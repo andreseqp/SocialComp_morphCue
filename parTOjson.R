@@ -1,20 +1,25 @@
 # ------------------------ generate json files  ------------------------------------------ #
 
+dirAndes<-"C:/Users/a.quinones/"
+dirLaptop<-"D:/"
+
+worPlac<-dirAndes
+
 library("jsonlite")
 
-projDir<-"D:/quinonesa/SocialCompetence/"
+projDir<-paste(worPlac,"Proyectos/SocialComp_mrphCue/",sep="")
 
-simsDir<-"S:/quinonesa/Simulations/Comp_cue/"
+simsDir<-paste(worPlac,"Simulations/morphCue/",sep="")
 
-visualDir<-"D:\\quinonesa/VisualStudio/Compet_cue/"
+visualDir<-paste(worPlac,"/source/repos/Compet_cue/",sep="")
 
 exedir<-paste(projDir,'/./cue_compt.exe',sep='')
 
 fileName<-"parameters.json"
 
 
-param<-list(totGen   =50000,   nRep        = 10,
-            printGen = 500,    popSize  = 1000, 
+param<-list(totGen   =10000,   nRep        = 10,
+            printGen = 500,    popSize  = 5000, 
             meanCue     = 20,   baselineFit = 1,
             sdCue    = 0.2,     nInt        = 50,
             mutRate  = 0.001, 
@@ -53,7 +58,7 @@ rangSD<-seq(0,1,length=5)
 check_create.dir(simsDir,param = rep("sdCue",1),
                  values = c(""))
 
-listfolders<-check_create.dir(paste(simsDir,"SdCue1_/",sep=""),
+listfolders<-check_create.dir(paste(simsDir,"SdCue_/",sep=""),
                                     param = rep("SdCue",5),
                               values = rang)
 

@@ -26,11 +26,11 @@ Start date :
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <math.h>
+#include <math.h>	
 #include <vector>
 #include "tchar.h"
-#include "D:\\quinonesa\\Dropbox\\C++\\Routines\\C++\\RandomNumbers\\random.h"
-#include "D:\\quinonesa\\Dropbox\C++\\json.hpp"       
+#include "C:\\Users\\a.quinones\\Dropbox\\C++\\Routines\\C++\\RandomNumbers\\random.h"
+#include "C:\\Users\\a.quinones\\Dropbox\C++\\json.hpp"       
 // Header for reading and using JSON files see https://github.com/nlohmann/json
 
 using namespace std;
@@ -226,14 +226,14 @@ void printStats(int popsize,ofstream &output, int time, int seed) {
 	output << CueMeanSd[0]              * invertPopsize << '\t';
 	output << SD << '\t';
 	output << endl;
-	cout << seed << '\t';
+	/*cout << seed << '\t';
 	cout << time << '\t';
 	cout << countGenotypes[hawk]        * invertPopsize << '\t';
 	cout << countGenotypes[dove]        * invertPopsize << '\t';
 	cout << countGenotypes[evaluator]   * invertPopsize << '\t';
 	cout << countPhenotypes[hawk]       * invertTotInt << '\t';
 	cout << countPhenotypes[dove]       * invertTotInt << '\t';
-	cout << endl;
+	cout << endl;*/
 
 }
 
@@ -302,6 +302,7 @@ int main(int argc, _TCHAR* argv[]){
 		ofstream popOutput;
 		initializeFile(popOutput, param);
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
+			cout << "sd=" << *itParVal << "	" << "seed=" << seed << endl;
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
 				population.push_back(individual((strategy)rnd::integer(2),
 					rnd::normal(param["meanCue"], param["sdCue"])));
@@ -313,8 +314,8 @@ int main(int argc, _TCHAR* argv[]){
 				Reprod(population, param["popSize"], param["mutRate"],
 					param["meanCue"], param["sdCue"], param["baselineFit"]);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
-					cout << "time=" << generation << endl;
-					cout << "prinGen=" << param["printGen"] << endl;
+					/*cout << "time=" << generation << endl;
+					cout << "prinGen=" << param["printGen"] << endl;*/
 					printStats(param["popSize"], popOutput, generation, seed);
 				}
 			}

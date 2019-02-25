@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.MorphCue.exe
+.MorphCue.iobj
+.MorphCue.ipdb
+.MorphCue.pdb
