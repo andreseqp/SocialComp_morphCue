@@ -71,8 +71,8 @@ matplot(x=sdStats[sdCuePar==0.2,time],
         y=sdStats[sdCuePar==0.2,.(m.freqGenDove,m.freqGenHawk,m.freqEval)],
         pch = 19,ylab="frequency",xlab="",type="l",lty=1,ylim=c(0,1))
 lines(x=c(0,max(sdStats[sdCuePar==0.2,time])),y=c(0.66,0.66),col="grey")
-matlines(x=sdStats[sdCuePar==0.4,time],
-        y=sdStats[sdCuePar==0.4,.(m.freqGenDove,m.freqGenHawk,m.freqEval)],
+matlines(x=sdStats[sdCuePar==0.6,time],
+        y=sdStats[sdCuePar==0.6,.(m.freqGenDove,m.freqGenHawk,m.freqEval)],
         pch = 19,ylab="frequency",xlab="",type="l",lty=2)
 
 legend("right",legend=c("Dove","Hawk","Evaluators"),pch = 19,col = c(1,2,3),
@@ -81,10 +81,10 @@ par(plt=posPlot(numploty = 2,idploty = 1),xaxt="s",new=TRUE,las=1)
 matplot(x=sdStats[sdCuePar==0.2,time],
         y=sdStats[sdCuePar==0.2,.(m.freqFenDove,m.freqFenHawk)],
         pch = 19,ylab="frequency",xlab="",type="l",lty=1)
-matlines(x=sdStats[sdCuePar==0.4,time],
-        y=sdStats[sdCuePar==0.4,.(m.freqFenDove,m.freqFenHawk)],
+matlines(x=sdStats[sdCuePar==0.6,time],
+        y=sdStats[sdCuePar==0.6,.(m.freqFenDove,m.freqFenHawk)],
         pch = 19,ylab="frequency",xlab="",type="l",lty=2)
-lines(x=c(0,max(test1$time)),y=c(0.66,0.66),col="grey")
+lines(x=c(0,max(sdStats[,time])),y=c(0.66,0.66),col="grey")
 legend("right",legend=c("Dove","Hawk"),pch = 19,col = c(1,2),
        title="phenotypes")
 
@@ -94,3 +94,9 @@ sdStatsEnd<-sdStats[time>max(time)*0.9,.(m.freqGenHawk=mean(m.freqGenHawk),
                     m.freqFenHawk=mean(m.freqFenHawk),
                     m.freqFenDove=mean(m.freqFenDove)),by=sdCuePar]
 
+par(plt=posPlot())
+matplot(x=sdStatsEnd[,sdCuePar],
+        y=sdStatsEnd[,.(m.freqGenDove,m.freqGenHawk,m.freqEval)],
+        pch=20,col=c(1,2,3))
+legend("right",legend=c("Dove","Hawk","Evaluators"),pch = 19,col = c(1,2,3),
+       title="genotypes")
