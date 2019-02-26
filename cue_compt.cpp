@@ -47,26 +47,26 @@ int countPhenotypes[2];
 double CueMeanSd[2];
 
 class individual {
-public:
-	individual(strategy genotype_, double own_cue_);
-	individual(individual& mother, double mutRate, double newcue);
-	double curr_payoff;
-	double cum_payoff;
-	int ninterac;
-	strategy phenotype;
-	strategy get_strat() {
-		return(genotype);
-	}
-	double get_cue() {
-		return(own_cue);
-	}
-	void set_phenotype(individual partner);
-	void get_payoff(individual partner, vector<double> param, bool win);
-	double logist(double othercue);
-	strategy mutate(strategy genotype,double mutRate);
-private:
-	strategy genotype;
-	double own_cue;
+	public:
+		individual(strategy genotype_, double own_cue_);
+		individual(individual& mother, double mutRate, double newcue);
+		double curr_payoff;
+		double cum_payoff;
+		int ninterac;
+		strategy phenotype;
+		strategy get_strat() {
+			return(genotype);
+		}
+		double get_cue() {
+			return(own_cue);
+		}
+		void set_phenotype(individual partner);
+		void get_payoff(individual partner, vector<double> param, bool win);
+		double logist(double othercue);
+		strategy mutate(strategy genotype,double mutRate);
+	private:
+		strategy genotype;
+		double own_cue;
 };
 
 // constructors
@@ -327,7 +327,7 @@ int main(int argc, _TCHAR* argv[]){
 	}
 	
 	mark_time(0);
-	wait_for_return();
+	//wait_for_return();
 
 	return 0;
 }
