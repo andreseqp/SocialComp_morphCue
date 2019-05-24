@@ -45,6 +45,8 @@ enum strategy { hawk, dove, evaluator};
 int countGenotypes[3];
 int countPhenotypes[2];
 double BadgeMeanSd[2];
+double alphaMeanSd[2];
+double betaMeanSd[2];
 
 class individual {
 	public:
@@ -59,6 +61,12 @@ class individual {
 		}
 		double get_badge() {
 			return(own_badge);
+		}
+		double get_alpha() {
+			return(alphaBadge);
+		}
+		double get_beta() {
+			return(betaBadge);
 		}
 		void set_phenotype(individual partner);
 		void get_payoff(individual partner, vector<double> param, bool win);
@@ -155,8 +163,7 @@ double individual::logist(double otherBadge) {
 }
 
 void individual::set_phenotype(individual partner) {
-	if (get_strat() == evaluator)
-	{
+	if (get_strat() == evaluator){
 		double probHawk = logist(partner.get_badge());
 		if (rnd::uniform() < probHawk) {
 			phenotype = hawk;
@@ -192,6 +199,10 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	countGenotypes[2] = 0;
 	BadgeMeanSd[0] = 0;
 	BadgeMeanSd[1] = 0;
+	alphaMeanSd[0] = 0;
+	alphaMeanSd[1] = 0;
+	betaMeanSd[0] = 0;
+	betaMeanSd[1] = 0;
 	for (vector<individual>::iterator itpop = popT.begin(); 
 		itpop < popT.end(); ++itpop) {
 		payoff_dist[itpop-popT.begin()] = baselineFit + 
@@ -199,6 +210,10 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 		++countGenotypes[itpop->get_strat()];
 		BadgeMeanSd[0] += itpop->get_badge();
 		BadgeMeanSd[1] += pow(itpop->get_badge(), 2);
+		alphaMeanSd[0] += itpop->get_alpha();
+		alphaMeanSd[1] += pow(itpop->get_alpha(),2);
+		betaMeanSd[0] += itpop->get_beta();
+		betaMeanSd[1] += pow(itpop->get_beta(), 2);
 	}
 	for (vector<individual>::iterator itpopTplus1 = popTplus1.begin(); 
 		itpopTplus1 < popTplus1.end(); ++itpopTplus1) {
@@ -232,13 +247,20 @@ void interactions(vector<individual> &population,int nint, int popsize,
 		ind1 = popsize, ind2 = popsize;
 	}
 }
+double calcSd(double sum[], double invN) {
+	return(sqrt(sum[1] * invN -
+		pow((sum[0] * invN), 2)));
+}
 
 void printStats(int popsize,ofstream &output, int time, int seed) {
 	double invertTotInt = 1/static_cast<double>(countPhenotypes[0] + 
 		countPhenotypes[1]);
 	double invertPopsize = 1/static_cast<double>(popsize);
-	double SD = sqrt(BadgeMeanSd[1]*invertPopsize - 
-		pow((BadgeMeanSd[0]*invertPopsize),2));
+	double badgSD = calcSd(BadgeMeanSd, invertPopsize);
+	double alphaSD = calcSd(alphaMeanSd, invertPopsize);
+	double betaSD = calcSd(betaMeanSd, invertPopsize);
+	/*double badgSD = sqrt(BadgeMeanSd[1]*invertPopsize - 
+		pow((BadgeMeanSd[0]*invertPopsize),2));*/
 	output << seed << '\t';
 	output << time << '\t';
 	output << countGenotypes[hawk]      * invertPopsize << '\t';
@@ -246,8 +268,12 @@ void printStats(int popsize,ofstream &output, int time, int seed) {
 	output << countGenotypes[evaluator] * invertPopsize << '\t';
 	output << countPhenotypes[hawk]     * invertTotInt << '\t';
 	output << countPhenotypes[dove]     * invertTotInt << '\t';
-	output << BadgeMeanSd[0]              * invertPopsize << '\t';
-	output << SD << '\t';
+	output << BadgeMeanSd[0]            * invertPopsize << '\t';
+	output << badgSD << '\t';
+	output << alphaMeanSd[0]            * invertPopsize << '\t';
+	output << alphaSD << '\t';
+	output << betaMeanSd[0]             * invertPopsize << '\t';
+	output << betaSD ;
 	output << endl;
 	/*cout << seed << '\t';
 	cout << time << '\t';
@@ -288,6 +314,8 @@ void initializeFile(ofstream &popOutput, json param) {
 	popOutput << "time" << '\t' << "freqGenHawks" << '\t' << "freqGenDove";
 	popOutput << '\t' << "freqGenEval" << '\t' << "freqFenHawks" << '\t';
 	popOutput << "freqFenDoves" << '\t' << "meanCue" << '\t' << "sdCue" << '\t';
+	popOutput << "meanAlpha" << '\t' << "sdAlpha" << '\t' << "meanBeta" << '\t';
+	popOutput << "sdBeta";
 	popOutput << endl;
 }
 
