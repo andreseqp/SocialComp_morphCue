@@ -3,7 +3,7 @@
 cue_comp.cpp
 ===============================================================================
 Main file of a model exploring social competence. Individuals play the 
-traditional hawl-dove game. The porpose of the project is to add a type of 
+traditional hawk-dove game. The purpose of the project is to add a type of 
 player that uses a morphological cue to determine the probability to play
 hawk or dove. 
 
@@ -44,12 +44,14 @@ enum strategy { hawk, dove, evaluator};
 
 int countGenotypes[3];
 int countPhenotypes[2];
-double CueMeanSd[2];
+double BadgeMeanSd[2];
+double alphaMeanSd[2];
+double betaMeanSd[2];
 
 class individual {
 	public:
-		individual(strategy genotype_, double own_cue_);
-		individual(individual& mother, double mutRate, double newcue);
+		individual(strategy genotype_,double alphaBadge_,double betaBadge_);
+		individual(individual& mother, double mutRate,double mutSD);
 		double curr_payoff;
 		double cum_payoff;
 		int ninterac;
@@ -57,40 +59,60 @@ class individual {
 		strategy get_strat() {
 			return(genotype);
 		}
-		double get_cue() {
-			return(own_cue);
+		double get_badge() {
+			return(own_badge);
+		}
+		double get_alpha() {
+			return(alphaBadge);
+		}
+		double get_beta() {
+			return(betaBadge);
 		}
 		void set_phenotype(individual partner);
 		void get_payoff(individual partner, vector<double> param, bool win);
-		double logist(double othercue);
-		strategy mutate(strategy genotype,double mutRate);
+		void setBadge();
+		double logist(double otherBadge);
+		strategy mutateStr(strategy genotype,double mutRate);
+		double mutateDoub(double value, double mutRate, double mutSD);
 	private:
 		strategy genotype;
-		double own_cue;
+		double own_badge;
+		double quality;
+		double alphaBadge;
+		double betaBadge;
 };
 
+// set quality and badge of status
+void individual::setBadge() {
+	quality = rnd::normal(0.5);
+	clip_range(quality, 0, 1);
+	own_badge = 1 / (1 + exp(alphaBadge - betaBadge * quality));
+}
+
 // constructors
-individual::individual(strategy genotype_=hawk, double own_cue_=0) {
+individual::individual(strategy genotype_=hawk, double alphaBadge_=0,
+	double betaBadge_=0) {
+	alphaBadge = alphaBadge_;
+	betaBadge = betaBadge_;
 	genotype = genotype_;
-	own_cue  = own_cue_ ;
-	clip_low(own_cue_,0);
+	setBadge();
 	curr_payoff = 0;
 	cum_payoff = 0;
 	ninterac = 0;
 }
 
-individual::individual(individual& mother, double mutRate,
-	double newcue) {
-	genotype = mutate(mother.genotype,mutRate);
+individual::individual(individual& mother, double mutRate,double mutSD) {
+	genotype = mutateStr(mother.genotype,mutRate);
 	//own_cue = mother.own_cue;
-	own_cue = newcue;
-	clip_low(own_cue, 0);
+	alphaBadge = mutateDoub(mother.alphaBadge,mutRate,mutSD);
+	betaBadge = mutateDoub(mother.betaBadge,mutRate,mutSD);
+	setBadge(); 
 	curr_payoff = 0;
 	cum_payoff = 0;
 	ninterac = 0;
 }
 
-strategy individual::mutate(strategy genotype,double mutRate) {
+strategy individual::mutateStr(strategy genotype,double mutRate) {
 	if (rnd::uniform() < mutRate) {
 		strategy newgenotype = (strategy)rnd::integer(3);
 		// set intput to random generator to 3, to include evaluators
@@ -99,6 +121,16 @@ strategy individual::mutate(strategy genotype,double mutRate) {
 	}
 	else {
 		return(genotype);
+	}
+}
+
+double  individual::mutateDoub(double value, double mutRate, double mutSD) {
+	if (rnd::uniform() < mutRate) {
+		double newValue = value + rnd::normal(0,mutSD);
+		return(newValue);
+	}
+	else {
+		return(value);
 	}
 }
 
@@ -126,14 +158,13 @@ void individual::get_payoff(individual partner,vector<double> payoff_matrix,
 	++ninterac;
 }
 
-double individual::logist(double othercue) { 
-	return (1 / (1 + exp(-(get_cue() - othercue)))); 
+double individual::logist(double otherBadge) { 
+	return (1 / (1 + exp(-(get_badge() - otherBadge)))); 
 }
 
 void individual::set_phenotype(individual partner) {
-	if (get_strat() == evaluator)
-	{
-		double probHawk = logist(partner.get_cue());
+	if (get_strat() == evaluator){
+		double probHawk = logist(partner.get_badge());
 		if (rnd::uniform() < probHawk) {
 			phenotype = hawk;
 		}
@@ -160,26 +191,33 @@ std::string douts(double j) {			// turns double into string
 }
 
 void Reprod(vector<individual> &popT, int popsize, double mutRate,
-	double meanCue, double sdCue, double baselineFit) {
+	double mutSD, double baselineFit) {
 	vector<individual> popTplus1(popsize);
 	rnd::discrete_distribution payoff_dist(popsize);
 	countGenotypes[0] = 0;
 	countGenotypes[1] = 0;
 	countGenotypes[2] = 0;
-	CueMeanSd[0] = 0;
-	CueMeanSd[1] = 0;
+	BadgeMeanSd[0] = 0;
+	BadgeMeanSd[1] = 0;
+	alphaMeanSd[0] = 0;
+	alphaMeanSd[1] = 0;
+	betaMeanSd[0] = 0;
+	betaMeanSd[1] = 0;
 	for (vector<individual>::iterator itpop = popT.begin(); 
 		itpop < popT.end(); ++itpop) {
 		payoff_dist[itpop-popT.begin()] = baselineFit + 
 			itpop->cum_payoff/itpop->ninterac;
 		++countGenotypes[itpop->get_strat()];
-		CueMeanSd[0] += itpop->get_cue();
-		CueMeanSd[1] += pow(itpop->get_cue(), 2);
+		BadgeMeanSd[0] += itpop->get_badge();
+		BadgeMeanSd[1] += pow(itpop->get_badge(), 2);
+		alphaMeanSd[0] += itpop->get_alpha();
+		alphaMeanSd[1] += pow(itpop->get_alpha(),2);
+		betaMeanSd[0] += itpop->get_beta();
+		betaMeanSd[1] += pow(itpop->get_beta(), 2);
 	}
 	for (vector<individual>::iterator itpopTplus1 = popTplus1.begin(); 
 		itpopTplus1 < popTplus1.end(); ++itpopTplus1) {
-		*itpopTplus1 = individual(popT[payoff_dist.sample()],mutRate,
-			rnd::normal(meanCue,sdCue));
+		*itpopTplus1 = individual(popT[payoff_dist.sample()],mutRate,mutSD);
 	}
 	vector<individual>::iterator itpopTplus1 = popTplus1.begin();
 	for (vector<individual>::iterator itpopT = popT.begin();
@@ -203,19 +241,26 @@ void interactions(vector<individual> &population,int nint, int popsize,
 		population[ind1].set_phenotype(population[ind2]);
 		population[ind2].set_phenotype(population[ind1]);
 		ind1win = rnd::binomial(1,
-			population[ind1].logist(population[ind2].get_cue()));
+			population[ind1].logist(population[ind2].get_badge()));
 		population[ind1].get_payoff(population[ind2], payoff_matrix,ind1win);
 		population[ind2].get_payoff(population[ind1], payoff_matrix,!ind1win);
 		ind1 = popsize, ind2 = popsize;
 	}
+}
+double calcSd(double sum[], double invN) {
+	return(sqrt(sum[1] * invN -
+		pow((sum[0] * invN), 2)));
 }
 
 void printStats(int popsize,ofstream &output, int time, int seed) {
 	double invertTotInt = 1/static_cast<double>(countPhenotypes[0] + 
 		countPhenotypes[1]);
 	double invertPopsize = 1/static_cast<double>(popsize);
-	double SD = sqrt(CueMeanSd[1]*invertPopsize - 
-		pow((CueMeanSd[0]*invertPopsize),2));
+	double badgSD = calcSd(BadgeMeanSd, invertPopsize);
+	double alphaSD = calcSd(alphaMeanSd, invertPopsize);
+	double betaSD = calcSd(betaMeanSd, invertPopsize);
+	/*double badgSD = sqrt(BadgeMeanSd[1]*invertPopsize - 
+		pow((BadgeMeanSd[0]*invertPopsize),2));*/
 	output << seed << '\t';
 	output << time << '\t';
 	output << countGenotypes[hawk]      * invertPopsize << '\t';
@@ -223,8 +268,12 @@ void printStats(int popsize,ofstream &output, int time, int seed) {
 	output << countGenotypes[evaluator] * invertPopsize << '\t';
 	output << countPhenotypes[hawk]     * invertTotInt << '\t';
 	output << countPhenotypes[dove]     * invertTotInt << '\t';
-	output << CueMeanSd[0]              * invertPopsize << '\t';
-	output << SD << '\t';
+	output << BadgeMeanSd[0]            * invertPopsize << '\t';
+	output << badgSD << '\t';
+	output << alphaMeanSd[0]            * invertPopsize << '\t';
+	output << alphaSD << '\t';
+	output << betaMeanSd[0]             * invertPopsize << '\t';
+	output << betaSD ;
 	output << endl;
 	/*cout << seed << '\t';
 	cout << time << '\t';
@@ -265,6 +314,8 @@ void initializeFile(ofstream &popOutput, json param) {
 	popOutput << "time" << '\t' << "freqGenHawks" << '\t' << "freqGenDove";
 	popOutput << '\t' << "freqGenEval" << '\t' << "freqFenHawks" << '\t';
 	popOutput << "freqFenDoves" << '\t' << "meanCue" << '\t' << "sdCue" << '\t';
+	popOutput << "meanAlpha" << '\t' << "sdAlpha" << '\t' << "meanBeta" << '\t';
+	popOutput << "sdBeta";
 	popOutput << endl;
 }
 
@@ -304,15 +355,14 @@ int main(int argc, _TCHAR* argv[]){
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
 			cout << "sd=" << *itParVal << "	" << "seed=" << seed << endl;
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
-				population.push_back(individual((strategy)rnd::integer(2),
-					rnd::normal(param["meanCue"], param["sdCue"])));
+				population.push_back(individual((strategy)rnd::integer(2)));
 			}
 			for (int generation = 0; generation < param["totGen"]; 
 				++generation) {
 				interactions(population, param["nInt"], param["popSize"],
 					param["payoff_matrix"]);
 				Reprod(population, param["popSize"], param["mutRate"],
-					param["meanCue"], param["sdCue"], param["baselineFit"]);
+					param["sdCue"], param["baselineFit"]);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
 					/*cout << "time=" << generation << endl;
 					cout << "prinGen=" << param["printGen"] << endl;*/

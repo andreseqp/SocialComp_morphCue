@@ -1,19 +1,9 @@
 # ------------------------ generate json files  ------------------------------------------ #
 
-dirAndes<-"C:/Users/a.quinones/"
-dirLaptop<-"D:/"
-
-worPlac<-dirAndes
 
 library("jsonlite")
+library("here")
 
-projDir<-paste(worPlac,"Proyectos/SocialComp_mrphCue/",sep="")
-
-simsDir<-paste(worPlac,"Simulations/morphCue/",sep="")
-
-visualDir<-paste(worPlac,"/source/repos/Compet_cue/",sep="")
-
-exedir<-paste(projDir,'/./cue_compt.exe',sep='')
 
 fileName<-"parameters.json"
 
@@ -26,9 +16,7 @@ param<-list(totGen   =10000,   nRep        = 10,
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "sdCue",
             rangParam = c(0.2,0.4,0.6,0.8,1 ),
-            folder=simsDir)
-
-setwd(simsDir)
+            folder=paste(here("Simulations"),"/",sep=""))
 
 check_create.dir<-function(folder,param,values){
   setwd(folder)
@@ -55,16 +43,16 @@ check_create.dir<-function(folder,param,values){
 rang<-c(0,1)
 rangSD<-seq(0,1,length=5)
 
-check_create.dir(simsDir,param = rep("sdCue",1),
+check_create.dir(here("Simulations"),param = rep("sdCue",1),
                  values = c(""))
 
-listfolders<-check_create.dir(paste(simsDir,"SdCue_/",sep=""),
+listfolders<-check_create.dir(here("Simulations","sdCue_"),
                                     param = rep("SdCue",5),
                               values = rang)
 
 
 for (i in 1:1) {
-  param$folder<-paste(simsDir,"sdCue_/",sep="")
+  param$folder<-paste(here("Simulations","sdCue_"),"/",sep="")
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   if(file.exists(paste(param$folder,fileName,sep = ''))){
     currFile<-fromJSON(paste(param$folder,fileName,sep = ''))
