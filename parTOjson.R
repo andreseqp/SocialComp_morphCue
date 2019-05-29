@@ -10,12 +10,12 @@ fileName<-"parameters.json"
 
 param<-list(totGen   =10000,   nRep        = 10,
             printGen = 500,    popSize  = 5000, 
-            meanCue     = 20,   baselineFit = 1,
-            sdCue    = 0.2,     nInt        = 50,
+            baselineFit = 1,   MutSd    = 0.1,
+            nInt        = 50,
             mutRate  = 0.001, 
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "sdCue",
-            rangParam = c(0.2,0.4,0.6,0.8,1 ),
+            namParam = "baselineFit",
+            rangParam = c(1),
             folder=paste(here("Simulations"),"/",sep=""))
 
 check_create.dir<-function(folder,param,values){
@@ -40,10 +40,10 @@ check_create.dir<-function(folder,param,values){
   }
 }
 
-rang<-c(0,1)
-rangSD<-seq(0,1,length=5)
 
-check_create.dir(here("Simulations"),param = rep("sdCue",1),
+rang<-1
+
+check_create.dir(here("Simulations"),param = rep(param$namParam,1),
                  values = c(""))
 
 listfolders<-check_create.dir(here("Simulations","sdCue_"),
@@ -52,7 +52,7 @@ listfolders<-check_create.dir(here("Simulations","sdCue_"),
 
 
 for (i in 1:1) {
-  param$folder<-paste(here("Simulations","sdCue_"),"/",sep="")
+  param$folder<-paste(here("Simulations",param$namParam),"_/",sep="")
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   if(file.exists(paste(param$folder,fileName,sep = ''))){
     currFile<-fromJSON(paste(param$folder,fileName,sep = ''))

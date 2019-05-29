@@ -50,7 +50,8 @@ double betaMeanSd[2];
 
 class individual {
 	public:
-		individual(strategy genotype_,double alphaBadge_,double betaBadge_);
+		individual(strategy genotype_,double alphaBadge_,double betaBadge_,
+			double alphaCI, double alphaAI, double gammaI, double sigmaSqI);
 		individual(individual& mother, double mutRate,double mutSD);
 		double curr_payoff;
 		double cum_payoff;
@@ -68,13 +69,41 @@ class individual {
 		double get_beta() {
 			return(betaBadge);
 		}
+		double get_quality() {
+			return(quality);
+		}
 		void set_phenotype(individual partner);
 		void get_payoff(individual partner, vector<double> param, bool win);
 		void setBadge();
-		double logist(double otherBadge);
+		bool Winfight(double otherQuality);
 		strategy mutateStr(strategy genotype,double mutRate);
 		double mutateDoub(double value, double mutRate, double mutSD);
+		void calcRespValPref(individual partner);
+		void update();
 	private:
+		int nCenters;
+		// number of ranges in which the morphological trait range is divided
+		vector<double> featWeightsCrit;
+		// vector of weights to fit the state value function. 
+		// Each corresponds to one value in the morphological trait range
+		vector <double> featWeightsAct;
+		// vector of weights to fit the action function. 
+		// Each corresponds to one value in the morphological trait range
+		vector <double> centers;
+		// Numerical value in the morphological trait range that corresponds 
+		// to the weights in FeatWeightsCrit anf featWeightAct
+		vector <double> responses;
+		// Response triggered by each weight corrected by distance accordig to RBF
+		double valueT; // estimated value for state at time t
+		double preferenceT;  // estimated preference for acting as hawk at time t
+		double sigmaSq; 
+		// degree of generalization
+		double alphaCrit;
+		// speed of learning for the critic
+		double alphaAct;
+		// speed of learning for the actor
+		double gamma;
+		// importance of future rewards 
 		strategy genotype;
 		double own_badge;
 		double quality;
@@ -91,11 +120,20 @@ void individual::setBadge() {
 
 // constructors
 individual::individual(strategy genotype_=hawk, double alphaBadge_=0,
-	double betaBadge_=0) {
+	double betaBadge_=0,double alphaCI = 0.01, double alphaAI = 0.01,
+	double gammaI = 0, double sigmaSqI = 0.01) {
 	alphaBadge = alphaBadge_;
 	betaBadge = betaBadge_;
 	genotype = genotype_;
 	setBadge();
+	alphaAct = alphaAI, alphaCrit = alphaCI, gamma = gammaI, sigmaSq = sigmaSqI;
+	double interv = 1 / nCenters;
+	for (int i = 0; i < nCenters; i++)	{
+		centers.push_back(interv * 0.5 + interv * i);
+		featWeightsAct.push_back(0);
+		featWeightsCrit.push_back(0);
+		responses.push_back(0);
+	}
 	curr_payoff = 0;
 	cum_payoff = 0;
 	ninterac = 0;
@@ -110,6 +148,49 @@ individual::individual(individual& mother, double mutRate,double mutSD) {
 	curr_payoff = 0;
 	cum_payoff = 0;
 	ninterac = 0;
+	alphaAct = mother.alphaAct;
+	alphaCrit = mother.alphaCrit;
+	gamma = mother.gamma;
+	sigmaSq = mother.sigmaSq;
+}
+
+void individual::calcRespValPref(individual partner) {
+	double totValue = 0;
+	double totPref = 0;
+	for (int countCenters = 0; countCenters < nCenters; ++countCenters) {
+		responses[countCenters] = exp(-(partner.get_badge() - centers[countCenters])
+			/ (2 * sigmaSq));
+		totValue += responses[countCenters] * featWeightsCrit[countCenters];
+		totPref += responses[countCenters] * featWeightsAct[countCenters];
+	}
+	valueT = totValue;
+	preferenceT = totPref;
+}
+
+double logist(double value1, double value2) {
+	return (1 / (1 + exp(-(value1 - value2))));
+}
+
+void individual::update() {
+	// change estimated value according to current reward and 
+	// estimates of future state-action pair
+	double delta = curr_payoff - valueT;
+	double p0 = logist(preferenceT,0);
+	double eligVec;
+	if (phenotype==0) {
+		// if phenotype is hawk
+		eligVec = -p0;
+	}
+	else {
+		// if phenotype is dove
+		eligVec = (1 - p0);
+	}
+	for (int countCent = 0; countCent < nCenters; ++countCent) {
+		featWeightsCrit[countCent] += alphaCrit * delta*
+			responses[countCent];
+		featWeightsAct[countCent] += alphaAct * delta*eligVec*
+			responses[countCent];
+	}
 }
 
 strategy individual::mutateStr(strategy genotype,double mutRate) {
@@ -158,13 +239,15 @@ void individual::get_payoff(individual partner,vector<double> payoff_matrix,
 	++ninterac;
 }
 
-double individual::logist(double otherBadge) { 
-	return (1 / (1 + exp(-(get_badge() - otherBadge)))); 
+bool individual::Winfight(double otherQuality) {
+	return(rnd::binomial(1,logist(get_quality(), otherQuality)));
 }
+
 
 void individual::set_phenotype(individual partner) {
 	if (get_strat() == evaluator){
-		double probHawk = logist(partner.get_badge());
+		calcRespValPref(partner);
+		double probHawk = logist(preferenceT,0);
 		if (rnd::uniform() < probHawk) {
 			phenotype = hawk;
 		}
@@ -240,10 +323,11 @@ void interactions(vector<individual> &population,int nint, int popsize,
 		}
 		population[ind1].set_phenotype(population[ind2]);
 		population[ind2].set_phenotype(population[ind1]);
-		ind1win = rnd::binomial(1,
-			population[ind1].logist(population[ind2].get_badge()));
+		ind1win = population[ind1].Winfight(population[ind2].get_quality());
 		population[ind1].get_payoff(population[ind2], payoff_matrix,ind1win);
 		population[ind2].get_payoff(population[ind1], payoff_matrix,!ind1win);
+		population[ind1].update();
+		population[ind2].update();
 		ind1 = popsize, ind2 = popsize;
 	}
 }
@@ -306,7 +390,7 @@ string create_filename(std::string filename, json param) {
 void initializeFile(ofstream &popOutput, json param) {
 	std::string namedir = param["folder"];
 	// 
-	std::string namefile ="pop";
+	std::string namefile ="popLearn";
 	namedir.append(namefile);
 	string IndFile = create_filename(namedir, param);
 	popOutput.open(IndFile.c_str());
@@ -323,25 +407,24 @@ int main(int argc, _TCHAR* argv[]){
 
 	mark_time(1);
 
-	/*json param;
+	json param;
 	param["totGen"]            = 1000;
 	param["nRep"]              = 5;
 	param["printGen"]          = 500;
 	param["payoff_matrix"]     = {1.5,1,0,0.5};
 	param["popSize"]           = 100;
-	param["meanCue"]           = 20;
-	param["sdCue"]             = 0.2;
+	param["MutSd"]             = 0.1;
 	param["nInt"]              = 50;
 	param["mutRate"]           = 0.001;
 	param["baselineFit"]       = 1;
-	param["namParam"]          = "sdCue";
+	param["namParam"]          = "baselinefit";
 	param["rangParam"]         = { 0.2,0.4,0.6,0.8,1 };
-	param["folder"]            = "s:/quinonesa/simulations/Comp_cue/test_/";*/
+	param["folder"]            = "s:/quinonesa/simulations/comp_cue/test_/";
 	
 		
-	ifstream input(argv[1]);
-	if (input.fail()) { cout << "JSON file failed" << endl; }
-	nlohmann::json param = json::parse(input);
+	//ifstream input(argv[1]);
+	//if (input.fail()) { cout << "JSON file failed" << endl; }
+	//nlohmann::json param = json::parse(input);
 
 	string namParam = param["namParam"];
 
@@ -353,7 +436,8 @@ int main(int argc, _TCHAR* argv[]){
 		ofstream popOutput;
 		initializeFile(popOutput, param);
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
-			cout << "sd=" << *itParVal << "	" << "seed=" << seed << endl;
+			cout << param["namParam"] << "=" << *itParVal << "	" << 
+				"seed=" << seed << endl;
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
 				population.push_back(individual((strategy)rnd::integer(2)));
 			}
@@ -362,7 +446,7 @@ int main(int argc, _TCHAR* argv[]){
 				interactions(population, param["nInt"], param["popSize"],
 					param["payoff_matrix"]);
 				Reprod(population, param["popSize"], param["mutRate"],
-					param["sdCue"], param["baselineFit"]);
+					param["MutSd"], param["baselineFit"]);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
 					/*cout << "time=" << generation << endl;
 					cout << "prinGen=" << param["printGen"] << endl;*/
