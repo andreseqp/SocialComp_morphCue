@@ -51,7 +51,8 @@ double betaMeanSd[2];
 class individual {
 	public:
 		individual(strategy genotype_,double alphaBadge_,double betaBadge_,
-			double alphaCI, double alphaAI, double gammaI, double sigmaSqI);
+			double alphaCI, double alphaAI, double gammaI, double sigmaSqI,
+			int nCenters_);
 		individual(individual& mother, double mutRate,double mutSD);
 		double curr_payoff;
 		double cum_payoff;
@@ -121,7 +122,8 @@ void individual::setBadge() {
 // constructors
 individual::individual(strategy genotype_=hawk, double alphaBadge_=0,
 	double betaBadge_=0,double alphaCI = 0.01, double alphaAI = 0.01,
-	double gammaI = 0, double sigmaSqI = 0.01) {
+	double gammaI = 0, double sigmaSqI = 0.01, int nCenters_=5) {
+	nCenters = nCenters_;
 	alphaBadge = alphaBadge_;
 	betaBadge = betaBadge_;
 	genotype = genotype_;
@@ -134,20 +136,16 @@ individual::individual(strategy genotype_=hawk, double alphaBadge_=0,
 		featWeightsCrit.push_back(0);
 		responses.push_back(0);
 	}
-	curr_payoff = 0;
-	cum_payoff = 0;
-	ninterac = 0;
+	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0, preferenceT;
 }
 
 individual::individual(individual& mother, double mutRate,double mutSD) {
 	genotype = mutateStr(mother.genotype,mutRate);
-	//own_cue = mother.own_cue;
+	nCenters = mother.nCenters;
 	alphaBadge = mutateDoub(mother.alphaBadge,mutRate,mutSD);
 	betaBadge = mutateDoub(mother.betaBadge,mutRate,mutSD);
 	setBadge(); 
-	curr_payoff = 0;
-	cum_payoff = 0;
-	ninterac = 0;
+	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0, preferenceT;
 	alphaAct = mother.alphaAct;
 	alphaCrit = mother.alphaCrit;
 	gamma = mother.gamma;
@@ -407,24 +405,26 @@ int main(int argc, _TCHAR* argv[]){
 
 	mark_time(1);
 
-	json param;
-	param["totGen"]            = 1000;
+	// uncomment for debugging
+	/*json param;
+	param["totGen"]            = 100;
 	param["nRep"]              = 5;
-	param["printGen"]          = 500;
+	param["printGen"]          = 5;
 	param["payoff_matrix"]     = {1.5,1,0,0.5};
 	param["popSize"]           = 100;
 	param["MutSd"]             = 0.1;
 	param["nInt"]              = 50;
 	param["mutRate"]           = 0.001;
 	param["baselineFit"]       = 1;
-	param["namParam"]          = "baselinefit";
+	param["namParam"]          = "baselineFit";
 	param["rangParam"]         = { 0.2,0.4,0.6,0.8,1 };
-	param["folder"]            = "s:/quinonesa/simulations/comp_cue/test_/";
+	param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/baselinefit_/";*/
 	
 		
-	//ifstream input(argv[1]);
-	//if (input.fail()) { cout << "JSON file failed" << endl; }
-	//nlohmann::json param = json::parse(input);
+	// Comment for debugging
+	ifstream input(argv[1]);
+	if (input.fail()) { cout << "JSON file failed" << endl; }
+	nlohmann::json param = json::parse(input);
 
 	string namParam = param["namParam"];
 
@@ -448,8 +448,7 @@ int main(int argc, _TCHAR* argv[]){
 				Reprod(population, param["popSize"], param["mutRate"],
 					param["MutSd"], param["baselineFit"]);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
-					/*cout << "time=" << generation << endl;
-					cout << "prinGen=" << param["printGen"] << endl;*/
+					//cout << "time=" << generation << endl;
 					printStats(param["popSize"], popOutput, generation, seed);
 				}
 			}

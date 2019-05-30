@@ -5,10 +5,10 @@ library("jsonlite")
 library("here")
 
 
-fileName<-"parameters.json"
+fileName<-"parameters2.json"
 
 
-param<-list(totGen   =10000,   nRep        = 10,
+param<-list(totGen   =100000,   nRep        = 10,
             printGen = 500,    popSize  = 5000, 
             baselineFit = 1,   MutSd    = 0.1,
             nInt        = 50,
