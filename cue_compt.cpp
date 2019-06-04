@@ -68,10 +68,14 @@ class individual {
 		double get_beta() {
 			return(betaBadge);
 		}
+		double get_qual() {
+			return(quality);
+		}
 		void set_phenotype(individual partner);
 		void get_payoff(individual partner, vector<double> param, bool win);
 		void setBadge();
-		double logist(double otherBadge);
+		bool Evualuate(double otherBadge);
+		bool WinFight(double otherQual);
 		strategy mutateStr(strategy genotype,double mutRate);
 		double mutateDoub(double value, double mutRate, double mutSD);
 	private:
@@ -158,14 +162,21 @@ void individual::get_payoff(individual partner,vector<double> payoff_matrix,
 	++ninterac;
 }
 
-double individual::logist(double otherBadge) { 
-	return (1 / (1 + exp(-(get_badge() - otherBadge)))); 
+double logist(double value1, double value2) {
+	return (1 / (1 + exp(-(value1 - value2))));
+}
+
+bool individual::Evualuate(double otherBadge) { 
+	return (rnd::bernoulli(logist(get_badge(), otherBadge))); 
+}
+
+bool individual::WinFight(double otherQual) {
+	return(rnd::bernoulli(logist(get_qual(), otherQual)));
 }
 
 void individual::set_phenotype(individual partner) {
 	if (get_strat() == evaluator){
-		double probHawk = logist(partner.get_badge());
-		if (rnd::uniform() < probHawk) {
+		if (Evualuate(partner.get_badge())) {
 			phenotype = hawk;
 		}
 		else {
@@ -240,8 +251,7 @@ void interactions(vector<individual> &population,int nint, int popsize,
 		}
 		population[ind1].set_phenotype(population[ind2]);
 		population[ind2].set_phenotype(population[ind1]);
-		ind1win = rnd::binomial(1,
-			population[ind1].logist(population[ind2].get_badge()));
+		ind1win = population[ind1].WinFight(population[ind2].get_qual());
 		population[ind1].get_payoff(population[ind2], payoff_matrix,ind1win);
 		population[ind2].get_payoff(population[ind1], payoff_matrix,!ind1win);
 		ind1 = popsize, ind2 = popsize;
@@ -330,7 +340,7 @@ int main(int argc, _TCHAR* argv[]){
 	param["payoff_matrix"]     = {1.5,1,0,0.5};
 	param["popSize"]           = 100;
 	param["meanCue"]           = 20;
-	param["sdCue"]             = 0.2;
+	param["MutSd"]             = 0.2;
 	param["nInt"]              = 50;
 	param["mutRate"]           = 0.001;
 	param["baselineFit"]       = 1;
@@ -353,7 +363,7 @@ int main(int argc, _TCHAR* argv[]){
 		ofstream popOutput;
 		initializeFile(popOutput, param);
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
-			cout << "sd=" << *itParVal << "	" << "seed=" << seed << endl;
+			cout << namParam << "=" << *itParVal << "	" << "seed=" << seed << endl;
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
 				population.push_back(individual((strategy)rnd::integer(2)));
 			}
@@ -362,7 +372,7 @@ int main(int argc, _TCHAR* argv[]){
 				interactions(population, param["nInt"], param["popSize"],
 					param["payoff_matrix"]);
 				Reprod(population, param["popSize"], param["mutRate"],
-					param["sdCue"], param["baselineFit"]);
+					param["MutSd"], param["baselineFit"]);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
 					/*cout << "time=" << generation << endl;
 					cout << "prinGen=" << param["printGen"] << endl;*/
