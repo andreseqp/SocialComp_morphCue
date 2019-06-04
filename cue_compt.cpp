@@ -47,6 +47,7 @@ int countPhenotypes[2];
 double BadgeMeanSd[2];
 double alphaMeanSd[2];
 double betaMeanSd[2];
+double featActMean[20];
 
 class individual {
 	public:
@@ -72,6 +73,9 @@ class individual {
 		}
 		double get_quality() {
 			return(quality);
+		}
+		double  get_feat(int id){
+			return(featWeightAct[id]);
 		}
 		void set_phenotype(individual partner);
 		void get_payoff(individual partner, vector<double> param, bool win);
@@ -275,26 +279,11 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	double mutSD, double baselineFit) {
 	vector<individual> popTplus1(popsize);
 	rnd::discrete_distribution payoff_dist(popsize);
-	countGenotypes[0] = 0;
-	countGenotypes[1] = 0;
-	countGenotypes[2] = 0;
-	BadgeMeanSd[0] = 0;
-	BadgeMeanSd[1] = 0;
-	alphaMeanSd[0] = 0;
-	alphaMeanSd[1] = 0;
-	betaMeanSd[0] = 0;
-	betaMeanSd[1] = 0;
+	
 	for (vector<individual>::iterator itpop = popT.begin(); 
 		itpop < popT.end(); ++itpop) {
 		payoff_dist[itpop-popT.begin()] = baselineFit + 
 			itpop->cum_payoff/itpop->ninterac;
-		++countGenotypes[itpop->get_strat()];
-		BadgeMeanSd[0] += itpop->get_badge();
-		BadgeMeanSd[1] += pow(itpop->get_badge(), 2);
-		alphaMeanSd[0] += itpop->get_alpha();
-		alphaMeanSd[1] += pow(itpop->get_alpha(),2);
-		betaMeanSd[0] += itpop->get_beta();
-		betaMeanSd[1] += pow(itpop->get_beta(), 2);
 	}
 	for (vector<individual>::iterator itpopTplus1 = popTplus1.begin(); 
 		itpopTplus1 < popTplus1.end(); ++itpopTplus1) {
@@ -304,6 +293,34 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	for (vector<individual>::iterator itpopT = popT.begin();
 		itpopT < popT.end(); ++itpopT, ++itpopTplus1) {
 		*itpopT = *itpopTplus1;
+	}
+}
+
+void get_stats(vector<individual> &popT, int popsize,int nFeat=5){
+	countGenotypes[0] = 0;
+	countGenotypes[1] = 0;
+	countGenotypes[2] = 0;
+	BadgeMeanSd[0] = 0;
+	BadgeMeanSd[1] = 0;
+	alphaMeanSd[0] = 0;
+	alphaMeanSd[1] = 0;
+	betaMeanSd[0] = 0;
+	betaMeanSd[1] = 0;
+	for(int countFeat = 0; countFeat<nFeat;++countFeat){
+		featActMean[countFeat] = 0;
+	}
+	for (vector<individual>::iterator itpop = popT.begin(); 
+		itpop < popT.end(); ++itpop) {
+		++countGenotypes[itpop->get_strat()];
+		BadgeMeanSd[0] += itpop->get_badge();
+		BadgeMeanSd[1] += pow(itpop->get_badge(), 2);
+		alphaMeanSd[0] += itpop->get_alpha();
+		alphaMeanSd[1] += pow(itpop->get_alpha(),2);
+		betaMeanSd[0] += itpop->get_beta();
+		betaMeanSd[1] += pow(itpop->get_beta(), 2);
+		for(int countFeat = 0; countFeat<nFeat;++countFeat){
+			featActMean[countFeat] += itpop->get_feat(countFeat);
+		}
 	}
 }
 
@@ -334,7 +351,8 @@ double calcSd(double sum[], double invN) {
 		pow((sum[0] * invN), 2)));
 }
 
-void printStats(int popsize,ofstream &output, int time, int seed) {
+void printStats(int popsize,ofstream &output, int time, int seed, 
+	int nfeat=5) {
 	double invertTotInt = 1/static_cast<double>(countPhenotypes[0] + 
 		countPhenotypes[1]);
 	double invertPopsize = 1/static_cast<double>(popsize);
@@ -355,7 +373,10 @@ void printStats(int popsize,ofstream &output, int time, int seed) {
 	output << alphaMeanSd[0]            * invertPopsize << '\t';
 	output << alphaSD << '\t';
 	output << betaMeanSd[0]             * invertPopsize << '\t';
-	output << betaSD ;
+	output << betaSD <<  '\t';
+	for(int countFeat;countFeat<nFeat;++countFeat){
+		output << featActMean[countFeat]*invertPopsize << '\t';
+	}
 	output << endl;
 	/*cout << seed << '\t';
 	cout << time << '\t';
@@ -385,7 +406,7 @@ string create_filename(std::string filename, json param) {
 	filename.append(".txt");
 	return(filename);
 }
-void initializeFile(ofstream &popOutput, json param) {
+void initializeFile(ofstream &popOutput, json param,int nfeat=5) {
 	std::string namedir = param["folder"];
 	// 
 	std::string namefile ="popLearn";
@@ -397,7 +418,10 @@ void initializeFile(ofstream &popOutput, json param) {
 	popOutput << '\t' << "freqGenEval" << '\t' << "freqFenHawks" << '\t';
 	popOutput << "freqFenDoves" << '\t' << "meanCue" << '\t' << "sdCue" << '\t';
 	popOutput << "meanAlpha" << '\t' << "sdAlpha" << '\t' << "meanBeta" << '\t';
-	popOutput << "sdBeta";
+	popOutput << "sdBeta" << '\t';
+	for(int countFeat;countFeat<nFeat;++countFeat){
+		output << append("WeightAct_",countFeat) << '\t';
+	}
 	popOutput << endl;
 }
 
