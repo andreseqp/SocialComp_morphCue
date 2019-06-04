@@ -316,7 +316,7 @@ string create_filename(std::string filename, json param) {
 void initializeFile(ofstream &popOutput, json param) {
 	std::string namedir = param["folder"];
 	// 
-	std::string namefile ="pop";
+	std::string namefile ="popReactN";
 	namedir.append(namefile);
 	string IndFile = create_filename(namedir, param);
 	popOutput.open(IndFile.c_str());
@@ -338,6 +338,7 @@ int main(int argc, _TCHAR* argv[]){
 	param["nRep"]              = 5;
 	param["printGen"]          = 500;
 	param["payoff_matrix"]     = {1.5,1,0,0.5};
+	param["init"]              = {1,1,0};
 	param["popSize"]           = 100;
 	param["meanCue"]           = 20;
 	param["MutSd"]             = 0.2;
@@ -356,6 +357,15 @@ int main(int argc, _TCHAR* argv[]){
 	string namParam = param["namParam"];
 
 	vector<individual> population;
+	
+	// intial conditions
+	rnd::discrete_distribution initFreq(3);
+
+	for (json::iterator initIt = param["init"].begin();
+		initIt != param["init"].end(); ++initIt) {
+		initFreq[initIt-param["init"].begin()] = *initIt;
+	}
+	
 
 	for (json::iterator itParVal = param["rangParam"].begin();
 		itParVal != param["rangParam"].end(); ++itParVal) {
@@ -365,7 +375,7 @@ int main(int argc, _TCHAR* argv[]){
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
 			cout << namParam << "=" << *itParVal << "	" << "seed=" << seed << endl;
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
-				population.push_back(individual((strategy)rnd::integer(2)));
+				population.push_back(individual((strategy)initFreq.sample()));
 			}
 			for (int generation = 0; generation < param["totGen"]; 
 				++generation) {
@@ -391,3 +401,4 @@ int main(int argc, _TCHAR* argv[]){
 
 	return 0;
 }
+	

@@ -5,28 +5,30 @@ here()
 source("C:/Users/a.quinones/Dropbox/R_files/posPlots.R")
 
 
-(listTest<-list.files(here("Simulations/SdCue_")))
-sdList<-grep("sdCue",listTest,value=TRUE)
+(listTest<-list.files(here("Simulations","Init_")))
+sdList<-grep(".txt",listTest,value=TRUE)
 
-test1<-fread(here("Simulations","SdCue_",listTest[2]))
+test1<-fread(here("Simulations","Init_",sdList[1]))
 
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="n")
-matplot(test1[,.(freqGenDove,freqGenHawks,freqGenEval)],
+matplot(y = test1[,.(freqGenDove,freqGenHawks,freqGenEval)],
+        x= test1[,time],xlab="",
         pch = 19,ylab="frequency")
 lines(x=c(0,max(test1$time)),y=c(0.66,0.66),col="grey")
 legend("right",legend=c("Dove","Hawk","Evaluators"),pch = 19,col = c(1,2,3),
        title="genotypes")
 
-par(plt=posPlot(numploty = 2,idploty = 1),new=T)
-matplot(test1[,.(freqFenDoves,freqFenHawks)],
+par(plt=posPlot(numploty = 2,idploty = 1),new=T,xaxt="s")
+matplot(y=test1[,.(freqFenDoves,freqFenHawks)],
+        x=test1[,time],
         pch = 19,ylab="frequency")
-lines(x=c(0,100),y=c(0.66,0.66),col="grey")
+lines(x=c(0,test1[,max(time)]),y=c(0.66,0.66),col="grey")
 legend("right",legend=c("Dove","Hawk"),pch = 19,col = c(1,2),
        title="phenotypes")
 
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="n")
 matplot(test1[,.(meanAlpha,meanBeta)],x = test1[,.(time)],
-        pch = 19,ylab="trait value")
+        pch = 19,ylab="trait value",xlab="")
 legend("right",legend=c("Dove","Hawk"),pch = 19,col = c(1,2),
        title="phenotypes")
 
@@ -42,24 +44,24 @@ test1Stats<-test1[,.(m.freqGenHawk=mean(freqGenHawks),
                      m.freqEval=mean(freqGenEval),
                      m.freqFenHawk=mean(freqFenHawks),
                      m.freqFenDove=mean(freqFenDoves),
-                     m.meanAlpha=mean(meanAlpha)),by=time]
+                     m.meanAlpha=mean(meanAlpha),
+                     m.meanBeta=mean(meanBeta)),by=time]
 
-par(plt=posPlot(numploty = 2,idploty = 2),xaxt="n")
+par(plt=posPlot(numploty = 2,idploty = 2),xaxt="n",las=1)
 matplot(x=test1Stats[,time],
         y=test1Stats[,.(m.freqGenDove,m.freqGenHawk,m.freqEval)],
-        pch = 19,ylab="frequency",xlab="",type="l")
+        pch = 19,ylab="frequency",xlab="",type="l",ylim = c(0,1))
 lines(x=c(0,max(test1$time)),y=c(0.66,0.66),col="grey")
 legend("right",legend=c("Dove","Hawk","Evaluators"),pch = 19,col = c(1,2,3),
        title="genotypes")
 par(plt=posPlot(numploty = 2,idploty = 1),xaxt="s",new=TRUE)
 matplot(x=test1Stats[,time],
         y=test1Stats[,.(m.freqFenDove,m.freqFenHawk)],
-        pch = 19,ylab="frequency",xlab="",type="l")
+        pch = 19,ylab="frequency",xlab="",type="l",ylim=c(0,1))
 lines(x=c(0,max(test1$time)),y=c(0.66,0.66),col="grey")
 legend("right",legend=c("Dove","Hawk"),pch = 19,col = c(1,2),
        title="phenotypes")
 
-par(plt=posPlot())
 
 
 
@@ -137,9 +139,9 @@ Logist<-function(x,alpha,beta){
 rangQual<-seq(0,1,length.out = 100)
 
 par(plt=posPlot())
-plot(Logist(rangQual,sdStatsEnd[sdCuePar==0.2,m.meanAlpha],
-            sdStatsEnd[sdCuePar==0.2,m.meanBeta]),xlab="Badge",ylab="Quality",
-     type="l",ylim=c(0.5,1),col=0)
+plot(Logist(rangQual,test1Stats[time==max(time),m.meanAlpha],
+            test1Stats[time==max(time),m.meanBeta]),xlab="Badge",ylab="Quality",
+     type="l",ylim=c(0.5,1),col=1)
 colcount<-1
 for (sd in unique(sdStatsEnd$sdCuePar)) {
   lines(Logist(rangQual,sdStatsEnd[sdCuePar==sd,m.meanAlpha],

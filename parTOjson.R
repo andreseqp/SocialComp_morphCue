@@ -14,7 +14,8 @@ param<-list(totGen   =10000,   nRep        = 10,
             nInt        = 50,
             mutRate  = 0.001, 
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "MutSd",
+            init = c(0,0,1),
+            namParam = "Init",
             rangParam = c(0.2),
             folder=paste(here("Simulations"),"/",sep=""))
 
