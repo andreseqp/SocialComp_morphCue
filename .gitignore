@@ -4,10 +4,6 @@
 .Ruserdata
 Morph_cue/
 Simulations/
-MorphCue.exe
-MorphCue.iobj
-MorphCue.ipdb
-MorphCue.pdb
 *.exe
 *.iobj
 *.ipdb

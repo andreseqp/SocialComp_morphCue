@@ -75,7 +75,7 @@ class individual {
 			return(quality);
 		}
 		double  get_feat(int id){
-			return(featWeightAct[id]);
+			return(featWeightsAct[id]);
 		}
 		void set_phenotype(individual partner);
 		void get_payoff(individual partner, vector<double> param, bool win);
@@ -352,15 +352,13 @@ double calcSd(double sum[], double invN) {
 }
 
 void printStats(int popsize,ofstream &output, int time, int seed, 
-	int nfeat=5) {
+	int nFeat=5) {
 	double invertTotInt = 1/static_cast<double>(countPhenotypes[0] + 
 		countPhenotypes[1]);
 	double invertPopsize = 1/static_cast<double>(popsize);
 	double badgSD = calcSd(BadgeMeanSd, invertPopsize);
 	double alphaSD = calcSd(alphaMeanSd, invertPopsize);
 	double betaSD = calcSd(betaMeanSd, invertPopsize);
-	/*double badgSD = sqrt(BadgeMeanSd[1]*invertPopsize - 
-		pow((BadgeMeanSd[0]*invertPopsize),2));*/
 	output << seed << '\t';
 	output << time << '\t';
 	output << countGenotypes[hawk]      * invertPopsize << '\t';
@@ -374,19 +372,11 @@ void printStats(int popsize,ofstream &output, int time, int seed,
 	output << alphaSD << '\t';
 	output << betaMeanSd[0]             * invertPopsize << '\t';
 	output << betaSD <<  '\t';
-	for(int countFeat;countFeat<nFeat;++countFeat){
+	for(int countFeat=0;countFeat<nFeat;++countFeat){
 		output << featActMean[countFeat]*invertPopsize << '\t';
 	}
 	output << endl;
-	/*cout << seed << '\t';
-	cout << time << '\t';
-	cout << countGenotypes[hawk]        * invertPopsize << '\t';
-	cout << countGenotypes[dove]        * invertPopsize << '\t';
-	cout << countGenotypes[evaluator]   * invertPopsize << '\t';
-	cout << countPhenotypes[hawk]       * invertTotInt << '\t';
-	cout << countPhenotypes[dove]       * invertTotInt << '\t';
-	cout << endl;*/
-
+	
 }
 
 string create_filename(std::string filename, json param) {
@@ -406,7 +396,7 @@ string create_filename(std::string filename, json param) {
 	filename.append(".txt");
 	return(filename);
 }
-void initializeFile(ofstream &popOutput, json param,int nfeat=5) {
+void initializeFile(ofstream &popOutput, json param,int nFeat=5) {
 	std::string namedir = param["folder"];
 	// 
 	std::string namefile ="popLearn";
@@ -419,8 +409,8 @@ void initializeFile(ofstream &popOutput, json param,int nfeat=5) {
 	popOutput << "freqFenDoves" << '\t' << "meanCue" << '\t' << "sdCue" << '\t';
 	popOutput << "meanAlpha" << '\t' << "sdAlpha" << '\t' << "meanBeta" << '\t';
 	popOutput << "sdBeta" << '\t';
-	for(int countFeat;countFeat<nFeat;++countFeat){
-		output << append("WeightAct_",countFeat) << '\t';
+	for(int countFeat=0;countFeat<nFeat;++countFeat){
+		popOutput << "WeightAct_" + itos(countFeat) << '\t';
 	}
 	popOutput << endl;
 }
