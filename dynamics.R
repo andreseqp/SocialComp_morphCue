@@ -8,6 +8,7 @@ library(data.table)
 library(here)
 library('plotrix')
 here()
+source(here("aesth.R"))
 source("C:/Users/a.quinones/Dropbox/R_files/posPlots.R")
 
 
@@ -84,15 +85,15 @@ plot(x=c(0,max(test1Stats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",
 polygon(x=c(test1Stats$time,rev(test1Stats$time)),
       y=c(test1Stats$upIQR.freqGenHawk,
           rev(test1Stats$lowIQR.freqGenHawk)),
-        col=colTypes[1],border=NA)
+        col=colTypesPol[1],border=NA)
 polygon(x=c(test1Stats$time,rev(test1Stats$time)),
         y=c(test1Stats$upIQR.freqGenDove,
             rev(test1Stats$lowIQR.freqGenDove)),
-        col=colTypes[2],border=NA)
+      col=colTypesPol[2],border=NA)
 polygon(x=c(test1Stats$time,rev(test1Stats$time)),
         y=c(test1Stats$upIQR.freqGenEval,
             rev(test1Stats$lowIQR.freqGenEval)),
-        col=colTypes[3],border=NA)
+        col=colTypesPol[3],border=NA)
 with(test1Stats,{
   lines(time,m.freqGenHawk,col=colTypesLin[1],lwd=3)
   lines(time,m.freqGenDove,col=colTypesLin[2],lwd=3)
@@ -110,11 +111,11 @@ plot(x=c(0,max(test1Stats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",ylim=c(0
 polygon(x=c(test1Stats$time,rev(test1Stats$time)),
         y=c(test1Stats$upIQR.freqFenHawk,
             rev(test1Stats$lowIQR.freqFenHawk)),
-        col=colTypes[1],border=NA)
+        col=colTypesPol[1],border=NA)
 polygon(x=c(test1Stats$time,rev(test1Stats$time)),
         y=c(test1Stats$upIQR.freqFenDove,
             rev(test1Stats$lowIQR.freqFenDove)),
-        col=colTypes[2],border=NA)
+        col=colTypesPol[2],border=NA)
 with(test1Stats,{
   lines(time,m.freqFenHawk,col=colTypesLin[1],lwd=3)
   lines(time,m.freqFenDove,col=colTypesLin[2],lwd=3)
@@ -124,10 +125,10 @@ with(test1Stats,{
 
 # Plot mean and IQRs of the reaction norm parameters ---------------------------
 
-par(plt=posPlot(numploty = 2,idploty = 2),xaxt="s",las=2)
+par(plt=posPlot(numploty = 2,idploty = 1),xaxt="s",las=2,new=TRUE)
 plot(x=c(0,max(test1Stats$time)),y=c(0,0),type="l",lwd=2,col="grey",
      ylim=fivenum(as.matrix(test1[,.(meanAlpha,meanBeta)]))[c(1,5)],
-     xlab="",ylab="",cex.lab=1.5,cex.axis=1.2,xaxt='n')
+     xlab="",ylab="",cex.lab=1.5,cex.axis=1.2,xaxt='s')
 polygon(x=c(test1Stats$time,rev(test1Stats$time)),
         y=c(test1Stats$upIQR.alpha,rev(test1Stats$lowIQR.alpha)),
         col=colGenesPol[1],border = NA)
@@ -139,7 +140,18 @@ with(test1Stats,{
   lines(time,m.meanBeta,col=colGenesLin[2],lwd=3)
 })
 
+logist<-function(x,alpha,beta){
+  return(1/(1+exp(alpha-beta*x)))
+}
 
+rangQual<-seq(0,1,length.out = 100)
+par(plt=posPlot(),xaxt="s",las=1)
+plot(logist(rangQual,test1Stats[time==max(time),m.meanAlpha],
+            test1Stats[time==max(time),m.meanBeta])~rangQual,
+     ylab="Badge size", xlab="Quality",type="l",lwd=3,ylim=c(0,1))
+
+
+# Frequencies without the colour ribbons ---------------------------------------
 
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="n")
 
@@ -167,14 +179,7 @@ lines(x=c(0,max(test1$time)),y=c(0.66,0.66),col="grey")
 legend("right",legend=c("Dove","Hawk","Evaluators"),pch = 19,col = c(1,2,3),
        title="genotypes")
 
-logist<-function(x,alpha,beta){
-  return(1/(1+exp(alpha-beta*x)))
-}
 
-rangQual<-seq(0,1,length.out = 100)
-par(plt=posPlot(),xaxt="s")
-plot(logist(rangQual,test1Stats[time==max(time),m.meanAlpha],
-            test1Stats[time==max(time),m.meanBeta])~rangQual,type="l")
 
 # Effect of SD -----------------------------------------------------------------
 
