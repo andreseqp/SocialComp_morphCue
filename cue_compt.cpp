@@ -54,7 +54,7 @@ class individual {
 		individual(strategy genotype_,double alphaBadge_,double betaBadge_,
 			double alphaCI, double alphaAI, double gammaI, double sigmaSqI,
 			int nCenters_);
-		individual(individual& mother, double mutRate,double mutSD);
+		individual(individual& mother, double mutRate,double mutSD, int mutType);
 		double curr_payoff;
 		double cum_payoff;
 		int ninterac;
@@ -81,7 +81,7 @@ class individual {
 		void get_payoff(individual partner, vector<double> param, bool win);
 		void setBadge();
 		bool Winfight(double otherQuality);
-		strategy mutateStr(strategy genotype,double mutRate);
+		strategy mutateStr(strategy genotype,double mutRate,int mutType);
 		double mutateDoub(double value, double mutRate, double mutSD);
 		void calcRespValPref(individual partner);
 		void update();
@@ -125,7 +125,7 @@ void individual::setBadge() {
 
 // constructors
 individual::individual(strategy genotype_=hawk, double alphaBadge_=0,
-	double betaBadge_=0,double alphaCI = 0.01, double alphaAI = 0.01,
+	double betaBadge_=0,double alphaCI = 0.02, double alphaAI = 0.02,
 	double gammaI = 0, double sigmaSqI = 0.01, int nCenters_=5) {
 	nCenters = nCenters_;
 	alphaBadge = alphaBadge_;
@@ -143,7 +143,8 @@ individual::individual(strategy genotype_=hawk, double alphaBadge_=0,
 	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0, preferenceT;
 }
 
-individual::individual(individual& mother, double mutRate,double mutSD) {
+individual::individual(individual& mother, double mutRate,double mutSD,
+	int mutType) {
 	genotype = mutateStr(mother.genotype,mutRate);
 	nCenters = mother.nCenters;
 	alphaBadge = mutateDoub(mother.alphaBadge,mutRate,mutSD);
@@ -154,6 +155,13 @@ individual::individual(individual& mother, double mutRate,double mutSD) {
 	alphaCrit = mother.alphaCrit;
 	gamma = mother.gamma;
 	sigmaSq = mother.sigmaSq;
+	double interv = 1 / nCenters;
+	for (int i = 0; i < nCenters; i++) {
+		centers.push_back(interv * 0.5 + interv * i);
+		featWeightsAct.push_back(0);
+		featWeightsCrit.push_back(0);
+		responses.push_back(0);
+	}
 }
 
 void individual::calcRespValPref(individual partner) {
@@ -195,15 +203,17 @@ void individual::update() {
 	}
 }
 
-strategy individual::mutateStr(strategy genotype,double mutRate) {
-	if (rnd::uniform() < mutRate) {
-		strategy newgenotype = (strategy)rnd::integer(3);
-		// set intput to random generator to 3, to include evaluators
-		// set intput to random generator to 2, for simple hawk-dove game
-		return(newgenotype);
-	}
-	else {
-		return(genotype);
+strategy individual::mutateStr(strategy genotype,double mutRate,int mutType) {
+	if (mutType > 1) {
+		if (rnd::uniform() < mutRate) {
+			strategy newgenotype = (strategy)rnd::integer(mutType);
+			// set intput to random generator to 3, to include evaluators
+			// set intput to random generator to 2, for simple hawk-dove game
+			return(newgenotype);
+		}
+		else {
+			return(genotype);
+		}
 	}
 }
 
@@ -242,7 +252,7 @@ void individual::get_payoff(individual partner,vector<double> payoff_matrix,
 }
 
 bool individual::Winfight(double otherQuality) {
-	return(rnd::binomial(1,logist(get_quality(), otherQuality)));
+	return(rnd::bernoulli(logist(get_quality(), otherQuality)));
 }
 
 
@@ -276,7 +286,7 @@ std::string douts(double j) {			// turns double into string
 }
 
 void Reprod(vector<individual> &popT, int popsize, double mutRate,
-	double mutSD, double baselineFit) {
+	double mutSD, double baselineFit, int mutType) {
 	vector<individual> popTplus1(popsize);
 	rnd::discrete_distribution payoff_dist(popsize);
 	
@@ -287,7 +297,8 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	}
 	for (vector<individual>::iterator itpopTplus1 = popTplus1.begin(); 
 		itpopTplus1 < popTplus1.end(); ++itpopTplus1) {
-		*itpopTplus1 = individual(popT[payoff_dist.sample()],mutRate,mutSD);
+		*itpopTplus1 = individual(popT[payoff_dist.sample()],mutRate,mutSD,
+			mutType);
 	}
 	vector<individual>::iterator itpopTplus1 = popTplus1.begin();
 	for (vector<individual>::iterator itpopT = popT.begin();
@@ -421,17 +432,22 @@ int main(int argc, _TCHAR* argv[]){
 
 	// uncomment for debugging
 	/*json param;
-	param["totGen"]            = 100;
-	param["nRep"]              = 5;
-	param["printGen"]          = 5;
-	param["payoff_matrix"]     = {1.5,1,0,0.5};
+	param["totGen"]            = 100;   // Total number of generations
+	param["nRep"]              = 5;     // Number of replicates
+	param["printGen"]          = 5;     // How often data is printed	
+	param["init"]              = {1,1,0};        //Initial frequencies
+	param["payoff_matrix"]     = {1.5,1,0,0.5};  
 	param["popSize"]           = 100;
 	param["MutSd"]             = 0.1;
-	param["nInt"]              = 50;
+	param["nInt"]              = 50;    // Number of interactions per individual
 	param["mutRate"]           = 0.001;
 	param["baselineFit"]       = 1;
-	param["namParam"]          = "baselineFit";
-	param["rangParam"]         = { 0.2,0.4,0.6,0.8,1 };
+	parma["mutType"]		   = 3;     
+	// How many strategies are introduced by mutation
+	param["namParam"]          = "baselineFit";  
+	// which parameter to vary inside the program
+	param["rangParam"]         = { 0.2,0.4,0.6,0.8,1 }; 
+	// range in which the paramenter varies
 	param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/baselinefit_/";*/
 	
 		
@@ -444,6 +460,14 @@ int main(int argc, _TCHAR* argv[]){
 
 	vector<individual> population;
 
+	// intial conditions
+	rnd::discrete_distribution initFreq(3);
+	for (json::iterator initIt = param["init"].begin();
+		initIt != param["init"].end(); ++initIt) {
+		initFreq[initIt - param["init"].begin()] = *initIt;
+	}
+
+
 	for (json::iterator itParVal = param["rangParam"].begin();
 		itParVal != param["rangParam"].end(); ++itParVal) {
 		param[namParam] = *itParVal;
@@ -453,16 +477,17 @@ int main(int argc, _TCHAR* argv[]){
 			cout << param["namParam"] << "=" << *itParVal << "	" << 
 				"seed=" << seed << endl;
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
-				population.push_back(individual((strategy)rnd::integer(2)));
+				population.push_back(individual((strategy)initFreq.sample()));
 			}
 			for (int generation = 0; generation < param["totGen"]; 
 				++generation) {
 				interactions(population, param["nInt"], param["popSize"],
 					param["payoff_matrix"]);
 				Reprod(population, param["popSize"], param["mutRate"],
-					param["MutSd"], param["baselineFit"]);
+					param["MutSd"], param["baselineFit"],param["mutType"]);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
 					//cout << "time=" << generation << endl;
+					get_stats(population, param["popSize"]);
 					printStats(param["popSize"], popOutput, generation, seed);
 				}
 			}

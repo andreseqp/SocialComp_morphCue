@@ -4,17 +4,14 @@
 
 # Required libraries -----------------------------------------------------------
 
-library(data.table)
 library(here)
-library('plotrix')
 here()
-source(here("aesth.R"))
-source("C:/Users/a.quinones/Dropbox/R_files/posPlots.R")
+source(here(AccFunc.R))
 
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"baselineFit_"
+scenario<-"Init_"
 
 
 # Load files -------------------------------------------------------------------
@@ -28,7 +25,7 @@ test1<-fread(here("Simulations",scenario,sdList[1]))
 
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="n")
 matplot(x=test1[,time],y=test1[,.(freqGenDove,freqGenHawks,freqGenEval)],
-        pch = 19,ylab="frequency")
+        pch = 19,ylab="frequency",xlab="",ylim = c(0,1))
 lines(x=c(0,max(test1$time)),y=c(0.66,0.66),col="grey")
 legend("right",legend=c("Dove","Hawk","Evaluators"),pch = 19,col = c(1,2,3),
        title="genotypes")
@@ -36,7 +33,7 @@ legend("right",legend=c("Dove","Hawk","Evaluators"),pch = 19,col = c(1,2,3),
 par(plt=posPlot(numploty = 2,idploty = 1),new=T,xaxt="s")
 matplot(x=test1[,time],y=test1[,.(freqFenDoves,freqFenHawks)],
         pch = 19,ylab="frequency")
-lines(x=c(0,100),y=c(0.66,0.66),col="grey")
+lines(x=c(0,max(test1$time)),y=c(0.66,0.66),col="grey")
 legend("right",legend=c("Dove","Hawk"),pch = 19,col = c(1,2),
        title="phenotypes")
 
@@ -53,7 +50,7 @@ matplot(y=test1[,.(meanCue)],x = test1[,.(time)],pch = 19,
 
 # Extract means and IQR for the dynamic variables ------------------------------
 
-test1Stats<-test1[,.(m.freqGenHawk=mean(freqGenHawks),
+  test1Stats<-test1[,.(m.freqGenHawk=mean(freqGenHawks),
                      upIQR.freqGenHawk=fivenum(freqGenHawks)[4],
                      lowIQR.freqGenHawk=fivenum(freqGenHawks)[2],
                      m.freqGenDove=mean(freqGenDove),
@@ -73,7 +70,12 @@ test1Stats<-test1[,.(m.freqGenHawk=mean(freqGenHawks),
                      lowIQR.alpha=fivenum(meanAlpha)[2],
                      m.meanBeta=mean(meanBeta),
                      upIQR.beta=fivenum(meanBeta)[4],
-                     lowIQR.beta=fivenum(meanBeta)[2]),by=time]
+                     lowIQR.beta=fivenum(meanBeta)[2],
+                     m.weightAct_0=mean(WeightAct_0),
+                     m.weightAct_1=mean(WeightAct_1),
+                     m.weightAct_2=mean(WeightAct_2),
+                     m.weightAct_3=mean(WeightAct_3),
+                     m.weightAct_4=mean(WeightAct_4)),by=time]
 
 
 # Plot mean and IQRs of the genotypes and phenotypes ----------------------------
@@ -125,7 +127,7 @@ with(test1Stats,{
 
 # Plot mean and IQRs of the reaction norm parameters ---------------------------
 
-par(plt=posPlot(numploty = 2,idploty = 1),xaxt="s",las=2,new=TRUE)
+par(plt=posPlot(numploty = 2,idploty = 1),xaxt="s",las=1)
 plot(x=c(0,max(test1Stats$time)),y=c(0,0),type="l",lwd=2,col="grey",
      ylim=fivenum(as.matrix(test1[,.(meanAlpha,meanBeta)]))[c(1,5)],
      xlab="",ylab="",cex.lab=1.5,cex.axis=1.2,xaxt='s')
@@ -139,10 +141,12 @@ with(test1Stats,{
   lines(time,m.meanAlpha,col=colGenesLin[1],lwd=3)
   lines(time,m.meanBeta,col=colGenesLin[2],lwd=3)
 })
+legend("topleft",legend = c(expression(alpha),expression(beta)),
+       col=colGenesLin,lwd=2,bty = "n")
 
-logist<-function(x,alpha,beta){
-  return(1/(1+exp(alpha-beta*x)))
-}
+
+# Plot the losgistic function of the last generation ---------------------------
+
 
 rangQual<-seq(0,1,length.out = 100)
 par(plt=posPlot(),xaxt="s",las=1)
@@ -150,6 +154,21 @@ plot(logist(rangQual,test1Stats[time==max(time),m.meanAlpha],
             test1Stats[time==max(time),m.meanBeta])~rangQual,
      ylab="Badge size", xlab="Quality",type="l",lwd=3,ylim=c(0,1))
 
+# Plot the weights of the actor ------------------------------------------------
+
+
+nCenters<-5
+interv<-1/nCenters
+centers<-interv*0.5+interv*seq(0,nCenters-1)
+weights<-as.double(test1Stats[time==max(time),.SD,
+                    .SDcols=grep("m.weightAct",names(test1Stats),value = TRUE)])
+rangx<-seq(0,1,length=1000)
+
+par(plt=posPlot())
+plot(logist(totRBF(rangx,centers,0.01,weights),alpha = 0,
+            beta = 1)~rangx,type='l',col=1,
+     xlab="x",ylab="response",ylim=c(0,1),lwd=3)
+points(y=logist(weights,0,1),x=centers,cex=3)
 
 # Frequencies without the colour ribbons ---------------------------------------
 
@@ -179,6 +198,56 @@ lines(x=c(0,max(test1$time)),y=c(0.66,0.66),col="grey")
 legend("right",legend=c("Dove","Hawk","Evaluators"),pch = 19,col = c(1,2,3),
        title="genotypes")
 
+# Dynamics of the reaction norm with the weights -------------------------------
+
+seqYax<-c("s",rep("n",3))
+seqYlabUp<-c("Badge",rep("",3))
+seqYlabDown<-c("P(hawk)",rep("",3))
+seqXlabDown<-c("","Badge size","")
+
+par(plt=posPlot(numploty = 3,numplotx = 1,idploty = 2))
+plot(x=c(0,max(test1Stats$time)),y=c(0,0),type="l",lwd=2,col="grey",
+     ylim=fivenum(as.matrix(test1[,.(meanAlpha,meanBeta)]))[c(1,5)],
+     xlab="",ylab="Trait \n value",cex.lab=1.5,cex.axis=1,xaxt='n')
+polygon(x=c(test1Stats$time,rev(test1Stats$time)),
+        y=c(test1Stats$upIQR.alpha,rev(test1Stats$lowIQR.alpha)),
+        col=colGenesPol[1],border = NA)
+polygon(x=c(test1Stats$time,rev(test1Stats$time)),
+        y=c(test1Stats$upIQR.beta,rev(test1Stats$lowIQR.beta)),
+        col=colGenesPol[2],border = NA)
+with(test1Stats,{
+  lines(time,m.meanAlpha,col=colGenesLin[1],lwd=3)
+  lines(time,m.meanBeta,col=colGenesLin[2],lwd=3)
+})
+legend("topleft",legend = c(expression(alpha),expression(beta)),
+       col=colGenesLin,lwd=2,bty = "n")
+axis(side=1,padj = -3)
+rangQual<-seq(0,1,length.out = 100)
+nCenters<-5
+interv<-1/nCenters
+centers<-interv*0.5+interv*seq(0,nCenters-1)
+rangx<-seq(0,1,length=1000)
+count<-0
+for(genC in round(seq(1,20,length.out = 5))[2:5]){
+  count<-count+1
+  par(plt=posPlot(numplotx = 4,numploty = 3,idplotx = count,idploty = 3),
+      xaxt="s",las=1,new=TRUE)
+  plot(logist(rangQual,test1Stats[time==unique(time)[genC],m.meanAlpha],
+              test1Stats[time==unique(time)[genC],m.meanBeta])~rangQual,
+       yaxt=seqYax[count],ylab=seqYlabUp[count], xlab="",type="l",lwd=3,
+       ylim=c(0,1),xaxt="n")
+  text(x=0.5,y=0.8,labels = paste0("time=",unique(test1Stats$time)[genC]))
+  par(plt=posPlot(numplotx = 4,numploty = 3,idplotx = count,idploty = 1),
+      las=1,new=TRUE)
+  weights<-as.double(test1Stats[time==unique(time)[genC],.SD,
+                                .SDcols=grep("m.weightAct",
+                                             names(test1Stats),value = TRUE)])
+  plot(logist(totRBF(rangx,centers,0.01,weights),alpha = 0,
+              beta = 1)~rangx,type='l',col=1,
+       xlab=seqXlabDown[count],ylab=seqYlabDown[count],ylim=c(0,1),
+       lwd=3,yaxt=seqYax[count],xaxt="s")
+  points(y=logist(weights,0,1),x=centers,cex=1.5,pch=19,col="red")
+}
 
 
 # Effect of SD -----------------------------------------------------------------

@@ -4,17 +4,7 @@ here()
 
 source("C:/Users/a.quinones/Dropbox/R_files/posPlots.R")
 
-RBF<-function(x,xCenter,sigSq){
-  return(exp(-(x-xCenter)^2/(2*sigSq)))
-}
 
-
-totRBF<-function(x,xCenter,sigSq,featWeig){
-  tmp<-sapply(xCenter, RBF,x=x,sigSq=sigSq)
-  tmp<-apply(tmp, 1, FUN=crossprod,y=featWeig)
-  #tmp<-apply(tmp,1,FUN = sum)
-  return(tmp)
-}
 
 nCenters<-5
 interv<-1/nCenters

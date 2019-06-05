@@ -5,16 +5,16 @@ library("jsonlite")
 library("here")
 
 
-fileName<-"parameters2.json"
+fileName<-"parameters.json"
 
 
-param<-list(totGen   =100000,   nRep        = 10,
+param<-list(totGen   =00000,   nRep    = 10,
             printGen = 500,    popSize  = 5000, 
-            baselineFit = 1,   MutSd    = 0.1,
-            nInt        = 50,
+            baselineFit = 1,   MutSd    = 0.2,
+            nInt        = 50,  init     = c(0,0,1),
             mutRate  = 0.001, 
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "baselineFit",
+            namParam = "init",
             rangParam = c(1),
             folder=paste(here("Simulations"),"/",sep=""))
 
