@@ -8,37 +8,20 @@ library("here")
 fileName<-"parameters.json"
 
 
-param<-list(totGen   =00000,   nRep    = 10,
-            printGen = 500,    popSize  = 5000, 
+param<-list(totGen   =100,   nRep    = 5,
+            printGen = 10,    popSize  = 1000, 
             baselineFit = 1,   MutSd    = 0.2,
-            nInt        = 50,  init     = c(0,0,1),
-            mutRate  = 0.001, 
+            nInt        = 100,  init     = c(0,0,1),
+            mutRate  = 0.001,  mutType  = 0,
+            sampleSize = 20,   strQual  = 10,
+            alphaBad	 = 0,    betaBad	 = 0,
+            alphaCrit  = 0,    alphaAct = 0,
+            sigSq   	 = 0,    nCenters = 5,
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "init",
             rangParam = c(1),
             folder=paste(here("Simulations"),"/",sep=""))
 
-check_create.dir<-function(folder,param,values){
-  setwd(folder)
-  listfolders<-paste(param,values,"_",sep = "")  
-  currFolders<-lapply(listfolders,dir.exists)
-  if(sum(currFolders>0)){
-    warning("At least one of the folders already exists \n Please check",
-            immediate. = TRUE)
-    print(cbind(listfolders,currFolders))
-    ans<-readline("Want to continue?")
-    if(substr(ans, 1, 1) == "y"){
-      lapply(listfolders,dir.create)
-      return(listfolders)
-    }
-    else{
-      return(listfolders)
-    }
-  }else{
-    lapply(listfolders,dir.create)
-    return(listfolders)
-  }
-}
 
 
 rang<-1

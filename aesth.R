@@ -14,3 +14,7 @@ colGenesPol<-c(rgb(241/255,163/255,64/255,alpha = 0.5),
 
 colGenesLin<-c(rgb(241/255,163/255,64/255),
                rgb(153/255,142/255,195/255))
+
+paletteMeans <- colorRampPalette(c('#d73027','#fc8d59','#fee090',
+                                   '#e0f3f8','#91bfdb','#4575b4')[6:1],
+                                 alpha=TRUE)

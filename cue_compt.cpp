@@ -44,10 +44,12 @@ enum strategy { hawk, dove, evaluator};
 
 int countGenotypes[3];
 int countPhenotypes[2];
+int countIntTypes[3];
 double BadgeMeanSd[2];
 double alphaMeanSd[2];
 double betaMeanSd[2];
 double featActMean[20];
+double featCritMean[20];
 
 class individual {
 	public:
@@ -74,13 +76,14 @@ class individual {
 		double get_quality() {
 			return(quality);
 		}
-		double  get_feat(int id){
-			return(featWeightsAct[id]);
+		double  get_feat(bool act,int id){
+			if(act)	return(featWeightsAct[id]);
+			else return (featWeightsCrit[id]);
 		}
-		void set_phenotype(individual partner);
+		int set_phenotype(individual partner);
 		void get_payoff(individual partner, vector<double> param, bool win);
-		void setBadge();
-		bool Winfight(double otherQuality);
+		void setBadge(double stdDev);
+		bool Winfight(double otherQuality, double strQual);
 		strategy mutateStr(strategy genotype,double mutRate,int mutType);
 		double mutateDoub(double value, double mutRate, double mutSD);
 		void calcRespValPref(individual partner);
@@ -117,15 +120,15 @@ class individual {
 };
 
 // set quality and badge of status
-void individual::setBadge() {
-	quality = rnd::normal(0.5);
+void individual::setBadge(double stdDev=1.0) {
+	quality = rnd::normal(0.5,stdDev);
 	clip_range(quality, 0, 1);
 	own_badge = 1 / (1 + exp(alphaBadge - betaBadge * quality));
 }
 
 // constructors
 individual::individual(strategy genotype_=hawk, double alphaBadge_=0,
-	double betaBadge_=0,double alphaCI = 0.02, double alphaAI = 0.02,
+	double betaBadge_=0,double alphaCI = 0.05, double alphaAI = 0.05,
 	double gammaI = 0, double sigmaSqI = 0.01, int nCenters_=5) {
 	nCenters = nCenters_;
 	alphaBadge = alphaBadge_;
@@ -133,29 +136,31 @@ individual::individual(strategy genotype_=hawk, double alphaBadge_=0,
 	genotype = genotype_;
 	setBadge();
 	alphaAct = alphaAI, alphaCrit = alphaCI, gamma = gammaI, sigmaSq = sigmaSqI;
-	double interv = 1 / nCenters;
+	double interv = 1 / static_cast<double>(nCenters);
 	for (int i = 0; i < nCenters; i++)	{
 		centers.push_back(interv * 0.5 + interv * i);
 		featWeightsAct.push_back(0);
 		featWeightsCrit.push_back(0);
 		responses.push_back(0);
 	}
-	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0, preferenceT;
+	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0;
+	preferenceT=0;
 }
 
 individual::individual(individual& mother, double mutRate,double mutSD,
 	int mutType) {
-	genotype = mutateStr(mother.genotype,mutRate);
+	genotype = mutateStr(mother.genotype,mutRate,mutType);
 	nCenters = mother.nCenters;
 	alphaBadge = mutateDoub(mother.alphaBadge,mutRate,mutSD);
 	betaBadge = mutateDoub(mother.betaBadge,mutRate,mutSD);
 	setBadge(); 
-	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0, preferenceT;
+	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0, 
+	preferenceT=0;
 	alphaAct = mother.alphaAct;
 	alphaCrit = mother.alphaCrit;
 	gamma = mother.gamma;
 	sigmaSq = mother.sigmaSq;
-	double interv = 1 / nCenters;
+	double interv = 1 / static_cast<double>(nCenters);
 	for (int i = 0; i < nCenters; i++) {
 		centers.push_back(interv * 0.5 + interv * i);
 		featWeightsAct.push_back(0);
@@ -168,7 +173,8 @@ void individual::calcRespValPref(individual partner) {
 	double totValue = 0;
 	double totPref = 0;
 	for (int countCenters = 0; countCenters < nCenters; ++countCenters) {
-		responses[countCenters] = exp(-(partner.get_badge() - centers[countCenters])
+		responses[countCenters] = 
+			exp(-(pow(abs(partner.get_badge() - centers[countCenters]),2))
 			/ (2 * sigmaSq));
 		totValue += responses[countCenters] * featWeightsCrit[countCenters];
 		totPref += responses[countCenters] * featWeightsAct[countCenters];
@@ -177,8 +183,8 @@ void individual::calcRespValPref(individual partner) {
 	preferenceT = totPref;
 }
 
-double logist(double value1, double value2) {
-	return (1 / (1 + exp(-(value1 - value2))));
+double logist(double value1, double value2, double beta=1) {
+	return (1 / (1 + exp(-beta*(value1 - value2))));
 }
 
 void individual::update() {
@@ -204,7 +210,7 @@ void individual::update() {
 }
 
 strategy individual::mutateStr(strategy genotype,double mutRate,int mutType) {
-	if (mutType > 1) {
+	if (mutType > 0) {
 		if (rnd::uniform() < mutRate) {
 			strategy newgenotype = (strategy)rnd::integer(mutType);
 			// set intput to random generator to 3, to include evaluators
@@ -215,6 +221,7 @@ strategy individual::mutateStr(strategy genotype,double mutRate,int mutType) {
 			return(genotype);
 		}
 	}
+	else return(genotype);
 }
 
 double  individual::mutateDoub(double value, double mutRate, double mutSD) {
@@ -251,16 +258,15 @@ void individual::get_payoff(individual partner,vector<double> payoff_matrix,
 	++ninterac;
 }
 
-bool individual::Winfight(double otherQuality) {
-	return(rnd::bernoulli(logist(get_quality(), otherQuality)));
+bool individual::Winfight(double otherQuality,double strQual) {
+	return(rnd::bernoulli(logist(get_quality(), otherQuality, strQual)));
 }
 
 
-void individual::set_phenotype(individual partner) {
+int individual::set_phenotype(individual partner) {
 	if (get_strat() == evaluator){
 		calcRespValPref(partner);
-		double probHawk = logist(preferenceT,0);
-		if (rnd::uniform() < probHawk) {
+		if (rnd::bernoulli(logist(preferenceT,0))) {
 			phenotype = hawk;
 		}
 		else {
@@ -271,6 +277,7 @@ void individual::set_phenotype(individual partner) {
 		phenotype = get_strat();
 	}
 	++countPhenotypes[phenotype];
+	return(phenotype);
 }
 
 std::string itos(int j) {				// turns int into string
@@ -309,8 +316,8 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 
 void get_stats(vector<individual> &popT, int popsize,int nFeat=5){
 	countGenotypes[0] = 0;
-	countGenotypes[1] = 0;
-	countGenotypes[2] = 0;
+	countGenotypes[1] = 0; 
+	countGenotypes[2] = 0; 
 	BadgeMeanSd[0] = 0;
 	BadgeMeanSd[1] = 0;
 	alphaMeanSd[0] = 0;
@@ -318,7 +325,7 @@ void get_stats(vector<individual> &popT, int popsize,int nFeat=5){
 	betaMeanSd[0] = 0;
 	betaMeanSd[1] = 0;
 	for(int countFeat = 0; countFeat<nFeat;++countFeat){
-		featActMean[countFeat] = 0;
+		featActMean[countFeat] = 0, featCritMean[countFeat] = 0;
 	}
 	for (vector<individual>::iterator itpop = popT.begin(); 
 		itpop < popT.end(); ++itpop) {
@@ -330,26 +337,31 @@ void get_stats(vector<individual> &popT, int popsize,int nFeat=5){
 		betaMeanSd[0] += itpop->get_beta();
 		betaMeanSd[1] += pow(itpop->get_beta(), 2);
 		for(int countFeat = 0; countFeat<nFeat;++countFeat){
-			featActMean[countFeat] += itpop->get_feat(countFeat);
+			featActMean[countFeat] += itpop->get_feat(1,countFeat);
+			featCritMean[countFeat] += itpop->get_feat(0, countFeat);
 		}
 	}
 }
 
 void interactions(vector<individual> &population,int nint, int popsize,
-	vector<double> payoff_matrix) {
+	vector<double> payoff_matrix, double strQual) {
 	int ind1 = popsize;
 	int ind2 = popsize;
+	int intType;
 	bool ind1win;
-	countPhenotypes[0] = 0;
-	countPhenotypes[1] = 0;
+	countPhenotypes[0] = 0, countPhenotypes[1] = 0;
+	countIntTypes[0] = 0, countIntTypes[1] = 0, countIntTypes[2] = 0;
 	for (int i = 0; i < nint*popsize; ++i) {
 		while (ind1 == ind2) {
 			ind1 = rnd::integer(popsize);
 			ind2 = rnd::integer(popsize);
 		}
-		population[ind1].set_phenotype(population[ind2]);
-		population[ind2].set_phenotype(population[ind1]);
-		ind1win = population[ind1].Winfight(population[ind2].get_quality());
+		intType = 0;
+		intType += population[ind1].set_phenotype(population[ind2]);
+		intType += population[ind2].set_phenotype(population[ind1]);
+		++countIntTypes[intType];
+		ind1win = population[ind1].Winfight(population[ind2].get_quality(),
+			strQual);
 		population[ind1].get_payoff(population[ind2], payoff_matrix,ind1win);
 		population[ind2].get_payoff(population[ind1], payoff_matrix,!ind1win);
 		population[ind1].update();
@@ -362,32 +374,63 @@ double calcSd(double sum[], double invN) {
 		pow((sum[0] * invN), 2)));
 }
 
-void printStats(int popsize,ofstream &output, int time, int seed, 
-	int nFeat=5) {
+void printStats(int popsize,ofstream &evolOutput, 
+	int time, int seed,	int nFeat = 5) {
 	double invertTotInt = 1/static_cast<double>(countPhenotypes[0] + 
 		countPhenotypes[1]);
 	double invertPopsize = 1/static_cast<double>(popsize);
 	double badgSD = calcSd(BadgeMeanSd, invertPopsize);
 	double alphaSD = calcSd(alphaMeanSd, invertPopsize);
 	double betaSD = calcSd(betaMeanSd, invertPopsize);
-	output << seed << '\t';
-	output << time << '\t';
-	output << countGenotypes[hawk]      * invertPopsize << '\t';
-	output << countGenotypes[dove]      * invertPopsize << '\t';
-	output << countGenotypes[evaluator] * invertPopsize << '\t';
-	output << countPhenotypes[hawk]     * invertTotInt << '\t';
-	output << countPhenotypes[dove]     * invertTotInt << '\t';
-	output << BadgeMeanSd[0]            * invertPopsize << '\t';
-	output << badgSD << '\t';
-	output << alphaMeanSd[0]            * invertPopsize << '\t';
-	output << alphaSD << '\t';
-	output << betaMeanSd[0]             * invertPopsize << '\t';
-	output << betaSD <<  '\t';
-	for(int countFeat=0;countFeat<nFeat;++countFeat){
-		output << featActMean[countFeat]*invertPopsize << '\t';
+	evolOutput << seed << '\t';
+	evolOutput << time << '\t';
+	evolOutput << countGenotypes[hawk]      * invertPopsize << '\t';
+	evolOutput << countGenotypes[dove]      * invertPopsize << '\t';
+	evolOutput << countGenotypes[evaluator] * invertPopsize << '\t';
+	evolOutput << countPhenotypes[hawk]     * invertTotInt << '\t';
+	evolOutput << countPhenotypes[dove]     * invertTotInt << '\t';
+	evolOutput << countIntTypes[0] * 2 * invertTotInt << '\t';
+	evolOutput << countIntTypes[1] * 2 * invertTotInt << '\t';
+	evolOutput << countIntTypes[2] * 2 * invertTotInt << '\t';
+	evolOutput << BadgeMeanSd[0]            * invertPopsize << '\t';
+	evolOutput << badgSD << '\t';
+	evolOutput << alphaMeanSd[0]            * invertPopsize << '\t';
+	evolOutput << alphaSD << '\t';
+	evolOutput << betaMeanSd[0]             * invertPopsize << '\t';
+	evolOutput << betaSD <<  '\t';
+	for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
+		evolOutput << featActMean[countFeat] * invertPopsize << '\t';
+		evolOutput << featCritMean[countFeat] * invertPopsize << '\t';
 	}
-	output << endl;
+	evolOutput << endl;
 	
+	//for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
+	//	cout << featActMean[countFeat] * invertPopsize << '\t';
+	//	cout << featCritMean[countFeat] * invertPopsize << '\t';
+	//}
+	//cout << endl;
+}
+
+void printPopSample(vector<individual> &population, ofstream &popOutput,
+	int time, int seed, const int sampleSize, int nFeat = 5) {
+	int sample;
+	for (int countSample = 0; countSample < sampleSize; ++countSample) {
+		sample = rnd::integer(population.size());
+		popOutput << seed << '\t';
+		popOutput << time << '\t';
+		popOutput << sample << '\t';
+		popOutput << population[sample].get_quality() << '\t';
+		popOutput << population[sample].get_strat() << '\t';
+		popOutput << population[sample].get_alpha() << '\t';
+		popOutput << population[sample].get_beta() << '\t';
+		popOutput << population[sample].get_badge() << '\t';
+		popOutput << population[sample].ninterac << '\t';
+		for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
+			popOutput << population[sample].get_feat(1,countFeat) << '\t';
+			popOutput << population[sample].get_feat(0,countFeat) << '\t';
+		}
+		popOutput << endl;
+	}
 }
 
 string create_filename(std::string filename, json param) {
@@ -407,23 +450,47 @@ string create_filename(std::string filename, json param) {
 	filename.append(".txt");
 	return(filename);
 }
-void initializeFile(ofstream &popOutput, json param,int nFeat=5) {
-	std::string namedir = param["folder"];
-	// 
-	std::string namefile ="popLearn";
-	namedir.append(namefile);
-	string IndFile = create_filename(namedir, param);
-	popOutput.open(IndFile.c_str());
-	popOutput << "seed" << '\t';
-	popOutput << "time" << '\t' << "freqGenHawks" << '\t' << "freqGenDove";
-	popOutput << '\t' << "freqGenEval" << '\t' << "freqFenHawks" << '\t';
-	popOutput << "freqFenDoves" << '\t' << "meanCue" << '\t' << "sdCue" << '\t';
-	popOutput << "meanAlpha" << '\t' << "sdAlpha" << '\t' << "meanBeta" << '\t';
-	popOutput << "sdBeta" << '\t';
+void initializeFile(ofstream &evolOutput, ofstream &popOutput, 
+	json param,int nFeat=5) {
+	std::string filename = param["folder"];
+	filename.append("evolLearn");
+	// File to print evolutionary dynamics
+	std::string evolFile = create_filename(filename,param);
+	/*std::string namefile ="popLearn";
+	namedir.append(namefile);*/
+	evolOutput.open(evolFile.c_str());
+	evolOutput << "seed" << '\t';
+	evolOutput << "time" << '\t' << "freqGenHawks" << '\t' << "freqGenDove";
+	evolOutput << '\t' << "freqGenEval" << '\t' << "freqFenHawks" << '\t';
+	evolOutput << "freqFenDoves" << '\t' << "freqHH" << '\t' << "freqHD" << '\t';
+	evolOutput << "freqDD" << '\t' << "meanCue" << '\t' << "sdCue" << '\t';
+	evolOutput << "meanAlpha" << '\t' << "sdAlpha" << '\t' << "meanBeta" << '\t';
+	evolOutput << "sdBeta" << '\t';
 	for(int countFeat=0;countFeat<nFeat;++countFeat){
+		evolOutput << "WeightAct_" + itos(countFeat) << '\t';
+		evolOutput << "WeightCrit_" + itos(countFeat) << '\t';
+	}
+	evolOutput << endl;
+	// File to print a sample of populations
+	std::string filename1 = param["folder"];
+	filename1.append("popLearn");
+	std::string popFile = create_filename(filename1, param);
+	popOutput.open(popFile.c_str());
+	popOutput << "seed" << '\t';
+	popOutput << "time" << '\t' << "idInd" << '\t' << "Quality";
+	popOutput << '\t' << "genotype" << '\t' << "alpha" << '\t';
+	popOutput << "beta" << '\t' << "Badge" << '\t' << "nInteract" << '\t';
+	for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
 		popOutput << "WeightAct_" + itos(countFeat) << '\t';
+		popOutput << "WeightCrit_" + itos(countFeat) << '\t';
 	}
 	popOutput << endl;
+
+	//for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
+	//	cout << "WeightAct_" + itos(countFeat) << '\t';
+	//	cout << "WeightCrit_" + itos(countFeat) << '\t';
+	//}
+	//cout << endl;
 }
 
 int main(int argc, _TCHAR* argv[]){
@@ -431,24 +498,32 @@ int main(int argc, _TCHAR* argv[]){
 	mark_time(1);
 
 	// uncomment for debugging
-	/*json param;
-	param["totGen"]            = 100;   // Total number of generations
-	param["nRep"]              = 5;     // Number of replicates
-	param["printGen"]          = 5;     // How often data is printed	
-	param["init"]              = {1,1,0};        //Initial frequencies
-	param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	param["popSize"]           = 100;
-	param["MutSd"]             = 0.1;
-	param["nInt"]              = 50;    // Number of interactions per individual
-	param["mutRate"]           = 0.001;
-	param["baselineFit"]       = 1;
-	parma["mutType"]		   = 3;     
-	// How many strategies are introduced by mutation
-	param["namParam"]          = "baselineFit";  
-	// which parameter to vary inside the program
-	param["rangParam"]         = { 0.2,0.4,0.6,0.8,1 }; 
-	// range in which the paramenter varies
-	param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/baselinefit_/";*/
+	//json param;
+	//param["totGen"]            = 100;   // Total number of generations
+	//param["nRep"]              = 5;     // Number of replicates
+	//param["printGen"]          = 1;     // How often data is printed	
+	//param["init"]              = {0,0,1};        //Initial frequencies
+	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
+	//param["popSize"]           = 100;
+	//param["MutSd"]             = 0.1;
+	//param["nInt"]              = 50;    // Number of interactions per individual
+	//param["mutRate"]           = 0.001;
+	//param["strQual"]           = 10;
+	//param["baselineFit"]       = 1;
+	//param["mutType"]		     = 0;     
+	//param["sampleSize"]        = 20; 
+	//param["alphaBad"]			 = 0;
+	//param["betaBad"]			 = 0;
+	//param["alphaCrit"]     	 = 0;
+	//param["alphaAct"]     	 = 0;
+	//param["sigSq"]        	 = 0;
+	//param["nCenters"]     	 = 5;
+	//// How many strategies are introduced by mutation
+	//param["namParam"]          = "baselineFit";  
+	//// which parameter to vary inside the program
+	//param["rangParam"]         = { 0.2,0.4,0.6,0.8,1 }; 
+	//// range in which the paramenter varies
+	//param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/baselinefit_/";
 	
 		
 	// Comment for debugging
@@ -471,31 +546,37 @@ int main(int argc, _TCHAR* argv[]){
 	for (json::iterator itParVal = param["rangParam"].begin();
 		itParVal != param["rangParam"].end(); ++itParVal) {
 		param[namParam] = *itParVal;
-		ofstream popOutput;
-		initializeFile(popOutput, param);
+		ofstream popOutput, evolOutput;
+		initializeFile(evolOutput,popOutput, param);
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
 			cout << param["namParam"] << "=" << *itParVal << "	" << 
 				"seed=" << seed << endl;
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
-				population.push_back(individual((strategy)initFreq.sample()));
+				population.push_back(individual((strategy)initFreq.sample(),
+					param["alphaBad"], param["betaBad"],param["alphaCrit"],
+					param["alphaAct"],0, param["sigSq"], param["nCenters"]));
 			}
 			for (int generation = 0; generation < param["totGen"]; 
 				++generation) {
 				interactions(population, param["nInt"], param["popSize"],
-					param["payoff_matrix"]);
-				Reprod(population, param["popSize"], param["mutRate"],
-					param["MutSd"], param["baselineFit"],param["mutType"]);
+					param["payoff_matrix"], param["strQual"]);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
 					//cout << "time=" << generation << endl;
 					get_stats(population, param["popSize"]);
-					printStats(param["popSize"], popOutput, generation, seed);
+					printStats(param["popSize"], evolOutput, generation, seed);
+					printPopSample(population, popOutput, generation, seed,
+						param["sampleSize"]);
 				}
+				Reprod(population, param["popSize"], param["mutRate"],
+					param["MutSd"], param["baselineFit"],param["mutType"]);
+				
 			}
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
 				population.pop_back();
 			}
 		}
 		popOutput.close();
+		evolOutput.close();
 	}
 	
 	mark_time(0);
