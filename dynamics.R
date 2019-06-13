@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"Init_"
+scenario<-"QualStDv_"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +19,7 @@ scenario<-"Init_"
 (listTest<-list.files(here("Simulations",scenario)))
 (sdList<-grep("evol",listTest,value=TRUE))
 
-evol<-fread(here("Simulations",scenario,sdList[1]))
+evol<-fread(here("Simulations",scenario,sdList[3]))
 
 # Extract means and IQR for the dynamic variables ------------------------------
 
@@ -63,11 +63,6 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
                      m.weightCrit_2=mean(WeightCrit_2),
                      m.weightCrit_3=mean(WeightCrit_3),
                      m.weightCrit_4=mean(WeightCrit_4)),by=time]
-
-
-
-evol[,.SD,.SDcols=grep("Weight",names(evol),value = TRUE)]
-
 
 # Plot mean and IQRs of the genotypes and phenotypes ----------------------------
 
@@ -136,7 +131,7 @@ legend("topleft",legend = c(expression(alpha),expression(beta)),
        col=colGenesLin,lwd=2,bty = "n")
 
 
-# Plot the losgistic function of the last generation ---------------------------
+# Plot the logistic function of the last generation ---------------------------
 
 rangQual<-seq(0,1,length.out = 100)
 par(plt=posPlot(),xaxt="s",las=1)
@@ -158,7 +153,7 @@ rangx<-seq(0,1,length=1000)
 par(plt=posPlot())
 plot(logist(totRBF(rangx,centers,0.01,weights),alpha = 0,
             beta = 1)~rangx,type='l',col=1,
-     xlab="x",ylab="p(Hawk)",ylim=c(0,1),lwd=3)
+     xlab="x",ylab="p(Dove)",ylim=c(0,1),lwd=3)
 points(y=logist(weights,0,1),x=centers,cex=3)
 
 # Plot the weights of the critic ------------------------------------------------
@@ -211,7 +206,7 @@ legend("right",legend=c("Dove","Hawk","Evaluators"),pch = 19,col = c(1,2,3),
 seqYax<-c("s",rep("n",3))
 # seqYlabUp<-c("Badge",rep("",3))
 seqYlabUp<-c("Value",rep("",3))
-seqYlabDown<-c("P(hawk)",rep("",3))
+seqYlabDown<-c("P(dove)",rep("",3))
 seqXlabDown<-c("","Badge size","")
 
 par(plt=posPlot(numploty = 3,numplotx = 1,idploty = 2))

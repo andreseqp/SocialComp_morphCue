@@ -1,0 +1,2 @@
+Wed Jun 12 09:32:36 2019 : error! in function argument out of range() -> bool __cdecl rnd::bernoulli(const double &).
+

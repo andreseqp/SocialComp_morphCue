@@ -6,12 +6,12 @@
 library(here)
 here()
 source(here("AccFunc.R"))
-source()
+
 
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"Init_"
+scenario<-"QualStDv_"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +19,7 @@ scenario<-"Init_"
 (listTest<-list.files(here("Simulations",scenario)))
 (List<-grep("pop",listTest,value=TRUE))
 
-pop<-fread(here("Simulations",scenario,List[1]))
+pop<-fread(here("Simulations",scenario,List[3]))
 
 # Extract means and IQR for the dynamic variables ------------------------------
 
@@ -36,7 +36,7 @@ popStats<-pop[, as.list(unlist(lapply(.SD,
 
 # Plot variation of the weights ------------------------------------------------
 
-gener<-pop[,unique(time)][2]
+gener<-pop[,unique(time)][5]
 nCenters<-5
 interv<-1/nCenters
 centers<-interv*0.5+interv*seq(0,nCenters-1)
@@ -51,7 +51,7 @@ weightsAct<-as.double(evolStats[time==gener,.SD,
 par(plt=posPlot(numploty = 2,idploty = 2),las=1)
 plot(logist(totRBF(rangx,centers,0.01,weightsAct),alpha = 0,
             beta = 1)~rangx,type='l',col=1,xaxt="n",
-     xlab="",ylab="p(Hawk)",ylim=c(0,1),lwd=3)
+     xlab="",ylab="p(dove)",ylim=c(0,1),lwd=3)
 lines(logist(totRBF(rangx,centers,0.01,
                     as.double(popStats[time==gener,.SD,
                                        .SDcols=paste0("WeightAct_",0:4,".m")])),
@@ -81,7 +81,28 @@ weightsCrit<-as.double(evolStats[time==min(time),.SD,
 par(plt=posPlot(numploty = 2,idploty = 1),new=TRUE)
 plot(totRBF(rangx,centers,0.01,weightsCrit)~rangx,type='l',col=1,
      xlab="x",ylab="Value",ylim=c(0,1),lwd=3)
-points(y=weights,x=centers,cex=3)
+# points(y=weights,x=centers,cex=3)
+lines(totRBF(rangx,centers,0.01,
+                    as.double(popStats[time==gener,.SD,
+                                       .SDcols=paste0("WeightCrit_",0:4,".m")]))
+      ~rangx,col="red")
+for(ind in pop[time==gener,unique(idInd)]){
+  lines(totRBF(rangx,centers,0.01,
+                      as.double(pop[time==gener&idInd==ind,.SD,
+                                    .SDcols=grep("WeightCrit",names(pop),
+                                                 value=TRUE)][1]))
+        ~rangx,col=paletteMeans(100)[
+                 findInterval(pop[time==gener&idInd==ind,
+                                  Quality],colorbreaksQual)],lwd=0.5)
+}
+
+par(new=FALSE)
+color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
+               max = max(colorbreaksQual),nticks = 3,
+               title = "",
+               cex.tit = 1.2,
+               numplotx = 15,numploty = 10,idplotx =15,idploty = 4)
+
 
 
 # Scatterplot relating quality and central weight of the actor -----------------
@@ -90,13 +111,6 @@ par(plt=posPlot())
 plot(pop[time==min(time),WeightAct_3]~pop[time==min(time),Quality],
      xlab="Quality",ylab = "Central actor weight")
 
-
-
-logistDiff<-function(x,y){
-  return(1/(1+exp(-10*(x-y))))
-}
-
-xrang<-seq(0,1,length.out = 100)
-par(plt=posPlot())
-plot(logistDiff(xrang,0.5)~xrang)
+hist(pop[,nInteract],xaxt="s")
+hist(pop[,Badge],xaxt="s")
 

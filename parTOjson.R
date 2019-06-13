@@ -8,18 +8,19 @@ library("here")
 fileName<-"parameters.json"
 
 
-param<-list(totGen   =100,   nRep    = 5,
-            printGen = 10,    popSize  = 1000, 
-            baselineFit = 1,   MutSd    = 0.2,
-            nInt        = 100,  init     = c(0,0,1),
-            mutRate  = 0.001,  mutType  = 0,
+param<-list(totGen   =1000,   nRep    = 30,
+            printGen = 100,    popSize  = 5000, 
+            baselineFit = 1,   MutSd    = 0.0,
+            nInt        = 2000,  init     = c(1,1,0),
+            mutRate  = 0.002,  mutType  = 0,
             sampleSize = 20,   strQual  = 10,
             alphaBad	 = 0,    betaBad	 = 0,
-            alphaCrit  = 0,    alphaAct = 0,
-            sigSq   	 = 0,    nCenters = 5,
+            alphaCrit  = 0.2,    alphaAct = 0.2,
+            sigSq   	 = 0.01,    nCenters = 5,
+            QualStDv   = 0.1,
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "init",
-            rangParam = c(1),
+            namParam = "mutType",
+            rangParam = c(0,1,2),
             folder=paste(here("Simulations"),"/",sep=""))
 
 
