@@ -50,6 +50,7 @@ double alphaMeanSd[2];
 double betaMeanSd[2];
 double featActMean[20];
 double featCritMean[20];
+int countIntTypesGen[3];
 
 class individual {
 	public:
@@ -80,6 +81,9 @@ class individual {
 		double  get_feat(bool act,int id){
 			if(act)	return(featWeightsAct[id]);
 			else return (featWeightsCrit[id]);
+		}
+		int get_nCenter() {
+			return(nCenters);
 		}
 		int set_phenotype(individual partner);
 		void get_payoff(individual partner, vector<double> param, bool win);
@@ -341,30 +345,60 @@ void get_stats(vector<individual> &popT, int popsize,int nFeat=5){
 	}
 }
 
-void interactions(vector<individual> &population,int nint, int popsize,
-	vector<double> payoff_matrix, double strQual) {
-	int ind1 = popsize;
-	int ind2 = popsize;
+void interactions(vector<individual> &population, ofstream &genoutput,int nint,
+	vector<double> payoff_matrix, double strQual, bool trackPopLearn,
+	int printLearn, int sampleSize,int generat, int seed) {
+	int ind1 = population.size();
+	int ind2 = population.size();
 	int intType;
 	bool ind1win;
-	countPhenotypes[0] = 0, countPhenotypes[1] = 0;
-	countIntTypes[0] = 0, countIntTypes[1] = 0, countIntTypes[2] = 0;
-	for (int i = 0; i < nint*popsize; ++i) {
+	vector<int>::iterator itSamp1;
+	vector<int> sample;
+	if (trackPopLearn) {
+		countPhenotypes[0] = 0, countPhenotypes[1] = 0;
+		countIntTypes[0] = 0, countIntTypes[1] = 0, countIntTypes[2] = 0;
+		countIntTypesGen[0], countIntTypesGen[1], countIntTypesGen[2] = 0;
+		for (int countSam = 0; countSam < sampleSize; ++countSam) {
+			sample.push_back(rnd::integer(population.size()));
+		}
+	}
+	for (int i = 0; i < nint*population.size(); ++i) {
 		while (ind1 == ind2) {
-			ind1 = rnd::integer(popsize);
-			ind2 = rnd::integer(popsize);
+			ind1 = rnd::integer(population.size());
+			ind2 = rnd::integer(population.size());
 		}
 		intType = 0;
 		intType += population[ind1].set_phenotype(population[ind2]);
 		intType += population[ind2].set_phenotype(population[ind1]);
-		++countIntTypes[intType];
+		if (trackPopLearn) { 
+			int foundInd = 0;
+			++countIntTypes[intType], countIntTypesGen[intType];
+			itSamp1 = find(sample.begin(), sample.end(), ind1);
+			if (itSamp1 != sample.end()&
+				population[*itSamp1].ninterac%printLearn == 0) {
+					printLearnDynamics(genoutput, population, generat, i,
+						ind1,seed);
+					++foundInd;
+			}
+			itSamp1 = find(sample.begin(), sample.end(), ind2);
+			if (itSamp1 != sample.end()&
+				population[*itSamp1].ninterac%printLearn == 0) {
+				printLearnDynamics(genoutput, population, generat, i,
+					ind1,seed);
+				++foundInd;
+			}
+			if (foundInd > 0) {
+				countIntTypesGen[0], countIntTypesGen[1], 
+					countIntTypesGen[2] = 0;
+			}
+		}
 		ind1win = population[ind1].Winfight(population[ind2].get_quality(),
 			strQual);
 		population[ind1].get_payoff(population[ind2], payoff_matrix,ind1win);
 		population[ind2].get_payoff(population[ind1], payoff_matrix,!ind1win);
 		population[ind1].update();
 		population[ind2].update();
-		ind1 = popsize, ind2 = popsize;
+		ind1 = population.size(), ind2 = population.size();
 	}
 }
 
@@ -410,48 +444,24 @@ void printStats(int popsize,ofstream &evolOutput,
 	//cout << endl;
 }
 
-//void printGenEvents(ofstream &genoutput,vector<individual> &pop,int intType,
-//	int nInt, int counter) {
-//	static double countIntTypesGen[3];
-//	static int popSample[20];
-//	static int event;
-//	switch (event)
-//	{
-//	case 0:// sample the population
-//		for (int countSam = 0; countSam < 20; ++countSam) {
-//			popSample[countSam] = rnd::integer(pop.size());
-//		}
-//		++event;
-//		break;
-//	case 1:
-//		countIntTypesGen[0], countIntTypesGen[1], countIntTypesGen[1] = 0;
-//		++event;
-//		break;
-//	case 2:
-//		++countIntTypesGen[intType];
-//		if (counter == nInt * pop.size) ++event;
-//		break;
-//	case 3:
-//
-//
-//
-//	default:
-//		break;
-//	}
-//	if (event == 0) {
-//		
-//	}
-//	else if (event==1){
-//		
-//	}
-//	else {
-//
-//	}
-//
-//}
+void printLearnDynamics(ofstream &genoutput,vector<individual> &pop,
+	int generat,int countInt, int indId, int seed){
+	genoutput << seed << '\t' <<generat << '\t' << countInt << '\t' << 
+		indId << '\t' << countIntTypesGen[0] << '\t' << 
+		countIntTypesGen[1] << '\t' <<	countIntTypesGen[2] << '\t';
+	for (int countFeat = 0; countFeat < pop[indId].get_nCenter();
+		++countFeat) {
+		genoutput << pop[indId].get_feat(1, countFeat) << '\t'
+			<< pop[indId].get_feat(0, countFeat) << '\t';
+	}
+	genoutput << pop[indId].get_quality() << '\t' << pop[indId].get_strat() <<
+		'\t' << pop[indId].get_alpha() << '\t' << pop[indId].get_beta() << '\t'
+		<< pop[indId].get_badge() << '\t' << pop[indId].ninterac << '\t';
+	genoutput << endl;
+}
 
 void printPopSample(vector<individual> &population, ofstream &popOutput,
-	int time, int seed, const int sampleSize, int nFeat = 5) {
+	int time, int seed, int sampleSize, int nFeat = 5) {
 	int sample;
 	for (int countSample = 0; countSample < sampleSize; ++countSample) {
 		sample = rnd::integer(population.size());
@@ -489,8 +499,8 @@ string create_filename(std::string filename, json param) {
 	filename.append(".txt");
 	return(filename);
 }
-void initializeFile(ofstream &evolOutput, ofstream &popOutput, 
-	json param,int nFeat=5) {
+void initializeFiles(ofstream &evolOutput, ofstream &popOutput, 
+	ofstream &indOutput, json param,int nFeat=5) {
 	std::string filename = param["folder"];
 	filename.append("evolLearn");
 	// File to print evolutionary dynamics
@@ -524,7 +534,22 @@ void initializeFile(ofstream &evolOutput, ofstream &popOutput,
 		popOutput << "WeightCrit_" + itos(countFeat) << '\t';
 	}
 	popOutput << endl;
-
+	// File to print a learning dynamics within a generation
+	std::string filename1 = param["folder"];
+	filename1.append("indLearn");
+	std::string IndFile = create_filename(filename1, param);
+	indOutput.open(IndFile.c_str());
+	indOutput << "seed" << '\t' <<  "time" << '\t' << "numInter" << '\t' 
+		<< "indId" << '\t' << "nint_HH" << '\t' <<
+		"nint_HD" << '\t' << "nint_DD" << '\t';
+	for (int countFeat = 0; countFeat < nFeat;
+		++countFeat) {
+		indOutput << "WeightAct_" + itos(countFeat) << '\t'
+			<< "WeightCrit_" + itos(countFeat) << '\t';
+	}
+	indOutput << "Quality" << '\t' << "genotype" << '\t' << "alpha" << '\t';
+	indOutput << "beta" << '\t' << "Badge" << '\t' << "nInteract" << '\t';
+	indOutput << endl;
 	//for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
 	//	cout << "WeightAct_" + itos(countFeat) << '\t';
 	//	cout << "WeightCrit_" + itos(countFeat) << '\t';
@@ -586,8 +611,8 @@ int main(int argc, _TCHAR* argv[]){
 	for (json::iterator itParVal = param["rangParam"].begin();
 		itParVal != param["rangParam"].end(); ++itParVal) {
 		param[namParam] = *itParVal;
-		ofstream popOutput, evolOutput;
-		initializeFile(evolOutput,popOutput, param);
+		ofstream popOutput, evolOutput, indOutput;
+		initializeFiles(evolOutput,popOutput,indOutput,param);
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
 			cout << param["namParam"] << "=" << *itParVal << "	" << 
 				"seed=" << seed << endl;
@@ -599,8 +624,10 @@ int main(int argc, _TCHAR* argv[]){
 			}
 			for (int generation = 0; generation < param["totGen"]; 
 				++generation) {
-				interactions(population, param["nInt"], param["popSize"],
-					param["payoff_matrix"], param["strQual"]);
+				interactions(population,indOutput, param["nInt"], 
+					param["payoff_matrix"], param["strQual"], 
+					generation % static_cast<int>(param["printGen"]) == 0,
+					param["printLearn"], param["sampleSize"],generation,seed);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
 					//cout << "time=" << generation << endl;
 					get_stats(population, param["popSize"]);
