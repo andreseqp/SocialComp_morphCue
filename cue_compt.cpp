@@ -345,9 +345,25 @@ void get_stats(vector<individual> &popT, int popsize,int nFeat=5){
 	}
 }
 
+void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
+	int generat, int countInt, int indId, int seed) {
+	genoutput << seed << '\t' << generat << '\t' << countInt << '\t' <<
+		indId << '\t' << countIntTypesGen[0] << '\t' <<
+		countIntTypesGen[1] << '\t' << countIntTypesGen[2] << '\t';
+	for (int countFeat = 0; countFeat < pop[indId].get_nCenter();
+		++countFeat) {
+		genoutput << pop[indId].get_feat(1, countFeat) << '\t'
+			<< pop[indId].get_feat(0, countFeat) << '\t';
+	}
+	genoutput << pop[indId].get_quality() << '\t' << pop[indId].get_strat() <<
+		'\t' << pop[indId].get_alpha() << '\t' << pop[indId].get_beta() << '\t'
+		<< pop[indId].get_badge() << '\t' << pop[indId].ninterac << '\t';
+	genoutput << endl;
+}
+
 void interactions(vector<individual> &population, ofstream &genoutput,int nint,
 	vector<double> payoff_matrix, double strQual, bool trackPopLearn,
-	int printLearn, int sampleSize,int generat, int seed) {
+	int printLearnInt, int sampleSize,int generat, int seed) {
 	int ind1 = population.size();
 	int ind2 = population.size();
 	int intType;
@@ -372,23 +388,23 @@ void interactions(vector<individual> &population, ofstream &genoutput,int nint,
 		intType += population[ind2].set_phenotype(population[ind1]);
 		if (trackPopLearn) { 
 			int foundInd = 0;
-			++countIntTypes[intType], countIntTypesGen[intType];
+			++countIntTypes[intType], ++countIntTypesGen[intType];
 			itSamp1 = find(sample.begin(), sample.end(), ind1);
-			if (itSamp1 != sample.end()&
-				population[*itSamp1].ninterac%printLearn == 0) {
+			if (itSamp1 != sample.end() &&
+				(population[*itSamp1].ninterac % printLearnInt) == 0) {
 					printLearnDynamics(genoutput, population, generat, i,
 						ind1,seed);
 					++foundInd;
 			}
 			itSamp1 = find(sample.begin(), sample.end(), ind2);
-			if (itSamp1 != sample.end()&
-				population[*itSamp1].ninterac%printLearn == 0) {
+			if (itSamp1 != sample.end() &&
+				(population[*itSamp1].ninterac % printLearnInt) == 0) {
 				printLearnDynamics(genoutput, population, generat, i,
-					ind1,seed);
+					ind2,seed);
 				++foundInd;
 			}
 			if (foundInd > 0) {
-				countIntTypesGen[0], countIntTypesGen[1], 
+				countIntTypesGen[0]=0, countIntTypesGen[1]=0, 
 					countIntTypesGen[2] = 0;
 			}
 		}
@@ -412,6 +428,13 @@ void printStats(int popsize,ofstream &evolOutput,
 	double invertTotInt = 1/static_cast<double>(countPhenotypes[0] + 
 		countPhenotypes[1]);
 	double invertPopsize = 1/static_cast<double>(popsize);
+	double invertNlearners;
+	if (countGenotypes[3] != 0) {
+		invertNlearners = 1 / static_cast<double>(countGenotypes[3]);
+	}
+	else {
+		invertNlearners = 0;
+	}
 	double badgSD = calcSd(BadgeMeanSd, invertPopsize);
 	double alphaSD = calcSd(alphaMeanSd, invertPopsize);
 	double betaSD = calcSd(betaMeanSd, invertPopsize);
@@ -432,8 +455,8 @@ void printStats(int popsize,ofstream &evolOutput,
 	evolOutput << betaMeanSd[0]             * invertPopsize << '\t';
 	evolOutput << betaSD <<  '\t';
 	for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
-		evolOutput << featActMean[countFeat] * invertPopsize << '\t';
-		evolOutput << featCritMean[countFeat] * invertPopsize << '\t';
+		evolOutput << featActMean[countFeat] * invertNlearners << '\t';
+		evolOutput << featCritMean[countFeat] * invertNlearners << '\t';
 	}
 	evolOutput << endl;
 	
@@ -442,22 +465,6 @@ void printStats(int popsize,ofstream &evolOutput,
 	//	cout << featCritMean[countFeat] * invertPopsize << '\t';
 	//}
 	//cout << endl;
-}
-
-void printLearnDynamics(ofstream &genoutput,vector<individual> &pop,
-	int generat,int countInt, int indId, int seed){
-	genoutput << seed << '\t' <<generat << '\t' << countInt << '\t' << 
-		indId << '\t' << countIntTypesGen[0] << '\t' << 
-		countIntTypesGen[1] << '\t' <<	countIntTypesGen[2] << '\t';
-	for (int countFeat = 0; countFeat < pop[indId].get_nCenter();
-		++countFeat) {
-		genoutput << pop[indId].get_feat(1, countFeat) << '\t'
-			<< pop[indId].get_feat(0, countFeat) << '\t';
-	}
-	genoutput << pop[indId].get_quality() << '\t' << pop[indId].get_strat() <<
-		'\t' << pop[indId].get_alpha() << '\t' << pop[indId].get_beta() << '\t'
-		<< pop[indId].get_badge() << '\t' << pop[indId].ninterac << '\t';
-	genoutput << endl;
 }
 
 void printPopSample(vector<individual> &population, ofstream &popOutput,
@@ -499,7 +506,7 @@ string create_filename(std::string filename, json param) {
 	filename.append(".txt");
 	return(filename);
 }
-void initializeFiles(ofstream &evolOutput, ofstream &popOutput, 
+void initializeFiles(ofstream &evolOutput, //ofstream &popOutput, 
 	ofstream &indOutput, json param,int nFeat=5) {
 	std::string filename = param["folder"];
 	filename.append("evolLearn");
@@ -521,7 +528,7 @@ void initializeFiles(ofstream &evolOutput, ofstream &popOutput,
 	}
 	evolOutput << endl;
 	// File to print a sample of populations
-	std::string filename1 = param["folder"];
+	/*std::string filename1 = param["folder"];
 	filename1.append("popLearn");
 	std::string popFile = create_filename(filename1, param);
 	popOutput.open(popFile.c_str());
@@ -533,7 +540,7 @@ void initializeFiles(ofstream &evolOutput, ofstream &popOutput,
 		popOutput << "WeightAct_" + itos(countFeat) << '\t';
 		popOutput << "WeightCrit_" + itos(countFeat) << '\t';
 	}
-	popOutput << endl;
+	popOutput << endl;*/
 	// File to print a learning dynamics within a generation
 	std::string filename1 = param["folder"];
 	filename1.append("indLearn");
@@ -561,11 +568,13 @@ int main(int argc, _TCHAR* argv[]){
 
 	mark_time(1);
 
-	// uncomment for debugging
+	 //uncomment for debugging
 	//json param;
 	//param["totGen"]            = 100;   // Total number of generations
 	//param["nRep"]              = 5;     // Number of replicates
-	//param["printGen"]          = 1;     // How often data is printed	
+	//param["printGen"]          = 10;     // How often data is printed	
+	//param["printLearn"]        = 10;	  // how often learning dyn are printed
+	//param["printLearnInt"]     = 20;   // How often are learning parameters printed
 	//param["init"]              = {0,0,1};        //Initial frequencies
 	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
 	//param["popSize"]           = 100;
@@ -574,7 +583,8 @@ int main(int argc, _TCHAR* argv[]){
 	//param["mutRate"]           = 0.001;
 	//param["strQual"]           = 10;
 	//param["baselineFit"]       = 1;
-	//param["mutType"]		     = 0;     
+	//param["mutType"]		     = 0;  
+	//// How many strategies are introduced by mutation
 	//param["sampleSize"]        = 20; 
 	//param["alphaBad"]			 = 0;
 	//param["betaBad"]			 = 0;
@@ -583,10 +593,9 @@ int main(int argc, _TCHAR* argv[]){
 	//param["sigSq"]        	 = 0.01;
 	//param["nCenters"]     	 = 5;
 	//param["QualStDv"]          = 0.1;
-	//// How many strategies are introduced by mutation
 	//param["namParam"]          = "baselineFit";  
 	//// which parameter to vary inside the program
-	//param["rangParam"]         = { 0.2,0.4,0.6,0.8,1 }; 
+	//param["rangParam"]         = { 0.2 }; 
 	//// range in which the paramenter varies
 	//param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/baselinefit_/";
 	
@@ -611,8 +620,8 @@ int main(int argc, _TCHAR* argv[]){
 	for (json::iterator itParVal = param["rangParam"].begin();
 		itParVal != param["rangParam"].end(); ++itParVal) {
 		param[namParam] = *itParVal;
-		ofstream popOutput, evolOutput, indOutput;
-		initializeFiles(evolOutput,popOutput,indOutput,param);
+		ofstream  evolOutput, indOutput;//popOutput,
+		initializeFiles(evolOutput,indOutput,param);//popOutput,
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
 			cout << param["namParam"] << "=" << *itParVal << "	" << 
 				"seed=" << seed << endl;
@@ -626,14 +635,14 @@ int main(int argc, _TCHAR* argv[]){
 				++generation) {
 				interactions(population,indOutput, param["nInt"], 
 					param["payoff_matrix"], param["strQual"], 
-					generation % static_cast<int>(param["printGen"]) == 0,
-					param["printLearn"], param["sampleSize"],generation,seed);
+					generation % static_cast<int>(param["printLearn"]) == 0,
+					param["printLearnInt"], param["sampleSize"],generation,seed);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
 					//cout << "time=" << generation << endl;
 					get_stats(population, param["popSize"]);
 					printStats(param["popSize"], evolOutput, generation, seed);
-					printPopSample(population, popOutput, generation, seed,
-						param["sampleSize"]);
+					/*printPopSample(population, popOutput, generation, seed,
+						param["sampleSize"]);*/
 				}
 				Reprod(population, param["popSize"], param["mutRate"],
 					param["MutSd"], param["baselineFit"],param["mutType"],
@@ -644,8 +653,9 @@ int main(int argc, _TCHAR* argv[]){
 				population.pop_back();
 			}
 		}
-		popOutput.close();
+		//popOutput.close();
 		evolOutput.close();
+		indOutput.close();
 	}
 	
 	mark_time(0);

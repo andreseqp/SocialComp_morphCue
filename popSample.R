@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDv_"
+scenario<-"mutType_"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +19,7 @@ scenario<-"QualStDv_"
 (listTest<-list.files(here("Simulations",scenario)))
 (List<-grep("pop",listTest,value=TRUE))
 
-pop<-fread(here("Simulations",scenario,List[3]))
+pop<-fread(here("Simulations",scenario,List[1]))
 
 # Extract means and IQR for the dynamic variables ------------------------------
 
