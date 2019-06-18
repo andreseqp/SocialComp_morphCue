@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"baselineFit_"
+scenario<-"mutType_"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +19,7 @@ scenario<-"baselineFit_"
 (listTest<-list.files(here("Simulations",scenario)))
 (sdList<-grep("evol",listTest,value=TRUE))
 
-evol<-fread(here("Simulations",scenario,sdList[1]))
+evol<-fread(here("Simulations",scenario,sdList[3]))
 
 # Extract means and IQR for the dynamic variables ------------------------------
 
@@ -66,6 +66,8 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 
 # Plot mean and IQRs of the genotypes and phenotypes ----------------------------
 
+png(here("Simulations",scenario,"basidHawkDove.png"),height = 800,width = 800)
+
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="s",las=2)
 plot(x=c(0,max(evolStats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",
      ylim=c(0,1),xlab="",ylab="",cex.lab=1.5,cex.axis=1.2,xaxt='n')
@@ -86,15 +88,17 @@ with(evolStats,{
   lines(time,m.freqGenHawk,col=colTypesLin[1],lwd=3)
   lines(time,m.freqGenDove,col=colTypesLin[2],lwd=3)
   lines(time,m.freqEval,col=colTypesLin[3],lwd=3)
+  lines(x=c(0,max(time)),y=c(0.66,0.66),col="grey",lwd=2)
 })
+
 
 legend("topright",legend=c("Hawk","Dove","Learner"),
        lty=c(1,1,1),lwd=2,col=colTypesLin,bty="o",cex=1.15)
 
 
-par(plt=posPlot(numploty = 2,idploty = 1),xaxt="n",las=2,new=TRUE)
-plot(x=c(0,max(evolStats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",ylim=c(0,1),
-     xlab="",ylab="",cex.lab=1.5,cex.axis=1.2,xaxt='n')
+par(plt=posPlot(numploty = 2,idploty = 1),xaxt="n",las=1,new=TRUE,xpd=T)
+plot(x=c(0,max(evolStats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",
+     ylim=c(0,1),xlab="",ylab="",cex.lab=1.5,cex.axis=1.2,xaxt='s')
 
 polygon(x=c(evolStats$time,rev(evolStats$time)),
         y=c(evolStats$upIQR.freqFenHawk,
@@ -109,7 +113,42 @@ with(evolStats,{
   lines(time,m.freqFenDove,col=colTypesLin[2],lwd=3)
   lines(x=c(0,max(time)),y=c(0.66,0.66),col="grey",lwd=2)
 })
+text(x = -150,y=1.1,labels = "frequency",cex=1.5,srt=90)
 
+# dev.off()
+
+# Plot the weights of the actor ------------------------------------------------
+
+
+nCenters<-5
+interv<-1/nCenters
+centers<-interv*0.5+interv*seq(0,nCenters-1)
+weights<-as.double(evolStats[time==max(time),.SD,
+                    .SDcols=grep("m.weightAct",names(evolStats),value = TRUE)])
+# weights<-rep(-5,nCenters)
+rangx<-seq(0,1,length=1000)
+
+par(plt=posPlot())
+plot(logist(totRBF(rangx,centers,0.01,weights),alpha = 0,
+            beta = 1)~rangx,type='l',col=1,
+     xlab="x",ylab="p(Dove)",ylim=c(0,1),lwd=3)
+points(y=logist(weights,0,1),x=centers,cex=3)
+
+# Plot the weights of the critic ------------------------------------------------
+
+nCenters<-5
+interv<-1/nCenters
+centers<-interv*0.5+interv*seq(0,nCenters-1)
+weights<-as.double(evolStats[time==max(time),.SD,
+                              .SDcols=grep("m.weightCrit",
+                                           names(evolStats),value = TRUE)])
+# weights<-rep(-5,nCenters)
+rangx<-seq(0,1,length=1000)
+
+par(plt=posPlot())
+plot(totRBF(rangx,centers,0.01,weights)~rangx,type='l',col=1,
+     xlab="x",ylab="Value",ylim=c(0,1),lwd=3)
+points(y=weights,x=centers,cex=3)
 
 # Plot mean and IQRs of the reaction norm parameters ---------------------------
 
@@ -139,39 +178,6 @@ plot(logist(rangQual,evolStats[time==max(time),m.meanAlpha],
             evolStats[time==max(time),m.meanBeta])~rangQual,
      ylab="Badge size", xlab="Quality",type="l",lwd=3,ylim=c(0,1))
 
-# Plot the weights of the actor ------------------------------------------------
-
-
-nCenters<-5
-interv<-1/nCenters
-centers<-interv*0.5+interv*seq(0,nCenters-1)
-weights<-as.double(evolStats[time==max(time),.SD,
-                    .SDcols=grep("m.weightAct",names(evolStats),value = TRUE)])
-# weights<-rep(-5,nCenters)
-rangx<-seq(0,1,length=1000)
-
-par(plt=posPlot())
-plot(logist(totRBF(rangx,centers,0.01,weights),alpha = 0,
-            beta = 1)~rangx,type='l',col=1,
-     xlab="x",ylab="p(Dove)",ylim=c(0,1),lwd=3)
-points(y=logist(weights,0,1),x=centers,cex=3)
-
-# Plot the weights of the critic ------------------------------------------------
-
-
-nCenters<-5
-interv<-1/nCenters
-centers<-interv*0.5+interv*seq(0,nCenters-1)
-weights<-as.double(evolStats[time==max(time),.SD,
-                              .SDcols=grep("m.weightCrit",
-                                           names(evolStats),value = TRUE)])
-# weights<-rep(-5,nCenters)
-rangx<-seq(0,1,length=1000)
-
-par(plt=posPlot())
-plot(totRBF(rangx,centers,0.01,weights)~rangx,type='l',col=1,
-     xlab="x",ylab="Value",ylim=c(0,1),lwd=3)
-points(y=weights,x=centers,cex=3)
 
 # Frequencies without the colour ribbons ---------------------------------------
 

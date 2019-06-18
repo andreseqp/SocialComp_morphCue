@@ -11,33 +11,21 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"baselineFit_"
+scenario<-"QualStDv"
 
 
 # Load files -------------------------------------------------------------------
 
-(listTest<-list.files(here("Simulations",scenario)))
+(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
 indLearn<-fread(here("Simulations",scenario,List[1]))
 
 
-# Extract means and IQR for the dynamic variables ------------------------------
-
-popStats<-pop[, as.list(unlist(lapply(.SD, 
-                                      function(x) list(m = mean(x),
-                                                       upIQR = fivenum(x)[4],
-                                                       downIQR = fivenum(x)[2]
-                                      )))),
-              by = time, 
-              .SDcols=c("Quality","alpha","beta","Badge","nInteract","WeightAct_0",
-                        "WeightAct_1","WeightAct_2","WeightAct_3","WeightAct_4",
-                        "WeightCrit_0","WeightCrit_1","WeightCrit_2",
-                        "WeightCrit_3","WeightCrit_4")]
 
 # Changes in learning parameters for several individuals -----------------------
 
-gener<-indLearn[,unique(time)][3]
+gener<-indLearn[,unique(time)][5]
 nCenters<-5
 interv<-1/nCenters
 centers<-interv*0.5+interv*seq(0,nCenters-1)
@@ -58,7 +46,7 @@ for(behavTime in unique(indLearn$nInteract)){
   par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx),
       las=1,new=T)
   plot(logist(totRBF(rangx,centers,0.01,rep(0,5))
-              ,alpha = 0,beta = 1)~rangx,type='l',xlab="",ylab="",ylim=c(0.4,0.6),
+              ,alpha = 0,beta = 1)~rangx,type='l',xlab="",ylab="",ylim=c(0,1),
        lwd=3,col=1,xaxt=xaxRang[county],yaxt=yaxRang[countx])
   text(x = 0.5,y=0.58,labels = paste0("nInt=",behavTime))
   for(idInd in indLearn[(time==gener&nInteract==behavTime)&seed==seedCh,
@@ -97,7 +85,7 @@ for(behavTime in unique(indLearn$nInteract)){
   par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx),
       las=1,new=T)
   plot(totRBF(rangx,centers,0.01,rep(0,5))~rangx,type='l',xlab="",ylab="",
-       ylim=c(0,0.4), lwd=3,col=1,xaxt=xaxRang[county],yaxt=yaxRang[countx])
+       ylim=c(0,1), lwd=3,col=1,xaxt=xaxRang[county],yaxt=yaxRang[countx])
   text(x = 0.5,y=0.38,labels = paste0("nInt=",behavTime))
   for(idInd in indLearn[(time==gener&nInteract==behavTime)&seed==seedCh,
                         unique(indId)]){
@@ -112,8 +100,9 @@ for(behavTime in unique(indLearn$nInteract)){
   }
 }
 
-
-indCh<-80
+indLearn[(time==gener)&
+           (seed==seedCh),unique(indId)]
+indCh<-559
 par(plt=posPlot(numploty = 2,idploty = 2))
 matplot(x=indLearn[(time==gener&seed==seedCh)&indId==indCh,nInteract],
         y=indLearn[(time==gener&seed==seedCh)&indId==indCh,.SD,
@@ -125,7 +114,7 @@ par(plt=posPlot(numploty = 2,idploty = 1),new=TRUE)
 matplot(x=indLearn[(time==gener&seed==seedCh)&indId==indCh,nInteract],
         y=indLearn[(time==gener&seed==seedCh)&indId==indCh,.SD,
                    .SDcols=grep("WeightCrit",names(indLearn),value = T)],
-        xlab="nInter",ylab="Weights Actor",xaxt="s",type="l")
+        xlab="nInter",ylab="Weights Crit",xaxt="s",type="l")
 
 
 # par(new=FALSE)

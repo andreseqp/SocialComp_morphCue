@@ -154,8 +154,7 @@ individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
 }
 
 individual::individual(individual& mother, double QualStDv,
-	double mutRate, double mutSD,
-	int mutType) {
+	double mutRate, double mutSD, int mutType) {
 	genotype = mutateStr(mother.genotype,mutRate,mutType);
 	nCenters = mother.nCenters;
 	alphaBadge = mutateDoub(mother.alphaBadge,mutRate,mutSD);
@@ -306,8 +305,8 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	}
 	for (vector<individual>::iterator itpopTplus1 = popTplus1.begin(); 
 		itpopTplus1 < popTplus1.end(); ++itpopTplus1) {
-		*itpopTplus1 = individual(popT[payoff_dist.sample()], QualStDv,mutRate,mutSD,
-			mutType);
+		*itpopTplus1 = individual(popT[payoff_dist.sample()], QualStDv,mutRate,
+			mutSD, mutType);
 	}
 	vector<individual>::iterator itpopTplus1 = popTplus1.begin();
 	for (vector<individual>::iterator itpopT = popT.begin();
@@ -569,41 +568,41 @@ int main(int argc, _TCHAR* argv[]){
 	mark_time(1);
 
 	 //uncomment for debugging
-	//json param;
-	//param["totGen"]            = 100;   // Total number of generations
-	//param["nRep"]              = 5;     // Number of replicates
-	//param["printGen"]          = 10;     // How often data is printed	
-	//param["printLearn"]        = 10;	  // how often learning dyn are printed
-	//param["printLearnInt"]     = 20;   // How often are learning parameters printed
-	//param["init"]              = {0,0,1};        //Initial frequencies
-	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	//param["popSize"]           = 100;
-	//param["MutSd"]             = 0.1;
-	//param["nInt"]              = 50;    // Number of interactions per individual
-	//param["mutRate"]           = 0.001;
-	//param["strQual"]           = 10;
-	//param["baselineFit"]       = 1;
-	//param["mutType"]		     = 0;  
-	//// How many strategies are introduced by mutation
-	//param["sampleSize"]        = 20; 
-	//param["alphaBad"]			 = 0;
-	//param["betaBad"]			 = 0;
-	//param["alphaCrit"]     	 = 0.01;
-	//param["alphaAct"]     	 = 0.01;
-	//param["sigSq"]        	 = 0.01;
-	//param["nCenters"]     	 = 5;
-	//param["QualStDv"]          = 0.1;
-	//param["namParam"]          = "baselineFit";  
-	//// which parameter to vary inside the program
-	//param["rangParam"]         = { 0.2 }; 
-	//// range in which the paramenter varies
-	//param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/baselinefit_/";
+	json param;
+	param["totGen"]            = 100;   // Total number of generations
+	param["nRep"]              = 5;     // Number of replicates
+	param["printGen"]          = 10;     // How often data is printed	
+	param["printLearn"]        = 10;	  // how often learning dyn are printed
+	param["printLearnInt"]     = 20;   // How often are learning parameters printed
+	param["init"]              = {0,0,1};        //Initial frequencies
+	param["payoff_matrix"]     = {1.5,1,0,0.5};  
+	param["popSize"]           = 100;
+	param["MutSd"]             = 0.1;
+	param["nInt"]              = 50;    // Number of interactions per individual
+	param["mutRate"]           = 0.001;
+	param["strQual"]           = 10;
+	param["baselineFit"]       = 1;
+	param["mutType"]		     = 2;  
+	// How many strategies are introduced by mutation
+	param["sampleSize"]        = 20; 
+	param["alphaBad"]			 = 0;
+	param["betaBad"]			 = 0;
+	param["alphaCrit"]     	 = 0.01;
+	param["alphaAct"]     	 = 0.01;
+	param["sigSq"]        	 = 0.01;
+	param["nCenters"]     	 = 5;
+	param["QualStDv"]          = 0.1;
+	param["namParam"]          = "baselineFit";  
+	// which parameter to vary inside the program
+	param["rangParam"]         = { 0.2 }; 
+	// range in which the paramenter varies
+	param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/baselinefit_/";
 	
 		
 	// Comment for debugging
-	ifstream input(argv[1]);
+	/*ifstream input(argv[1]);
 	if (input.fail()) { cout << "JSON file failed" << endl; }
-	nlohmann::json param = json::parse(input);
+	nlohmann::json param = json::parse(input);*/
 
 	string namParam = param["namParam"];
 
