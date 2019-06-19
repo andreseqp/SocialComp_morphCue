@@ -11,17 +11,19 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDv"
+scenario<-"mutType"
 
 
 # Load files -------------------------------------------------------------------
 
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
-(List<-grep("pop",listTest,value=TRUE))
+(List<-grep("indLearn",listTest,value=TRUE))
 
-pop<-fread(here("Simulations",scenario,List[1]))
+pop<-fread(here("Simulations",paste0(scenario,"_"),List[4]))
 
-pop<-do.call(rbind,lapply(List,filesScenar,scenario))
+pop<-pop[,.SD[nInteract==max(nInteract)],by=.(seed,time,indId)]
+
+# pop<-do.call(rbind,lapply(List,filesScenar,scenario))
 
 # Extract means and IQR for the dynamic variables ------------------------------
 

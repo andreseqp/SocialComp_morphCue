@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDv"
+scenario<-"mutType"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,13 +19,13 @@ scenario<-"QualStDv"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
-indLearn<-fread(here("Simulations",scenario,List[1]))
+indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[4]))
 
 
 
 # Changes in learning parameters for several individuals -----------------------
 
-gener<-indLearn[,unique(time)][5]
+gener<-indLearn[,unique(time)][3]
 nCenters<-5
 interv<-1/nCenters
 centers<-interv*0.5+interv*seq(0,nCenters-1)
@@ -100,31 +100,38 @@ for(behavTime in unique(indLearn$nInteract)){
   }
 }
 
-indLearn[(time==gener)&
-           (seed==seedCh),unique(indId)]
-indCh<-559
+png(here("Simulations",paste0(scenario,"_"),paste0("learnDyn",gener,".png")),
+    height = 800,width = 800)
+
+gener
+indLearn[(time==gener),unique(indId)]
+learnDyn<-dcast(indLearn[(genotype==2&time==gener)],nInteract~indId,
+      value.var=c("WeightAct_3","WeightCrit_3"),fun=function(x){return(x[1])})
+cols<-paletteMeans(100)[
+  findInterval(indLearn[(genotype==2&time==gener)][
+  match(as.numeric(tstrsplit(grep("WeightAct",names(learnDyn),value = T),"_")[[4]]),
+        indLearn[(genotype==2&time==gener),indId]),Quality],colorbreaksQual)]
+
 par(plt=posPlot(numploty = 2,idploty = 2))
-matplot(x=indLearn[(time==gener&seed==seedCh)&indId==indCh,nInteract],
-        y=indLearn[(time==gener&seed==seedCh)&indId==indCh,.SD,
-                   .SDcols=grep("WeightAct",names(indLearn),value = T)],
-        xlab="",ylab="Weights Actor",xaxt="n",type="l")
-legend("topright",legend = grep("WeightCrit",names(indLearn),value = T),
-       col = 1:5,lty=1)
+matplot(x=learnDyn[,nInteract],
+        y=learnDyn[,.SD,.SDcols=grep("WeightAct",names(learnDyn),value = T)],
+        xlab="",ylab="Weights Actor",xaxt="n",type="l",col = cols,lwd=2,lty=1)
+# legend("topright",legend = grep("WeightCrit",names(indLearn),value = T),
+#        col = 1:5,lty=1)
+title(main = bquote(t==.(gener)),line=-2)
 par(plt=posPlot(numploty = 2,idploty = 1),new=TRUE)
-matplot(x=indLearn[(time==gener&seed==seedCh)&indId==indCh,nInteract],
-        y=indLearn[(time==gener&seed==seedCh)&indId==indCh,.SD,
-                   .SDcols=grep("WeightCrit",names(indLearn),value = T)],
-        xlab="nInter",ylab="Weights Crit",xaxt="s",type="l")
-
-
-# par(new=FALSE)
-# color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
-#                max = max(colorbreaksQual),nticks = 3,
-#                title = "",
-#                cex.tit = 1.2,
-#                numplotx = 15,numploty = 10,idplotx =15,idploty = 4)
-
-
+matplot(x=learnDyn[,nInteract],
+        y=learnDyn[,.SD,.SDcols=grep("WeightCrit",names(learnDyn),value = T)],
+        xlab="nInter",ylab="Weights Critic",xaxt="s",type="l",col = cols,lwd=2,
+        lty=1)
+par(new=FALSE)
+color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
+               max = max(colorbreaksQual),nticks = 3,
+               title = "",
+               cex.tit = 1,
+               numplotx = 15,numploty = 10,idplotx =15,idploty = 4)
+title("quality   ", line = 1)
+dev.off()
 
 # Scatterplot relating quality and central weight of the actor -----------------
 
@@ -134,4 +141,4 @@ plot(pop[time==min(time),WeightAct_3]~pop[time==min(time),Quality],
 
 hist(pop[,nInteract],xaxt="s")
 hist(pop[,Badge],xaxt="s")
-
+hist(pop[,Quality],xaxt="s")

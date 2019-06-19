@@ -19,7 +19,7 @@ scenario<-"mutType_"
 (listTest<-list.files(here("Simulations",scenario)))
 (sdList<-grep("evol",listTest,value=TRUE))
 
-evol<-fread(here("Simulations",scenario,sdList[3]))
+evol<-fread(here("Simulations",scenario,sdList[4]))
 
 # Extract means and IQR for the dynamic variables ------------------------------
 
@@ -66,7 +66,7 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 
 # Plot mean and IQRs of the genotypes and phenotypes ----------------------------
 
-png(here("Simulations",scenario,"basidHawkDove.png"),height = 800,width = 800)
+png(here("Simulations",scenario,"evolDynTypes.png"),height = 800,width = 800)
 
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="s",las=2)
 plot(x=c(0,max(evolStats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",
@@ -88,13 +88,45 @@ with(evolStats,{
   lines(time,m.freqGenHawk,col=colTypesLin[1],lwd=3)
   lines(time,m.freqGenDove,col=colTypesLin[2],lwd=3)
   lines(time,m.freqEval,col=colTypesLin[3],lwd=3)
-  lines(x=c(0,max(time)),y=c(0.66,0.66),col="grey",lwd=2)
+  lines(x=c(0,max(time)),y=c(0.66,0.66),col=colTypesLin[1],lwd=2,lty=2)
 })
 
 
-legend("topright",legend=c("Hawk","Dove","Learner"),
+legend("topleft",legend=c("Hawk","Dove","Learner"),
+       lty=c(1,1,1),lwd=2,col=colTypesLin,bty="o",cex=1)
+
+
+par(plt=posPlot(numploty = 2,idploty = 1),xaxt="n",las=1,new=TRUE,xpd=T)
+
+plot(x=c(0,max(evolStats$time)),y=c(0.4444436,0.4444436),type="l",lwd=2,
+     col=colTypesLin[1],ylim=c(0,1),xlab="Generations",ylab="Frequency",
+     cex.lab=1.5,cex.axis=1.2,xaxt='s',lty=2)
+lines(x=c(0,max(evolStats$time)),y=c(0.4444436,0.4444436)+0.01,type="l",lwd=2,
+      col=colTypesLin[2],lty=2)
+lines(x=c(0,max(evolStats$time)),y=c(0.1111111,0.1111111),type="l",lwd=2,
+      col=colTypesLin[3],lty=2)
+polygon(x=c(evolStats$time,rev(evolStats$time)),
+        y=c(evolStats$upIQR.freqHH,
+            rev(evolStats$lowIQR.freqHH)),
+        col=colTypesPol[1],border=NA)
+polygon(x=c(evolStats$time,rev(evolStats$time)),
+        y=c(evolStats$upIQR.freqHD,
+            rev(evolStats$lowIQR.freqHD)),
+        col=colTypesPol[2],border=NA)
+polygon(x=c(evolStats$time,rev(evolStats$time)),
+        y=c(evolStats$upIQR.freqDD,
+            rev(evolStats$lowIQR.freqDD)),
+        col=colTypesPol[3],border=NA)
+with(evolStats,{
+  lines(time,m.freqHH,col=colTypesLin[1],lwd=3)
+  lines(time,m.freqHD,col=colTypesLin[2],lwd=3)
+  lines(time,m.freqDD,col=colTypesLin[3],lwd=3)
+})
+
+legend("topright",legend=c("HH","HD","DD"),
        lty=c(1,1,1),lwd=2,col=colTypesLin,bty="o",cex=1.15)
 
+# Phenotypic frequencies 
 
 par(plt=posPlot(numploty = 2,idploty = 1),xaxt="n",las=1,new=TRUE,xpd=T)
 plot(x=c(0,max(evolStats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",
@@ -268,9 +300,13 @@ for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){
 # Plot the frequency of interaction types --------------------------------------
 
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="s",las=2)
-plot(x=c(0,max(evolStats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",
-     ylim=c(0,1),xlab="",ylab="",cex.lab=1.5,cex.axis=1.2,xaxt='n')
-
+plot(x=c(0,max(evolStats$time)),y=c(0.4444436,0.4444436),type="l",lwd=2,
+     col=colTypesLin[1],ylim=c(0,1),xlab="",ylab="",cex.lab=1.5,
+     cex.axis=1.2,xaxt='n',lty=2)
+lines(x=c(0,max(evolStats$time)),y=c(0.4444436,0.4444436)+0.01,type="l",lwd=2,
+      col=colTypesLin[2],lty=2)
+lines(x=c(0,max(evolStats$time)),y=c(0.1111111,0.1111111),type="l",lwd=2,
+      col=colTypesLin[3],lty=2)
 polygon(x=c(evolStats$time,rev(evolStats$time)),
         y=c(evolStats$upIQR.freqHH,
             rev(evolStats$lowIQR.freqHH)),
