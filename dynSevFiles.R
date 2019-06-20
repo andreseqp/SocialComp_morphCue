@@ -62,7 +62,7 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 
 # Plot mean and IQRs of the genotypes and phenotypes ----------------------------
 
-png(here("Simulations",scenario,"basidHawkDove.png"),height = 800,width = 800)
+png(here("Simulations",paste0(scenario,"_"),"effectQualVariance.png"),height = 800,width = 800)
 
 timeChoi<-max(evolStats[,time])
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="n",las=1)

@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"mutType_"
+scenario<-"QualStDv_"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +19,7 @@ scenario<-"mutType_"
 (listTest<-list.files(here("Simulations",scenario)))
 (sdList<-grep("evol",listTest,value=TRUE))
 
-evol<-fread(here("Simulations",scenario,sdList[4]))
+evol<-fread(here("Simulations",scenario,sdList[2]))
 
 # Extract means and IQR for the dynamic variables ------------------------------
 
@@ -66,7 +66,7 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 
 # Plot mean and IQRs of the genotypes and phenotypes ----------------------------
 
-png(here("Simulations",scenario,"evolDynTypes.png"),height = 800,width = 800)
+png(here("Simulations",scenario,"hawkDoveLearn_0.1.png"),height = 800,width = 800)
 
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="s",las=2)
 plot(x=c(0,max(evolStats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",
@@ -92,8 +92,8 @@ with(evolStats,{
 })
 
 
-legend("topleft",legend=c("Hawk","Dove","Learner"),
-       lty=c(1,1,1),lwd=2,col=colTypesLin,bty="o",cex=1)
+legend("topleft",legend=c("Hawk","Dove"),
+       lty=c(1,1),lwd=2,col=colTypesLin[1:2],bty="o",cex=1)
 
 
 par(plt=posPlot(numploty = 2,idploty = 1),xaxt="n",las=1,new=TRUE,xpd=T)
@@ -130,7 +130,8 @@ legend("topright",legend=c("HH","HD","DD"),
 
 par(plt=posPlot(numploty = 2,idploty = 1),xaxt="n",las=1,new=TRUE,xpd=T)
 plot(x=c(0,max(evolStats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",
-     ylim=c(0,1),xlab="",ylab="",cex.lab=1.5,cex.axis=1.2,xaxt='s')
+     ylim=c(0,1),xlab="",ylab="",cex.lab=1.5,cex.axis=1.2,xaxt='s',las=1,
+     xaxt="n")
 
 polygon(x=c(evolStats$time,rev(evolStats$time)),
         y=c(evolStats$upIQR.freqFenHawk,
@@ -145,7 +146,7 @@ with(evolStats,{
   lines(time,m.freqFenDove,col=colTypesLin[2],lwd=3)
   lines(x=c(0,max(time)),y=c(0.66,0.66),col="grey",lwd=2)
 })
-text(x = -150,y=1.1,labels = "frequency",cex=1.5,srt=90)
+# mtext(side = 2,text = "frequency",line = 3,cex=1.2)
 
 # dev.off()
 
