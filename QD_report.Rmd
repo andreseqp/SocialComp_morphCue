@@ -1,6 +1,7 @@
 ---
 title: "The evolution of badges of status with learners"
 author: "Andrés Quiñones"
+bibliography: SocialMorphCue.bib
 output: 
   pdf_document: 
     fig_caption: yes
@@ -19,33 +20,39 @@ Individuals may or may not vary in their quality. Quality is a numerical value f
 p(A)=\frac{1}{1+e^{-\beta(Q_A-Q_B)}},
 \end{equation}
 
-where $Q_A$ and $Q_b$ are the qualities of individuals A and B respectively, and $\beta$ is how important quality is in determining who wins the contest. Individuals' reproductive success is proportional to the payoff accumulated
-throughout their lifes. Figure \ref{fig:HD_game} shows the evolutionary dynamics of  the two genotypes, which fit the game theoretical prediction.
+where $Q_A$ and $Q_b$ are the qualities of individuals A and B respectively, and $\beta$ is how important quality is in determining who wins the contest. 
+Individuals' reproductive success is proportional to the payoff accumulated
+throughout their lifes. Figure \ref{fig:HD_game} shows the evolutionary dynamics 
+of  the two genotypes, which fit the game theoretical prediction.
 
 
 ```{r fig1, echo=FALSE, fig.cap="\\label{fig:HD_game}Hawk-dove game. Dashed line is the  game theoretical prediction for frequency of hawks.", out.width = '80%'}
-knitr::include_graphics("Simulations//mutType_//basicHawkDove.png")
+knitr::include_graphics("Simulations/mutType_/basicHawkDove.png")
 ```
 
 
 # The effect of learning 
 
-We let individuals have a _badge of status_ that potentially signals their quality. To allow for this signalling, we let the size of the _badge of status_ of an individual be dependent on her quality through a reaction norm. we assume the size of the _badge_ is a value from 0 to 1. This value is given by
+We let individuals have a _badge of status_ that potentially signals their 
+quality. To allow for this signalling, we let the size of the _badge of status_ 
+of an individual be dependent on her quality through a reaction norm. we assume the size of the _badge_ is a value from 0 to 1. This value is given by
 \begin{equation}
 s_i = \frac{1}{1+e^{-(\alpha_i+\gamma_iQ_i)}}
 \label{eq:react_norm}
 \end{equation}
-The parameters $\alpha$ and $\gamma$ in equation \ref{eq:react_norm} determine the
-shape of the reaction norm, and hence, how honest the _badge_ is in signalling the
-quality of the individual.Eventually, the aim is to allow the signalling system to
-evolve, by letting the parameters of the reaction norm be inherited from parent to offspring and be change by a mutational process.
+The parameters $\alpha$ and $\gamma$ in equation \ref{eq:react_norm} determine 
+the shape of the reaction norm, and hence, how honest the _badge_ is in 
+signalling the quality of the individual.Eventually, the aim is to allow the 
+signalling system to evolve, by letting the parameters of the reaction norm be inherited from parent to offspring and be change by a mutational process.
 
 ## How does learning work?
 
-To complete the receiver side of the signalling system, we introduce a new strategy in the game that we call _learner_. _Learners_ use a mixed strategy in the hawk-dove game. Which means, they play hawk (dove) with a certain probability.
+To complete the receiver side of the signalling system, we introduce a new 
+strategy in the game that we call _learner_. _Learners_ use a mixed strategy in 
+the hawk-dove game. Which means, they play hawk (dove) with a certain probability.
 Furthermore, the probability with which the play each strategy changes during their lifetime according to the payoff they recieve in previous interactions. In other words, _learners_ learn to behave in the game. To implement the learning
-process, we use the reinforcement learning formalism. Specifically, we use the actor-critic algorithm. Individuals ( _learners_ ) perceive the _badge_ of their counterpart as the environmental state in which they find themselves. They estimate the value of that state and a preference for playing hawk (dove) in that state. They update their estimation and preference after each interaction they have. Given that the badge size is a real number between 0 and 1, there are infinitely many environmental states. Thus, for their value estimation and preference computation, individual must use a form of generalization. We let them
-use as generalization a function approximation method based on radial basis functions. Each individual uses five _centers_ spread uniformly throughout the range of badge size variation (from 0 to 1). Each time an individual interacts with a conspecific the size of the badge of the interacting partner triggers are response from each one of the _centers_. This response decreases in strength as the badge size is further from the _center_. The decrease follows a radial basis function with gaussian shape. The sum of the responses given by all the centers provide the value estimation and the preference for one of the two pure strategies (hawk or dove). During the learning process individuals update the response that each one of these centers triggers. In the case of the preference for the strategies the numerical value resulting from the sum of the responses is translated to a probability of one of the two pure strategies through a logistic function. Figure \ref{fig:learning_cartoonRBF} shows a made up example of how the function approximation works for the actor (top panel - probability of choosing dove) and the critic (bottom panel - expected payoff from facing an individual with a given badge size).
+process, we use the reinforcement learning formalism. Specifically, we use the actor-critic algorithm [@sutton_reinforcement_2018]. Individuals ( _learners_ ) perceive the _badge_ of their counterpart as the environmental state in which they find themselves. They estimate the value of that state and a preference for playing hawk (dove) in that state. They update their estimation and preference after each interaction they have. Given that the badge size is a real number between 0 and 1, there are infinitely many environmental states. Thus, for their value estimation and preference computation, individual must use a form of generalization. We let them
+use as generalization a function approximation method based on radial basis functions. Each individual uses five _centers_ spread uniformly throughout the range of badge size variation (from 0 to 1). Each time an individual interacts with a conspecific the size of the badge of the interacting partner triggers are response from each one of the _centers_. This response decreases in strength as the badge size is further from the _center_. The decrease follows a radial basis function with gaussian shape. The sum of the responses given by all the centers provide the value estimation and the preference for one of the two pure strategies (hawk or dove). During the learning process individuals update the _weight_ of the response that each one of these centers triggers. In the case of the preference for the strategies the numerical value resulting from the sum of the responses is translated to a probability of one of the two pure strategies through a logistic function. Figure \ref{fig:learning_cartoonRBF} shows a made up example of how the function approximation works for the actor (top panel - probability of choosing dove) and the critic (bottom panel - expected payoff from facing an individual with a given badge size).
 
 ```{r fig2, echo=FALSE, fig.cap="\\label{fig:learning_cartoonRBF}Function approximation for the actor and the critic. Using random values for the responses of each center. Circles show the location of the centers and the maximum response they trigger, while the lines show the total response along the badge size continium.", out.width = '80%'}
 knitr::include_graphics("cartoonRBF.png")
@@ -63,25 +70,36 @@ knitr::include_graphics("Simulations//QualStDv_//hawkDoveLearn.png")
 
 ## Results when individuals vary in their quality
 
+In figure \ref{fig:learning_var0.1} we show results of phenotypic and interaction types frequencies from simulations in which individuals vary in their quality. 
+The value of quality is drawn from a truncated normal distribution with mean 0.5 
+and standard deviation 0.1. Compared to the expectation from evolutionary dynamics of the standard game, the learning scenario with qualiy variation shows lower levels of hawks and therefore lower levels of escalated conflict. At this point individuals do not respond adaptively to the quality of their partner, instead their preference for a given action is dependent on their own quality. 
+
 ```{r fig4, echo=FALSE, fig.cap="\\label{fig:learning_var0.1}Learning equilibrium when individuals vary in quality. Dashed lines are the  game theoretical predictions in the standard game.", out.width = '80%'}
 knitr::include_graphics("Simulations//QualStDv_//hawkDoveLearn_0.1.png")
 ```
 
 ## Overal effect of variance
 
+In figure \ref{fig:learning_all_var} we show how the effect of increasing 
+variance in quality further deacrases the amount of individuals in a population 
+expressing the hawk phenotype.
 
 ```{r fig5, echo=FALSE, fig.cap="\\label{fig:learning_all_var}Effect of variation in quality for the learning equilibrium.", out.width = '80%'}
 knitr::include_graphics("Simulations//QualStDv_//effectQualVariance.png")
 ```
 
 
-## How does learning look like in the Hawk-Dove game
+## How does learning look like in the Hawk-Dove game?
+
+Figures \ref{fig:learning_var0.1} and \ref{fig:learning_all_var} only show how learners behave at a population level, but they do not show how inter-invidivual variation behind those frequencies. In figure \ref{fig:AC_HD} we show the result of the function aproximation mechanism arising at the end of a generation for a sample of the individuals of the populations. These results are show under three different levels of variation in quality. All three panes show that through their learning processes individuals split up in two groups, one which mostly behaves like a hawk and a second that mostly behaves like a dove. The group of "hawks" is mostly, but no exclusively, composed of individuals whose quality is on the upper half of the quality distribution. Concordantly, the group of "doves" is mostly composed of individuals whose qualiy is on the lower half of the quality distribution. The relation between quality and the prefered behaviour of individuals obviously only holds in scenarios with variance in quality. In the scenario with quality invariance, the split of individuals in two groups with a tenedency for each behaviour nevertheless remains. 
 
 ```{r fig6, echo=FALSE, fig.cap="\\label{fig:AC_HD}Within population variation in the learning parameters at the end of learning for three scenarios of variation in the quality of individuals.", out.width = '80%'}
 knitr::include_graphics("Simulations//QualStDv_//WeightsVarQualSt.png")
 ```
 
 ## How do the learning dynamics look like
+
+In figure \ref{fig:learn_dyn} we show the learning trajectory, for the actor and the critic, of a sample of individuals. These dynamics show how individuals split in the two groups according to their experiences. Despite the robustness of the bimodal distribution along the learning dynamics, it is not uncommon that individual go from one group to the other. 
 
 ```{r fig7, echo=FALSE, fig.cap="\\label{fig:learn_dyn}Learning dynamics of the individuals in a population.", out.width = '80%'}
 knitr::include_graphics("Simulations//mutType_//learnDyn200.png")
@@ -90,13 +108,17 @@ knitr::include_graphics("Simulations//mutType_//learnDyn200.png")
 
 # How do learners fare against the "pure" strategies
 
+Finally, in a new set of simulations we explore the question of how competitive learners are in competition with the pure strategies. Figure \ref{fig:types_comp}
+show the results of competition among the three strategies. The population starts with a 1:1 ratio of pure hawks anf doves, and learners are intruced by mutation. Learners manage to increase in frequency. They, however, do not manage to outcompete the pure streategies. In the end, there is a polymorphic equilibrium with the three strategies coexisting, with learners being the most frequen of the threee. 
+
 ```{r fig8, echo=FALSE, fig.cap="\\label{fig:types_comp}Evolutionary dynamics of the learners competing against pure strategies.", out.width = '80%'}
 knitr::include_graphics("Simulations//mutType_//evolDynTypes.png")
 ```
 
 
-
 # What's next?
 
 Let reaction norm evolve, under different initial conditions. 
+
+# Cited literature
 
