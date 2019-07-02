@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"mutType"
+scenario<-"baselineFit"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +19,7 @@ scenario<-"mutType"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("indLearn",listTest,value=TRUE))
 
-pop<-fread(here("Simulations",paste0(scenario,"_"),List[4]))
+pop<-fread(here("Simulations",paste0(scenario,"_"),List[1]))
 
 pop<-pop[,.SD[nInteract==max(nInteract)],by=.(seed,time,indId)]
 
@@ -39,10 +39,10 @@ popStats<-pop[, as.list(unlist(lapply(.SD,
 
 # Plot variation of the weights ------------------------------------------------
 
-png(here("Simulations",paste0(scenario,"_"),"weightsVarQualSt.png"),
-    width = 1000,height = 800)
+# png(here("Simulations",paste0(scenario,"_"),"weightsVarQualSt.png"),
+#     width = 1000,height = 800)
 
-gener<-pop[,unique(time)][10]
+gener<-pop[,unique(time)][25]
 nCenters<-5
 interv<-1/nCenters
 centers<-interv*0.5+interv*seq(0,nCenters-1)
@@ -75,12 +75,12 @@ for(ind in pop[time==gener&genotype==2,unique(indId)]){
                                   Quality],colorbreaksQual)],lwd=0.5)
 }
 # Critic 
-weightsCrit<-as.double(evolStats[time==min(time),.SD,
+weightsCrit<-as.double(evolStats[time==gener,.SD,
                                  .SDcols=grep("m.weightCrit",
                                               names(evolStats),value = TRUE)])
 par(plt=posPlot(numploty = 2,idploty = 1),new=TRUE)
 plot(totRBF(rangx,centers,0.01,weightsCrit)~rangx,type='l',col=1,xaxt="s",
-     yaxt="s",xlab="Badge",ylab="value",ylim=c(-0.20,1),lwd=3)
+     yaxt="s",xlab="Badge",ylab="value",ylim=c(-1,1.5),lwd=3)
 lines(totRBF(rangx,centers,0.01,
              as.double(popStats[time==gener,.SD,
                                 .SDcols=paste0("WeightCrit_",0:4,".m")]))
@@ -110,7 +110,49 @@ color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
                cex.tit = 1,
                numplotx = 15,numploty = 10,idplotx =15,idploty = 4)
 title("quality   ", line = 1)
-dev.off()
+# dev.off()
+
+# Show the reaction norms of the sampled individuals ---------------------------
+
+gener<-pop[,unique(time)][25]
+rangx<-seq(0,1,length=1000)
+# yaxs<-c("s","n","n")
+# ylabsUP<-c("p(Dove)","","")
+# ylabsDO<-c("Value","","")
+# Actor 
+plot.new()
+par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 1),las=1,new=T)
+plot(rep(0.5,1000)~rangx,type='l',col="grey",xaxt="s",
+     yaxt="s", xlab="Quality",ylab="Badge",ylim=c(0,1),lwd=1.5)
+lines(sapply(rangx,
+             FUN=function(x){
+               do.call(logist,
+                       as.list(c(x,
+                                 as.double(popStats[time==gener,
+                                                    .SD,
+                                                    .SDcols=c("alpha.m"
+                                                              ,"beta.m")]))))})
+              ~rangx,
+      col="black")
+
+for(ind in pop[time==gener&genotype==2,unique(indId)]){
+  lines(sapply(rangx,
+               FUN=function(x){
+                 do.call(logist,
+                         as.list(c(x,
+                                   as.double(pop[(time==gener&indId==ind),
+                                                      .SD,
+                                                      .SDcols=c("alpha"
+                                                                ,"beta")][1]
+                                             ))))})
+        ~rangx,col=pop[(time==gener&indId==ind),seed]+2,lwd=0.5)
+}
+
+
+
+pop[(time==gener&indId==ind)]
+
+
 
 # Scatterplot relating quality and central weight of the actor -----------------
 
@@ -125,8 +167,8 @@ legend("topright",legend = unique(pop$QualStDv)[order(unique(pop$QualStDv))],
        col = colboxes[1:3],pch = 19,title = expression(sigma^2))
 dev.off()
 
-hist(pop[,nInteract],xaxt="s")
-hist(pop[,Badge],xaxt="s")
+hist(pop[time==gener,nInteract],xaxt="s")
+hist(pop[time==gener,Badge],xaxt="s")
 
 
 pop[WeightAct_3==0,unique(genotype)]

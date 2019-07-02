@@ -11,15 +11,15 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDv_"
+scenario<-"baselineFit"
 
 
 # Load files -------------------------------------------------------------------
 
-(listTest<-list.files(here("Simulations",scenario)))
+(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (sdList<-grep("evol",listTest,value=TRUE))
 
-evol<-fread(here("Simulations",scenario,sdList[2]))
+evol<-fread(here("Simulations",paste0(scenario,"_"),sdList[1]))
 
 # Extract means and IQR for the dynamic variables ------------------------------
 
@@ -66,7 +66,8 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 
 # Plot mean and IQRs of the genotypes and phenotypes ----------------------------
 
-png(here("Simulations",scenario,"hawkDoveLearn_0.1.png"),height = 800,width = 800)
+# png(here("Simulations",scenario,"hawkDoveLearn_0.1.png"),
+# height = 800,width = 800)
 
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="s",las=2)
 plot(x=c(0,max(evolStats$time)),y=c(0.5,0.5),type="l",lwd=2,col="grey",
@@ -152,7 +153,6 @@ with(evolStats,{
 
 # Plot the weights of the actor ------------------------------------------------
 
-
 nCenters<-5
 interv<-1/nCenters
 centers<-interv*0.5+interv*seq(0,nCenters-1)
@@ -201,6 +201,32 @@ with(evolStats,{
 })
 legend("topleft",legend = c(expression(alpha),expression(beta)),
        col=colGenesLin,lwd=2,bty = "n")
+
+
+hist(evol[time==9600,meanBeta])
+hist(evol[time==9600,meanAlpha])
+plot(meanAlpha~meanBeta,data=evol[time==9600])
+linReg<-lm(meanAlpha~meanBeta,data=evol[time==9600])
+linReg$coefficients[2]
+
+
+# Plot trajectory of the trait evolution for all runs separetely ---------------
+
+traitsTrajs<-dcast(evol,time~seed,value.var = c("meanAlpha","meanBeta"))
+
+par(plt=posPlot(numploty = 2,idploty = 2),xaxt="s",las=1)
+matplot(x=traitsTrajs[,time],
+        y=traitsTrajs[,.SD,.SDcol=grep("Alpha",names(traitsTrajs),value = T)],
+        type="l",lwd=2,col=2:17,lty = 1,
+     xlab="",ylab=expression(alpha),cex.lab=1.5,cex.axis=1.2,xaxt='n')
+lines(y=c(0,0),x=c(0,traitsTrajs[time==max(time),time]),col="grey")
+par(plt=posPlot(numploty = 2,idploty = 1),xaxt="s",las=1,new=T)
+matplot(x=traitsTrajs[,time],
+        y=traitsTrajs[,.SD,.SDcol=grep("Beta",names(traitsTrajs),value = T)],
+        type="l",lwd=2,col=2:17,lty = 1,
+        xlab="",ylab=expression(beta),cex.lab=1.5,cex.axis=1.2,xaxt='s')
+lines(y=c(0,0),x=c(0,traitsTrajs[time==max(time),time]),col="grey")
+
 
 
 # Plot the logistic function of the last generation ---------------------------
