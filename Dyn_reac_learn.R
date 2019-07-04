@@ -73,13 +73,13 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,value.var = c("meanAlpha","meanBeta"))
-runChoi<-0
+runChoi<-5
 
 # Average trajectory
 par(plt=posPlot(numploty = 3,idploty = 2),xaxt="s",las=1)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
      ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta)]))[c(1,5)],
-     xlab="",ylab="Trait \n value",cex.lab=1.5,cex.axis=1,xaxt='n')
+     xlab="",ylab="Trait \n value",cex.lab=1.5,cex.axis=1,xaxt='n',las=1)
 polygon(x=c(evolStats$time,rev(evolStats$time)),
         y=c(evolStats$upIQR.alpha,rev(evolStats$lowIQR.alpha)),
         col=colGenesPol[1],border = NA)
@@ -97,8 +97,7 @@ axis(side=1,padj = -3)
 par(new=T)
 matplot(x=traitsTrajs[,time],
         y=traitsTrajs[,.SD,
-                      .SDcol=grep(paste0("_",runChoi),
-                                  names(traitsTrajs),value = T)],
+                      .SDcol=paste0(c("meanAlpha_","meanBeta_"),runChoi)],
         col=colGenesLin,lty = 2,type="l",lwd=3,
         ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta)]))[c(1,5)],
         ylab = "",xlab="",xaxt="n",yaxt="n")
@@ -108,16 +107,15 @@ gen2plot<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
 # Plor the actor
 seqYax<-c("s",rep("n",3))
 # seqYlabUp<-c("Badge",rep("",3))
-seqYlabUp<-c("Value",rep("",3))
-seqYlabDown<-c("P(dove)",rep("",3))
-seqXlabDown<-c("","Badge size","")
+seqYlabUp<-c("P(dove)",rep("",3))
+seqYlabDown<-c("Badge",rep("",3))
+seqXlabDown<-c("","Quality","")
 rangQual<-seq(0,1,length.out = 100)
 nCenters<-5
 interv<-1/nCenters
 centers<-interv*0.5+interv*seq(0,nCenters-1)
 rangx<-seq(0,1,length=1000)
 count<-0
-genC<-7
 for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){
   count<-count+1
   par(plt=posPlot(numplotx = 4,numploty = 3,idplotx = count,idploty = 3),
@@ -125,24 +123,52 @@ for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){
   weightsAct<-as.double(evol[(time==unique(time)[genC])&seed==runChoi,.SD,
                                    .SDcols=grep("WeightAct",
                                                 names(evol),value = TRUE)])
-  plot(totRBF(rangx,centers,0.01,weightsAct)~rangx,
-       yaxt=seqYax[count],ylab=seqYlabUp[count], xlab="",type="l",lwd=3,xaxt="n")
-  # points(y=weightsAct,x=centers,cex=1.5,pch=19,col="red")
-  for(ind in pop[time==unique(time)[genC]&seed==runChoi,indId]){
-    lines(totRBF(rangx,centers,0.01,weightsAct)~rangx)
-  }
-  text(x=0.5,y=0.8,labels = paste0("time=",unique(evolStats$time)[genC]))
+  plot(logist(totRBF(rangx,centers,0.01,weightsAct),alpha=0,beta=1)~rangx,
+       yaxt=seqYax[count],ylab=seqYlabUp[count],xlab="",type="l",
+       lwd=3,xaxt="n",ylim=c(0,1))
+  tempPop<-pop[time==unique(time)[genC]&seed==runChoi,.SD[.N],
+               .SDcol=c(grep("WeightAct",
+                           names(evol),value = TRUE),"Quality","alpha","beta"),
+               by=indId]
+  dataIndCrit<-sapply(as.list(tempPop[,indId]),
+                       function(x){x=
+                         logist(totRBF(rangx,
+                                       centers,0.01,
+                                       as.double(
+                                         tempPop[indId==x,.SD,
+                                                 .SDcol=grep("WeightAct",
+                                                             names(tempPop),
+                                                             value = TRUE)
+                                                          ])),alpha=0,beta = 1)})
+  matlines(x=rangx,y=dataIndCrit,col = paletteMeans(100)[
+    findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2)
+  text(x=0.5,y=0.1,labels = paste0("time=",unique(evolStats$time)[genC]))
   par(plt=posPlot(numplotx = 4,numploty = 3,idplotx = count,idploty = 1),
       las=1,new=TRUE)
-  weightsAct<-as.double(evolStats[time==unique(time)[genC],.SD,
-                                  .SDcols=grep("m.weightAct",
-                                               names(evolStats),value = TRUE)])
-  plot(logist(totRBF(rangx,centers,0.01,weightsAct),alpha = 0,
-              beta = 1)~rangx,type='l',col=1,
+  plot(sapply(rangx,
+               FUN=function(x){
+                 do.call(logist,
+                         as.list(c(x,
+                                   as.double(evol[(time==unique(time)[genC])&
+                                                    seed==runChoi,
+                                                      .SD,
+                                                      .SDcols=c("meanAlpha"
+                                                                ,"meanBeta")]))))})
+        ~rangx,type='l',col=1,
        xlab=seqXlabDown[count],ylab=seqYlabDown[count],ylim=c(0,1),
        lwd=3,yaxt=seqYax[count],xaxt="s")
-  points(y=logist(weightsAct,0,1),x=centers,cex=1.5,pch=19,col="red")
+  dataIndReact<-sapply(as.list(tempPop[,indId]),
+                      function(x){x=
+                        sapply(rangx, function(y)
+                        do.call(logist,as.list(c(y,as.double(tempPop[indId==x,.SD,
+                                                .SDcol=c("alpha","beta")])))))})
+  matlines(x=rangx,y=dataIndReact,col = paletteMeans(100)[
+    findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2)
+  
 }
+par(plt=posPlot())
+hist(pop[,Badge])
+hist(pop[,Quality])
+hist(pmin(pmax(rnorm(2000,mean = 0.5,sd = 0.3),0),1))
 
 
-# Plot reaction norms

@@ -48,7 +48,6 @@ nCenters<-5
 interv<-1/nCenters
 centers<-interv*0.5+interv*seq(0,nCenters-1)
 rangx<-seq(0,1,length=1000)
-colorbreaksQual<-seq(0,1,length=100)
 yaxs<-c("s","n","n")
 ylabsUP<-c("p(Dove)","","")
 ylabsDO<-c("Value","","")
