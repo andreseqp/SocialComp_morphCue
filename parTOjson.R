@@ -8,28 +8,28 @@ library("here")
 fileName<-"parameters.json"
 
 
-param<-list(totGen   = 10000,   nRep    = 15,
-            printGen = 400,   printLearn = 400,
-            printLearnInt = 150,
+param<-list(totGen   = 10,   nRep    = 30,
+            printGen = 1,   printLearn = 1,
+            printLearnInt = 100,
             popSize  = 1000,  baselineFit = 2,   
-            MutSd    = 0.1,
-            nInt        = 750,  init     = c(0,0,1),
+            MutSd    = 0.0,
+            nInt        = 2000,  init     = c(0,0,1),
             mutRate  = 0.02,  mutType  = 0,
-            sampleSize = 5,   strQual  = 10,
-            alphaBad	 = 0,    betaBad	 = 0,
+            sampleSize = 20,   strQual  = 10,
+            alphaBad	 = 5,    betaBad	 = 10,
             alphaCrit  = 0.2,  alphaAct = 0.2,
             sigSq   	 = 0.01, nCenters = 5,
             QualStDv   = 0.3,  
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "baselineFit",
-            rangParam = c(1.9),
+            namParam = "QualStDv",
+            rangParam = c(0.1,0.2,0.3),
             folder=paste(here("Simulations"),"/",sep=""))
 
 
 
 rang<-1
 
-check_create.dir(here("Simulations"),param = rep(param$namParam,1),
+check_create.dir(here("Simulations","learHonest_"),param = param$namParam,
                  values = c(""))
 
 listfolders<-check_create.dir(here("Simulations","sdCue_"),
@@ -38,7 +38,7 @@ listfolders<-check_create.dir(here("Simulations","sdCue_"),
 
 
 for (i in 1:1) {
-  param$folder<-paste(here("Simulations",param$namParam),"_/",sep="")
+  param$folder<-paste0(here("Simulations","learHonest_",param$namParam),"_/")
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   if(file.exists(paste(param$folder,fileName,sep = ''))){
     currFile<-fromJSON(paste(param$folder,fileName,sep = ''))

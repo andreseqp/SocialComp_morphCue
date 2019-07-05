@@ -31,8 +31,7 @@ logist<-function(x,alpha,beta){
 # Create output folders --------------------------------------------------------
 
 check_create.dir<-function(folder,param,values){
-  setwd(folder)
-  listfolders<-paste(param,values,"_",sep = "")  
+  listfolders<-paste0(folder,"/",param,values,"_")  
   currFolders<-lapply(listfolders,dir.exists)
   if(sum(currFolders>0)){
     warning("At least one of the folders already exists \n Please check",

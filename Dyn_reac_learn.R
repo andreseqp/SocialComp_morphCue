@@ -18,7 +18,7 @@ scenario<-"baselineFit"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
+fileId<-2
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -130,7 +130,7 @@ for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){
                .SDcol=c(grep("WeightAct",
                            names(evol),value = TRUE),"Quality","alpha","beta"),
                by=indId]
-  dataIndCrit<-sapply(as.list(tempPop[,indId]),
+  dataIndAct<-sapply(as.list(tempPop[,indId]),
                        function(x){x=
                          logist(totRBF(rangx,
                                        centers,0.01,
@@ -140,7 +140,7 @@ for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){
                                                              names(tempPop),
                                                              value = TRUE)
                                                           ])),alpha=0,beta = 1)})
-  matlines(x=rangx,y=dataIndCrit,col = paletteMeans(100)[
+  matlines(x=rangx,y=dataIndAct,col = paletteMeans(100)[
     findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2)
   text(x=0.5,y=0.1,labels = paste0("time=",unique(evolStats$time)[genC]))
   par(plt=posPlot(numplotx = 4,numploty = 3,idplotx = count,idploty = 1),
@@ -164,8 +164,10 @@ for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){
                                                 .SDcol=c("alpha","beta")])))))})
   matlines(x=rangx,y=dataIndReact,col = paletteMeans(100)[
     findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2)
-  
 }
+rm(list=grep("temp",ls(),value = T))
+
+
 par(plt=posPlot())
 hist(pop[,Badge])
 hist(pop[,Quality])

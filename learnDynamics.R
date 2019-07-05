@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"mutType"
+scenario<-"learHonest_/QualStDv"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +19,7 @@ scenario<-"mutType"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
-indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[4]))
+indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[1]))
 
 
 
@@ -36,7 +36,7 @@ colorbreaksQual<-seq(0,1,length=100)
 
 yaxRang<-c("s",rep("n",4))
 xaxRang<-c("s","n")
-seedCh<-0
+seedCh<-1
 countx<-0
 county<-2
 plot.new()

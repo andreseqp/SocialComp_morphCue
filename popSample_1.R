@@ -11,17 +11,18 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"baselineFit"
+scenario<-"learHonest_/QualStDv"
 
 
 # Load files -------------------------------------------------------------------
 
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
-(List<-grep("indLearn",listTest,value=TRUE))
+(evolList<-grep("evol",listTest,value=TRUE))
+(indList<-grep("ind",listTest,value=TRUE))
 
-pop<-fread(here("Simulations",paste0(scenario,"_"),List[1]))
-
-pop<-pop[,.SD[nInteract==max(nInteract)],by=.(seed,time,indId)]
+fileId<-2
+evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
+pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
 
 # Extract means and IQR for the dynamic variables ------------------------------
@@ -37,64 +38,118 @@ popStats<-pop[, as.list(unlist(lapply(.SD,
                         "WeightCrit_0","WeightCrit_1","WeightCrit_2",
                         "WeightCrit_3","WeightCrit_4")]
 
+# Extract means and IQR for the dynamic variables for each replicate -----------
+# separately
+Runmeans<-pop[, as.list(unlist(lapply(.SD, 
+                                          function(x) list(m = mean(x),
+                                                           upIQR = fivenum(x)[4],
+                                                           downIQR = fivenum(x)[2]
+                                          )))),
+                  by = .(time,seed), 
+                  .SDcols=c("Quality","alpha","beta","Badge","nInteract","WeightAct_0",
+                            "WeightAct_1","WeightAct_2","WeightAct_3","WeightAct_4",
+                            "WeightCrit_0","WeightCrit_1","WeightCrit_2",
+                            "WeightCrit_3","WeightCrit_4")]
+
+
 # Plot variation of the weights ------------------------------------------------
 
 # png(here("Simulations",paste0(scenario,"_"),"weightsVarQualSt.png"),
 #     width = 1000,height = 800)
 
-gener<-pop[,unique(time)][25]
+gener<-pop[,unique(time)][1]
+runChoi<-0
 nCenters<-5
 interv<-1/nCenters
 centers<-interv*0.5+interv*seq(0,nCenters-1)
 rangx<-seq(0,1,length=1000)
-colorbreaksQual<-seq(0,1,length=100)
+tempPop<-pop[time==gener&seed==runChoi,.SD[.N],
+             .SDcol=c(grep("Weight",
+                           names(evol),value = TRUE),"Quality"),
+             by=indId]
+dataIndAct<-sapply(as.list(tempPop[,indId]),
+                   function(x){x=
+                     logist(totRBF(rangx,
+                                   centers,0.01,
+                                   as.double(
+                                     tempPop[indId==x,.SD,
+                                             .SDcol=grep("WeightAct",
+                                                         names(tempPop),
+                                                         value = TRUE)
+                                             ])),alpha=0,beta = 1)})
+
 # yaxs<-c("s","n","n")
 # ylabsUP<-c("p(Dove)","","")
 # ylabsDO<-c("Value","","")
 # Actor 
 plot.new()
-weightsAct<-as.double(evolStats[time==gener,.SD,
-                                  .SDcols=grep("m.weightAct",names(evolStats),
-                                               value = TRUE)])
+# Average of the evolutionary replicates
+# weightsAct<-as.double(evolStats[time==gener,.SD,
+#                                   .SDcols=grep("m.weightAct",names(evolStats),
+#                                                value = TRUE)])
+# One particular run
 par(plt=posPlot(numploty = 2,idploty = 2,numplotx = 1),las=1,new=T)
-plot(logist(totRBF(rangx,centers,0.01,weightsAct),alpha = 0,
-            beta = 1)~rangx,type='l',col=1,xaxt="n",
-     yaxt="s",
-     xlab="",ylab="p(Dove)",ylim=c(0,1),lwd=3)
+matplot(x=rangx,y=dataIndAct,col = paletteMeans(100)[
+  findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2,lty = 1,xaxt="n",
+  yaxt="s",  xlab="",ylab="p(Dove)",type = "l")
+
+weightsAct<-as.double(evol[time==gener&seed==runChoi,.SD,
+                           .SDcols=grep("WeightAct",names(evol),
+                                        value = TRUE)])
+
+lines(logist(totRBF(rangx,centers,0.01,weightsAct),alpha = 0,
+            beta = 1)~rangx,col=1,lwd=3)
+# average of all the replicates
+# lines(logist(totRBF(rangx,centers,0.01,
+#                     as.double(popStats[time==gener,.SD,
+#                                        .SDcols=paste0("WeightAct_",0:4,".m")])),
+#              alpha=0,beta=1)~rangx,col="red")
+# average of individuals from one run
 lines(logist(totRBF(rangx,centers,0.01,
-                    as.double(popStats[time==gener,.SD,
+                    as.double(Runmeans[time==gener&seed==runChoi,.SD,
                                        .SDcols=paste0("WeightAct_",0:4,".m")])),
              alpha=0,beta=1)~rangx,col="red")
-for(ind in pop[time==gener&genotype==2,unique(indId)]){
-  lines(logist(totRBF(rangx,centers,0.01,
-                      as.double(pop[(time==gener&indId==ind),.SD,
-                                    .SDcols=grep("WeightAct",names(pop),
-                                                 value=TRUE)][1])),
-               alpha=0,beta=1)~rangx,col=paletteMeans(100)[
-                 findInterval(pop[(time==gener&indId==ind),
-                                  Quality],colorbreaksQual)],lwd=0.5)
-}
+
+
 # Critic 
-weightsCrit<-as.double(evolStats[time==gener,.SD,
-                                 .SDcols=grep("m.weightCrit",
-                                              names(evolStats),value = TRUE)])
+
+# get data structure ready for plotting
+dataIndCrit<-sapply(as.list(tempPop[,indId]),
+                    function(x){x=
+                      logist(totRBF(rangx,
+                                    centers,0.01,
+                                    as.double(
+                                      tempPop[indId==x,.SD,
+                                              .SDcol=grep("WeightCrit",
+                                                          names(tempPop),
+                                                          value = TRUE)
+                                              ])),alpha=0,beta = 1)})
+
+# average of all replicates
+# weightsCrit<-as.double(evolStats[time==gener,.SD,
+#                                  .SDcols=grep("m.weightCrit",
+#                                               names(evolStats),value = TRUE)])
+# One particular run
 par(plt=posPlot(numploty = 2,idploty = 1),new=TRUE)
-plot(totRBF(rangx,centers,0.01,weightsCrit)~rangx,type='l',col=1,xaxt="s",
-     yaxt="s",xlab="Badge",ylab="value",ylim=c(-1,1.5),lwd=3)
+matplot(x=rangx,y=dataIndCrit,col = paletteMeans(100)[
+  findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2,lty = 1,
+  type = "l",xaxt="s",yaxt="s",xlab="Badge",ylab="value",)
+
+weightsAct<-as.double(evol[time==gener&seed==runChoi,.SD,
+                           .SDcols=grep("WeightAct",names(evol),
+                                        value = TRUE)])
+lines(totRBF(rangx,centers,0.01,weightsCrit)~rangx,
+     ylim=as.double(tempPop[,.(min(WeightCrit_4),max(WeightCrit_1))]),lwd=3)
+# Average from all replicates
+# lines(totRBF(rangx,centers,0.01,
+#              as.double(popStats[time==gener,.SD,
+#                                 .SDcols=paste0("WeightCrit_",0:4,".m")]))
+#       ~rangx,col="red")
+# average of individuals from one run
 lines(totRBF(rangx,centers,0.01,
-             as.double(popStats[time==gener,.SD,
-                                .SDcols=paste0("WeightCrit_",0:4,".m")]))
-      ~rangx,col="red")
-for(ind in pop[time==gener,unique(indId)]){
-  lines(totRBF(rangx,centers,0.01,
-               as.double(pop[(time==gener&indId==ind),.SD,
-                             .SDcols=grep("WeightCrit",names(pop),
-                                          value=TRUE)][1]))
-        ~rangx,col=paletteMeans(100)[
-          findInterval(pop[(time==gener&indId==ind),
-                           Quality],colorbreaksQual)],lwd=0.5)
-}
-  
+                    as.double(Runmeans[time==gener&seed==runChoi,.SD,
+                                       .SDcols=paste0("WeightCrit_",0:4,".m")]))
+             ~rangx,col="red")
 
 # par(new=FALSE)
 # color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
@@ -114,7 +169,7 @@ title("quality   ", line = 1)
 
 # Show the reaction norms of the sampled individuals ---------------------------
 
-gener<-pop[,unique(time)][25]
+gener<-pop[,unique(time)][9]
 rangx<-seq(0,1,length=1000)
 # yaxs<-c("s","n","n")
 # ylabsUP<-c("p(Dove)","","")
@@ -134,23 +189,18 @@ lines(sapply(rangx,
                                                               ,"beta.m")]))))})
               ~rangx,
       col="black")
+dataIndReact<-sapply(as.list(tempPop[,indId]),
+                     function(x){x=
+                       sapply(rangx, function(y)
+                         do.call(logist,
+                                 as.list(
+                                   c(y,
+                                     as.double(tempPop[indId==x,.SD,
+                                                       .SDcol=c("alpha","beta")
+                                                       ])))))})
+matlines(x=rangx,y=dataIndReact,col = paletteMeans(100)[
+  findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2)
 
-for(ind in pop[time==gener&genotype==2,unique(indId)]){
-  lines(sapply(rangx,
-               FUN=function(x){
-                 do.call(logist,
-                         as.list(c(x,
-                                   as.double(pop[(time==gener&indId==ind),
-                                                      .SD,
-                                                      .SDcols=c("alpha"
-                                                                ,"beta")][1]
-                                             ))))})
-        ~rangx,col=pop[(time==gener&indId==ind),seed]+2,lwd=0.5)
-}
-
-
-
-pop[(time==gener&indId==ind)]
 
 
 

@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"baselineFit"
+scenario<-"learHonest_/QualStDv"
 
 
 # Load files -------------------------------------------------------------------
