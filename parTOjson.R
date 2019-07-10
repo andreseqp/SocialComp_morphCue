@@ -21,13 +21,16 @@ param<-list(totGen   = 10,   nRep    = 30,
             sigSq   	 = 0.01, nCenters = 5,
             QualStDv   = 0.3,  
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "QualStDv",
-            rangParam = c(0.1,0.2,0.3),
+            namParam = "alphaAct",
+            rangParam = c(0.01,0.05,0.1),
             folder=paste(here("Simulations"),"/",sep=""))
 
 
 
 rang<-1
+
+check_create.dir(here("Simulations"),param = "learHonest",
+                 values = c(""))
 
 check_create.dir(here("Simulations","learHonest_"),param = param$namParam,
                  values = c(""))

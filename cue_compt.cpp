@@ -29,8 +29,8 @@ Start date :
 #include <math.h>	
 #include <vector>
 #include "tchar.h"
-#include "C:\\Users\\a.quinones\\Dropbox\\C++\\Routines\\C++\\RandomNumbers\\random.h"
-#include "C:\\Users\\a.quinones\\Dropbox\C++\\json.hpp"       
+#include "..\\Cpp\\Routines\\C++\\RandomNumbers\\random.h"
+#include "..\\Cpp\\json.hpp"       
 // Header for reading and using JSON files see https://github.com/nlohmann/json
 
 using namespace std;
