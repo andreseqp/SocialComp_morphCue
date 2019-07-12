@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/QualStDv"
+scenario<-"learHonest_/alphaAct"
 
 
 # Load files -------------------------------------------------------------------
@@ -20,7 +20,7 @@ scenario<-"learHonest_/QualStDv"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-3
+fileId<-2
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -205,7 +205,7 @@ weightsCritAll<-as.double(evolStats[time==gener,.SD,
 par(plt=posPlot(numploty = 2,idploty = 1),new=TRUE)
 matplot(x=rangx,y=dataIndCrit,col = paletteMeans(100)[
   findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2,lty = 1,
-  type = "l",xaxt="s",yaxt="s",xlab="Badge",ylab="value",)
+  type = "l",xaxt="s",yaxt="s",xlab="Badge",ylab="value")
 
 
 lines(totRBF(rangx,centers,0.01,weightsCritAll)~rangx,

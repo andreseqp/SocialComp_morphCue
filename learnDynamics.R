@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/QualStDv"
+scenario<-"learHonest_/alphaAct"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +19,7 @@ scenario<-"learHonest_/QualStDv"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
-indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[1]))
+indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[3]))
 
 
 
@@ -40,7 +40,7 @@ seedCh<-1
 countx<-0
 county<-2
 plot.new()
-for(behavTime in unique(indLearn$nInteract)){
+for(behavTime in unique(indLearn$nInteract)[15:39]){
   if(countx==5)  {countx<-0;county<-county-1}
   countx<-countx+1
   par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx),

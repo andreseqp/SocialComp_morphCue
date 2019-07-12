@@ -3,8 +3,8 @@
 # Libraries
 source(here("aesth.R"))
 library('rmarkdown')
-source("C:/Users/a.quinones/Dropbox/R_files/posPlots.R")
-library('plotrix')
+source(here("..","R_files","posPlots.R"))
+# library('plotrix')
 library(data.table)
 
 # Calculate response triggered by one RBF --------------------------------------
