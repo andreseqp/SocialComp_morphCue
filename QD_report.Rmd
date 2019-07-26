@@ -10,6 +10,78 @@ header-includes: \usepackage{float}
                 #\floatplacement{figure}{H}
 ---
 
+```{r loadData, echo=FALSE,include=FALSE}
+# Required libraries -----------------------------------------------------------
+
+library(here)
+here()
+source(here("AccFunc.R"))
+# Scenario to be plotted - corresponds to folders where simulations are stored
+scenario<-"mutType"
+(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(evolList<-grep(".txt",grep("evol",listTest,value=TRUE),value=TRUE))
+(indList<-grep("ind",listTest,value=TRUE))
+
+fileId<-1
+evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
+pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
+evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
+                   upIQR.freqGenHawk=fivenum(freqGenHawks)[4],
+                   lowIQR.freqGenHawk=fivenum(freqGenHawks)[2],
+                   m.freqGenDove=mean(freqGenDove),
+                   upIQR.freqGenDove=fivenum(freqGenDove)[4],
+                   lowIQR.freqGenDove=fivenum(freqGenDove)[2],
+                   m.freqEval=mean(freqGenEval),
+                   upIQR.freqGenEval=fivenum(freqGenEval)[4],
+                   lowIQR.freqGenEval=fivenum(freqGenEval)[2], 
+                   m.freqFenHawk=mean(freqFenHawks),
+                   upIQR.freqFenHawk=fivenum(freqFenHawks)[4],
+                   lowIQR.freqFenHawk=fivenum(freqFenHawks)[2],
+                   m.freqFenDove=mean(freqFenDoves),
+                   upIQR.freqFenDove=fivenum(freqFenDoves)[4],
+                   lowIQR.freqFenDove=fivenum(freqFenDoves)[2],
+                   m.meanAlpha=mean(meanAlpha),
+                   upIQR.alpha=fivenum(meanAlpha)[4],
+                   lowIQR.alpha=fivenum(meanAlpha)[2],
+                   m.meanBeta=mean(meanBeta),
+                   upIQR.beta=fivenum(meanBeta)[4],
+                   lowIQR.beta=fivenum(meanBeta)[2],
+                   m.freqHH = mean(freqHH),
+                   m.freqHD = mean(freqHD),
+                   m.freqDD = mean(freqDD),
+                   upIQR.freqHH = fivenum(freqHH)[4],
+                   upIQR.freqHD = fivenum(freqHD)[4],
+                   upIQR.freqDD = fivenum(freqDD)[4],
+                   lowIQR.freqHH = fivenum(freqHH)[4],
+                   lowIQR.freqHD = fivenum(freqHD)[2],
+                   lowIQR.freqDD = fivenum(freqDD)[2],
+                   m.weightAct_0=mean(WeightAct_0),
+                   m.weightAct_1=mean(WeightAct_1),
+                   m.weightAct_2=mean(WeightAct_2),
+                   m.weightAct_3=mean(WeightAct_3),
+                   m.weightAct_4=mean(WeightAct_4),
+                   m.weightCrit_0=mean(WeightCrit_0),
+                   m.weightCrit_1=mean(WeightCrit_1),
+                   m.weightCrit_2=mean(WeightCrit_2),
+                   m.weightCrit_3=mean(WeightCrit_3),
+                   m.weightCrit_4=mean(WeightCrit_4)),by=time]
+# Extract means and IQR for the dynamic variables ------------------------------
+
+popStats<-pop[, as.list(unlist(lapply(.SD, 
+                                      function(x) list(m = mean(x),
+                                                       upIQR = fivenum(x)[4],
+                                                       downIQR = fivenum(x)[2]
+                                      )))),
+              by = time, 
+              .SDcols=c("Quality","alpha","beta","Badge","nInteract","WeightAct_0",
+                        "WeightAct_1","WeightAct_2","WeightAct_3","WeightAct_4",
+                        "WeightCrit_0","WeightCrit_1","WeightCrit_2",
+                        "WeightCrit_3","WeightCrit_4")]
+
+
+# knitr::include_graphics("Simulations/mutType_/basicHawkDove.png")
+```
+
 # The Hawk-Dove game
 
 Individuals have one of two genetically determined phenotypic strategies. _Hawks_ are willing to start a conflict over resources, while _doves_ prefer to stand down in the hope to share the resource without an aggressive contest. Individuals interact randomly with each other over their lifetimes and collect resources depending on the strategy of theirs and their partners. In contrast to the classical _Hawk-dove_, in here when two _hawks_ interact with each other one of them wins the contest and gets $V-\frac{C}{2}$ as payoff; while the loser gets $-\frac{C}{2}$. Where $V$ is the value of the resource individuals are competing for, and $C$ is the cost of an aggressive contest. individuals share the cost, but only the winner gets the value of the resource.The rest of payoff matrix follows the standard game.

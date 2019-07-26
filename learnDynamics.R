@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/alphaAct"
+scenario<-"mutType"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +19,7 @@ scenario<-"learHonest_/alphaAct"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
-indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[3]))
+indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[1]))
 
 
 

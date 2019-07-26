@@ -9,6 +9,7 @@ Simulations/
 *.ipdb
 *.pdb
 *.log
+*.png
 QD_report.html
 QD_report.pdf
 cartoonRBF.png

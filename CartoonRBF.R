@@ -2,7 +2,7 @@ library(data.table)
 library(here)
 here()
 
-source("C:/Users/a.quinones/Dropbox/R_files/posPlots.R")
+source("../R_files/posPlots.R")
 
 
 png(here("cartoonRBF.png"),width=800,height = 800)
