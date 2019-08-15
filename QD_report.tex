@@ -88,7 +88,8 @@
 \begin{document}
 \maketitle
 
-\section{The Hawk-Dove game}\label{the-hawk-dove-game}
+\hypertarget{the-hawk-dove-game}{%
+\section{The Hawk-Dove game}\label{the-hawk-dove-game}}
 
 Individuals have one of two genetically determined phenotypic
 strategies. \emph{Hawks} are willing to start a conflict over resources,
@@ -128,27 +129,25 @@ which fit the game theoretical prediction.
 \includegraphics[width=0.8\linewidth]{Simulations/mutType_/basicHawkDove} \caption{\label{fig:HD_game}Hawk-dove game. Dashed line is the  game theoretical prediction for frequency of hawks.}\label{fig:fig1}
 \end{figure}
 
-\section{The effect of learning}\label{the-effect-of-learning}
+\hypertarget{the-effect-of-learning}{%
+\section{The effect of learning}\label{the-effect-of-learning}}
 
 We let individuals have a \emph{badge of status} that potentially
 signals their quality. To allow for this signalling, we let the size of
 the \emph{badge of status} of an individual be dependent on her quality
 through a reaction norm. we assume the size of the \emph{badge} is a
-value from 0 to 1. This value is given by
-
-\begin{equation}
+value from 0 to 1. This value is given by \begin{equation}
 s_i = \frac{1}{1+e^{-(\alpha_i+\gamma_iQ_i)}}
 \label{eq:react_norm}
-\end{equation}
+\end{equation} The parameters \(\alpha\) and \(\gamma\) in equation
+\ref{eq:react_norm} determine the shape of the reaction norm, and hence,
+how honest the \emph{badge} is in signalling the quality of the
+individual.Eventually, the aim is to allow the signalling system to
+evolve, by letting the parameters of the reaction norm be inherited from
+parent to offspring and be change by a mutational process.
 
-The parameters \(\alpha\) and \(\gamma\) in equation \ref{eq:react_norm}
-determine the shape of the reaction norm, and hence, how honest the
-\emph{badge} is in signalling the quality of the individual.Eventually,
-the aim is to allow the signalling system to evolve, by letting the
-parameters of the reaction norm be inherited from parent to offspring
-and be change by a mutational process.
-
-\subsection{How does learning work?}\label{how-does-learning-work}
+\hypertarget{how-does-learning-work}{%
+\subsection{How does learning work?}\label{how-does-learning-work}}
 
 To complete the receiver side of the signalling system, we introduce a
 new strategy in the game that we call \emph{learner}. \emph{Learners}
@@ -190,8 +189,9 @@ payoff from facing an individual with a given badge size).
 \includegraphics[width=0.8\linewidth]{cartoonRBF} \caption{\label{fig:learning_cartoonRBF}Function approximation for the actor and the critic. Using random values for the responses of each center. Circles show the location of the centers and the maximum response they trigger, while the lines show the total response along the badge size continium.}\label{fig:fig2}
 \end{figure}
 
+\hypertarget{results-when-individuals-do-not-vary-in-their-quality}{%
 \subsection{Results when individuals do NOT vary in their
-quality}\label{results-when-individuals-do-not-vary-in-their-quality}
+quality}\label{results-when-individuals-do-not-vary-in-their-quality}}
 
 In Figure \ref{fig:learning_invar} we show the phenotypic frequencies
 and interaction-type frequencies in 4 generations of a population
@@ -208,8 +208,9 @@ the pure strategies.
 \includegraphics[width=0.8\linewidth]{Simulations//QualStDv_//hawkDoveLearn} \caption{\label{fig:learning_invar}Learning equilibrium when individuals do not vary in quality. Dashed line is the  game theoretical prediction for frequency of hawks.}\label{fig:fig3}
 \end{figure}
 
+\hypertarget{results-when-individuals-vary-in-their-quality}{%
 \subsection{Results when individuals vary in their
-quality}\label{results-when-individuals-vary-in-their-quality}
+quality}\label{results-when-individuals-vary-in-their-quality}}
 
 In figure \ref{fig:learning_var0.1} we show results of phenotypic and
 interaction types frequencies from simulations in which individuals vary
@@ -225,8 +226,9 @@ preference for a given action is dependent on their own quality.
 \includegraphics[width=0.8\linewidth]{Simulations//QualStDv_//hawkDoveLearn_0.1} \caption{\label{fig:learning_var0.1}Learning equilibrium when individuals vary in quality. Dashed lines are the  game theoretical predictions in the standard game.}\label{fig:fig4}
 \end{figure}
 
+\hypertarget{overall-effect-of-variance}{%
 \subsection{Overall effect of
-variance}\label{overall-effect-of-variance}
+variance}\label{overall-effect-of-variance}}
 
 In figure \ref{fig:learning_all_var} we show how the effect of
 increasing variance in quality further decreases the amount of
@@ -236,8 +238,9 @@ individuals in a population expressing the hawk phenotype.
 \includegraphics[width=0.8\linewidth]{Simulations//QualStDv_//effectQualVariance} \caption{\label{fig:learning_all_var}Effect of variation in quality for the learning equilibrium.}\label{fig:fig5}
 \end{figure}
 
+\hypertarget{how-does-learning-look-like-in-the-hawk-dove-game}{%
 \subsection{How does learning look like in the Hawk-Dove
-game?}\label{how-does-learning-look-like-in-the-hawk-dove-game}
+game?}\label{how-does-learning-look-like-in-the-hawk-dove-game}}
 
 Figures \ref{fig:learning_var0.1} and \ref{fig:learning_all_var} only
 show how learners behave at a population level, but they do not show the
@@ -261,8 +264,9 @@ groups with a tendency for each behavior nevertheless remains.
 \includegraphics[width=0.7\linewidth]{Simulations//QualStDv_//WeightsVarQualSt} \caption{\label{fig:AC_HD}Within population variation in the learning parameters at the end of learning for three scenarios of variation in the quality of individuals.}\label{fig:fig6}
 \end{figure}
 
+\hypertarget{how-do-the-learning-dynamics-look-like}{%
 \subsection{How do the learning dynamics look
-like}\label{how-do-the-learning-dynamics-look-like}
+like}\label{how-do-the-learning-dynamics-look-like}}
 
 In figure \ref{fig:learn_dyn} we show the learning trajectory, for the
 actor and the critic, of a sample of individuals. These dynamics show
@@ -275,8 +279,9 @@ other.
 \includegraphics[width=0.8\linewidth]{Simulations//mutType_//learnDyn200} \caption{\label{fig:learn_dyn}Learning dynamics of the individuals in a population.}\label{fig:fig7}
 \end{figure}
 
-\section{\texorpdfstring{How do learners fare against the ``pure''
-strategies}{How do learners fare against the pure strategies}}\label{how-do-learners-fare-against-the-pure-strategies}
+\hypertarget{how-do-learners-fare-against-the-pure-strategies}{%
+\section{How do learners fare against the ``pure''
+strategies?}\label{how-do-learners-fare-against-the-pure-strategies}}
 
 Finally, in a new set of simulations we explore the question of how
 competitive learners are in competition with the pure strategies. Figure
@@ -292,15 +297,25 @@ the three.
 \includegraphics[width=0.8\linewidth]{Simulations//mutType_//evolDynTypes} \caption{\label{fig:types_comp}Evolutionary dynamics of the learners competing against pure strategies.}\label{fig:fig8}
 \end{figure}
 
-\section{What's next?}\label{whats-next}
+\hypertarget{how-do-learners-behave-when-signals-are-honest}{%
+\section{How do learners behave when signals are
+honest?}\label{how-do-learners-behave-when-signals-are-honest}}
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{Simulations//learHonest_//QualStDv_//weightsVarQualSt} \caption{\label{fig:honest_learn}Actor and critic developed when signals are honest. Left panel: honest signal. Right panel: learners behavioral response }\label{fig:fig9}
+\end{figure}
+
+\hypertarget{whats-next}{%
+\section{What's next?}\label{whats-next}}
 
 Let reaction norm evolve, under different initial conditions.
 
-\section*{Cited literature}\label{cited-literature}
+\hypertarget{cited-literature}{%
+\section*{Cited literature}\label{cited-literature}}
 \addcontentsline{toc}{section}{Cited literature}
 
 \hypertarget{refs}{}
-\hypertarget{ref-sutton_reinforcement_2018}{}
+\leavevmode\hypertarget{ref-sutton_reinforcement_2018}{}%
 Sutton, Richard S., and Andrew G. Barto. 2018. \emph{Reinforcement
 Learning: An Introduction}. Edited by Francis Bach. Second edition
 edition. Cambridge, MA: A Bradford Book.

@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/alphaAct"
+scenario<-"learHonest_/QualStDv"
 
 
 # Load files -------------------------------------------------------------------
@@ -20,7 +20,7 @@ scenario<-"learHonest_/alphaAct"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-2
+fileId<-1
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -97,8 +97,8 @@ Runmeans<-pop[, as.list(unlist(lapply(.SD,
 
 # Plot variation of the weights ------------------------------------------------
 
-# png(here("Simulations",paste0(scenario,"_"),"weightsVarQualSt.png"),
-#     width = 1000,height = 800)
+png(here("Simulations",paste0(scenario,"_"),"weightsVarQualSt.png"),
+    width = 1000,height = 800)
 
 gener<-tail(pop[,unique(time)],1)
 runChoi<-0
@@ -146,12 +146,16 @@ weightsActMean<-as.double(evolStats[time==gener,.SD,
 #                            .SDcols=grep("WeightAct",names(evol),
 #                                         value = TRUE)])
 
-par(plt=posPlot(numploty = 2,idploty = 2,numplotx = 1),las=1,new=T)
+par(plt=posPlot(numploty = 2,idploty = 2,numplotx = 2,idplotx = 2)
+    -c(0.05,0.05,0,0),las=1,new=T)
 matplot(x=rangx,y=dataIndAct,col = paletteMeans(100)[
   findInterval(tempPop[,Quality],colorbreaksQual)],
-lwd=2,lty = 1,xaxt="n",
-  yaxt="s",  xlab="",ylab="p(Dove)",type = "l")
-
+lwd=2,lty = 1,xaxt="n",yaxt="n",
+  xlab="",ylab="",type = "l")
+axis(4,cex.axis=1.5)
+par(las=0)
+mtext("p(Dove)",4,cex = 2,line = 3)
+par(las=1)
 lines(logist(totRBF(rangx,centers,0.01,weightsActMean),alpha = 0,
             beta = 1)~rangx,lwd=3,col="black")
 # average of all the replicates from the pop data
@@ -202,11 +206,15 @@ weightsCritAll<-as.double(evolStats[time==gener,.SD,
 #                                .SDcols=grep("WeightCrit",names(evol),
 #                                             value = TRUE)])
 
-par(plt=posPlot(numploty = 2,idploty = 1),new=TRUE)
+par(plt=posPlot(numploty = 2,idploty = 1,numplotx = 2,idplotx = 2)
+    -c(0.05,0.05,0,0),new=TRUE)
 matplot(x=rangx,y=dataIndCrit,col = paletteMeans(100)[
   findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2,lty = 1,
-  type = "l",xaxt="s",yaxt="s",xlab="Badge",ylab="value")
-
+  type = "l",xaxt="s",yaxt="n",xlab="Badge",ylab="",cex.lab=2)
+axis(4,cex.axis=1.5)
+par(las=0)
+mtext("Value",4,cex = 2,line = 3)
+par(las=1)
 
 lines(totRBF(rangx,centers,0.01,weightsCritAll)~rangx,
      lwd=3,col="black")
@@ -238,7 +246,7 @@ color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
                max = max(colorbreaksQual),nticks = 3,
                title = "",
                cex.tit = 1,
-               numplotx = 15,numploty = 10,idplotx =15,idploty = 4)
+               numplotx = 15,numploty = 10,idplotx =14,idploty = 4)
 title("quality   ", line = 1)
 # dev.off()
 
@@ -261,16 +269,22 @@ matlines(x=rangx,y=dataIndCrit,col = paletteMeans(100)[
 
 # Show the reaction norms of the sampled individuals ---------------------------
 
+# png(here("Simulations",paste0(scenario,"_"),"react_norm.png"),
+# width = 1000,height = 800)
+
+
 gener<-pop[,unique(time)][9]
 rangx<-seq(0,1,length=1000)
 # yaxs<-c("s","n","n")
 # ylabsUP<-c("p(Dove)","","")
 # ylabsDO<-c("Value","","")
 # Actor 
-plot.new()
-par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 1),las=1,new=T)
+# plot.new()
+par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 2,idplotx = 1)
+    -c(0.05,0.05,0,0),las=1,new=T)
 plot(rep(0.5,1000)~rangx,type='l',col="grey",xaxt="s",
-     yaxt="s", xlab="Quality",ylab="Badge",ylim=c(0,1),lwd=1.5)
+     yaxt="s", xlab="Quality",ylab="Badge",ylim=c(0,1),lwd=1.5,cex.axis=1.5,
+     cex.lab=2)
 lines(sapply(rangx,
              FUN=function(x){
                do.call(logist,
@@ -280,7 +294,7 @@ lines(sapply(rangx,
                                                     .SDcols=c("alpha.m"
                                                               ,"beta.m")]))))})
               ~rangx,
-      col="black")
+      col="black",lwd=3)
 dataIndReact<-sapply(as.list(tempPop[,indId]),
                      function(x){x=
                        sapply(rangx, function(y)

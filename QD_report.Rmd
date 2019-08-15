@@ -178,7 +178,7 @@ knitr::include_graphics("Simulations//mutType_//learnDyn200.png")
 ```
 
 
-# How do learners fare against the "pure" strategies
+# How do learners fare against the "pure" strategies?
 
 Finally, in a new set of simulations we explore the question of how competitive learners are in competition with the pure strategies. Figure \ref{fig:types_comp}
 show the results of competition among the three strategies. The population starts with a 1:1 ratio of pure hawks and doves, and learners are introduced by mutation. Learners manage to increase in frequency. They, however, do not manage to outcompete the pure strategies. In the end, there is a polymorphic equilibrium with the three strategies coexisting, with learners being the most frequent of the three. 
@@ -187,6 +187,12 @@ show the results of competition among the three strategies. The population start
 knitr::include_graphics("Simulations//mutType_//evolDynTypes.png")
 ```
 
+# How do learners behave when signals are honest?
+
+```{r fig9, echo=FALSE,fig.cap="\\label{fig:honest_learn}Actor and critic developed when signals are honest. Left panel: honest signal. Right panel: learners behavioral response ",out.width='100%',fig.show='hold'}
+knitr::include_graphics("Simulations//learHonest_//QualStDv_//weightsVarQualSt.png")
+
+```
 
 # What's next?
 
