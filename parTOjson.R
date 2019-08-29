@@ -3,6 +3,7 @@
 
 library("jsonlite")
 library("here")
+source(here("AccFunc.R"))
 
 
 fileName<-"parameters.json"
@@ -22,7 +23,7 @@ param<-list(totGen   = 10,   nRep    = 30,
             QualStDv   = 0.3,  
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "alphaAct",
-            rangParam = c(0.01,0.05,0.1),
+            rangParam = c(0.1,0.01,0.001),
             folder=paste(here("Simulations"),"/",sep=""))
 
 
@@ -35,7 +36,7 @@ check_create.dir(here("Simulations"),param = "learHonest",
 check_create.dir(here("Simulations","learHonest_"),param = param$namParam,
                  values = c(""))
 
-listfolders<-check_create.dir(here("Simulations","sdCue_"),
+listfolders<-check_create.dir(here("Simulations","alphaAC_"),
                                     param = rep("SdCue",5),
                               values = rang)
 

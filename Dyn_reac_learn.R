@@ -9,7 +9,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"baselineFit"
+scenario<-"learHonest_/alphaAct"
 
 
 # Load files -------------------------------------------------------------------
@@ -18,7 +18,7 @@ scenario<-"baselineFit"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-4
+fileId<-3
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 

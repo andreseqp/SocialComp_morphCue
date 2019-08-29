@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/QualStDv"
+scenario<-"learHonest_/alphaAct"
 
 
 # Load files -------------------------------------------------------------------
@@ -20,9 +20,10 @@ scenario<-"learHonest_/QualStDv"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
+fileId<-3
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
+
 
 
 # Extract means and IQR for the dynamic variables ------------------------------
@@ -97,8 +98,8 @@ Runmeans<-pop[, as.list(unlist(lapply(.SD,
 
 # Plot variation of the weights ------------------------------------------------
 
-png(here("Simulations",paste0(scenario,"_"),"weightsVarQualSt.png"),
-    width = 1000,height = 800)
+# png(here("Simulations",paste0(scenario,"_"),"weightsVarQualSt.png"),
+#     width = 1000,height = 800)
 
 gener<-tail(pop[,unique(time)],1)
 runChoi<-0
@@ -251,21 +252,21 @@ title("quality   ", line = 1)
 # dev.off()
 
 
-par(plt=posPlot())
-plot(totRBF(rangx,centers,0.01,weightsCrit)~rangx,type="l",xaxt="s",yaxt="s",
-      lwd=3)
+# par(plt=posPlot())
+# plot(totRBF(rangx,centers,0.01,weightsCrit)~rangx,type="l",xaxt="s",yaxt="s",
+#       lwd=3)
 # Average from all replicates
-lines(totRBF(rangx,centers,0.01,
-             as.double(popStats[time==gener,.SD,
-                                .SDcols=paste0("WeightCrit_",0:4,".m")]))
-      ~rangx,col="green")
+# lines(totRBF(rangx,centers,0.01,
+#              as.double(popStats[time==gener,.SD,
+#                                 .SDcols=paste0("WeightCrit_",0:4,".m")]))
+#       ~rangx,col="green")
 # average of individuals from one run
-lines(totRBF(rangx,centers,0.01,
-             as.double(Runmeans[time==gener&seed==runChoi,.SD,
-                                .SDcols=paste0("WeightCrit_",0:4,".m")]))
-      ~rangx,col="red")
-matlines(x=rangx,y=dataIndCrit,col = paletteMeans(100)[
-  findInterval(tempPop[,Quality],colorbreaksQual)])
+# lines(totRBF(rangx,centers,0.01,
+#              as.double(Runmeans[time==gener&seed==runChoi,.SD,
+#                                 .SDcols=paste0("WeightCrit_",0:4,".m")]))
+#       ~rangx,col="red")
+# matlines(x=rangx,y=dataIndCrit,col = paletteMeans(100)[
+#   findInterval(tempPop[,Quality],colorbreaksQual)])
 
 # Show the reaction norms of the sampled individuals ---------------------------
 

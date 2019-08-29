@@ -11,7 +11,8 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/QualStDv"
+scenario<-"learHonest_/alphaAct"
+
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +20,8 @@ scenario<-"learHonest_/QualStDv"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
-indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[1]))
+fileId<-1
+indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[fileId]))
 
 
 
@@ -39,28 +41,38 @@ xaxRang<-c("s","n")
 seedCh<-1
 countx<-0
 county<-2
+
 plot.new()
-for(behavTime in unique(indLearn$nInteract)[15:39]){
+
+timePoints<-round(seq(1,length(unique(indLearn[,nInteract]))-1,length.out = 10))
+
+for(behavTime in unique(indLearn$nInteract)[timePoints]){
   if(countx==5)  {countx<-0;county<-county-1}
   countx<-countx+1
+  dataIndsAct<-sapply(as.list(indLearn[(time==gener&nInteract==behavTime)
+                                        &seed==seedCh,indId]),
+                       function(x){x=
+                         logist(totRBF(rangx,
+                                centers,0.01,
+                                as.double(
+                                  indLearn[(time==gener&seed==seedCh)&
+                                             (indId==x&nInteract==behavTime),.SD,
+                                           .SDcol=grep("WeightAct",
+                                                       names(indLearn),
+                                                       value = TRUE)
+                                           ])),alpha = 0,beta = 1)})
   par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx),
       las=1,new=T)
-  plot(logist(totRBF(rangx,centers,0.01,rep(0,5))
-              ,alpha = 0,beta = 1)~rangx,type='l',xlab="",ylab="",ylim=c(0,1),
-       lwd=3,col=1,xaxt=xaxRang[county],yaxt=yaxRang[countx])
+  matplot(x=rangx,y=dataIndsAct,type='l',xlab="",ylab="",
+          xaxt=xaxRang[county],yaxt=yaxRang[countx],lty = 1,
+          col=1+match(indLearn[(time==gener&nInteract==behavTime)
+                               &seed==seedCh,indId],
+                      indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
+                               unique(indId)]),lwd=0.5,ylim=c(0,1))
+  lines(logist(totRBF(rangx,centers,0.01,rep(0,5))
+              ,alpha = 0,beta = 1)~rangx,
+       lwd=1,col=1)
   text(x = 0.5,y=0.58,labels = paste0("nInt=",behavTime))
-  for(idInd in indLearn[(time==gener&nInteract==behavTime)&seed==seedCh,
-                      unique(indId)]){
-    lines(logist(totRBF(rangx,centers,0.01,
-                        as.double(indLearn[(time==gener&indId==idInd)&
-                                        (seed==seedCh&nInteract==behavTime),.SD,
-                                      .SDcols=grep("WeightAct",names(indLearn),
-                                                   value=TRUE)][1])),
-                 alpha=0,beta=1)~rangx,
-          col=1+match(idInd,indLearn[(time==gener)&
-                                       (seed==seedCh&nInteract==behavTime),
-                                     unique(indId)]),lwd=0.5)
-  }
 }
 
 
@@ -73,32 +85,46 @@ for(behavTime in unique(indLearn$nInteract)[15:39]){
 
 # Critic 
 
+
+
 yaxRang<-c("s",rep("n",4))
 xaxRang<-c("s","n")
 seedCh<-0
 countx<-0
 county<-2
 plot.new()
-for(behavTime in unique(indLearn$nInteract)){
+
+ylims<-fivenum(as.matrix(indLearn[,.SD,
+                .SDcol=grep("WeightCrit",names(indLearn),
+                                     value = TRUE)]))[c(1,5)]
+for(behavTime in unique(indLearn$nInteract)[timePoints]){
   if(countx==5)  {countx<-0;county<-county-1}
   countx<-countx+1
   par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx),
       las=1,new=T)
-  plot(totRBF(rangx,centers,0.01,rep(0,5))~rangx,type='l',xlab="",ylab="",
-       ylim=c(0,1), lwd=3,col=1,xaxt=xaxRang[county],yaxt=yaxRang[countx])
+  dataIndsCrit<-sapply(as.list(indLearn[(time==gener&nInteract==behavTime)
+                                        &seed==seedCh,indId]),
+                       function(x){x=
+                         totRBF(rangx,
+                                centers,0.01,
+                                as.double(
+                                  indLearn[(time==gener&seed==seedCh)&
+                                             (indId==x&nInteract==behavTime),.SD,
+                                       .SDcol=grep("WeightCrit",
+                                                   names(indLearn),
+                                                   value = TRUE)
+                                       ]))})
+  matplot(x=rangx,y=dataIndsCrit,type='l',xlab="",ylab="",
+          xaxt=xaxRang[county],yaxt=yaxRang[countx],lty = 1,
+          col=1+match(indLearn[(time==gener&nInteract==behavTime)
+                               &seed==seedCh,indId],
+                      indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
+                                     unique(indId)]),lwd=0.5,ylim = ylims)
+  lines(totRBF(rangx,centers,0.01,rep(0,5))~rangx,lwd=1,col=1)
   text(x = 0.5,y=0.38,labels = paste0("nInt=",behavTime))
-  for(idInd in indLearn[(time==gener&nInteract==behavTime)&seed==seedCh,
-                        unique(indId)]){
-  lines(totRBF(rangx,centers,0.01,
-                      as.double(indLearn[(time==gener&indId==idInd)&
-                                           (seed==seedCh&nInteract==behavTime),.SD,
-                                         .SDcols=grep("WeightCrit",names(indLearn),
-                                                      value=TRUE)][1]))~rangx,
-        col=1+match(idInd,indLearn[(time==gener)&
-                                         (seed==seedCh&nInteract==behavTime),
-                                       unique(indId)]),lwd=0.5)
-  }
 }
+rm(dataIndsCrit)
+
 
 png(here("Simulations",paste0(scenario,"_"),paste0("learnDyn",gener,".png")),
     height = 800,width = 800)

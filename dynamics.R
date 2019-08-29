@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"baselineFit"
+scenario<-"learHonest_/alphaAct"
 
 
 # Load files -------------------------------------------------------------------
@@ -19,7 +19,7 @@ scenario<-"baselineFit"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (sdList<-grep("evol",listTest,value=TRUE))
 
-evol<-fread(here("Simulations",paste0(scenario,"_"),sdList[4]))
+evol<-fread(here("Simulations",paste0(scenario,"_"),sdList[1]))
 
 # Extract means and IQR for the dynamic variables ------------------------------
 
