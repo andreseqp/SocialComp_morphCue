@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/alphaAct"
+scenario<-"learHonest_/alphaBad1"
 
 
 
@@ -23,6 +23,9 @@ scenario<-"learHonest_/alphaAct"
 fileId<-1
 indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[fileId]))
 
+# new columns ------------------------------------------------------------------
+
+indLearn[,diffActWeights:=abs(WeightAct_0-WeightAct_4)]
 
 
 # Changes in learning parameters for several individuals -----------------------
@@ -44,7 +47,7 @@ county<-2
 
 plot.new()
 
-timePoints<-round(seq(1,length(unique(indLearn[,nInteract]))-1,length.out = 10))
+timePoints<-round(seq(0,length(unique(indLearn[time==gener,nInteract])),length.out = 10))
 
 for(behavTime in unique(indLearn$nInteract)[timePoints]){
   if(countx==5)  {countx<-0;county<-county-1}
@@ -168,3 +171,28 @@ plot(pop[time==min(time),WeightAct_3]~pop[time==min(time),Quality],
 hist(pop[,nInteract],xaxt="s")
 hist(pop[,Badge],xaxt="s")
 hist(pop[,Quality],xaxt="s")
+
+
+# Dynamic changes in the responsiveness of the actor  --------------------------
+
+plot.new()
+
+plot(diffActWeights~nInteract,data=indLearn[seed==0],col = indId,pch=20,cex=0.5)
+
+
+diffWeight<-dcast(indLearn[time==0],nInteract~indId+seed,
+                 value.var = c("diffActWeights"))
+
+
+par(plt=posPlot())
+matplot(y=diffWeight[,2:dim(diffWeight)[2]],x=diffWeight[,1],
+        col = paletteMeans(100)[
+  findInterval(indLearn[seed==1&time==0,Quality],colorbreaksQual)],
+  type="p",cex=0.8,lty=1,pch=20)
+par(new=FALSE)
+color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
+               max = max(colorbreaksQual),nticks = 3,
+               title = "",
+               cex.tit = 1,
+               numplotx = 15,numploty = 10,idplotx =2,idploty = 9)
+title("quality   ", line = 1)

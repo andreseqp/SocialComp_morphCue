@@ -31,6 +31,7 @@ Start date :
 #include "tchar.h"
 #include "..\\Cpp\\Routines\\C++\\RandomNumbers\\random.h"
 #include "..\\Cpp\\json.hpp"       
+#include "..\\Cpp\\Routines\C++\RandomNumbers\utils.h"
 // Header for reading and using JSON files see https://github.com/nlohmann/json
 
 using namespace std;
@@ -55,7 +56,7 @@ int countIntTypesGen[3];
 class individual {
 	public:
 		individual(strategy genotype_, double QualStDv,
-			double alphaBadge_,double betaBadge_, double alphaCI, 
+			double alphaBadge_, double alphaCI, 
 			double alphaAI, double gammaI, double sigmaSqI,	int nCenters_);
 		individual(individual& mother, double QualStDv,
 			double mutRate,double mutSD, int mutType);
@@ -126,19 +127,25 @@ class individual {
 
 // set quality and badge of status
 void individual::set_Badge(double stdDev=0.1) {
-	quality = rnd::normal(0.5,stdDev);
-	clip_range(quality, 0, 1);
+	if (stdDev>1)
+	{
+		quality = rnd::uniform();
+	}
+	else {
+		quality = rnd::normal(0.5, stdDev);
+		clip_range(quality, 0, 1);
+	}
 	own_badge = 1 / (1 + exp(alphaBadge - betaBadge * quality));
 }
 
 // constructors
 individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
-	double alphaBadge_=0, double betaBadge_=0,double alphaCI = 0.05, 
+	double alphaBadge_=0, double alphaCI = 0.05, 
 	double alphaAI = 0.05, double gammaI = 0, double sigmaSqI = 0.01, 
 	int nCenters_=5) {
 	nCenters = nCenters_;
 	alphaBadge = alphaBadge_;
-	betaBadge = betaBadge_;
+	betaBadge = alphaBadge_*2;
 	genotype = genotype_;
 	set_Badge(QualStDv);
 	alphaAct = alphaAI, alphaCrit = alphaCI, gamma = gammaI, sigmaSq = sigmaSqI;
@@ -626,7 +633,7 @@ int main(int argc, _TCHAR* argv[]){
 				"seed=" << seed << endl;
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
 				population.push_back(individual((strategy)initFreq.sample(),
-					param["QualStDv"], param["alphaBad"], param["betaBad"],
+					param["QualStDv"], param["alphaBad"],
 					param["alphaCrit"],	param["alphaAct"], param["sigSq"], 
 					param["nCenters"]));
 			}

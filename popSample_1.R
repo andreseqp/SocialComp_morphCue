@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/alphaAct"
+scenario<-"learHonest_/alphaBad1"
 
 
 # Load files -------------------------------------------------------------------
@@ -20,7 +20,7 @@ scenario<-"learHonest_/alphaAct"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-3
+fileId<-1
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -102,12 +102,13 @@ Runmeans<-pop[, as.list(unlist(lapply(.SD,
 #     width = 1000,height = 800)
 
 gener<-tail(pop[,unique(time)],1)
+lastInt<-tail(pop[,unique(nInteract)],3)
 runChoi<-0
 nCenters<-5
 interv<-1/nCenters
 centers<-interv*0.5+interv*seq(0,nCenters-1)
 rangx<-seq(0,1,length=1000)
-tempPop<-pop[time==gener,.SD[.N],
+tempPop<-pop[time==gener&nInteract==lastInt[1],.SD[.N],
              .SDcol=c(grep("Weight",
                            names(evol),value = TRUE),"Quality"),
              by=indId]
@@ -274,7 +275,7 @@ title("quality   ", line = 1)
 # width = 1000,height = 800)
 
 
-gener<-pop[,unique(time)][9]
+gener<-tail(pop[,unique(time)],1)
 rangx<-seq(0,1,length=1000)
 # yaxs<-c("s","n","n")
 # ylabsUP<-c("p(Dove)","","")
@@ -313,19 +314,34 @@ matlines(x=rangx,y=dataIndReact,col = paletteMeans(100)[
 
 # Scatterplot relating quality and central weight of the actor -----------------
 
-png(here("Simulations",paste0(scenario,"_"),"weightVSQualiy.png"),
-    width = 1000,height = 800)
+# png(here("Simulations",paste0(scenario,"_"),"weightVSQualiy.png"),
+#     width = 1000,height = 800)
 par(plt=posPlot())
-plot(logist(WeightAct_3,alpha = 0,beta = 1)~Quality,data=pop[time==gener],
+plot(logist(WeightAct_3,alpha = 0,beta = 1)~Quality,
+     data=pop[time==gener&nInteract==lastInt[1]],
      xlab="Quality",ylab = "p(Dove)",xaxt="s",
      col=genotype+1,
      pch=19)
 legend("topright",legend = unique(pop$QualStDv)[order(unique(pop$QualStDv))],
        col = colboxes[1:3],pch = 19,title = expression(sigma^2))
-dev.off()
+# dev.off()
 
+
+# Vizualise variation
+
+par(plt=posPlot())
 hist(pop[time==gener,nInteract],xaxt="s")
 hist(pop[time==gener,Badge],xaxt="s")
+hist(pop[time==gener,Quality],xaxt="s")
+pop[,diffActWeight:=abs(WeightAct_0-WeightAct_4)]
+hist(pop[time==gener&nInteract==lastInt[1],diffActWeight])
 
+printInt<-1000
+
+par(plt=posPlot())
+plot(diffActWeight~Quality,data=pop[time==gener&nInteract%%printInt==0],
+     col=1+nInteract/printInt,cex=0.5,pch=20)
+legend("topright",legend = pop[nInteract%%printInt==0,unique(nInteract)],pch=20,
+       col=1+pop[nInteract%%printInt==0,unique(nInteract)]/printInt)
 
 pop[WeightAct_3==0,unique(genotype)]
