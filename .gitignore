@@ -4,6 +4,7 @@
 .Ruserdata
 Morph_cue/
 Simulations/
+Images/
 *.exe
 *.iobj
 *.ipdb

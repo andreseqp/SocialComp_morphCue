@@ -8,6 +8,9 @@ output:
       keep_tex: yes
 header-includes: 
     \usepackage{float}
+    \usepackage{multicol}
+    \usepackage{amsmath} 
+    \usepackage{graphicx}
                 #\floatplacement{figure}{H}
 ---
 
@@ -90,16 +93,18 @@ popStats<-pop[, as.list(unlist(lapply(.SD,
 Individuals have one of two genetically determined phenotypic strategies. _Hawks_ are willing to start a conflict over resources, while _doves_ prefer to stand down in the hope to share the resource without an aggressive contest.
 
 ```{r,echo=FALSE,fig.align="center",out.width='50%'}
-knitr::include_graphics("Images//hawk_dove.jpeg")
+knitr::include_graphics("Images//HDgame.jpeg")
 ```
 
 ## The hawk-dove game
 
 \begin{align*}
+w_H &= p_H \frac{V-C}{2}+(1-p_h) V\\
+w_D &= p_H 0 + (1-p_H)\frac{V}{2}
 \end{align*}
-
-```{r, echo=FALSE, out.width = '80%'}
-knitr::include_graphics("Images/Hawk_dove_plot.png")
+\vspace{-0.8cm}
+```{r, echo=FALSE,fig.align="center", out.width = '55%'}
+knitr::include_graphics("Images//Hawk_dove_plot.png")
 ```
 
 
@@ -109,7 +114,76 @@ knitr::include_graphics("Images/Hawk_dove_plot.png")
 knitr::include_graphics("Simulations/mutType_/basicHawkDove.png")
 ```
 
+## What about signals?
 
+```{r,echo=FALSE,fig.align='center',out.height='80%'}
+knitr::include_graphics("Images//hosp_alexandra_mackenzie.jpg")
+
+```
+
+
+## What about signals?
+
+### When are signals honest?
+
+* Impossible to fake
+* Individuals have common interests
+* Handicap principle (signal´s cost is proportional to quality)
+  + Social costs? 
+  
+```{r,echo=FALSE, fig.align='center',out.width='100%'}
+knitr::include_graphics("Images//social_costs.png")
+```
+
+## What about signals?
+
+```{r,echo=FALSE,fig.align='center',out.width='90%'}
+knitr::include_graphics("Images//comSystemBot.png")
+```
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.width='90%'}
+knitr::include_graphics("Images//pavlov.jpg")
+```
+
+# Associative learning
+
+## Reinforcement learning theory
+
+\begin{columns}[T]
+ \column{0.5\linewidth}
+ \begin{equation*}
+  \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error}
+  \end{equation*}
+  \pause
+  \includegraphics[width=1\textwidth]{Images//learn_curve.png}
+ \column{0.5\linewidth}
+  \pause
+  \includegraphics[height=.9\textheight]{Images//predErrorNeur.png}
+\end{columns}
+  
+## Reinforcement learning theory
+
+```{r,echo=FALSE,fig.align='center',out.width='90%'}
+knitr::include_graphics("Images//learnUpdate.png")
+```
+
+## Environmental states
+
+### Discrete states
+\includegraphics[width=0.8\textwidth]{Images//discreteStates.png}
+
+\pause
+
+### Continuos states
+\includegraphics[width=0.8\textwidth]{Images//contStates.png}
+
+## Continuos environmental states
+
+```{r fig2, echo=FALSE, fig.cap="\\label{fig:learning_cartoonRBF}Function approximation for the actor and the critic. Using random values for the responses of each center. Circles show the location of the centers and the maximum response they trigger, while the lines show the total response along the badge size continium.", out.width = '80%'}
+knitr::include_graphics("cartoonRBF.png")
+```
 
 
 <!-- Individuals interact randomly with each other over their lifetimes and collect resources depending on the strategy of theirs and their partners. In contrast to the classical _Hawk-dove_, in here when two _hawks_ interact with each other one of them wins the contest and gets $V-\frac{C}{2}$ as payoff; while the loser gets $-\frac{C}{2}$. Where $V$ is the value of the resource individuals are competing for, and $C$ is the cost of an aggressive contest. individuals share the cost, but only the winner gets the value of the resource.The rest of payoff matrix follows the standard game. -->
@@ -150,9 +224,7 @@ knitr::include_graphics("Simulations/mutType_/basicHawkDove.png")
 <!-- process, we use the reinforcement learning formalism. Specifically, we use the actor-critic algorithm [@sutton_reinforcement_2018]. Individuals ( _learners_ ) perceive the _badge_ of their counterpart as the environmental state in which they find themselves. They estimate the value of that state and a preference for playing hawk (dove) in that state. They update their estimation and preference after each interaction they have. Given that the badge size is a real number between 0 and 1, there are infinitely many environmental states. Thus, for their value estimation and preference computation, individual must use a form of generalization. We let them -->
 <!-- use as generalization a function approximation method based on radial basis functions. Each individual uses five _centers_ spread uniformly throughout the range of badge size variation (from 0 to 1). Each time an individual interacts with a con-specific the size of the badge of the interacting partner triggers a response from each one of the _centers_. This response decreases in strength as the badge size is further from the _center_. The decrease follows a radial basis function with Gaussian shape. The sum of the responses given by all the centers provide the value estimation and the preference for one of the two pure strategies (hawk or dove). During the learning process individuals update the _weight_ of the response that each one of these centers triggers. In the case of the preference for the strategies the numerical value resulting from the sum of the responses is translated to a probability of one of the two pure strategies through a logistic function. Figure \ref{fig:learning_cartoonRBF} shows a made up example of how the function approximation works for the actor (top panel - probability of choosing dove) and the critic (bottom panel - expected payoff from facing an individual with a given badge size). -->
 
-<!-- ```{r fig2, echo=FALSE, fig.cap="\\label{fig:learning_cartoonRBF}Function approximation for the actor and the critic. Using random values for the responses of each center. Circles show the location of the centers and the maximum response they trigger, while the lines show the total response along the badge size continium.", out.width = '80%'} -->
-<!-- knitr::include_graphics("cartoonRBF.png") -->
-<!-- ``` -->
+
 
 
 <!-- ## Results when individuals do NOT vary in their quality -->

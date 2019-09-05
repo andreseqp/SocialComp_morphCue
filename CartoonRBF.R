@@ -53,9 +53,11 @@ lines(x=rangx,y=totRBF(rangx,centers,0.01,means),col=2,lwd=2)
 
 # Cartoon Logist
 
-logist(0.5,alpha = 3,beta = 6)
+logist(0.5,alpha = 5,beta = 10)
 
 plot(logist(seq(0,1,length.out = 1000),alpha = 3,beta = 6)~
        seq(0,1,length.out = 1000),type="l")
 
+plot(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 2)~
+       seq(-1,1,length.out = 1000),type="l")
 

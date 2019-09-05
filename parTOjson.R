@@ -17,13 +17,13 @@ param<-list(totGen   = 5,   nRep    = 30,
             nInt        = 5000,  init     = c(0,0,1),
             mutRate  = 0.02,  mutType  = 0,
             sampleSize = 20,   strQual  = 10,
-            alphaBad	 = 5,    betaBad	 = 10,
+            alphaBad	 = 3,    betaBad	 = 6,
             alphaCrit  = 0.01,  alphaAct = 0.01,
             sigSq   	 = 0.01, nCenters = 5,
             QualStDv   = 1.1,  
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "alphaBad",
-            rangParam = c(1,2,3),
+            namParam = "strQual",
+            rangParam = c(1,2,5),
             folder=paste(here("Simulations"),"/",sep=""))
 
 
@@ -43,7 +43,7 @@ listfolders<-check_create.dir(here("Simulations","alphaAC_"),
 
 for (i in 1:1) {
   param$folder<-paste0(here("Simulations","learHonest_",
-                            paste0(param$namParam,1)),"_/")
+                            paste0(param$namParam,"1")),"_/")
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   if(file.exists(paste(param$folder,fileName,sep = ''))){
     currFile<-fromJSON(paste(param$folder,fileName,sep = ''))

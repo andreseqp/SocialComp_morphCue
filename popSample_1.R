@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/alphaBad1"
+scenario<-"learHonest_/strQual1"
 
 
 # Load files -------------------------------------------------------------------
@@ -20,7 +20,7 @@ scenario<-"learHonest_/alphaBad1"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
+fileId<-2
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
