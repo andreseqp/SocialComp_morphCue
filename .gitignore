@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 Morph_cue/
+Images/
 Simulations/
 *.exe
 *.iobj
