@@ -81,8 +81,5 @@ filesScenar<-function(filename,scenario){
   tmp[,eval(splitScen):=parVal]
   return(tmp)
 }
-splitScen<-tail(strsplit(scenario,"_")[[1]],1)
-splitScen<-gsub("/",splitScen,replacement = '')
-strsplit(indList[1],'QualStDv')[[1]][2]
-as.numeric(substr(gsub("[[:alpha:]]","0.1.txt",replacement = ''),1,3))
+
 

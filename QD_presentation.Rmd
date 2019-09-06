@@ -286,7 +286,40 @@ knitr::include_graphics("Simulations//mutType_//learnDyn200.png")
 knitr::include_graphics("Simulations//learHonest_//QualStDv_//weightsVarQualSt.png")
 ```
 
+## What parameters influence responsiveness?
 
+### Distribution of quality
+
+```{r,echo=FALSE,fig.align='center',out.width='90%'}
+knitr::include_graphics("Simulations//learHonest_//QualStDv_//compDistrNorm1Unif.png")
+```
+
+## What parameters influence responsiveness?
+
+### Distribution of quality
+
+```{r,echo=FALSE,fig.align='center',out.width='90%'}
+knitr::include_graphics("Simulations//learHonest_//QualStDv_//compDistrDiff.png")
+```
+
+## What parameters influence responsiveness?
+
+### Strength of quality influence on competition outcome 
+
+```{r,echo=FALSE,fig.align='center',out.width='90%'}
+knitr::include_graphics("Simulations//learHonest_//strQual_//compStr1_last.png")
+```
+
+## What parameters influence responsiveness?
+
+### Strength of quality influence on competition outcome 
+
+```{r,echo=FALSE,out.width='45%',fig.show='hold'}
+knitr::include_graphics("Simulations//learHonest_//strQual_//compStrDiff.png")
+knitr::include_graphics("Simulations//learHonest_//strQual_//compStrpDove.png")
+```
+
+# Why the hell is responsiveness so low?
 
 ## How do learners fare against pure strategies?
 
@@ -294,6 +327,11 @@ knitr::include_graphics("Simulations//learHonest_//QualStDv_//weightsVarQualSt.p
 knitr::include_graphics("Simulations//mutType_//evolDynTypes.png")
 ```
 
+## Concluding
+
+* Learning is good, even if you do not learn about your opponent. You still learn about you
+* Learning reduces aggressive interactions
+* Learning splits up individuals into _types_
 
 ## What's next? 
 

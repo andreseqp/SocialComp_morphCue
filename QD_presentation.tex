@@ -1,69 +1,96 @@
-\documentclass[ignorenonframetext,]{beamer}
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  ignorenonframetext,
+]{beamer}
+\usepackage{pgfpages}
 \setbeamertemplate{caption}[numbered]
 \setbeamertemplate{caption label separator}{: }
 \setbeamercolor{caption name}{fg=normal text.fg}
 \beamertemplatenavigationsymbolsempty
-\usepackage{lmodern}
-\usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
-\else % if luatex or xelatex
-  \ifxetex
-    \usepackage{mathspec}
-  \else
-    \usepackage{fontspec}
-  \fi
-  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
-\fi
-% use upquote if available, for straight quotes in verbatim environments
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
-}{}
-\newif\ifbibliography
-\hypersetup{
-            pdftitle={The evolution of badges of status with learners},
-            pdfauthor={Andrés Quiñones},
-            pdfborder={0 0 0},
-            breaklinks=true}
-\urlstyle{same}  % don't use monospace font for urls
-
 % Prevent slide breaks in the middle of a paragraph:
 \widowpenalties 1 10000
 \raggedbottom
-
+\setbeamertemplate{part page}{
+  \centering
+  \begin{beamercolorbox}[sep=16pt,center]{part title}
+    \usebeamerfont{part title}\insertpart\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center]{part title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{part title}
+    \usebeamerfont{subsection title}\insertsubsection\par
+  \end{beamercolorbox}
+}
 \AtBeginPart{
-  \let\insertpartnumber\relax
-  \let\partname\relax
   \frame{\partpage}
 }
 \AtBeginSection{
   \ifbibliography
   \else
-    \let\insertsectionnumber\relax
-    \let\sectionname\relax
     \frame{\sectionpage}
   \fi
 }
 \AtBeginSubsection{
-  \let\insertsubsectionnumber\relax
-  \let\subsectionname\relax
   \frame{\subsectionpage}
 }
-
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={The evolution of badges of status with learners},
+  pdfauthor={Andrés Quiñones},
+  pdfborder={0 0 0},
+  breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\newif\ifbibliography
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{0}
-\usepackage{float} \usepackage{multicol} \usepackage{amsmath}
-\usepackage{graphicx} \usepackage{array}
+\setcounter{secnumdepth}{-2}
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{float} \usepackage{multicol} \usepackage{amsmath} \usepackage{graphicx} \usepackage{array}
 
 \title{The evolution of badges of status with learners}
 \author{Andrés Quiñones}
@@ -73,6 +100,7 @@
 \frame{\titlepage}
 
 \begin{frame}{The Hawk-Dove game}
+\protect\hypertarget{the-hawk-dove-game}{}
 
 Individuals have one of two genetically determined phenotypic
 strategies. \emph{Hawks} are willing to start a conflict over resources,
@@ -84,19 +112,19 @@ resource without an aggressive contest.
 \end{frame}
 
 \begin{frame}{The hawk-dove game}
+\protect\hypertarget{the-hawk-dove-game-1}{}
 
 \begin{align*}
 w_H &= p_H \frac{V-C}{2}+(1-p_h) V\\
 w_D &= p_H 0 + (1-p_H)\frac{V}{2}
-\end{align*}
-
-\vspace{-0.8cm}
+\end{align*} \vspace{-0.8cm}
 
 \begin{center}\includegraphics[width=0.55\linewidth]{Images//Hawk_dove_plot} \end{center}
 
 \end{frame}
 
 \begin{frame}{The hawk-dove game}
+\protect\hypertarget{the-hawk-dove-game-2}{}
 
 \begin{figure}
 \includegraphics[width=0.8\linewidth]{Simulations/mutType_/basicHawkDove} \caption{\label{fig:HD_game}Hawk-dove game. Dashed line is the  game theoretical prediction for frequency of hawks.}\label{fig:unnamed-chunk-3}
@@ -105,12 +133,14 @@ w_D &= p_H 0 + (1-p_H)\frac{V}{2}
 \end{frame}
 
 \begin{frame}{What about signals?}
+\protect\hypertarget{what-about-signals}{}
 
 \begin{center}\includegraphics[height=0.8\textheight]{Images//hosp_alexandra_mackenzie} \end{center}
 
 \end{frame}
 
 \begin{frame}{What about signals?}
+\protect\hypertarget{what-about-signals-1}{}
 
 \begin{block}{When are signals honest?}
 
@@ -122,8 +152,12 @@ w_D &= p_H 0 + (1-p_H)\frac{V}{2}
   Individuals have common interests
 \item
   Handicap principle (signal´s cost is proportional to quality)
-\item
-  Social costs?
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Social costs?
+  \end{itemize}
 \end{itemize}
 
 \begin{center}\includegraphics[width=1\linewidth]{Images//social_costs} \end{center}
@@ -133,20 +167,24 @@ w_D &= p_H 0 + (1-p_H)\frac{V}{2}
 \end{frame}
 
 \begin{frame}{What about signals?}
+\protect\hypertarget{what-about-signals-2}{}
 
 \begin{center}\includegraphics[width=0.9\linewidth]{Images//comSystemBot} \end{center}
 
 \end{frame}
 
 \begin{frame}{What about learning?}
+\protect\hypertarget{what-about-learning}{}
 
 \begin{center}\includegraphics[width=0.9\linewidth]{Images//pavlov} \end{center}
 
 \end{frame}
 
-\section{Associative learning}\label{associative-learning}
+\hypertarget{associative-learning}{%
+\section{Associative learning}\label{associative-learning}}
 
 \begin{frame}{Reinforcement learning theory}
+\protect\hypertarget{reinforcement-learning-theory}{}
 
 \begin{columns}[T]
  \column{0.5\linewidth}
@@ -163,12 +201,14 @@ w_D &= p_H 0 + (1-p_H)\frac{V}{2}
 \end{frame}
 
 \begin{frame}{Reinforcement learning theory}
+\protect\hypertarget{reinforcement-learning-theory-1}{}
 
 \begin{center}\includegraphics[width=0.9\linewidth]{Images//learnUpdate} \end{center}
 
 \end{frame}
 
 \begin{frame}{Environmental states}
+\protect\hypertarget{environmental-states}{}
 
 \begin{block}{Discrete states}
 
@@ -187,6 +227,7 @@ w_D &= p_H 0 + (1-p_H)\frac{V}{2}
 \end{frame}
 
 \begin{frame}{Continuos environmental states}
+\protect\hypertarget{continuos-environmental-states}{}
 
 \begin{equation*}
   \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error}
@@ -198,9 +239,11 @@ w_D &= p_H 0 + (1-p_H)\frac{V}{2}
 
 \end{frame}
 
-\section{Our model}\label{our-model}
+\hypertarget{our-model}{%
+\section{Our model}\label{our-model}}
 
 \begin{frame}{The hawk-dove game 2.0}
+\protect\hypertarget{the-hawk-dove-game-2.0}{}
 
 \begin{center}
 \begin{tabular}{ >{\centering\arraybackslash}p{1cm} | >{\centering\arraybackslash}p{4.5cm} | >{\centering\arraybackslash}p{4.5cm} }
@@ -219,6 +262,7 @@ p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
 \end{frame}
 
 \begin{frame}{Sender Code}
+\protect\hypertarget{sender-code}{}
 
 \begin{equation*}
 s_i = \frac{1}{1+e^{-(\epsilon_i+\gamma_iQ_i)}}
@@ -230,6 +274,7 @@ s_i = \frac{1}{1+e^{-(\epsilon_i+\gamma_iQ_i)}}
 \end{frame}
 
 \begin{frame}{Receiver code}
+\protect\hypertarget{receiver-code}{}
 
 \begin{equation*}
   \Delta V_{t(s)}=\alpha (R_t-V_t)
@@ -239,51 +284,125 @@ s_i = \frac{1}{1+e^{-(\epsilon_i+\gamma_iQ_i)}}
 
 \end{frame}
 
-\section{Results}\label{results}
+\hypertarget{results}{%
+\section{Results}\label{results}}
 
 \begin{frame}{When individuals do \emph{NOT} vary in quality}
+\protect\hypertarget{when-individuals-do-not-vary-in-quality}{}
 
 \begin{center}\includegraphics[width=0.8\linewidth]{Simulations//QualStDv_//hawkDoveLearn} \end{center}
 
 \end{frame}
 
 \begin{frame}{When individuals \emph{DO} vary in quality}
+\protect\hypertarget{when-individuals-do-vary-in-quality}{}
 
 \begin{center}\includegraphics[width=0.8\linewidth]{Simulations//QualStDv_//hawkDoveLearn_1} \end{center}
 
 \end{frame}
 
 \begin{frame}{Overal effect of quality variation}
+\protect\hypertarget{overal-effect-of-quality-variation}{}
 
 \begin{center}\includegraphics[width=0.8\linewidth]{Simulations//QualStDv_//effectQualVariance} \end{center}
 
 \end{frame}
 
 \begin{frame}{How does variation among \emph{learners} look like?}
+\protect\hypertarget{how-does-variation-among-learners-look-like}{}
 
-\begin{center}\includegraphics[width=0.7\linewidth]{Simulations//QualStDv_//WeightsVarQualSt} \end{center}
+\begin{center}\includegraphics[width=0.9\linewidth]{Simulations//QualStDv_//WeightsVarQualSt} \end{center}
 
 \end{frame}
 
 \begin{frame}{How do the learning dynamics look like?}
+\protect\hypertarget{how-do-the-learning-dynamics-look-like}{}
 
 \includegraphics[width=0.8\linewidth]{Simulations//mutType_//learnDyn200}
 
 \end{frame}
 
 \begin{frame}{How do learners behave when signals are honest?}
+\protect\hypertarget{how-do-learners-behave-when-signals-are-honest}{}
 
-\includegraphics[width=1\linewidth]{Simulations//learHonest_//QualStDv_//weightsVarQualSt}
+\includegraphics[width=0.9\linewidth]{Simulations//learHonest_//QualStDv_//weightsVarQualSt}
 
 \end{frame}
 
+\begin{frame}{What parameters influence responsiveness?}
+\protect\hypertarget{what-parameters-influence-responsiveness}{}
+
+\begin{block}{Distribution of quality}
+
+\begin{center}\includegraphics[width=0.9\linewidth]{Simulations//learHonest_//QualStDv_//compDistrNorm1Unif} \end{center}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{What parameters influence responsiveness?}
+\protect\hypertarget{what-parameters-influence-responsiveness-1}{}
+
+\begin{block}{Distribution of quality}
+
+\begin{center}\includegraphics[width=0.9\linewidth]{Simulations//learHonest_//QualStDv_//compDistrDiff} \end{center}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{What parameters influence responsiveness?}
+\protect\hypertarget{what-parameters-influence-responsiveness-2}{}
+
+\begin{block}{Strength of quality influence on competition outcome}
+
+\begin{center}\includegraphics[width=0.9\linewidth]{Simulations//learHonest_//strQual_//compStr1_last} \end{center}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{What parameters influence responsiveness?}
+\protect\hypertarget{what-parameters-influence-responsiveness-3}{}
+
+\begin{block}{Strength of quality influence on competition outcome}
+
+\includegraphics[width=0.45\linewidth]{Simulations//learHonest_//strQual_//compStrDiff}
+\includegraphics[width=0.45\linewidth]{Simulations//learHonest_//strQual_//compStrpDove}
+
+\end{block}
+
+\end{frame}
+
+\hypertarget{why-the-hell-is-responsiveness-so-low}{%
+\section{Why the hell is responsiveness so
+low?}\label{why-the-hell-is-responsiveness-so-low}}
+
 \begin{frame}{How do learners fare against pure strategies?}
+\protect\hypertarget{how-do-learners-fare-against-pure-strategies}{}
 
 \begin{center}\includegraphics[width=0.8\linewidth]{Simulations//mutType_//evolDynTypes} \end{center}
 
 \end{frame}
 
+\begin{frame}{Concluding}
+\protect\hypertarget{concluding}{}
+
+\begin{itemize}
+\tightlist
+\item
+  Learning is good, even if you do not learn about your opponent. You
+  still learn about you
+\item
+  Learning reduces aggressive interactions
+\item
+  Learning splits up individuals into \emph{types}
+\end{itemize}
+
+\end{frame}
+
 \begin{frame}{What's next?}
+\protect\hypertarget{whats-next}{}
 
 \begin{itemize}
 \tightlist
