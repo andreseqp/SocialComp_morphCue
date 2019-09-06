@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/strQual1"
+scenario<-"learHonest_/QualStDv"
 
 
 # Load files -------------------------------------------------------------------
@@ -20,7 +20,7 @@ scenario<-"learHonest_/strQual1"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-2
+fileId<-1
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -322,8 +322,8 @@ plot(logist(WeightAct_3,alpha = 0,beta = 1)~Quality,
      xlab="Quality",ylab = "p(Dove)",xaxt="s",
      col=genotype+1,
      pch=19)
-legend("topright",legend = unique(pop$QualStDv)[order(unique(pop$QualStDv))],
-       col = colboxes[1:3],pch = 19,title = expression(sigma^2))
+# legend("topright",legend = unique(pop$QualStDv)[order(unique(pop$QualStDv))],
+#        col = colboxes[1:3],pch = 19,title = expression(sigma^2))
 # dev.off()
 
 

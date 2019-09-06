@@ -73,11 +73,16 @@ color.bar.aeqp <- function(lut, min, max=-min, nticks=11, ticks=seq(min, max, le
 # not robust yet to filename variation CHECK!!! --------------------------------
 
 filesScenar<-function(filename,scenario){
-  extPar<-strsplit(filename,scenario)[[1]][2]
+  splitScen<-tail(strsplit(scenario,"_")[[1]],1)
+  splitScen<-gsub("/",splitScen,replacement = '')
+  extPar<-strsplit(filename,splitScen)[[1]][2]
   parVal<-as.numeric(substr(gsub("[[:alpha:]]",extPar,replacement = ''),1,3))
   tmp<-fread(here("Simulations",paste0(scenario,"_"),filename))
-  tmp[,eval(scenario):=parVal]
+  tmp[,eval(splitScen):=parVal]
   return(tmp)
 }
-
+splitScen<-tail(strsplit(scenario,"_")[[1]],1)
+splitScen<-gsub("/",splitScen,replacement = '')
+strsplit(indList[1],'QualStDv')[[1]][2]
+as.numeric(substr(gsub("[[:alpha:]]","0.1.txt",replacement = ''),1,3))
 
