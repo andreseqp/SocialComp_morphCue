@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/alphaBad1"
+scenario<-"learHonest_/strQual1"
 
 
 
@@ -47,7 +47,7 @@ county<-2
 
 plot.new()
 
-timePoints<-round(seq(0,length(unique(indLearn[time==gener,nInteract])),length.out = 10))
+timePoints<-round(seq(1,length(unique(indLearn[time==gener,nInteract])),length.out = 10))
 
 for(behavTime in unique(indLearn$nInteract)[timePoints]){
   if(countx==5)  {countx<-0;county<-county-1}
@@ -177,6 +177,7 @@ hist(pop[,Quality],xaxt="s")
 
 plot.new()
 
+par(plt=posPlot())
 plot(diffActWeights~nInteract,data=indLearn[seed==0],col = indId,pch=20,cex=0.5)
 
 

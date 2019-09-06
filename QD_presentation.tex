@@ -1,0 +1,238 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  ignorenonframetext,
+]{beamer}
+\usepackage{pgfpages}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+% Prevent slide breaks in the middle of a paragraph:
+\widowpenalties 1 10000
+\raggedbottom
+\setbeamertemplate{part page}{
+  \centering
+  \begin{beamercolorbox}[sep=16pt,center]{part title}
+    \usebeamerfont{part title}\insertpart\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center]{part title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{part title}
+    \usebeamerfont{subsection title}\insertsubsection\par
+  \end{beamercolorbox}
+}
+\AtBeginPart{
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \frame{\sectionpage}
+  \fi
+}
+\AtBeginSubsection{
+  \frame{\subsectionpage}
+}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={The evolution of badges of status with learners},
+  pdfauthor={Andrés Quiñones},
+  pdfborder={0 0 0},
+  breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\newif\ifbibliography
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-2}
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{float} \usepackage{multicol} \usepackage{amsmath} \usepackage{graphicx}
+
+\title{The evolution of badges of status with learners}
+\author{Andrés Quiñones}
+\date{}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}{The Hawk-Dove game}
+\protect\hypertarget{the-hawk-dove-game}{}
+
+Individuals have one of two genetically determined phenotypic
+strategies. \emph{Hawks} are willing to start a conflict over resources,
+while \emph{doves} prefer to stand down in the hope to share the
+resource without an aggressive contest.
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Images//HDgame} \end{center}
+
+\end{frame}
+
+\begin{frame}{The hawk-dove game}
+\protect\hypertarget{the-hawk-dove-game-1}{}
+
+\begin{align*}
+w_H &= p_H \frac{V-C}{2}+(1-p_h) V\\
+w_D &= p_H 0 + (1-p_H)\frac{V}{2}
+\end{align*} \vspace{-0.8cm}
+
+\begin{center}\includegraphics[width=0.55\linewidth]{Images//Hawk_dove_plot} \end{center}
+
+\end{frame}
+
+\begin{frame}{The hawk-dove game}
+\protect\hypertarget{the-hawk-dove-game-2}{}
+
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{Simulations/mutType_/basicHawkDove} \caption{\label{fig:HD_game}Hawk-dove game. Dashed line is the  game theoretical prediction for frequency of hawks.}\label{fig:unnamed-chunk-3}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{What about signals?}
+\protect\hypertarget{what-about-signals}{}
+
+\begin{center}\includegraphics[height=0.8\textheight]{Images//hosp_alexandra_mackenzie} \end{center}
+
+\end{frame}
+
+\begin{frame}{What about signals?}
+\protect\hypertarget{what-about-signals-1}{}
+
+\begin{block}{When are signals honest?}
+
+\begin{itemize}
+\tightlist
+\item
+  Impossible to fake
+\item
+  Individuals have common interests
+\item
+  Handicap principle (signal´s cost is proportional to quality)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Social costs?
+  \end{itemize}
+\end{itemize}
+
+\begin{center}\includegraphics[width=1\linewidth]{Images//social_costs} \end{center}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{What about signals?}
+\protect\hypertarget{what-about-signals-2}{}
+
+\begin{center}\includegraphics[width=0.9\linewidth]{Images//comSystemBot} \end{center}
+
+\end{frame}
+
+\begin{frame}{What about learning?}
+\protect\hypertarget{what-about-learning}{}
+
+\begin{center}\includegraphics[width=0.9\linewidth]{Images//pavlov} \end{center}
+
+\end{frame}
+
+\hypertarget{associative-learning}{%
+\section{Associative learning}\label{associative-learning}}
+
+\begin{frame}{Reinforcement learning theory}
+\protect\hypertarget{reinforcement-learning-theory}{}
+
+\begin{columns}[T]
+ \column{0.5\linewidth}
+ \begin{equation*}
+  \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error}
+  \end{equation*}
+  \pause
+  \includegraphics[width=1\textwidth]{Images//learn_curve.png}
+ \column{0.5\linewidth}
+  \pause
+  \includegraphics[height=.9\textheight]{Images//predErrorNeur.png}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}{Reinforcement learning theory}
+\protect\hypertarget{reinforcement-learning-theory-1}{}
+
+\begin{center}\includegraphics[width=0.9\linewidth]{Images//learnUpdate} \end{center}
+
+\end{frame}
+
+\begin{frame}{Environmental states}
+\protect\hypertarget{environmental-states}{}
+
+\begin{block}{Discrete states}
+
+\includegraphics[width=0.8\textwidth]{Images//discreteStates.png}
+
+\pause
+
+\end{block}
+
+\begin{block}{Continuos states}
+
+\includegraphics[width=0.8\textwidth]{Images//contStates.png}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Continuos environmental states}
+\protect\hypertarget{continuos-environmental-states}{}
+
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{cartoonRBF} \caption{\label{fig:learning_cartoonRBF}Function approximation for the actor and the critic. Using random values for the responses of each center. Circles show the location of the centers and the maximum response they trigger, while the lines show the total response along the badge size continium.}\label{fig:fig2}
+\end{figure}
+
+\end{frame}
+
+\end{document}
