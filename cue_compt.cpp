@@ -142,16 +142,16 @@ void individual::set_Badge(double stdDev=0.1) {
 individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
 	double alphaBadge_=0, double alphaCI = 0.05, 
 	double alphaAI = 0.05, double gammaI = 0, double sigmaSqI = 0.01, 
-	int nCenters_=5) {
+	int nCenters_=6) {
 	nCenters = nCenters_;
 	alphaBadge = alphaBadge_;
 	betaBadge = alphaBadge_*2;
 	genotype = genotype_;
 	set_Badge(QualStDv);
 	alphaAct = alphaAI, alphaCrit = alphaCI, gamma = gammaI, sigmaSq = sigmaSqI;
-	double interv = 1 / static_cast<double>(nCenters);
+	double interv = 1 / static_cast<double>(nCenters-1);
 	for (int i = 0; i < nCenters; i++)	{
-		centers.push_back(interv * 0.5 + interv * i);
+		centers.push_back(interv * i);
 		featWeightsAct.push_back(0);
 		featWeightsCrit.push_back(0);
 		responses.push_back(0);
@@ -173,9 +173,9 @@ individual::individual(individual& mother, double QualStDv,
 	alphaCrit = mother.alphaCrit;
 	gamma = mother.gamma;
 	sigmaSq = mother.sigmaSq;
-	double interv = 1 / static_cast<double>(nCenters);
+	double interv = 1 / static_cast<double>(nCenters-1);
 	for (int i = 0; i < nCenters; i++) {
-		centers.push_back(interv * 0.5 + interv * i);
+		centers.push_back(interv * i);
 		featWeightsAct.push_back(0);
 		featWeightsCrit.push_back(0);
 		responses.push_back(0);
@@ -513,7 +513,7 @@ string create_filename(std::string filename, json param) {
 	return(filename);
 }
 void initializeFiles(ofstream &evolOutput, //ofstream &popOutput, 
-	ofstream &indOutput, json param,int nFeat=5) {
+	ofstream &indOutput, json param) {
 	std::string filename = param["folder"];
 	filename.append("evolLearn");
 	// File to print evolutionary dynamics
@@ -528,7 +528,7 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	evolOutput << "freqDD" << '\t' << "meanCue" << '\t' << "sdCue" << '\t';
 	evolOutput << "meanAlpha" << '\t' << "sdAlpha" << '\t' << "meanBeta" << '\t';
 	evolOutput << "sdBeta" << '\t';
-	for(int countFeat=0;countFeat<nFeat;++countFeat){
+	for(int countFeat=0;countFeat<param["nCenters"];++countFeat){
 		evolOutput << "WeightAct_" + itos(countFeat) << '\t';
 		evolOutput << "WeightCrit_" + itos(countFeat) << '\t';
 	}
@@ -555,7 +555,7 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	indOutput << "seed" << '\t' <<  "time" << '\t' << "numInter" << '\t' 
 		<< "indId" << '\t' << "nint_HH" << '\t' <<
 		"nint_HD" << '\t' << "nint_DD" << '\t';
-	for (int countFeat = 0; countFeat < nFeat;
+	for (int countFeat = 0; countFeat < param["nCenters"];
 		++countFeat) {
 		indOutput << "WeightAct_" + itos(countFeat) << '\t'
 			<< "WeightCrit_" + itos(countFeat) << '\t';
@@ -645,10 +645,10 @@ int main(int argc, _TCHAR* argv[]){
 					param["printLearnInt"], param["sampleSize"],generation,seed);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
 					//cout << "time=" << generation << endl;
-					get_stats(population, param["popSize"]);
-					printStats(param["popSize"], evolOutput, generation, seed);
+					get_stats(population, param["popSize"],param["nCenters"]);
+					printStats(param["popSize"], evolOutput, generation, seed,param["nCenters"]);
 					/*printPopSample(population, popOutput, generation, seed,
-						param["sampleSize"]);*/
+						param["sampleSize"],param["nCenters"]);*/
 				}
 				Reprod(population, param["popSize"], param["mutRate"],
 					param["MutSd"], param["baselineFit"],param["mutType"],

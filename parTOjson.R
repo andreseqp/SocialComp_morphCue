@@ -30,6 +30,7 @@ param<-list(totGen   = 5,   nRep    = 30,
 
 rang<-1
 
+
 check_create.dir(here("Simulations"),param = "learHonest",
                  values = c(""))
 
@@ -61,6 +62,7 @@ for (i in 1:1) {
   }
   else{
     write(outParam,paste(param$folder,fileName,sep = ""))
+    jobfile(param$folder,param$namparam)
   }
   # system(paste(exedir,
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)

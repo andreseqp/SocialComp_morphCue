@@ -83,3 +83,44 @@ filesScenar<-function(filename,scenario){
 }
 
 
+## Automatically produce job files ---------------------------------------------
+
+jobfile<-function(folder,jobname){
+  
+  bashafile<-list(line0="#!/bin/bash",jobname="#SBATCH --job-name=",
+                  partit="#SBATCH -p short",nodes="#SBATCH -N 1",
+                  cpus="#SBATCH --cpus-per-task=1", mem="#SBATCH --mem=2000",
+                  time="#SBATCH --time=00:10:00",
+                  mailu="#SBATCH --mail-user=a.quinones@uniandes.edu.co",
+                  mailt="#SBATCH --mail-type=END",
+                  outp="#SBATCH -o TEST_job.o%j",
+                  gethost="host=`/bin/hostname`",
+                  getdate="date=/bin/date",
+                  exec=".././Morph_cue parameters.json",
+                  printhost="echo \"Run  at: \"$host",
+                  printdate="echo  \"Run  on: \"$date")
+  
+  bashafile$jobname<-paste0(bashafile$jobname,"jobname")
+  if(file.exists(here(scenario,"jobfile.sh"))){
+    unlink(here(scenario,"jobfile.sh"))
+  }
+  lapply(bashafile, write, file=file(here(scenario,"jobfile.sh"),"wb"), append=T)
+}
+
+# #SBATCH --job-name=TestJOB		#Nombre del job
+# #SBATCH -p short			#Cola a usar, Default=short (Ver colas y límites en /hpcfs/shared/README/partitions.txt)
+# #SBATCH -N 1				#Nodos requeridos, Default=1
+# #SBATCH -n 1				#Tasks paralelos, recomendado para MPI, Default=1
+# #SBATCH --cpus-per-task=1		#Cores requeridos por task, recomendado para multi-thread, Default=1
+# #SBATCH --mem=2000		#Memoria en Mb por CPU, Default=2048
+# #SBATCH --time=00:10:00			#Tiempo máximo de corrida, Default=2 horas
+# #SBATCH --mail-user=USER@uniandes.edu.co
+# #SBATCH --mail-type=ALL			
+# #SBATCH -o TEST_job.o%j			#Nombre de archivo de salida
+# 
+# host=`/bin/hostname`
+# date=`/bin/date`
+# echo "Soy un JOB de prueba"
+# echo "Corri en la maquina: "$host
+# echo "Corri el: "$date
+
