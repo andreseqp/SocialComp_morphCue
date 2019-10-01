@@ -17,25 +17,26 @@ param<-list(totGen   = 5,   nRep    = 30,
             nInt        = 5000,  init     = c(0,0,1),
             mutRate  = 0.02,  mutType  = 0,
             sampleSize = 20,   strQual  = 10,
-            alphaBad	 = 3,    betaBad	 = 6,
+            alphaBad	 = 0,    betaBad	 = 0,
             alphaCrit  = 0.01,  alphaAct = 0.01,
-            sigSq   	 = 0.01, nCenters = 5,
+            sigSq   	 = 0.01, nCenters = 6,
             QualStDv   = 1.1,  
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "strQual",
-            rangParam = c(1,2,5),
-            folder=paste(here("Simulations"),"/",sep=""))
+            namParam = "baselineFit",
+            rangParam = c(3,5,10),
+            folderL=paste(here("Simulations"),"/",sep=""))
 
 
+param$folder<-paste0(param$namParam,"_/")
 
 rang<-1
 
 
-check_create.dir(here("Simulations"),param = "learHonest",
+check_create.dir(here("Simulations"),param = "Centers6",
                  values = c(""))
 
-check_create.dir(here("Simulations","learHonest_"),param = param$namParam,
-                 values = c("1"))
+check_create.dir(here("Simulations","Centers6_"),param = param$namParam,
+                 values = c(""))
 
 listfolders<-check_create.dir(here("Simulations","alphaAC_"),
                                     param = rep("SdCue",5),
@@ -43,11 +44,11 @@ listfolders<-check_create.dir(here("Simulations","alphaAC_"),
 
 
 for (i in 1:1) {
-  param$folder<-paste0(here("Simulations","learHonest_",
-                            paste0(param$namParam,"1")),"_/")
+  param$folderL<-paste0(here("Simulations","Centers6_",
+                            paste0(param$namParam,"")),"_/")
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
-  if(file.exists(paste(param$folder,fileName,sep = ''))){
-    currFile<-fromJSON(paste(param$folder,fileName,sep = ''))
+  if(file.exists(paste(param$folderL,fileName,sep = ''))){
+    currFile<-fromJSON(paste(param$folderL,fileName,sep = ''))
     if(sum(unlist(currFile)!=unlist(param))>0){
       warning("You are erasing old files!! n\ Check first!!!",immediate. = TRUE)
       print("OLD value")
@@ -56,13 +57,17 @@ for (i in 1:1) {
       print(unlist(param)[unlist(currFile)!=unlist(param)])
       ans<-readline("Want to continue?")
       if(substr(ans, 1, 1) == "y"){
-        write(outParam,paste(param$folder,fileName,sep = ""))
+        write(outParam,paste(param$folderL,fileName,sep = ""))
+        jobfile(param$folderL,param$namParam)
       }
+    }
+    else{
+      jobfile(param$folderL,param$namParam)
     }
   }
   else{
-    write(outParam,paste(param$folder,fileName,sep = ""))
-    jobfile(param$folder,param$namparam)
+    write(outParam,paste(param$folderL,fileName,sep = ""))
+    jobfile(param$folderL,param$namParam)
   }
   # system(paste(exedir,
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)

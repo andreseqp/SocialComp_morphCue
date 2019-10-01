@@ -82,15 +82,25 @@ filesScenar<-function(filename,scenario){
   return(tmp)
 }
 
+# Visualize difference in parameters between 2 JSON files ----------------------
+
+diffJsons<-function(json1,json2){
+  print("JSON.1")
+  print(unlist(json1)[unlist(json1)!=unlist(json2)])
+  print("JSON.2")
+  print(unlist(json2)[unlist(json1)!=unlist(json2)])
+}
 
 ## Automatically produce job files ---------------------------------------------
 
-jobfile<-function(folder,jobname){
+jobfile<-function(folder,jobname,timelim="10:00:00",
+                  part="short"){
   
-  bashafile<-list(line0="#!/bin/bash",jobname="#SBATCH --job-name=",
-                  partit="#SBATCH -p short",nodes="#SBATCH -N 1",
+  bashafile<-list(line0="#!/bin/bash",
+                  jobname="#SBATCH --job-name=",
+                  partit="#SBATCH -p ",nodes="#SBATCH -N 1",
                   cpus="#SBATCH --cpus-per-task=1", mem="#SBATCH --mem=2000",
-                  time="#SBATCH --time=00:10:00",
+                  time="#SBATCH --time=",
                   mailu="#SBATCH --mail-user=a.quinones@uniandes.edu.co",
                   mailt="#SBATCH --mail-type=END",
                   outp="#SBATCH -o TEST_job.o%j",
@@ -100,11 +110,13 @@ jobfile<-function(folder,jobname){
                   printhost="echo \"Run  at: \"$host",
                   printdate="echo  \"Run  on: \"$date")
   
-  bashafile$jobname<-paste0(bashafile$jobname,"jobname")
-  if(file.exists(here(scenario,"jobfile.sh"))){
-    unlink(here(scenario,"jobfile.sh"))
+  bashafile$jobname<-paste0(bashafile$jobname,jobname)
+  bashafile$time<-paste0(bashafile$time,timelim)
+  bashafile$partit<-paste0(bashafile$partit,part)
+  if(file.exists(paste0(folder,"jobfile.sh"))){
+    unlink(paste0(folder,"jobfile.sh"))
   }
-  lapply(bashafile, write, file=file(here(scenario,"jobfile.sh"),"wb"), append=T)
+  lapply(bashafile, write, file=file(paste0(folder,"jobfile.sh"),"wb"), append=T)
 }
 
 # #SBATCH --job-name=TestJOB		#Nombre del job
