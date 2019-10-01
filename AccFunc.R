@@ -95,7 +95,6 @@ diffJsons<-function(json1,json2){
 
 jobfile<-function(folder,jobname,timelim="10:00:00",
                   part="short"){
-  
   bashafile<-list(line0="#!/bin/bash",
                   jobname="#SBATCH --job-name=",
                   partit="#SBATCH -p ",nodes="#SBATCH -N 1",
@@ -106,7 +105,9 @@ jobfile<-function(folder,jobname,timelim="10:00:00",
                   outp="#SBATCH -o TEST_job.o%j",
                   gethost="host=`/bin/hostname`",
                   getdate="date=/bin/date",
-                  exec=".././Morph_cue parameters.json",
+                  exec=paste0("/hpcfs/home/a.quinones/BadgeStatus/./Morph_cue ",
+                              "/hpcfs/home/a.quinones/BadgeStatus/",
+                              jobname,"_/parameters.json"),
                   printhost="echo \"Run  at: \"$host",
                   printdate="echo  \"Run  on: \"$date")
   
@@ -116,7 +117,8 @@ jobfile<-function(folder,jobname,timelim="10:00:00",
   if(file.exists(paste0(folder,"jobfile.sh"))){
     unlink(paste0(folder,"jobfile.sh"))
   }
-  lapply(bashafile, write, file=file(paste0(folder,"jobfile.sh"),"wb"), append=T)
+  conJobfile<-lapply(bashafile, write, file=file(paste0(folder,"jobfile.sh"),"wb"), append=T)
+  showConnections()
 }
 
 # #SBATCH --job-name=TestJOB		#Nombre del job

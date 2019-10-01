@@ -7,7 +7,9 @@ source(here("AccFunc.R"))
 
 
 fileName<-"parameters.json"
+here()
 
+oldJson<-fromJSON(here("Simulations","learHonest_","strQual1_",fileName))
 
 param<-list(totGen   = 5,   nRep    = 30,
             printGen = 1,   printLearn = 1,
@@ -24,10 +26,18 @@ param<-list(totGen   = 5,   nRep    = 30,
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "baselineFit",
             rangParam = c(3,5,10),
-            folderL=paste(here("Simulations"),"/",sep=""))
+            folderL=paste(here("Simulations"),"/",sep=""),
+            folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",namParam,"_/"))
 
+diffJsons(oldJson,param)
 
-param$folder<-paste0(param$namParam,"_/")
+param<-oldJson
+param$alphaAct<-0.01
+param$alphaCrit<-0.01
+param$folderL<-param$folder
+param$folder<-paste0("/hpcfs/home/a.quinones/BadgeStatus/",param$namParam,"1_/")
+param$baselineFit<-5
+
 
 rang<-1
 
@@ -44,8 +54,8 @@ listfolders<-check_create.dir(here("Simulations","alphaAC_"),
 
 
 for (i in 1:1) {
-  param$folderL<-paste0(here("Simulations","Centers6_",
-                            paste0(param$namParam,"")),"_/")
+  param$folderL<-paste0(here("Simulations","learHonest_",
+                            paste0(param$namParam,"")),"1_/")
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   if(file.exists(paste(param$folderL,fileName,sep = ''))){
     currFile<-fromJSON(paste(param$folderL,fileName,sep = ''))
@@ -58,16 +68,16 @@ for (i in 1:1) {
       ans<-readline("Want to continue?")
       if(substr(ans, 1, 1) == "y"){
         write(outParam,paste(param$folderL,fileName,sep = ""))
-        jobfile(param$folderL,param$namParam)
+        jobfile(param$folderL,paste0(param$namParam,1))
       }
     }
     else{
-      jobfile(param$folderL,param$namParam)
+      jobfile(param$folderL,paste0(param$namParam,1))
     }
   }
   else{
     write(outParam,paste(param$folderL,fileName,sep = ""))
-    jobfile(param$folderL,param$namParam)
+    jobfile(param$folderL,paste0(param$namParam,1))
   }
   # system(paste(exedir,
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)
