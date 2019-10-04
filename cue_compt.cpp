@@ -602,7 +602,7 @@ int main(int argc, char* argv[]){
 	//param["sigSq"]        	 = 0.01;
 	//param["nCenters"]     	 = 5;
 	//param["initCrit"]          = 0;
-	//param["initAct"]           = 0;
+	//param["initAct"]           = 5;
 	//param["QualStDv"]          = 0.1;
 	//param["namParam"]          = "baselineFit";  
 	//// which parameter to vary inside the program
