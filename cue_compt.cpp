@@ -2,20 +2,18 @@
 /*=============================================================================
 cue_comp.cpp
 ===============================================================================
-Main file of a model exploring social competence. Individuals play the 
-traditional hawk-dove game. The purpose of the project is to add a type of 
-player that uses a morphological cue to determine the probability to play
-hawk or dove. 
+Main file of a model exploring the evolution communication systems where 
+individuals learn to respond to a signal. Individuals play the 
+traditional hawk-dove game. 
 
 
 Written by :
 
 Andrés E.Quiñones
 Posdoctoral researcher
-Behavioural Ecology Group
-Institute of Biology
-University of Neuchâtel
-Switzerland
+Departamento de ciencias biológicas
+Universidad de los Andes
+Bogotá Colombia
 
 Start date :
 11 June 2018
@@ -28,10 +26,10 @@ Start date :
 #include <cstdlib>
 #include <math.h>	
 #include <vector>
-#include "tchar.h"
-#include "..\\Cpp\\Routines\\C++\\RandomNumbers\\random.h"
-#include "..\\Cpp\\json.hpp"       
-#include "..\\Cpp\\Routines\C++\RandomNumbers\utils.h"
+//#include "tchar.h"   //Eliminate for g++
+#include "../Cpp/Routines/C++/RandomNumbers/random.h"
+#include "../Cpp/json.hpp"       
+#include "../Cpp/Routines/C++/RandomNumbers/utils.h"
 // Header for reading and using JSON files see https://github.com/nlohmann/json
 
 using namespace std;
@@ -570,7 +568,7 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	//cout << endl;
 }
 
-int main(int argc, _TCHAR* argv[]){
+int main(int argc, char* argv[]){
 
 	mark_time(1);
 
