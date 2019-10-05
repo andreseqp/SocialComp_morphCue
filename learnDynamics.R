@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/strQual1"
+scenario<-"QualStDv"
 
 
 
@@ -20,7 +20,7 @@ scenario<-"learHonest_/strQual1"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
+fileId<-3
 indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[fileId]))
 
 # new columns ------------------------------------------------------------------
@@ -31,9 +31,12 @@ indLearn[,diffActWeights:=abs(WeightAct_0-WeightAct_4)]
 # Changes in learning parameters for several individuals -----------------------
 
 gener<-indLearn[,unique(time)][3]
-nCenters<-5
-interv<-1/nCenters
-centers<-interv*0.5+interv*seq(0,nCenters-1)
+nCenters<-6
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+# nCenters<-5
+# interv<-1/nCenters
+# centers<-interv*0.5+interv*seq(0,nCenters-1)
 rangx<-seq(0,1,length=1000)
 colorbreaksQual<-seq(0,1,length=100)
 
@@ -72,7 +75,7 @@ for(behavTime in unique(indLearn$nInteract)[timePoints]){
                                &seed==seedCh,indId],
                       indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
                                unique(indId)]),lwd=0.5,ylim=c(0,1))
-  lines(logist(totRBF(rangx,centers,0.01,rep(0,5))
+  lines(logist(totRBF(rangx,centers,0.01,rep(0,nCenters))
               ,alpha = 0,beta = 1)~rangx,
        lwd=1,col=1)
   text(x = 0.5,y=0.58,labels = paste0("nInt=",behavTime))

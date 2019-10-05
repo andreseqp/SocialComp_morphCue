@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/alphaAct"
+scenario<-"initAct"
 
 
 # Load files -------------------------------------------------------------------
@@ -63,11 +63,13 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
                    m.weightAct_2=mean(WeightAct_2),
                    m.weightAct_3=mean(WeightAct_3),
                    m.weightAct_4=mean(WeightAct_4),
+                   m.weightAct_5=mean(WeightAct_5),
                    m.weightCrit_0=mean(WeightCrit_0),
                    m.weightCrit_1=mean(WeightCrit_1),
                    m.weightCrit_2=mean(WeightCrit_2),
                    m.weightCrit_3=mean(WeightCrit_3),
-                   m.weightCrit_4=mean(WeightCrit_4)),by=time]
+                   m.weightCrit_4=mean(WeightCrit_4),
+                   m.weightCrit_5=mean(WeightCrit_5)),by=time]
 
 # Extract means and IQR for the dynamic variables ------------------------------
 
@@ -79,8 +81,9 @@ popStats<-pop[, as.list(unlist(lapply(.SD,
               by = time, 
               .SDcols=c("Quality","alpha","beta","Badge","nInteract","WeightAct_0",
                         "WeightAct_1","WeightAct_2","WeightAct_3","WeightAct_4",
+                        "WeightAct_5",
                         "WeightCrit_0","WeightCrit_1","WeightCrit_2",
-                        "WeightCrit_3","WeightCrit_4")]
+                        "WeightCrit_3","WeightCrit_4","WeightCrit_5")]
 
 # Extract means and IQR for the dynamic variables for each replicate -----------
 # separately
@@ -92,8 +95,9 @@ Runmeans<-pop[, as.list(unlist(lapply(.SD,
                   by = .(time,seed), 
                   .SDcols=c("Quality","alpha","beta","Badge","nInteract","WeightAct_0",
                             "WeightAct_1","WeightAct_2","WeightAct_3","WeightAct_4",
+                            "WeightAct_5",
                             "WeightCrit_0","WeightCrit_1","WeightCrit_2",
-                            "WeightCrit_3","WeightCrit_4")]
+                            "WeightCrit_3","WeightCrit_4","WeightCrit_4")]
 
 
 # Plot variation of the weights ------------------------------------------------
@@ -104,9 +108,13 @@ Runmeans<-pop[, as.list(unlist(lapply(.SD,
 gener<-tail(pop[,unique(time)],1)
 lastInt<-tail(pop[,unique(nInteract)],3)
 runChoi<-0
-nCenters<-5
-interv<-1/nCenters
-centers<-interv*0.5+interv*seq(0,nCenters-1)
+nCenters<-6
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+
+# nCenters<-5
+# interv<-1/nCenters
+# centers<-interv*0.5+interv*seq(0,nCenters-1)
 rangx<-seq(0,1,length=1000)
 tempPop<-pop[time==gener&nInteract==lastInt[1],.SD[.N],
              .SDcol=c(grep("Weight",
@@ -163,7 +171,7 @@ lines(logist(totRBF(rangx,centers,0.01,weightsActMean),alpha = 0,
 # average of all the replicates from the pop data
 lines(logist(totRBF(rangx,centers,0.01,
                     as.double(popStats[time==gener,.SD,
-                                       .SDcols=paste0("WeightAct_",0:4,".m")])),
+                                       .SDcols=paste0("WeightAct_",0:5,".m")])),
              alpha=0,beta=1)~rangx,col="green",lwd=3)
 matlines(x=rangx,y=dataRunsAct,col="red",lwd=0.8)
 
@@ -224,7 +232,7 @@ lines(totRBF(rangx,centers,0.01,weightsCritAll)~rangx,
 # Average from all replicates from sample
 lines(totRBF(rangx,centers,0.01,
              as.double(popStats[time==gener,.SD,
-                                .SDcols=paste0("WeightCrit_",0:4,".m")]))
+                                .SDcols=paste0("WeightCrit_",0:5,".m")]))
       ~rangx,col="red")
 
 matlines(x=rangx,y=dataRunsCrit,col="red",lwd=0.8)

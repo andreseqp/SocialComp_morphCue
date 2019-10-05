@@ -55,9 +55,11 @@ class individual {
 	public:
 		individual(strategy genotype_, double QualStDv,
 			double alphaBadge_, double alphaCI, 
-			double alphaAI, double gammaI, double sigmaSqI,	int nCenters_);
+			double alphaAI, double gammaI, double sigmaSqI,	int nCenters_,
+			double initCrit, double initAct );
 		individual(individual& mother, double QualStDv,
-			double mutRate,double mutSD, int mutType);
+			double mutRate,double mutSD, int mutType, double initCrit, 
+			double initAct);
 		double curr_payoff;
 		double cum_payoff;
 		int ninterac;
@@ -140,7 +142,7 @@ void individual::set_Badge(double stdDev=0.1) {
 individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
 	double alphaBadge_=0, double alphaCI = 0.05, 
 	double alphaAI = 0.05, double gammaI = 0, double sigmaSqI = 0.01, 
-	int nCenters_=6) {
+	int nCenters_=6,double initCrit=0,double initAct=0) {
 	nCenters = nCenters_;
 	alphaBadge = alphaBadge_;
 	betaBadge = alphaBadge_*2;
@@ -150,8 +152,8 @@ individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
 	double interv = 1 / static_cast<double>(nCenters-1);
 	for (int i = 0; i < nCenters; i++)	{
 		centers.push_back(interv * i);
-		featWeightsAct.push_back(0);
-		featWeightsCrit.push_back(0);
+		featWeightsAct.push_back(initAct);
+		featWeightsCrit.push_back(initCrit);
 		responses.push_back(0);
 	}
 	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0;
@@ -159,7 +161,8 @@ individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
 }
 
 individual::individual(individual& mother, double QualStDv,
-	double mutRate, double mutSD, int mutType) {
+	double mutRate, double mutSD, int mutType, 
+	double initCrit = 0, double initAct = 0) {
 	genotype = mutateStr(mother.genotype,mutRate,mutType);
 	nCenters = mother.nCenters;
 	alphaBadge = mutateDoub(mother.alphaBadge,mutRate,mutSD);
@@ -174,8 +177,8 @@ individual::individual(individual& mother, double QualStDv,
 	double interv = 1 / static_cast<double>(nCenters-1);
 	for (int i = 0; i < nCenters; i++) {
 		centers.push_back(interv * i);
-		featWeightsAct.push_back(0);
-		featWeightsCrit.push_back(0);
+		featWeightsAct.push_back(initAct);
+		featWeightsCrit.push_back(initCrit);
 		responses.push_back(0);
 	}
 }
@@ -299,7 +302,8 @@ std::string douts(double j) {			// turns double into string
 }
 
 void Reprod(vector<individual> &popT, int popsize, double mutRate,
-	double mutSD, double baselineFit, int mutType, double QualStDv) {
+	double mutSD, double baselineFit, int mutType, double QualStDv,
+	double initCrit, double initAct) {
 	vector<individual> popTplus1(popsize);
 	rnd::discrete_distribution payoff_dist(popsize);
 	
@@ -311,7 +315,7 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	for (vector<individual>::iterator itpopTplus1 = popTplus1.begin(); 
 		itpopTplus1 < popTplus1.end(); ++itpopTplus1) {
 		*itpopTplus1 = individual(popT[payoff_dist.sample()], QualStDv,mutRate,
-			mutSD, mutType);
+			mutSD, mutType,	initCrit,initAct);
 	}
 	vector<individual>::iterator itpopTplus1 = popTplus1.begin();
 	for (vector<individual>::iterator itpopT = popT.begin();
@@ -596,6 +600,8 @@ int main(int argc, char* argv[]){
 	//param["alphaAct"]     	 = 0.01;
 	//param["sigSq"]        	 = 0.01;
 	//param["nCenters"]     	 = 5;
+	//param["initCrit"]          = 0;
+	//param["initAct"]           = 5;
 	//param["QualStDv"]          = 0.1;
 	//param["namParam"]          = "baselineFit";  
 	//// which parameter to vary inside the program
@@ -633,7 +639,7 @@ int main(int argc, char* argv[]){
 				population.push_back(individual((strategy)initFreq.sample(),
 					param["QualStDv"], param["alphaBad"],
 					param["alphaCrit"],	param["alphaAct"], param["sigSq"], 
-					param["nCenters"]));
+					param["nCenters"],param["initCrit"],param["initAct"]));
 			}
 			for (int generation = 0; generation < param["totGen"]; 
 				++generation) {
@@ -650,7 +656,7 @@ int main(int argc, char* argv[]){
 				}
 				Reprod(population, param["popSize"], param["mutRate"],
 					param["MutSd"], param["baselineFit"],param["mutType"],
-					param["QualStDv"]);
+					param["QualStDv"],param["initCrit"], param["initAct"]);
 				
 			}
 			for (int popId = 0; popId < param["popSize"]; ++popId) {

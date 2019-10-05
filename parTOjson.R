@@ -9,7 +9,6 @@ source(here("AccFunc.R"))
 fileName<-"parameters.json"
 here()
 
-oldJson<-fromJSON(here("Simulations","learHonest_","strQual1_",fileName))
 
 param<-list(totGen   = 5,   nRep    = 30,
             printGen = 1,   printLearn = 1,
@@ -22,21 +21,23 @@ param<-list(totGen   = 5,   nRep    = 30,
             alphaBad	 = 0,    betaBad	 = 0,
             alphaCrit  = 0.01,  alphaAct = 0.01,
             sigSq   	 = 0.01, nCenters = 6,
-            QualStDv   = 1.1,  
+            initCrit = 0,      initAct=0,
+            QualStDv   = 0,  
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "baselineFit",
-            rangParam = c(3,5,10),
-            folderL=paste(here("Simulations"),"/",sep=""),
-            folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",namParam,"_/"))
+            namParam = "initAct",
+            rangParam = c(5,-5),
+            folderL=paste(here("Simulations"),"/",sep=""))
+param$folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",param$namParam,"_/")
 
-diffJsons(oldJson,param)
-
-param<-oldJson
-param$alphaAct<-0.01
-param$alphaCrit<-0.01
-param$folderL<-param$folder
-param$folder<-paste0("/hpcfs/home/a.quinones/BadgeStatus/",param$namParam,"1_/")
-param$baselineFit<-5
+# read and edit json 
+# oldJson<-fromJSON(here("Simulations","learHonest_","strQual1_",fileName))
+# diffJsons(oldJson,param)
+# param<-oldJson
+# param$alphaAct<-0.01
+# param$alphaCrit<-0.01
+# param$folderL<-param$folder
+# param$folder<-paste0("/hpcfs/home/a.quinones/BadgeStatus/",param$namParam,"1_/")
+# param$baselineFit<-5
 
 
 rang<-1
@@ -45,7 +46,7 @@ rang<-1
 check_create.dir(here("Simulations"),param = "Centers6",
                  values = c(""))
 
-check_create.dir(here("Simulations","Centers6_"),param = param$namParam,
+check_create.dir(here("Simulations"),param = param$namParam,
                  values = c(""))
 
 listfolders<-check_create.dir(here("Simulations","alphaAC_"),
@@ -54,8 +55,8 @@ listfolders<-check_create.dir(here("Simulations","alphaAC_"),
 
 
 for (i in 1:1) {
-  param$folderL<-paste0(here("Simulations","learHonest_",
-                            paste0(param$namParam,"")),"1_/")
+  param$folderL<-paste0(here("Simulations",
+                            param$namParam),"_/")
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   if(file.exists(paste(param$folderL,fileName,sep = ''))){
     currFile<-fromJSON(paste(param$folderL,fileName,sep = ''))
@@ -68,16 +69,16 @@ for (i in 1:1) {
       ans<-readline("Want to continue?")
       if(substr(ans, 1, 1) == "y"){
         write(outParam,paste(param$folderL,fileName,sep = ""))
-        jobfile(param$folderL,paste0(param$namParam,1))
+        jobfile(param$folderL,paste0(param$namParam))
       }
     }
     else{
-      jobfile(param$folderL,paste0(param$namParam,1))
+      jobfile(param$folderL,paste0(param$namParam))
     }
   }
   else{
     write(outParam,paste(param$folderL,fileName,sep = ""))
-    jobfile(param$folderL,paste0(param$namParam,1))
+    jobfile(param$folderL,paste0(param$namParam))
   }
   # system(paste(exedir,
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)
