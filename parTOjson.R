@@ -10,24 +10,24 @@ fileName<-"parameters.json"
 here()
 
 
-param<-list(totGen   = 5,   nRep    = 30,
+param<-list(totGen   = 10000,   nRep    = 20,
             printGen = 1,   printLearn = 1,
-            printLearnInt = 100,
+            printLearnInt = 200,
             popSize  = 1000,  baselineFit = 2,   
-            MutSd    = 0.0,
+            MutSd    = 0.2,
             nInt        = 5000,  init     = c(0,0,1),
             mutRate  = 0.02,  mutType  = 0,
             sampleSize = 20,   strQual  = 10,
-            alphaBad	 = 0,    betaBad	 = 0,
+            alphaBad	 = 3,    betaBad	 = 6,
             alphaCrit  = 0.01,  alphaAct = 0.01,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,
-            QualStDv   = 0,  
+            QualStDv   = 0.2,  
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "initAct",
-            rangParam = c(5,-5),
+            namParam = "strQual",
+            rangParam = c(2,5,10),
             folderL=paste(here("Simulations"),"/",sep=""))
-param$folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",param$namParam,"_/")
+param$folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",param$namParam,"Evol_/")
 
 # read and edit json 
 # oldJson<-fromJSON(here("Simulations","learHonest_","strQual1_",fileName))
@@ -46,7 +46,7 @@ rang<-1
 check_create.dir(here("Simulations"),param = "Centers6",
                  values = c(""))
 
-check_create.dir(here("Simulations"),param = param$namParam,
+check_create.dir(here("Simulations"),param = paste0(param$namParam,"Evol"),
                  values = c(""))
 
 listfolders<-check_create.dir(here("Simulations","alphaAC_"),
@@ -56,7 +56,7 @@ listfolders<-check_create.dir(here("Simulations","alphaAC_"),
 
 for (i in 1:1) {
   param$folderL<-paste0(here("Simulations",
-                            param$namParam),"_/")
+                            param$namParam),"Evol_/")
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   if(file.exists(paste(param$folderL,fileName,sep = ''))){
     currFile<-fromJSON(paste(param$folderL,fileName,sep = ''))
@@ -69,16 +69,16 @@ for (i in 1:1) {
       ans<-readline("Want to continue?")
       if(substr(ans, 1, 1) == "y"){
         write(outParam,paste(param$folderL,fileName,sep = ""))
-        jobfile(param$folderL,paste0(param$namParam))
+        jobfile(param$folderL,paste0(param$namParam,"Evol"))
       }
     }
     else{
-      jobfile(param$folderL,paste0(param$namParam))
+      jobfile(param$folderL,paste0(param$namParam,"Evol"))
     }
   }
   else{
     write(outParam,paste(param$folderL,fileName,sep = ""))
-    jobfile(param$folderL,paste0(param$namParam))
+    jobfile(param$folderL,paste0(param$namParam,"Evol"))
   }
   # system(paste(exedir,
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)

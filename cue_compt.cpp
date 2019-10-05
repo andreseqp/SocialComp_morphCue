@@ -289,17 +289,6 @@ int individual::set_phenotype(individual partner) {
 	return(phenotype);
 }
 
-std::string itos(int j) {				// turns int into string
-	std::stringstream s;
-	s << j;
-	return s.str();
-}
-
-std::string douts(double j) {			// turns double into string
-	std::stringstream s;
-	s << j;
-	return s.str();
-}
 
 void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	double mutSD, double baselineFit, int mutType, double QualStDv,
@@ -599,7 +588,7 @@ int main(int argc, char* argv[]){
 	//param["alphaCrit"]     	 = 0.01;
 	//param["alphaAct"]     	 = 0.01;
 	//param["sigSq"]        	 = 0.01;
-	//param["nCenters"]     	 = 5;
+	//param["nCenters"]     	 = 6;
 	//param["initCrit"]          = 0;
 	//param["initAct"]           = 5;
 	//param["QualStDv"]          = 0.1;
@@ -637,8 +626,8 @@ int main(int argc, char* argv[]){
 				"seed=" << seed << endl;
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
 				population.push_back(individual((strategy)initFreq.sample(),
-					param["QualStDv"], param["alphaBad"],
-					param["alphaCrit"],	param["alphaAct"], param["sigSq"], 
+					param["QualStDv"], param["alphaBad"],	
+					param["alphaCrit"],	param["alphaAct"],0, param["sigSq"], 
 					param["nCenters"],param["initCrit"],param["initAct"]));
 			}
 			for (int generation = 0; generation < param["totGen"]; 
