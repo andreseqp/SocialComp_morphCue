@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDv"
+scenario<-"initAct"
 
 
 
@@ -20,7 +20,7 @@ scenario<-"QualStDv"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
-fileId<-3
+fileId<-1
 indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[fileId]))
 
 # new columns ------------------------------------------------------------------
@@ -126,7 +126,7 @@ for(behavTime in unique(indLearn$nInteract)[timePoints]){
                                &seed==seedCh,indId],
                       indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
                                      unique(indId)]),lwd=0.5,ylim = ylims)
-  lines(totRBF(rangx,centers,0.01,rep(0,5))~rangx,lwd=1,col=1)
+  lines(totRBF(rangx,centers,0.01,rep(0,nCenters))~rangx,lwd=1,col=1)
   text(x = 0.5,y=0.38,labels = paste0("nInt=",behavTime))
 }
 rm(dataIndsCrit)

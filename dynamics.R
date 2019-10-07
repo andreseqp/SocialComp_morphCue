@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"learHonest_/alphaAct"
+scenario<-"initAct"
 
 
 # Load files -------------------------------------------------------------------
@@ -97,35 +97,35 @@ legend("topleft",legend=c("Hawk","Dove"),
        lty=c(1,1),lwd=2,col=colTypesLin[1:2],bty="o",cex=1)
 
 
-par(plt=posPlot(numploty = 2,idploty = 1),xaxt="n",las=1,new=TRUE,xpd=T)
-
-plot(x=c(0,max(evolStats$time)),y=c(0.4444436,0.4444436),type="l",lwd=2,
-     col=colTypesLin[1],ylim=c(0,1),xlab="Generations",ylab="Frequency",
-     cex.lab=1.5,cex.axis=1.2,xaxt='s',lty=2)
-lines(x=c(0,max(evolStats$time)),y=c(0.4444436,0.4444436)+0.01,type="l",lwd=2,
-      col=colTypesLin[2],lty=2)
-lines(x=c(0,max(evolStats$time)),y=c(0.1111111,0.1111111),type="l",lwd=2,
-      col=colTypesLin[3],lty=2)
-polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.freqHH,
-            rev(evolStats$lowIQR.freqHH)),
-        col=colTypesPol[1],border=NA)
-polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.freqHD,
-            rev(evolStats$lowIQR.freqHD)),
-        col=colTypesPol[2],border=NA)
-polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.freqDD,
-            rev(evolStats$lowIQR.freqDD)),
-        col=colTypesPol[3],border=NA)
-with(evolStats,{
-  lines(time,m.freqHH,col=colTypesLin[1],lwd=3)
-  lines(time,m.freqHD,col=colTypesLin[2],lwd=3)
-  lines(time,m.freqDD,col=colTypesLin[3],lwd=3)
-})
-
-legend("topright",legend=c("HH","HD","DD"),
-       lty=c(1,1,1),lwd=2,col=colTypesLin,bty="o",cex=1.15)
+# par(plt=posPlot(numploty = 2,idploty = 1),xaxt="n",las=1,new=TRUE,xpd=T)
+# 
+# plot(x=c(0,max(evolStats$time)),y=c(0.4444436,0.4444436),type="l",lwd=2,
+#      col=colTypesLin[1],ylim=c(0,1),xlab="Generations",ylab="Frequency",
+#      cex.lab=1.5,cex.axis=1.2,xaxt='s',lty=2)
+# lines(x=c(0,max(evolStats$time)),y=c(0.4444436,0.4444436)+0.01,type="l",lwd=2,
+#       col=colTypesLin[2],lty=2)
+# lines(x=c(0,max(evolStats$time)),y=c(0.1111111,0.1111111),type="l",lwd=2,
+#       col=colTypesLin[3],lty=2)
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$upIQR.freqHH,
+#             rev(evolStats$lowIQR.freqHH)),
+#         col=colTypesPol[1],border=NA)
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$upIQR.freqHD,
+#             rev(evolStats$lowIQR.freqHD)),
+#         col=colTypesPol[2],border=NA)
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$upIQR.freqDD,
+#             rev(evolStats$lowIQR.freqDD)),
+#         col=colTypesPol[3],border=NA)
+# with(evolStats,{
+#   lines(time,m.freqHH,col=colTypesLin[1],lwd=3)
+#   lines(time,m.freqHD,col=colTypesLin[2],lwd=3)
+#   lines(time,m.freqDD,col=colTypesLin[3],lwd=3)
+# })
+# 
+# legend("topright",legend=c("HH","HD","DD"),
+#        lty=c(1,1,1),lwd=2,col=colTypesLin,bty="o",cex=1.15)
 
 # Phenotypic frequencies 
 
