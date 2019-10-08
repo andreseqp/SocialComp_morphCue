@@ -24,8 +24,14 @@ totRBF<-function(x,xCenter,sigSq,featWeig){
 
 # Logistic function ------------------------------------------------------------
 
-logist<-function(x,alpha,beta){
+logist<-function(x,alpha=0,beta=1){
   return(1/(1+exp(alpha-beta*x)))
+}
+
+# inverted Logistic function ------------------------------------------------------------
+
+invertLogist<-function(x,alpha=0,beta=1){
+  return((-log(-1+(1/x))-alpha)/beta)
 }
 
 # Create output folders --------------------------------------------------------
