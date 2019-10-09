@@ -20,7 +20,7 @@ scenario<-"initAct"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
+fileId<-6
 indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[fileId]))
 
 # new columns ------------------------------------------------------------------

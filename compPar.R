@@ -8,7 +8,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"baselineFit"
+scenario<-"initAct"
 
 shortSce<-tail(strsplit(scenario,split = "_/")[[1]],1)
 
@@ -18,11 +18,15 @@ shortSce<-tail(strsplit(scenario,split = "_/")[[1]],1)
 (sdList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-inds<-do.call(rbind,lapply(indList[c(3,6,7)],filesScenar,scenario))
+inds<-do.call(rbind,lapply(indList,filesScenar,scenario))
 
 inds[,diffActWeight:=abs(WeightAct_0-WeightAct_4)]
 
 # Graphs -----------------------------------------------------------------------
+
+inds[,unique(get(shortSce))]
+
+inds[get(shortSce)==unique(get(shortSce))[5]]
 
 gener<-tail(inds[,unique(time)],1)
 lastInt<-tail(inds[,unique(nInteract)],3)
@@ -39,7 +43,9 @@ tempPop<-inds[time==gener&nInteract==lastInt[1],.SD[.N],
                            names(inds),value = TRUE),"Quality",
                       as.character(shortSce),"diffActWeight"),
              by=indId]
-dataIndAct_1<-sapply(as.list(tempPop[get(shortSce)==unique(get(shortSce)[1]),indId]),
+tempPop[,unique(get(shortSce))]
+idplot<-3
+dataIndAct_1<-sapply(as.list(tempPop[get(shortSce)==unique(get(shortSce)[idplot]),indId]),
                    function(x){x=
                      logist(totRBF(rangx,
                                    centers,0.01,
@@ -49,7 +55,7 @@ dataIndAct_1<-sapply(as.list(tempPop[get(shortSce)==unique(get(shortSce)[1]),ind
                                                          names(tempPop),
                                                          value = TRUE)
                                              ])),alpha=0,beta = 1)})
-idPAr<-3
+idPAr<-4
 dataIndAct_last<-sapply(as.list(tempPop[get(shortSce)==unique(get(shortSce))[idPAr],indId]),
                        function(x){x=
                          logist(totRBF(rangx,
@@ -69,7 +75,7 @@ matplot(x=rangx,y=dataIndAct_1,col = paletteMeans(100)[
   findInterval(tempPop[,Quality],colorbreaksQual)],
   lwd=2,lty = 1,xaxt="s",yaxt="n",ylim = c(0,1),
   xlab="",ylab="",type = "l")
-text(x = 0.5,y=0.95,labels = bquote(gamma==.(unique(inds[,get(shortSce)][1])))
+text(x = 0.5,y=0.95,labels = bquote(gamma==.(unique(tempPop[,get(shortSce)][idplot])))
      ,cex=2)
 axis(2,cex.axis=1.5)
 par(las=0)
@@ -83,7 +89,7 @@ matplot(x=rangx,y=dataIndAct_last,col = paletteMeans(100)[
   findInterval(tempPop[,Quality],colorbreaksQual)],
   lwd=2,lty = 1,xaxt="s",yaxt="n",ylim = c(0,1),
   xlab="",ylab="",type = "l")
-text(x = 0.5,y=0.95,labels = bquote(gamma==.(unique(inds[,get(shortSce)])[idPAr]))
+text(x = 0.5,y=0.95,labels = bquote(gamma==.(unique(tempPop[,get(shortSce)])[idPAr]))
      ,cex=2)
 par(las=0)
 mtext("Badge",1,cex = 2,line = 3)
