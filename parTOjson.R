@@ -15,23 +15,23 @@ param<-list(totGen   = 5,   nRep    = 30,
             printLearnInt = 100,
             popSize  = 1000,  baselineFit = 2,   
             MutSd    = 0,
-            nInt        = 5000,  init     = c(0,0,1),
+            nInt        = 7000,  init     = c(0,0,1),
             mutRate  = 0.02,  mutType  = 0,
             sampleSize = 20,   strQual  = 10,
             alphaBad	 = 0,    betaBad	 = 0,
             alphaCrit  = 0.01,  alphaAct = 0.01,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,
-            QualStDv   = 0.0,  
+            QualStDv   = 0,  
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "initAct",
-            rangParam = invertLogist(c(0.85,0.666,0.333,0.15)),
+            rangParam = round(invertLogist(c(0.85,0.666,0.5,0.333,0.15)),2),
             folderL=paste(here("Simulations"),"/",sep=""))
 
 apendScenar<-""
 
 param$folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",
-                    param$namParam,apendScenar)
+                    param$namParam,apendScenar,"_")
 
 # read and edit json 
 # oldJson<-fromJSON(here("Simulations","learHonest_","strQual1_",fileName))
