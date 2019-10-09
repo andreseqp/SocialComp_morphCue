@@ -81,8 +81,10 @@ color.bar.aeqp <- function(lut, min, max=-min, nticks=11, ticks=seq(min, max, le
 filesScenar<-function(filename,scenario){
   splitScen<-tail(strsplit(scenario,"_")[[1]],1)
   splitScen<-gsub("/",splitScen,replacement = '')
-  extPar<-strsplit(filename,splitScen)[[1]][2]
-  parVal<-as.numeric(substr(gsub("[[:alpha:]]",extPar,replacement = ''),1,3))
+  extPar<-grep(".txt",strsplit(filename,splitScen)[[1]],value=TRUE)
+  parVal<-gsub("[[:alpha:]]",extPar,replacement = '')
+  parVal<-substr(parVal,1,nchar(parVal)-1)
+  parVal<-as.numeric(parVal)
   tmp<-fread(here("Simulations",paste0(scenario,"_"),filename))
   tmp[,eval(splitScen):=parVal]
   return(tmp)
