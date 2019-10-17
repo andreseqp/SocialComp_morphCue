@@ -79,14 +79,11 @@ color.bar.aeqp <- function(lut, min, max=-min, nticks=11, ticks=seq(min, max, le
 # not robust yet to filename variation CHECK!!! --------------------------------
 
 filesScenar<-function(filename,scenario){
-  splitScen<-tail(strsplit(scenario,"_")[[1]],1)
-  splitScen<-gsub("/",splitScen,replacement = '')
-  extPar<-grep(".txt",strsplit(filename,splitScen)[[1]],value=TRUE)
-  parVal<-gsub("[[:alpha:]]",extPar,replacement = '')
-  parVal<-substr(parVal,1,nchar(parVal)-1)
-  parVal<-as.numeric(parVal)
+  par<-gsub(".txt","",tail(strsplit(filename,"_")[[1]],1))
+  parVal<-as.numeric(gsub("[[:alpha:]]",par,replacement = ''))
+  parNam<-gsub("[^[:alpha:]]",par,replacement = '')
   tmp<-fread(here("Simulations",paste0(scenario,"_"),filename))
-  tmp[,eval(splitScen):=parVal]
+  tmp[,eval(parNam):=parVal]
   return(tmp)
 }
 
@@ -130,6 +127,19 @@ jobfile<-function(folder,jobname,timelim="10:00:00",
   showConnections()
 }
 
+
+# function to generate the actor or critic with respect to badge ---------------
+
+Actor<-function(weights,centers,sigSq=0.01,nx=1000){
+  logist(totRBF(seq(0,1,length.out = nx),
+                centers,sigSq,as.double(weights)),alpha = 0,beta = 1)
+}
+
+Critic<-function(weights,centers,sigSq=0.01,nx=1000){
+  totRBF(seq(0,1,length.out = nx),
+                centers,sigSq,as.double(weights))
+}
+
 # #SBATCH --job-name=TestJOB		#Nombre del job
 # #SBATCH -p short			#Cola a usar, Default=short (Ver colas y límites en /hpcfs/shared/README/partitions.txt)
 # #SBATCH -N 1				#Nodos requeridos, Default=1
@@ -146,4 +156,5 @@ jobfile<-function(folder,jobname,timelim="10:00:00",
 # echo "Soy un JOB de prueba"
 # echo "Corri en la maquina: "$host
 # echo "Corri el: "$date
+
 

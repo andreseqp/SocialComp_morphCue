@@ -8,9 +8,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"initAct"
-
-shortSce<-tail(strsplit(scenario,split = "_/")[[1]],1)
+scenario<-"initActQual"
 
 # Load files -------------------------------------------------------------------
 
@@ -22,6 +20,10 @@ inds<-do.call(rbind,lapply(indList,filesScenar,scenario))
 
 inds[,diffActWeight:=abs(WeightAct_0-WeightAct_4)]
 
+shortSce<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[1],"_")[[1]],1)),
+               replacement = "")
+  
+
 # Graphs -----------------------------------------------------------------------
 
 inds[,unique(get(shortSce))]
@@ -29,6 +31,7 @@ inds[,unique(get(shortSce))]
 inds[get(shortSce)==unique(get(shortSce))[5]]
 
 gener<-tail(inds[,unique(time)],1)
+gener<-3
 lastInt<-tail(inds[,unique(nInteract)],3)
 runChoi<-0
 nCenters<-6
@@ -37,64 +40,37 @@ interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1) 
 # centers when extremes are not included
 # centers<-interv*0.5+interv*seq(0,nCenters-1) 
-rangx<-seq(0,1,length=1000)
+yaxtRang<-c("s",rep("n",10))
+yaxlabs<-c("p(D)",rep("",10))
 tempPop<-inds[time==gener&nInteract==lastInt[1],.SD[.N],
              .SDcol=c(grep("Weight",
                            names(inds),value = TRUE),"Quality",
                       as.character(shortSce),"diffActWeight"),
              by=indId]
 tempPop[,unique(get(shortSce))]
-idplot<-3
-dataIndAct_1<-sapply(as.list(tempPop[get(shortSce)==unique(get(shortSce)[idplot]),indId]),
-                   function(x){x=
-                     logist(totRBF(rangx,
-                                   centers,0.01,
-                                   as.double(
-                                     tempPop[indId==x,.SD,
-                                             .SDcol=grep("WeightAct",
-                                                         names(tempPop),
-                                                         value = TRUE)
-                                             ])),alpha=0,beta = 1)})
-idPAr<-4
-dataIndAct_last<-sapply(as.list(tempPop[get(shortSce)==unique(get(shortSce))[idPAr],indId]),
-                       function(x){x=
-                         logist(totRBF(rangx,
-                                       centers,0.01,
-                                       as.double(
-                                         tempPop[indId==x,.SD,
-                                                 .SDcol=grep("WeightAct",
-                                                             names(tempPop),
-                                                             value = TRUE)
-                                                 ])),alpha=0,beta = 1)})
-
-# png(here("Simulations",paste0(scenario,"_"),"compStr1_last.png"),width = 900,height = 600)
-
-par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 2,idplotx = 1)
-    ,las=1)
-matplot(x=rangx,y=dataIndAct_1,col = paletteMeans(100)[
-  findInterval(tempPop[,Quality],colorbreaksQual)],
-  lwd=2,lty = 1,xaxt="s",yaxt="n",ylim = c(0,1),
-  xlab="",ylab="",type = "l")
-text(x = 0.5,y=0.95,labels = bquote(gamma==.(unique(tempPop[,get(shortSce)][idplot])))
-     ,cex=2)
-axis(2,cex.axis=1.5)
-par(las=0)
-mtext("Badge",1,cex = 2,line = 3)
-mtext("p(Dove)",2,cex = 2,line = 3)
-
-
-par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 2,idplotx = 2)
-    ,las=1,new=T)
-matplot(x=rangx,y=dataIndAct_last,col = paletteMeans(100)[
-  findInterval(tempPop[,Quality],colorbreaksQual)],
-  lwd=2,lty = 1,xaxt="s",yaxt="n",ylim = c(0,1),
-  xlab="",ylab="",type = "l")
-text(x = 0.5,y=0.95,labels = bquote(gamma==.(unique(tempPop[,get(shortSce)])[idPAr]))
-     ,cex=2)
-par(las=0)
-mtext("Badge",1,cex = 2,line = 3)
-par(las=1)
-
+plot.new()
+for(PAr in tempPop[,unique(get(shortSce))]){
+  allWeightsAct.tmp<-tempPop[get(shortSce)==PAr,.SD,
+                             .SDcol=grep("WeightAct",
+                                         names(tempPop),
+                                         value = TRUE)]
+  matActors.tmp<-apply(allWeightsAct.tmp,
+                        MARGIN=1,FUN = Actor,centers=centers)
+  par(plt=posPlot(numploty = 1,idploty = 1,
+                  numplotx = length(tempPop[,unique(get(shortSce))]),
+                  idplotx = match(PAr,tempPop[,unique(get(shortSce))])),
+      las=1,new=TRUE,yaxt=yaxtRang[match(PAr,tempPop[,unique(get(shortSce))])],
+      cex.axis=1.5)
+  matplot(x=rangx,y=matActors.tmp,col = paletteMeans(100)[
+    findInterval(tempPop[get(shortSce)==PAr,Quality],colorbreaksQual)],
+    lwd=2,lty = 1,xaxt="s",ylim = c(0,1),
+    xlab="",ylab="",type = "l")
+  text(x = 0.5,y=0.95,labels = bquote(.(shortSce)==
+                                        .(PAr)),cex=1)
+  par(las=0)
+  mtext("Badge",1,cex = 2,line = 3)
+  mtext(yaxlabs[match(PAr,tempPop[,unique(get(shortSce))])],2,cex = 2,line = 3)
+}
 par(new=FALSE)
 color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
                max = max(colorbreaksQual),nticks = 3,
@@ -103,6 +79,43 @@ color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
                numplotx = 15,numploty = 10,idplotx =14,idploty = 1)
 title("quality   ", line = 1)
 
+# dev.off()
+
+yaxlabs<-c("Value",rep("",10))
+plot.new()
+for(PAr in tempPop[,unique(get(shortSce))]){
+  allWeightsCrit.tmp<-tempPop[get(shortSce)==PAr,.SD,
+                             .SDcol=grep("WeightCrit",
+                                         names(tempPop),
+                                         value = TRUE)]
+  matCritics.tmp<-apply(allWeightsCrit.tmp,
+                       MARGIN=1,FUN = Critic,centers=centers)
+  par(plt=posPlot(numploty = 1,idploty = 1,
+                  numplotx = length(tempPop[,unique(get(shortSce))]),
+                  idplotx = match(PAr,tempPop[,unique(get(shortSce))])),
+      las=1,new=TRUE,yaxt=yaxtRang[match(PAr,tempPop[,unique(get(shortSce))])],
+      cex.axis=1.5)
+  matplot(x=rangx,y=matCritics.tmp,col = paletteMeans(100)[
+    findInterval(tempPop[get(shortSce)==PAr,Quality],colorbreaksQual)],
+    lwd=2,lty = 1,xaxt="s",ylim = as.double(tempPop[,.(min(.SD),max(.SD)),
+                                          .SDcol=grep("WeightCrit",
+                                                      names(tempPop),value = TRUE)])
+    +c(0,0.1),
+    xlab="",ylab="",type = "l")
+  text(x = 0.5,y=0.4,labels = bquote(.(shortSce)==
+                                        .(PAr)),cex=1)
+  par(las=0)
+  mtext("Badge",1,cex = 2,line = 3)
+  mtext(yaxlabs[match(PAr,tempPop[,unique(get(shortSce))])],2,cex = 2,line = 3)
+}
+par(new=FALSE)
+color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
+               max = max(colorbreaksQual),nticks = 3,
+               title = "",
+               cex.tit = 1,
+               numplotx = 15,numploty = 10,idplotx =14,idploty = 1)
+title("quality   ", line = 1)
+tempPop[WeightCrit_3>0.4]
 dev.off()
 
 

@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"initAct"
+scenario<-"QualStDv"
 
 
 # Load files -------------------------------------------------------------------
@@ -20,7 +20,7 @@ scenario<-"initAct"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-6
+fileId<-1
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 

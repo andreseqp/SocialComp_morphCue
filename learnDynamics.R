@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"initAct"
+scenario<-"QualStDv"
 
 
 
@@ -20,7 +20,7 @@ scenario<-"initAct"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
-fileId<-6
+fileId<-3
 indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[fileId]))
 
 # new columns ------------------------------------------------------------------
