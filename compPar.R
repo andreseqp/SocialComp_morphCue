@@ -8,7 +8,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"initActQual"
+scenario<-"QualStDvHonest"
 
 # Load files -------------------------------------------------------------------
 
@@ -28,10 +28,9 @@ shortSce<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[1],"_")[[1]],
 
 inds[,unique(get(shortSce))]
 
-inds[get(shortSce)==unique(get(shortSce))[5]]
+inds[get(shortSce)==unique(get(shortSce))[4]]
 
 gener<-tail(inds[,unique(time)],1)
-gener<-3
 lastInt<-tail(inds[,unique(nInteract)],3)
 runChoi<-0
 nCenters<-6
@@ -61,7 +60,7 @@ for(PAr in tempPop[,unique(get(shortSce))]){
                   idplotx = match(PAr,tempPop[,unique(get(shortSce))])),
       las=1,new=TRUE,yaxt=yaxtRang[match(PAr,tempPop[,unique(get(shortSce))])],
       cex.axis=1.5)
-  matplot(x=rangx,y=matActors.tmp,col = paletteMeans(100)[
+  matplot(x=seq(0,1,length.out = 1000),y=matActors.tmp,col = paletteMeans(100)[
     findInterval(tempPop[get(shortSce)==PAr,Quality],colorbreaksQual)],
     lwd=2,lty = 1,xaxt="s",ylim = c(0,1),
     xlab="",ylab="",type = "l")
@@ -95,7 +94,7 @@ for(PAr in tempPop[,unique(get(shortSce))]){
                   idplotx = match(PAr,tempPop[,unique(get(shortSce))])),
       las=1,new=TRUE,yaxt=yaxtRang[match(PAr,tempPop[,unique(get(shortSce))])],
       cex.axis=1.5)
-  matplot(x=rangx,y=matCritics.tmp,col = paletteMeans(100)[
+  matplot(x=seq(0,1,length.out = 1000),y=matCritics.tmp,col = paletteMeans(100)[
     findInterval(tempPop[get(shortSce)==PAr,Quality],colorbreaksQual)],
     lwd=2,lty = 1,xaxt="s",ylim = as.double(tempPop[,.(min(.SD),max(.SD)),
                                           .SDcol=grep("WeightCrit",

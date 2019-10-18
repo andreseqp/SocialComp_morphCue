@@ -10,14 +10,14 @@ fileName<-"parameters.json"
 here()
 
 
-param<-list(totGen   = 5,   nRep    = 30,
-            printGen = 1,   printLearn = 1,
-            printLearnInt = 100,
+param<-list(totGen   = 1000,   nRep    = 10,
+            printGen = 500,   printLearn = 1,
+            printLearnInt = 1000,
             popSize  = 1000,  baselineFit = 2,   
-            MutSd    = 0,
+            MutSd    = 0.2,
             nInt        = 5000,  init     = c(0,0,1),
             mutRate  = 0.02,  mutType  = 0,
-            sampleSize = 20,   strQual  = 10,
+            sampleSize = 10,   strQual  = 10,
             alphaBad	 = 5,    betaBad	 = 10,
             alphaCrit  = 0.01,  alphaAct = 0.01,
             sigSq   	 = 0.01, nCenters = 6,
@@ -25,16 +25,20 @@ param<-list(totGen   = 5,   nRep    = 30,
             QualStDv   = 0,  
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "QualStDv",
-            rangParam = c(0,0.1,0.2,1.1),
+            rangParam = c(0.1,0.2,1.1),
             folderL=paste(here("Simulations"),"/",sep=""))
 
-apendScenar<-"Honest"
+apendScenar<-"Evol"
+
+runTime<-"360:00:00"#"10:00:00"
+
+partition<-"long"#"short"
 
 param$folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",
                     param$namParam,apendScenar,"_/")
 
 # read and edit json 
-# oldJson<-fromJSON(here("Simulations","learHonest_","strQual1_",fileName))
+# oldJson<-fromJSON(here("Simulations","strQualEvol_",fileName))
 # diffJsons(oldJson,param)
 # param<-oldJson
 # param$alphaAct<-0.01
@@ -73,16 +77,19 @@ for (i in 1:1) {
       ans<-readline("Want to continue?")
       if(substr(ans, 1, 1) == "y"){
         write(outParam,paste(param$folderL,fileName,sep = ""))
-        jobfile(param$folderL,paste0(param$namParam,apendScenar))
+        jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
+                partition)
       }
     }
     else{
-      jobfile(param$folderL,paste0(param$namParam,apendScenar))
+      jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
+              partition)
     }
   }
   else{
     write(outParam,paste(param$folderL,fileName,sep = ""))
-    jobfile(param$folderL,paste0(param$namParam,apendScenar))
+    jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
+            partition)
   }
   # system(paste(exedir,
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)
