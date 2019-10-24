@@ -9,7 +9,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"initAct"
+scenario<-"QualStDVEvol"
 
 
 # Load files -------------------------------------------------------------------
@@ -22,6 +22,7 @@ fileId<-1
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
+str(pop)
 # Get stats from the evolutionary simulations ----------------------------------
 
 evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
@@ -59,11 +60,13 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
                    m.weightAct_2=mean(WeightAct_2),
                    m.weightAct_3=mean(WeightAct_3),
                    m.weightAct_4=mean(WeightAct_4),
+                   m.weightAct_5=mean(WeightAct_5),
                    m.weightCrit_0=mean(WeightCrit_0),
                    m.weightCrit_1=mean(WeightCrit_1),
                    m.weightCrit_2=mean(WeightCrit_2),
                    m.weightCrit_3=mean(WeightCrit_3),
-                   m.weightCrit_4=mean(WeightCrit_4)),by=time]
+                   m.weightCrit_4=mean(WeightCrit_4),
+                   m.weightCrit_5=mean(WeightCrit_5)),by=time]
 
 
 # Plot mean and IQRs of the genotypes and phenotypes ----------------------------
@@ -111,9 +114,9 @@ seqYlabUp<-c("P(dove)",rep("",3))
 seqYlabDown<-c("Badge",rep("",3))
 seqXlabDown<-c("","Quality","")
 rangQual<-seq(0,1,length.out = 100)
-nCenters<-5
-interv<-1/nCenters
-centers<-interv*0.5+interv*seq(0,nCenters-1)
+nCenters<-6
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
 rangx<-seq(0,1,length=1000)
 count<-0
 for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){

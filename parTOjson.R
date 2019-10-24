@@ -10,9 +10,9 @@ fileName<-"parameters.json"
 here()
 
 
-param<-list(totGen   = 1000,   nRep    = 10,
-            printGen = 500,   printLearn = 1,
-            printLearnInt = 1000,
+param<-list(totGen   = 100000,   nRep    = 10,
+            printGen = 1000,   printLearn = 1000,
+            printLearnInt = 8000,
             popSize  = 1000,  baselineFit = 2,   
             MutSd    = 0.2,
             nInt        = 5000,  init     = c(0,0,1),
