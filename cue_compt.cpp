@@ -26,6 +26,7 @@ Start date :
 #include <cstdlib>
 #include <math.h>	
 #include <vector>
+#include <omp.h>
 //#include "tchar.h"   //Eliminate for g++
 #include "../Cpp/Routines/C++/RandomNumbers/random.h"
 #include "../Cpp/json.hpp"       
@@ -615,7 +616,7 @@ int main(int argc, char* argv[]){
 		initFreq[initIt - param["init"].begin()] = *initIt;
 	}
 
-
+	#pragma omp parallel for
 	for (json::iterator itParVal = param["rangParam"].begin();
 		itParVal != param["rangParam"].end(); ++itParVal) {
 		param[namParam] = *itParVal;
