@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"initAct"
+scenario<-"QualStDvEvol"
 
 
 # Load files -------------------------------------------------------------------
