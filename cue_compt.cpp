@@ -151,10 +151,10 @@ individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
 	alphaAct = alphaAI, alphaCrit = alphaCI, gamma = gammaI, sigmaSq = sigmaSqI;
 	double interv = 1 / static_cast<double>(nCenters-1);
 	for (int i = 0; i < nCenters; i++)	{
-		centers.push_back(interv * i);
-		featWeightsAct.push_back(initAct);
-		featWeightsCrit.push_back(initCrit);
-		responses.push_back(0);
+		centers.emplace_back(interv * i);
+		featWeightsAct.emplace_back(initAct);
+		featWeightsCrit.emplace_back(initCrit);
+		responses.emplace_back(0);
 	}
 	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0;
 	preferenceT=0;
@@ -176,10 +176,10 @@ individual::individual(individual& mother, double QualStDv,
 	sigmaSq = mother.sigmaSq;
 	double interv = 1 / static_cast<double>(nCenters-1);
 	for (int i = 0; i < nCenters; i++) {
-		centers.push_back(interv * i);
-		featWeightsAct.push_back(initAct);
-		featWeightsCrit.push_back(initCrit);
-		responses.push_back(0);
+		centers.emplace_back(interv * i);
+		featWeightsAct.emplace_back(initAct);
+		featWeightsCrit.emplace_back(initCrit);
+		responses.emplace_back(0);
 	}
 }
 
@@ -293,7 +293,8 @@ int individual::set_phenotype(individual partner) {
 void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	double mutSD, double baselineFit, int mutType, double QualStDv,
 	double initCrit, double initAct) {
-	vector<individual> popTplus1(popsize);
+	vector<individual> popTplus1;
+	popTplus1.reserve(popsize);
 	rnd::discrete_distribution payoff_dist(popsize);
 	
 	for (vector<individual>::iterator itpop = popT.begin(); 
@@ -306,11 +307,12 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 		*itpopTplus1 = individual(popT[payoff_dist.sample()], QualStDv,mutRate,
 			mutSD, mutType,	initCrit,initAct);
 	}
-	vector<individual>::iterator itpopTplus1 = popTplus1.begin();
+	popT = popTplus1;
+	/*vector<individual>::iterator itpopTplus1 = popTplus1.begin();
 	for (vector<individual>::iterator itpopT = popT.begin();
 		itpopT < popT.end(); ++itpopT, ++itpopTplus1) {
 		*itpopT = *itpopTplus1;
-	}
+	}*/
 }
 
 void get_stats(vector<individual> &popT, int popsize,int nFeat=5){
@@ -372,7 +374,7 @@ void interactions(vector<individual> &population, ofstream &genoutput,int nint,
 		countIntTypes[0] = 0, countIntTypes[1] = 0, countIntTypes[2] = 0;
 		countIntTypesGen[0], countIntTypesGen[1], countIntTypesGen[2] = 0;
 		for (int countSam = 0; countSam < sampleSize; ++countSam) {
-			sample.push_back(rnd::integer(population.size()));
+			sample.emplace_back(rnd::integer(population.size()));
 		}
 	}
 	for (int i = 0; i < nint*population.size(); ++i) {
@@ -566,47 +568,48 @@ int main(int argc, char* argv[]){
 	mark_time(1);
 
 	 //uncomment for debugging
-	//json param;
-	//param["totGen"]            = 100;   // Total number of generations
-	//param["nRep"]              = 5;     // Number of replicates
-	//param["printGen"]          = 10;     // How often data is printed	
-	//param["printLearn"]        = 10;	  // how often learning dyn are printed
-	//param["printLearnInt"]     = 20;   // How often are learning parameters printed
-	//param["init"]              = {0,0,1};        //Initial frequencies
-	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	//param["popSize"]           = 100;
-	//param["MutSd"]             = 0.1;
-	//param["nInt"]              = 50;    // Number of interactions per individual
-	//param["mutRate"]           = 0.001;
-	//param["strQual"]           = 10;
-	//param["baselineFit"]       = 1;
-	//param["mutType"]		     = 2;  
-	//// How many strategies are introduced by mutation
-	//param["sampleSize"]        = 20; 
-	//param["alphaBad"]			 = 0;
-	//param["betaBad"]			 = 0;
-	//param["alphaCrit"]     	 = 0.01;
-	//param["alphaAct"]     	 = 0.01;
-	//param["sigSq"]        	 = 0.01;
-	//param["nCenters"]     	 = 6;
-	//param["initCrit"]          = 0;
-	//param["initAct"]           = 5;
-	//param["QualStDv"]          = 0.1;
-	//param["namParam"]          = "baselineFit";  
-	//// which parameter to vary inside the program
-	//param["rangParam"]         = { 0.2 }; 
-	//// range in which the paramenter varies
-	//param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/baselinefit_/";
+	json param;
+	param["totGen"]            = 100;   // Total number of generations
+	param["nRep"]              = 5;     // Number of replicates
+	param["printGen"]          = 10;     // How often data is printed	
+	param["printLearn"]        = 10;	  // how often learning dyn are printed
+	param["printLearnInt"]     = 20;   // How often are learning parameters printed
+	param["init"]              = {0,0,1};        //Initial frequencies
+	param["payoff_matrix"]     = {1.5,1,0,0.5};  
+	param["popSize"]           = 100;
+	param["MutSd"]             = 0.1;
+	param["nInt"]              = 50;    // Number of interactions per individual
+	param["mutRate"]           = 0.001;
+	param["strQual"]           = 10;
+	param["baselineFit"]       = 1;
+	param["mutType"]		     = 2;  
+	// How many strategies are introduced by mutation
+	param["sampleSize"]        = 20; 
+	param["alphaBad"]			 = 0;
+	param["betaBad"]			 = 0;
+	param["alphaCrit"]     	 = 0.01;
+	param["alphaAct"]     	 = 0.01;
+	param["sigSq"]        	 = 0.01;
+	param["nCenters"]     	 = 6;
+	param["initCrit"]          = 0;
+	param["initAct"]           = 5;
+	param["QualStDv"]          = 0.1;
+	param["namParam"]          = "baselineFit";  
+	// which parameter to vary inside the program
+	param["rangParam"]         = { 0.2 }; 
+	// range in which the paramenter varies
+	param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/baselinefit_/";
 	
 		
 	// Comment for debugging
-	ifstream input(argv[1]);
+	/*ifstream input(argv[1]);
 	if (input.fail()) { cout << "JSON file failed" << endl; }
-	nlohmann::json param = json::parse(input);
+	nlohmann::json param = json::parse(input);*/
 
 	string namParam = param["namParam"];
 
 	vector<individual> population;
+	population.reserve(param["popSize"]);
 
 	// intial conditions
 	rnd::discrete_distribution initFreq(3);
@@ -625,7 +628,7 @@ int main(int argc, char* argv[]){
 			cout << param["namParam"] << "=" << *itParVal << "	" << 
 				"seed=" << seed << endl;
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
-				population.push_back(individual((strategy)initFreq.sample(),
+				population.emplace_back(individual((strategy)initFreq.sample(),
 					param["QualStDv"], param["alphaBad"],	
 					param["alphaCrit"],	param["alphaAct"],0, param["sigSq"], 
 					param["nCenters"],param["initCrit"],param["initAct"]));
