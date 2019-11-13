@@ -10,32 +10,32 @@ fileName<-"parameters.json"
 here()
 
 
-param<-list(totGen   = 5,   nRep    = 10,
-            printGen = 1,   printLearn = 1,
-            printLearnInt = 1000,
+param<-list(totGen   = 10000,   nRep    = 5,
+            printGen = 1000,   printLearn = 1000,
+            printLearnInt = 3500,
             popSize  = 1000,  baselineFit = 2,   
-            MutSd    = 0,
-            nInt        = 5000,  init     = c(0,0,1),
+            MutSd    = 0.3,
+            nInt        = 2000,  init     = c(0,0,1),
             mutRate  = 0.02,  mutType  = 0,
             sampleSize = 10,   strQual  = 10,
             alphaBad	 = 5,    betaBad	 = 10,
             alphaCrit  = 0.01,  alphaAct = 0.01,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,
-            QualStDv   = 0,
+            QualStDv   = 0.2,
             nIntGroup  = 1000,
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "nIntGroup",
             rangParam = c(10,100,1000),
             folderL=paste(here("Simulations"),"/",sep=""))
 
-apendScenar<-""
+apendScenar<-"Evol"
 
-runTime<-"10:00:00"# "360:00:00"#
+runTime<-"360:00:00"# "10:00:00"# 
 
-partition<-"short"#"long"#
+partition<-"long"#"short"#
 
-memor<-"4096"
+memor<- "16GB"#"4096"
 
 param$folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",
                     param$namParam,apendScenar,"_/")
@@ -98,7 +98,7 @@ for (i in 1:1) {
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)
   #   ,sep = " "))
 }
-gsub(pattern = "\\",replacement = "/",simsdir,fixed=TRUE)
+ygsub(pattern = "\\",replacement = "/",simsdir,fixed=TRUE)
 
 # system(paste(exedir,
 #              gsub("\\","/",paste(simsdir,listfolders[1],fileName,sep="\\"),fixed=TRUE)

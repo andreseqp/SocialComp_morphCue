@@ -94,6 +94,7 @@ class individual {
 		double mutateDoub(double value, double mutRate, double mutSD);
 		void calcRespValPref(individual partner);
 		void update();
+		bool viability(double alphaCost, double betaCost);
 	private:
 		int nCenters;
 		// number of ranges in which the morphological trait range is divided
@@ -197,8 +198,8 @@ void individual::calcRespValPref(individual partner) {
 	preferenceT = totPref;
 }
 
-double logist(double value1, double value2, double beta=1) {
-	return (1 / (1 + exp(-beta*(value1 - value2))));
+double logist(double value1, double value2, double beta=1,double alpha=0) {
+	return (1 / (1 + exp(alpha-beta*(value1 - value2))));
 }
 
 void individual::update() {
@@ -289,10 +290,13 @@ int individual::set_phenotype(individual partner) {
 	return(phenotype);
 }
 
+bool individual::viability(double alphaCost,double betaCost) {
+	return(rnd::binomial(logist(quality-own_badge,betaCost,alphaCost)));
+}
 
 void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	double mutSD, double baselineFit, int mutType, double QualStDv,
-	double initCrit, double initAct) {
+	double initCrit, double initAct,double alphaCost, double betaCost) {
 	vector<individual> popTplus1;
 	popTplus1.reserve(popsize);
 	rnd::discrete_distribution payoff_dist(popsize);
@@ -304,8 +308,19 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	}
 	for (vector<individual>::iterator itpopTplus1 = popTplus1.begin(); 
 		itpopTplus1 < popTplus1.end(); ++itpopTplus1) {
+		individual tmp = individual(popT[payoff_dist.sample()], QualStDv, mutRate,
+			mutSD, mutType, initCrit, initAct);
+
 		*itpopTplus1 = individual(popT[payoff_dist.sample()], QualStDv,mutRate,
 			mutSD, mutType,	initCrit,initAct);
+	}
+	vector<individual>::iterator itpopTplus1 = popTplus1.begin();
+	while (	itpopTplus1 < popTplus1.end()) {
+		*itpopTplus1 = individual(popT[payoff_dist.sample()], QualStDv, mutRate,
+			mutSD, mutType, initCrit, initAct);
+		if (itpopTplus1->viability(alphaCost,betaCost)) {
+			++itpopTplus1;
+		}
 	}
 	popT = popTplus1;
 	/*vector<individual>::iterator itpopTplus1 = popTplus1.begin();
@@ -594,6 +609,8 @@ int main(int argc, char* argv[]){
 	//param["initAct"]           = 5;
 	//param["QualStDv"]          = 0.1;
 	//param["nIntGroup"]		 = 50;
+	//param["initAct"]			 =-3;
+	//param["alphCost"]			 = 3;
 	//param["namParam"]          = "baselineFit";  
 	//// which parameter to vary inside the program
 	//param["rangParam"]         = { 0.2 }; 
@@ -648,7 +665,8 @@ int main(int argc, char* argv[]){
 				}
 				Reprod(population, param["popSize"], param["mutRate"],
 					param["MutSd"], param["baselineFit"],param["mutType"],
-					param["QualStDv"],param["initCrit"], param["initAct"]);
+					param["QualStDv"],param["initCrit"], param["initAct"], param["alphCost"], 
+					param["betCost"]);
 				
 			}
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
