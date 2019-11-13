@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDvHonest"
+scenario<-"test"
 
 
 # Load files -------------------------------------------------------------------
@@ -20,7 +20,7 @@ scenario<-"QualStDvHonest"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-4
+fileId<-1
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -118,7 +118,7 @@ centers<-interv*seq(0,nCenters-1)
 rangx<-seq(0,1,length=1000)
 tempPop<-pop[time==gener&nInteract==lastInt[1],.SD[.N],
              .SDcol=c(grep("Weight",
-                           names(evol),value = TRUE),"Quality"),
+                           names(evol),value = TRUE),"Quality","alpha","beta"),
              by=indId]
 dataIndAct<-sapply(as.list(tempPop[,indId]),
                    function(x){x=
@@ -338,6 +338,7 @@ plot(logist(WeightAct_3,alpha = 0,beta = 1)~Quality,
 # Vizualise variation
 
 par(plt=posPlot())
+
 hist(pop[time==gener,nInteract],xaxt="s")
 hist(pop[time==gener,Badge],xaxt="s")
 hist(pop[time==gener,Quality],xaxt="s")
@@ -348,7 +349,7 @@ printInt<-1000
 
 par(plt=posPlot())
 plot(diffActWeight~Quality,data=pop[time==gener&nInteract%%printInt==0],
-     col=1+nInteract/printInt,cex=0.5,pch=20)
+     col=1+nInteract/printInt,cex=0.7,pch=20)
 legend("topright",legend = pop[nInteract%%printInt==0,unique(nInteract)],pch=20,
        col=1+pop[nInteract%%printInt==0,unique(nInteract)]/printInt)
 

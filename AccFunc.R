@@ -99,11 +99,12 @@ diffJsons<-function(json1,json2){
 ## Automatically produce job files ---------------------------------------------
 
 jobfile<-function(folder,jobname,timelim="10:00:00",
-                  part="short"){
+                  part="short",nodes=1,mem=4096){
   bashafile<-list(line0="#!/bin/bash",
                   jobname="#SBATCH --job-name=",
-                  partit="#SBATCH -p ",nodes="#SBATCH -N 1",
-                  cpus="#SBATCH --cpus-per-task=1", mem="#SBATCH --mem=2000",
+                  partit="#SBATCH -p ",nodes="#SBATCH -N ",
+                  cpus="#SBATCH --cpus-per-task=1", 
+                  mem="#SBATCH --mem=",
                   time="#SBATCH --time=",
                   mailu="#SBATCH --mail-user=a.quinones@uniandes.edu.co",
                   mailt="#SBATCH --mail-type=END",
@@ -120,6 +121,8 @@ jobfile<-function(folder,jobname,timelim="10:00:00",
   bashafile$jobname<-paste0(bashafile$jobname,jobname)
   bashafile$time<-paste0(bashafile$time,timelim)
   bashafile$partit<-paste0(bashafile$partit,part)
+  bashafile$mem<-paste0(bashafile$mem,mem)
+  bashafile$nodes<-paste0(bashafile$nodes,nodes)
   if(file.exists(paste0(folder,"jobfile.sh"))){
     unlink(paste0(folder,"jobfile.sh"))
   }

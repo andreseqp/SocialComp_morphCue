@@ -10,11 +10,11 @@ fileName<-"parameters.json"
 here()
 
 
-param<-list(totGen   = 100000,   nRep    = 10,
-            printGen = 1000,   printLearn = 1000,
-            printLearnInt = 8000,
+param<-list(totGen   = 5,   nRep    = 10,
+            printGen = 1,   printLearn = 1,
+            printLearnInt = 1000,
             popSize  = 1000,  baselineFit = 2,   
-            MutSd    = 0.2,
+            MutSd    = 0,
             nInt        = 5000,  init     = c(0,0,1),
             mutRate  = 0.02,  mutType  = 0,
             sampleSize = 10,   strQual  = 10,
@@ -22,17 +22,20 @@ param<-list(totGen   = 100000,   nRep    = 10,
             alphaCrit  = 0.01,  alphaAct = 0.01,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,
-            QualStDv   = 0,  
+            QualStDv   = 0,
+            nIntGroup  = 1000,
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "QualStDv",
-            rangParam = c(0.1,0.2,1.1),
+            namParam = "nIntGroup",
+            rangParam = c(10,100,1000),
             folderL=paste(here("Simulations"),"/",sep=""))
 
-apendScenar<-"Evol"
+apendScenar<-""
 
-runTime<-"360:00:00"#"10:00:00"
+runTime<-"10:00:00"# "360:00:00"#
 
-partition<-"long"#"short"
+partition<-"short"#"long"#
+
+memor<-"4096"
 
 param$folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",
                     param$namParam,apendScenar,"_/")
@@ -78,18 +81,18 @@ for (i in 1:1) {
       if(substr(ans, 1, 1) == "y"){
         write(outParam,paste(param$folderL,fileName,sep = ""))
         jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
-                partition)
+                partition,nodes = 1,mem = memor)
       }
     }
     else{
       jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
-              partition)
+              partition,nodes = 1,mem = memor)
     }
   }
   else{
     write(outParam,paste(param$folderL,fileName,sep = ""))
     jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
-            partition)
+            partition,nodes = 1,mem = memor)
   }
   # system(paste(exedir,
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)

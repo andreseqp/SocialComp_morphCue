@@ -76,7 +76,7 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,value.var = c("meanAlpha","meanBeta"))
-runChoi<-5
+runChoi<-0
 
 # Average trajectory
 par(plt=posPlot(numploty = 3,idploty = 2),xaxt="s",las=1)
