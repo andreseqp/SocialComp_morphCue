@@ -567,43 +567,43 @@ int main(int argc, char* argv[]){
 	mark_time(1);
 
 	 //uncomment for debugging
-	//json param;
-	//param["totGen"]            = 100;   // Total number of generations
-	//param["nRep"]              = 5;     // Number of replicates
-	//param["printGen"]          = 10;     // How often data is printed	
-	//param["printLearn"]        = 10;	  // how often learning dyn are printed
-	//param["printLearnInt"]     = 20;   // How often are learning parameters printed
-	//param["init"]              = {0,0,1};        //Initial frequencies
-	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	//param["popSize"]           = 100;
-	//param["MutSd"]             = 0.1;
-	//param["nInt"]              = 50;    // Number of interactions per individual
-	//param["mutRate"]           = 0.001;
-	//param["strQual"]           = 10;
-	//param["baselineFit"]       = 1;
-	//param["mutType"]		     = 2;  
-	//// How many strategies are introduced by mutation
-	//param["sampleSize"]        = 20; 
-	//param["alphaBad"]			 = 0;
-	//param["betaBad"]			 = 0;
-	//param["alphaCrit"]     	 = 0.01;
-	//param["alphaAct"]     	 = 0.01;
-	//param["sigSq"]        	 = 0.01;
-	//param["nCenters"]     	 = 6;
-	//param["initCrit"]          = 0;
-	//param["initAct"]           = 5;
-	//param["QualStDv"]          = 0.1;
-	//param["namParam"]          = "baselineFit";  
-	//// which parameter to vary inside the program
-	//param["rangParam"]         = { 0.2 }; 
-	//// range in which the paramenter varies
-	//param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/baselinefit_/";
+	json param;
+	param["totGen"]            = 10;   // Total number of generations
+	param["nRep"]              = 5;     // Number of replicates
+	param["printGen"]          = 10;     // How often data is printed	
+	param["printLearn"]        = 10;	  // how often learning dyn are printed
+	param["printLearnInt"]     = 20;   // How often are learning parameters printed
+	param["init"]              = {0,0,1};        //Initial frequencies
+	param["payoff_matrix"]     = {1.5,1,0,0.5};  
+	param["popSize"]           = 100;
+	param["MutSd"]             = 0.1;
+	param["nInt"]              = 50;    // Number of interactions per individual
+	param["mutRate"]           = 0.001;
+	param["strQual"]           = 10;
+	param["baselineFit"]       = 1;
+	param["mutType"]		     = 2;  
+	// How many strategies are introduced by mutation
+	param["sampleSize"]        = 20; 
+	param["alphaBad"]			 = 0;
+	param["betaBad"]			 = 0;
+	param["alphaCrit"]     	 = 0.01;
+	param["alphaAct"]     	 = 0.01;
+	param["sigSq"]        	 = 0.01;
+	param["nCenters"]     	 = 6;
+	param["initCrit"]          = 0;
+	param["initAct"]           = 5;
+	param["QualStDv"]          = 0.1;
+	param["namParam"]          = "baselineFit";  
+	// which parameter to vary inside the program
+	param["rangParam"]         = { 2, 5, 10 }; 
+	// range in which the paramenter varies
+	param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/test/";
 	
 		
 	// Comment for debugging
-	ifstream input(argv[1]);
+	/*ifstream input(argv[1]);
 	if (input.fail()) { cout << "JSON file failed" << endl; }
-	nlohmann::json param = json::parse(input);
+	nlohmann::json param = json::parse(input);*/
 
 	string namParam = param["namParam"];
 
@@ -616,12 +616,12 @@ int main(int argc, char* argv[]){
 		initFreq[initIt - param["init"].begin()] = *initIt;
 	}
 
-	#pragma omp parallel for
 	for (json::iterator itParVal = param["rangParam"].begin();
 		itParVal != param["rangParam"].end(); ++itParVal) {
 		param[namParam] = *itParVal;
 		ofstream  evolOutput, indOutput;//popOutput,
 		initializeFiles(evolOutput,indOutput,param);//popOutput,
+		#pragma omp parallel for
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
 			cout << param["namParam"] << "=" << *itParVal << "	" << 
 				"seed=" << seed << endl;
@@ -637,12 +637,15 @@ int main(int argc, char* argv[]){
 					param["payoff_matrix"], param["strQual"], 
 					generation % static_cast<int>(param["printLearn"]) == 0,
 					param["printLearnInt"], param["sampleSize"],generation,seed);
-				if (generation % static_cast<int>(param["printGen"]) == 0) {
-					//cout << "time=" << generation << endl;
-					get_stats(population, param["popSize"],param["nCenters"]);
-					printStats(param["popSize"], evolOutput, generation, seed,param["nCenters"]);
-					/*printPopSample(population, popOutput, generation, seed,
-						param["sampleSize"],param["nCenters"]);*/
+				#pragma omp critical
+				{
+					if (generation % static_cast<int>(param["printGen"]) == 0) {
+						//cout << "time=" << generation << endl;
+						get_stats(population, param["popSize"], param["nCenters"]);
+						printStats(param["popSize"], evolOutput, generation, seed, param["nCenters"]);
+						/*printPopSample(population, popOutput, generation, seed,
+							param["sampleSize"],param["nCenters"]);*/
+					}
 				}
 				Reprod(population, param["popSize"], param["mutRate"],
 					param["MutSd"], param["baselineFit"],param["mutType"],
