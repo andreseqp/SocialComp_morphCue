@@ -318,7 +318,8 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	while (	itpopTplus1 < popTplus1.end()) {
 		*itpopTplus1 = individual(popT[payoff_dist.sample()], QualStDv, mutRate,
 			mutSD, mutType, initCrit, initAct);
-		if (itpopTplus1->viability(alphaCost,betaCost)) {
+		if (betaCost == 0) ++itpopTplus1;
+		else if (itpopTplus1->viability(alphaCost, betaCost)) {
 			++itpopTplus1;
 		}
 	}
@@ -610,6 +611,7 @@ int main(int argc, char* argv[]){
 	//param["QualStDv"]          = 0.1;
 	//param["nIntGroup"]		 = 50;
 	//param["initAct"]			 =-3;
+	//param["betCost"]           = -3;
 	//param["alphCost"]			 = 3;
 	//param["namParam"]          = "baselineFit";  
 	//// which parameter to vary inside the program
@@ -655,17 +657,20 @@ int main(int argc, char* argv[]){
 				interactions(population, indOutput, param["nInt"],
 					param["payoff_matrix"], param["strQual"],
 					generation % static_cast<int>(param["printLearn"]) == 0,
-					param["printLearnInt"], param["sampleSize"], generation, seed, param["nIntGroup"]);
+					param["printLearnInt"], param["sampleSize"], generation, seed, 
+					param["nIntGroup"]);
 				if (generation % static_cast<int>(param["printGen"]) == 0) {
 					//cout << "time=" << generation << endl;
 					get_stats(population, param["popSize"],param["nCenters"]);
-					printStats(param["popSize"], evolOutput, generation, seed,param["nCenters"]);
+					printStats(param["popSize"], evolOutput, generation, seed,
+						param["nCenters"]);
 					/*printPopSample(population, popOutput, generation, seed,
 						param["sampleSize"],param["nCenters"]);*/
 				}
 				Reprod(population, param["popSize"], param["mutRate"],
 					param["MutSd"], param["baselineFit"],param["mutType"],
-					param["QualStDv"],param["initCrit"], param["initAct"], param["alphCost"], 
+					param["QualStDv"],param["initCrit"], param["initAct"], 
+					param["alphCost"], 
 					param["betCost"]);
 				
 			}
