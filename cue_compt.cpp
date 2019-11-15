@@ -26,6 +26,7 @@ Start date :
 #include <cstdlib>
 #include <math.h>	
 #include <vector>
+#include <omp.h>
 //#include "tchar.h"   //Eliminate for g++
 #include "../Cpp/Routines/C++/RandomNumbers/random.h"
 #include "../Cpp/json.hpp"       
@@ -637,12 +638,12 @@ int main(int argc, char* argv[]){
 		initFreq[initIt - param["init"].begin()] = *initIt;
 	}
 
-
 	for (json::iterator itParVal = param["rangParam"].begin();
 		itParVal != param["rangParam"].end(); ++itParVal) {
 		param[namParam] = *itParVal;
 		ofstream  evolOutput, indOutput;//popOutput,
 		initializeFiles(evolOutput,indOutput,param);//popOutput,
+		#pragma omp parallel for
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
 			cout << param["namParam"] << "=" << *itParVal << "	" << 
 				"seed=" << seed << endl;
@@ -659,13 +660,15 @@ int main(int argc, char* argv[]){
 					generation % static_cast<int>(param["printLearn"]) == 0,
 					param["printLearnInt"], param["sampleSize"], generation, seed, 
 					param["nIntGroup"]);
-				if (generation % static_cast<int>(param["printGen"]) == 0) {
-					//cout << "time=" << generation << endl;
-					get_stats(population, param["popSize"],param["nCenters"]);
-					printStats(param["popSize"], evolOutput, generation, seed,
-						param["nCenters"]);
-					/*printPopSample(population, popOutput, generation, seed,
-						param["sampleSize"],param["nCenters"]);*/
+				#pragma omp critical
+				{
+					if (generation % static_cast<int>(param["printGen"]) == 0) {
+						//cout << "time=" << generation << endl;
+						get_stats(population, param["popSize"], param["nCenters"]);
+						printStats(param["popSize"], evolOutput, generation, seed, param["nCenters"]);
+						/*printPopSample(population, popOutput, generation, seed,
+							param["sampleSize"],param["nCenters"]);*/
+					}
 				}
 				Reprod(population, param["popSize"], param["mutRate"],
 					param["MutSd"], param["baselineFit"],param["mutType"],
