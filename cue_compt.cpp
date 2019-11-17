@@ -618,7 +618,7 @@ int main(int argc, char* argv[]){
 	//// which parameter to vary inside the program
 	//param["rangParam"]         = { 0.2 }; 
 	//// range in which the paramenter varies
-	//param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/test_/";
+	//param["folder"]            = "E:/Proyectos/SocialComp_morphCue/Simulations/test_/";
 	
 		
 	// Comment for debugging
@@ -628,16 +628,7 @@ int main(int argc, char* argv[]){
 
 	string namParam = param["namParam"];
 
-	vector<individual> population;
-	population.reserve(param["popSize"]);
-
-	// intial conditions
-	rnd::discrete_distribution initFreq(3);
-	for (json::iterator initIt = param["init"].begin();
-		initIt != param["init"].end(); ++initIt) {
-		initFreq[initIt - param["init"].begin()] = *initIt;
-	}
-
+	
 	for (json::iterator itParVal = param["rangParam"].begin();
 		itParVal != param["rangParam"].end(); ++itParVal) {
 		param[namParam] = *itParVal;
@@ -647,8 +638,16 @@ int main(int argc, char* argv[]){
 		for (int seed = 0; seed < param["nRep"]; ++seed) {
 			cout << param["namParam"] << "=" << *itParVal << "	" << 
 				"seed=" << seed << endl;
+			vector<individual> population;
+			population.reserve(param["popSize"]);
+			// intial conditions
+			rnd::discrete_distribution initFreq(3);
+			for (json::iterator initIt = param["init"].begin();
+				initIt != param["init"].end(); ++initIt) {
+				initFreq[initIt - param["init"].begin()] = *initIt;
+			}
 			for (int popId = 0; popId < param["popSize"]; ++popId) {
-				population.emplace_back(individual((strategy)initFreq.sample(),
+				population.push_back(individual((strategy)initFreq.sample(),
 					param["QualStDv"], param["alphaBad"],	
 					param["alphaCrit"],	param["alphaAct"],0, param["sigSq"], 
 					param["nCenters"],param["initCrit"],param["initAct"]));
@@ -677,9 +676,7 @@ int main(int argc, char* argv[]){
 					param["betCost"]);
 				
 			}
-			for (int popId = 0; popId < param["popSize"]; ++popId) {
-				population.pop_back();
-			}
+		
 		}
 		//popOutput.close();
 		evolOutput.close();
