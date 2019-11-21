@@ -310,7 +310,7 @@ public:
 
 printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 	int nCenters = 6) {
-	int nInterRecords = 1 + 2 * nInt / printLearnInt;
+	int nInterRecords = 1 + 2.5 * nInt / printLearnInt;
 	for (int countRecords = 0; countRecords < nInterRecords; ++countRecords) {
 		/*countIntTypesGen.emplace_back(0);
 		countIntTypesGen[countRecords].emplace_back(0);
@@ -652,48 +652,48 @@ int main(int argc, char* argv[]){
 	mark_time(1);
 
 	 //uncomment for debugging
-	json param;
-	param["totGen"]            = 50;   // Total number of generations
-	param["nRep"]              = 5;     // Number of replicates
-	param["printGen"]          = 10;     // How often data is printed	
-	param["printLearn"]        = 10;	  // how often learning dyn are printed
-	param["printLearnInt"]     = 20;   // How often are learning parameters printed
-	param["init"]              = {0,0,1};        //Initial frequencies
-	param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	param["popSize"]           = 1000;
-	param["MutSd"]             = 0.1;
-	param["nInt"]              = 50;    // Number of interactions per individual
-	param["mutRate"]           = 0.001;
-	param["strQual"]           = 10;
-	param["baselineFit"]       = 1;
-	param["mutType"]		     = 2;  
-	// How many strategies are introduced by mutation
-	param["sampleSize"]        = 20; 
-	param["alphaBad"]			 = 0;
-	param["betaBad"]			 = 0;
-	param["alphaCrit"]     	 = 0.01;
-	param["alphaAct"]     	 = 0.01;
-	param["sigSq"]        	 = 0.01;
-	param["nCenters"]     	 = 6;
-	param["initCrit"]          = 0;
-	param["initAct"]           = 5;
-	param["QualStDv"]          = 0.1;
-	param["nIntGroup"]		 = 50;
-	param["initAct"]			 =-3;
-	param["betCost"]           = 0;
-	param["alphCost"]			 = 3;
-	param["namParam"]          = "baselineFit";  
-	// which parameter to vary inside the program
-	param["rangParam"]         = { 0.2 }; 
-	// range in which the paramenter varies
-	param["folder"]            = "E:/Proyectos/SocialComp_morphCue/Simulations/test_/";
+	//json param;
+	//param["totGen"]            = 50;   // Total number of generations
+	//param["nRep"]              = 10;     // Number of replicates
+	//param["printGen"]          = 10;     // How often data is printed	
+	//param["printLearn"]        = 10;	  // how often learning dyn are printed
+	//param["printLearnInt"]     = 40;   // How often are learning parameters printed
+	//param["init"]              = {0,0,1};        //Initial frequencies
+	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
+	//param["popSize"]           = 1000;
+	//param["MutSd"]             = 0.1;
+	//param["nInt"]              = 100;    // Number of interactions per individual
+	//param["mutRate"]           = 0.001;
+	//param["strQual"]           = 10;
+	//param["baselineFit"]       = 1;
+	//param["mutType"]		     = 2;  
+	//// How many strategies are introduced by mutation
+	//param["sampleSize"]        = 10; 
+	//param["alphaBad"]			 = 0;
+	//param["betaBad"]			 = 0;
+	//param["alphaCrit"]     	 = 0.01;
+	//param["alphaAct"]     	 = 0.01;
+	//param["sigSq"]        	 = 0.01;
+	//param["nCenters"]     	 = 6;
+	//param["initCrit"]          = 0;
+	//param["initAct"]           = 5;
+	//param["QualStDv"]          = 0.1;
+	//param["nIntGroup"]		 = 50;
+	//param["initAct"]			 =-3;
+	//param["betCost"]           = 0;
+	//param["alphCost"]			 = 3;
+	//param["namParam"]          = "baselineFit";  
+	//// which parameter to vary inside the program
+	//param["rangParam"]         = { 0.2 }; 
+	//// range in which the paramenter varies
+	//param["folder"]            = "E:/Projects/SocialComp_morphCue/Simulations/test_/";
 	
 	nlohmann::json* pointParam;
 		
 	// Comment for debugging
-	/*ifstream input(argv[1]);
+	ifstream input(argv[1]);
 	if (input.fail()) { cout << "JSON file failed" << endl; }
-	nlohmann::json param = json::parse(input);*/
+	nlohmann::json param = json::parse(input);
 
 	pointParam = &param;
 
