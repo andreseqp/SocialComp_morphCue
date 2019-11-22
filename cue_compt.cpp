@@ -651,7 +651,7 @@ int main(int argc, char* argv[]){
 
 	mark_time(1);
 
-	 //uncomment for debugging
+	//uncomment for debugging
 	//json param;
 	//param["totGen"]            = 50;   // Total number of generations
 	//param["nRep"]              = 10;     // Number of replicates
@@ -686,7 +686,7 @@ int main(int argc, char* argv[]){
 	//// which parameter to vary inside the program
 	//param["rangParam"]         = { 0.2 }; 
 	//// range in which the paramenter varies
-	//param["folder"]            = "E:/Projects/SocialComp_morphCue/Simulations/test_/";
+	//param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/test_/";
 	
 	nlohmann::json* pointParam;
 		
