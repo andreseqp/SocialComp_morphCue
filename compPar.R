@@ -8,7 +8,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDvHonest"
+scenario<-"QualStDvEvol"
 
 # Load files -------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ inds[,unique(get(shortSce))]
 inds[get(shortSce)==unique(get(shortSce))[4]]
 
 gener<-tail(inds[,unique(time)],1)
-lastInt<-tail(inds[,unique(nInteract)],3)
+lastInt<-tail(inds[,unique(nInteract)],1)
 runChoi<-0
 nCenters<-6
 interv<-1/(nCenters-1)

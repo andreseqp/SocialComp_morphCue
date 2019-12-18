@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroup"
+scenario<-"QualStDvEvol"
 
 
 # Load files -------------------------------------------------------------------
@@ -20,7 +20,7 @@ scenario<-"nIntGroup"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-3
+fileId<-1
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -106,7 +106,7 @@ Runmeans<-pop[, as.list(unlist(lapply(.SD,
 #     width = 1000,height = 800)
 
 gener<-tail(pop[,unique(time)],1)
-lastInt<-tail(pop[,unique(nInteract)],3)
+lastInt<-tail(pop[,unique(nInteract)],1)
 runChoi<-0
 nCenters<-6
 interv<-1/(nCenters-1)
@@ -345,7 +345,7 @@ hist(pop[time==gener,Quality],xaxt="s")
 pop[,diffActWeight:=abs(WeightAct_0-WeightAct_4)]
 hist(pop[time==gener&nInteract==lastInt[1],diffActWeight])
 
-printInt<-1000
+printInt<-3500
 
 par(plt=posPlot())
 plot(diffActWeight~Quality,data=pop[time==gener&nInteract%%printInt==0],
