@@ -15,8 +15,8 @@ png(here("reacNorm.png"),width = 800,height = 800)
 
 
 qualRange<-seq(0,1,length=100)
-alpha<-5
-beta<-10
+alpha<-3
+beta<-6
 badgeFunc<-function(x,alpha,beta,maxBadge) {d<-maxBadge/(1+exp(alpha-beta*x))}
 par(plt=posPlot())
 plot(badgeFunc(qualRange,alpha,beta,1)~qualRange,type="l",cex.lab=1.5,

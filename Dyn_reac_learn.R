@@ -9,7 +9,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDvEvol"
+scenario<-"test"
 
 
 # Load files -------------------------------------------------------------------
@@ -98,13 +98,23 @@ legend("topleft",legend = c(expression(alpha),expression(beta)),
        col=colGenesLin,lwd=2,bty = "n")
 axis(side=1,padj = -3)
 # Runs' trajectory
-polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
-        y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
-                        .SDcol=c(paste0("meanAlpha_",runChoi),
-                                 paste0("sdAlpha_",runChoi))],
-            rev(traitsTrajs[,apply(.SD, margin=1,FUN = ),
-                            .SDcols=paste0("meanAlpha_",runChoi),paste0("sdAlpha_",runChoi)])),
-        col=colGenesPol[1],border = NA)
+# polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
+#         y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
+#                         .SDcol=c(paste0("meanAlpha_",runChoi),
+#                                  paste0("sdAlpha_",runChoi))],
+#             rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
+#                             .SDcols=c(paste0("meanAlpha_",runChoi),
+#                                       paste0("sdAlpha_",runChoi))])),
+#         col=colGenesPol[1],border = NA)
+# polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
+#         y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
+#                         .SDcol=c(paste0("meanBeta_",runChoi),
+#                                  paste0("sdBeta_",runChoi))],
+#             rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
+#                             .SDcols=c(paste0("meanBeta_",runChoi),
+#                                       paste0("sdBeta_",runChoi))])),
+#         col=colGenesPol[2],border = NA)
+
 par(new=T)
 matplot(x=traitsTrajs[,time],
         y=traitsTrajs[,.SD,

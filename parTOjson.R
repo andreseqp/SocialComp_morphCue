@@ -10,27 +10,27 @@ fileName<-"parameters.json"
 here()
 
 
-param<-list(totGen   = 5000,   nRep    = 5,
-            printGen = 500,   printLearn = 1000,
-            printLearnInt = 1900,
+param<-list(totGen   = 20000,   nRep    = 5,
+            printGen = 1000,   printLearn = 1000,
+            printLearnInt = 3500,
             popSize  = 1000,  baselineFit = 2,   
             MutSd    = 0.3,
-            nInt        = 1000,  init     = c(0,0,1),
-            mutRate  = 0.02,  mutType  = 0,
+            nInt        = 2000,  init     = c(0,0,1),
+            mutRate  = 0.05,  mutType  = 0,
             sampleSize = 10,   strQual  = 10,
-            alphaBad	 = 5,    betaBad	 = 10,
+            alphaBad	 = 3,    betaBad	 = 6,
             alphaCrit  = 0.01,  alphaAct = 0.01,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,
-            QualStDv   = 0.2, betCost = 0,
+            QualStDv   = 1.1, betCost = 0,
             alphCost	 = 3,
             nIntGroup  = 1000,
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "QualStDv",
-            rangParam = c(0.1,0.2,1.1),
+            namParam = "nIntGroupEvol",
+            rangParam = c(10,100,1000),
             folderL=paste(here("Simulations"),"/",sep=""))
 
-apendScenar<-"Evol"
+apendScenar<-"2"
 
 runTime<-"360:00:00"# "10:00:00"# 
 
@@ -40,9 +40,11 @@ memor<- "16GB"#"4096"
 
 nodes<-10
 
-param$folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",
+## For the cluster
+param$folder<-paste0("/hpcfs/home/a.quinones/BadgeStatus/",
                     param$namParam,apendScenar,"_/")
-
+## For the local pc
+param$folder<-param$folderL
 # read and edit json 
 # oldJson<-fromJSON(here("Simulations","strQualEvol_",fileName))
 # diffJsons(oldJson,param)
@@ -56,16 +58,17 @@ param$folder=paste0("/hpcfs/home/a.quinones/BadgeStatus/",
 
 rang<-1
 
+## Old ways of arranging folders
+# check_create.dir(here("Simulations"),param = "Centers6",
+#                  values = c(""))
+# listfolders<-check_create.dir(here("Simulations","alphaAC_"),
+#                               param = rep("SdCue",5),
+#                               values = rang)
 
-check_create.dir(here("Simulations"),param = "Centers6",
-                 values = c(""))
 
 check_create.dir(here("Simulations"),param = paste0(param$namParam,apendScenar),
                  values = c(""))
 
-listfolders<-check_create.dir(here("Simulations","alphaAC_"),
-                                    param = rep("SdCue",5),
-                              values = rang)
 
 
 for (i in 1:1) {
@@ -101,7 +104,7 @@ for (i in 1:1) {
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)
   #   ,sep = " "))
 }
-ygsub(pattern = "\\",replacement = "/",simsdir,fixed=TRUE)
+gsub(pattern = "\\",replacement = "/",simsdir,fixed=TRUE)
 
 # system(paste(exedir,
 #              gsub("\\","/",paste(simsdir,listfolders[1],fileName,sep="\\"),fixed=TRUE)
