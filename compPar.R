@@ -8,7 +8,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDvEvol"
+scenario<-"nIntGroupEvol2"
 
 # Load files -------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ shortSce<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[1],"_")[[1]],
 
 inds[,unique(get(shortSce))]
 
-inds[get(shortSce)==unique(get(shortSce))[4]]
+inds[get(shortSce)==unique(get(shortSce))[3]]
 
 gener<-tail(inds[,unique(time)],1)
 lastInt<-tail(inds[,unique(nInteract)],1)
@@ -44,7 +44,8 @@ yaxlabs<-c("p(D)",rep("",10))
 tempPop<-inds[time==gener&nInteract==lastInt[1],.SD[.N],
              .SDcol=c(grep("Weight",
                            names(inds),value = TRUE),"Quality",
-                      as.character(shortSce),"diffActWeight"),
+                      as.character(shortSce),"diffActWeight",
+                      "alpha","beta"),
              by=indId]
 tempPop[,unique(get(shortSce))]
 plot.new()
@@ -116,6 +117,54 @@ color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
 title("quality   ", line = 1)
 tempPop[WeightCrit_3>0.4]
 dev.off()
+
+# Reaction norms ---------------------------------------------------------------
+
+yaxlabs<-c("Value",rep("",10))
+plot.new()
+for(PAr in tempPop[,unique(get(shortSce))]){
+  dataIndReact<-sapply(as.list(tempPop[get(shortSce)==PAr,indId]),
+                       function(x){x=
+                         sapply(rangx, function(y)
+                           do.call(logist,
+                                   as.list(
+                                     c(y,
+                                       as.double(tempPop[indId==x,.SD,
+                                                         .SDcol=c("alpha","beta")
+                                                     ])))))})
+  par(plt=posPlot(numploty = 1,idploty = 1,
+                  numplotx = length(tempPop[,unique(get(shortSce))]),
+                  idplotx = match(PAr,tempPop[,unique(get(shortSce))])),
+      las=1,new=TRUE,yaxt=yaxtRang[match(PAr,tempPop[,unique(get(shortSce))])],
+      cex.axis=1.5)
+  matlines(x=rangx,y=dataIndReact,col = paletteMeans(100)[
+    findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2)
+  
+  
+  matplot(x=seq(0,1,length.out = 1000),y=matCritics.tmp,col = paletteMeans(100)[
+    findInterval(tempPop[get(shortSce)==PAr,Quality],colorbreaksQual)],
+    lwd=2,lty = 1,xaxt="s",ylim = as.double(tempPop[,.(min(.SD),max(.SD)),
+                                                    .SDcol=grep("WeightCrit",
+                                                                names(tempPop),value = TRUE)])
+    +c(0,0.1),
+    xlab="",ylab="",type = "l")
+  text(x = 0.5,y=0.4,labels = bquote(.(shortSce)==
+                                       .(PAr)),cex=1)
+  par(las=0)
+  mtext("Badge",1,cex = 2,line = 3)
+  mtext(yaxlabs[match(PAr,tempPop[,unique(get(shortSce))])],2,cex = 2,line = 3)
+}
+par(new=FALSE)
+color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
+               max = max(colorbreaksQual),nticks = 3,
+               title = "",
+               cex.tit = 1,
+               numplotx = 15,numploty = 10,idplotx =14,idploty = 1)
+title("quality   ", line = 1)
+
+
+
+
 
 
 png(here("Simulations",paste0(scenario,"_"),"compStrDiff.png"),

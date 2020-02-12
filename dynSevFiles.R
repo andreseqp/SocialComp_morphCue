@@ -5,10 +5,12 @@
 library(here)
 here()
 source(here("AccFunc.R"))
+library("plotrix")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDv"
+scenario<-"nIntGroupEvol2"
+variable<-gsub("[^[:alpha:]]",scenario,replacement = '')
 
 # Load files -------------------------------------------------------------------
 
@@ -58,7 +60,9 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
                    m.weightCrit_1=mean(WeightCrit_1),
                    m.weightCrit_2=mean(WeightCrit_2),
                    m.weightCrit_3=mean(WeightCrit_3),
-                   m.weightCrit_4=mean(WeightCrit_4)),by=.(time,QualStDv)]
+                   m.weightCrit_4=mean(WeightCrit_4)),by=.(time,get(variable))]
+
+setnames(evolStats,"get",variable)
 
 # Plot mean and IQRs of the genotypes and phenotypes ----------------------------
 
@@ -67,14 +71,14 @@ png(here("Simulations",paste0(scenario,"_"),"effectQualVariance.png"),height = 8
 timeChoi<-max(evolStats[,time])
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="n",las=1)
 with(evolStats[time==timeChoi],{
-  plotCI(x=QualStDv,y=m.freqFenHawk,
+  plotCI(x=get(variable),y=m.freqFenHawk,
          ui = upIQR.freqFenHawk,li=lowIQR.freqFenHawk,
          pch=16,xlab='',ylab='',
          col=colTypesLin[1],
          sfrac=0.005,cex.axis=1.3,yaxt='s',ylim=c(0,0.8))
-  lines(x=c(0,max(QualStDv)),y=c(0.66,0.66),col='grey')
+  lines(x=c(0,max(get(variable))),y=c(0.66,0.66),col='grey')
   par(new=T)
-  plotCI(x=QualStDv,y=m.freqFenDove,new=T,
+  plotCI(x=get(variable),y=m.freqFenDove,new=T,
          ui = upIQR.freqFenDove,li=lowIQR.freqFenDove,
          pch=16,xlab='',ylab='',
          col=colTypesLin[2],ylim=c(0,0.8),
@@ -86,24 +90,24 @@ legend("bottomright",legend=c("Hawk","Dove"),
 
 par(plt=posPlot(numploty = 2,idploty = 1),xaxt="s",las=1,new=TRUE,xpd=T)
 with(evolStats[time==timeChoi],{
-  plotCI(x=QualStDv,y=m.freqHH,
+  plotCI(x=get(variable),y=m.freqHH,
          ui = upIQR.freqHH,li=lowIQR.freqHH,
          pch=16,xlab=expression(sigma^2~"of the quality distribution")
          ,ylab='',col=colTypesLin[1],
          sfrac=0.005,cex.axis=1.3,yaxt='s',ylim=c(0,0.5))
   par(new=T)
-  plotCI(x=QualStDv,y=m.freqHD,
+  plotCI(x=get(variable),y=m.freqHD,
          ui = upIQR.freqHD,li=lowIQR.freqHD,
          pch=16,xlab='',ylab='',
          col=colTypesLin[2],
          sfrac=0.005,cex.axis=1.3,yaxt='s',ylim=c(0,0.5))
   par(new=T)
-  plotCI(x=QualStDv,y=m.freqDD,
+  plotCI(x=get(variable),y=m.freqDD,
          ui = upIQR.freqDD,li=lowIQR.freqDD,
          pch=16,xlab='',ylab='',
          col=colTypesLin[3],
          sfrac=0.005,cex.axis=1.3,yaxt='s',ylim=c(0,0.5))
-  lines(x=c(0,max(QualStDv)),y=c(0.4356,0.4356),col='grey')
+  lines(x=c(0,max(get(variable))),y=c(0.4356,0.4356),col='grey')
 })
 legend("bottomright",legend=c("HH","HD","DD"),
        lty=c(1,1,1),lwd=2,col=colTypesLin,bty="o",cex=1.)

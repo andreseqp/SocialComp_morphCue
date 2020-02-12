@@ -9,7 +9,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"test"
+scenario<-"nIntGroupEvol2"
 
 
 # Load files -------------------------------------------------------------------
@@ -18,7 +18,7 @@ scenario<-"test"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-3
+fileId<-2
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -77,19 +77,19 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,value.var = c("meanAlpha","meanBeta",
                                                 "sdAlpha","sdBeta"))
-runChoi<-0
+runChoi<-2
 
 # Average trajectory
 par(plt=posPlot(numploty = 3,idploty = 2),xaxt="s",las=1)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
      ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta)]))[c(1,5)],
      xlab="",ylab="Trait \n value",cex.lab=1.5,cex.axis=1,xaxt='n',las=1)
-polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.alpha,rev(evolStats$lowIQR.alpha)),
-        col=colGenesPol[1],border = NA)
-polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.beta,rev(evolStats$lowIQR.beta)),
-        col=colGenesPol[2],border = NA)
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$upIQR.alpha,rev(evolStats$lowIQR.alpha)),
+#         col=colGenesPol[1],border = NA)
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$upIQR.beta,rev(evolStats$lowIQR.beta)),
+#         col=colGenesPol[2],border = NA)
 with(evolStats,{
   lines(time,m.meanAlpha,col=colGenesLin[1],lwd=3)
   lines(time,m.meanBeta,col=colGenesLin[2],lwd=3)
@@ -98,22 +98,22 @@ legend("topleft",legend = c(expression(alpha),expression(beta)),
        col=colGenesLin,lwd=2,bty = "n")
 axis(side=1,padj = -3)
 # Runs' trajectory
-# polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
-#         y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
-#                         .SDcol=c(paste0("meanAlpha_",runChoi),
-#                                  paste0("sdAlpha_",runChoi))],
-#             rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
-#                             .SDcols=c(paste0("meanAlpha_",runChoi),
-#                                       paste0("sdAlpha_",runChoi))])),
-#         col=colGenesPol[1],border = NA)
-# polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
-#         y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
-#                         .SDcol=c(paste0("meanBeta_",runChoi),
-#                                  paste0("sdBeta_",runChoi))],
-#             rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
-#                             .SDcols=c(paste0("meanBeta_",runChoi),
-#                                       paste0("sdBeta_",runChoi))])),
-#         col=colGenesPol[2],border = NA)
+polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
+        y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
+                        .SDcol=c(paste0("meanAlpha_",runChoi),
+                                 paste0("sdAlpha_",runChoi))],
+            rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
+                            .SDcols=c(paste0("meanAlpha_",runChoi),
+                                      paste0("sdAlpha_",runChoi))])),
+        col=colGenesPol[1],border = NA)
+polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
+        y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
+                        .SDcol=c(paste0("meanBeta_",runChoi),
+                                 paste0("sdBeta_",runChoi))],
+            rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
+                            .SDcols=c(paste0("meanBeta_",runChoi),
+                                      paste0("sdBeta_",runChoi))])),
+        col=colGenesPol[2],border = NA)
 
 par(new=T)
 matplot(x=traitsTrajs[,time],

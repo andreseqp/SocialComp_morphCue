@@ -18,7 +18,7 @@ param<-list(totGen   = 20000,   nRep    = 5,
             nInt        = 2000,  init     = c(0,0,1),
             mutRate  = 0.05,  mutType  = 0,
             sampleSize = 10,   strQual  = 10,
-            alphaBad	 = 3,    betaBad	 = 6,
+            alphaBad	 = 0,    betaBad	 = 0,
             alphaCrit  = 0.01,  alphaAct = 0.01,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,
@@ -26,11 +26,11 @@ param<-list(totGen   = 20000,   nRep    = 5,
             alphCost	 = 3,
             nIntGroup  = 1000,
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "nIntGroupEvol",
-            rangParam = c(10,100,1000),
+            namParam = "betCost",
+            rangParam = c(2,4,6),
             folderL=paste(here("Simulations"),"/",sep=""))
 
-apendScenar<-"2"
+apendScenar<-""
 
 runTime<-"360:00:00"# "10:00:00"# 
 
@@ -74,6 +74,7 @@ check_create.dir(here("Simulations"),param = paste0(param$namParam,apendScenar),
 for (i in 1:1) {
   param$folderL<-paste0(here("Simulations",
                             param$namParam),apendScenar,"_/")
+  param$folder<-param$folderL
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   if(file.exists(paste(param$folderL,fileName,sep = ''))){
     currFile<-fromJSON(paste(param$folderL,fileName,sep = ''))
