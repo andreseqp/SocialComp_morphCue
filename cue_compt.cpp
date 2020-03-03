@@ -270,7 +270,9 @@ bool individual::Winfight(double otherQuality,double strQual) {
 
 
 bool individual::viability(double alphaCost,double betaCost) {
-	return(rnd::binomial(logist(quality-own_badge,betaCost,alphaCost)));
+	/*cout << logist(quality, own_badge, betaCost, -alphaCost) << endl;
+	cout << rnd::bernoulli(logist(quality, own_badge, betaCost, -alphaCost)) << endl;*/
+	return(rnd::bernoulli(logist(quality,own_badge,betaCost,-alphaCost)));
 }
 
 class printingObj {
@@ -654,15 +656,15 @@ int main(int argc, char* argv[]){
 	//uncomment for debugging
 	//json param;
 	//param["totGen"]            = 50;   // Total number of generations
-	//param["nRep"]              = 10;     // Number of replicates
+	//param["nRep"]              = 5;     // Number of replicates
 	//param["printGen"]          = 10;     // How often data is printed	
 	//param["printLearn"]        = 10;	  // how often learning dyn are printed
 	//param["printLearnInt"]     = 40;   // How often are learning parameters printed
 	//param["init"]              = {0,0,1};        //Initial frequencies
 	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	//param["popSize"]           = 1000;
+	//param["popSize"]           = 100;
 	//param["MutSd"]             = 0.1;
-	//param["nInt"]              = 100;    // Number of interactions per individual
+	//param["nInt"]              = 50;    // Number of interactions per individual
 	//param["mutRate"]           = 0.001;
 	//param["strQual"]           = 10;
 	//param["baselineFit"]       = 1;
@@ -678,13 +680,13 @@ int main(int argc, char* argv[]){
 	//param["initCrit"]          = 0;
 	//param["initAct"]           = 5;
 	//param["QualStDv"]          = 0.1;
-	//param["nIntGroup"]		 = 50;
-	//param["initAct"]			 =-3;
-	//param["betCost"]           = 0;
+	//param["nIntGroup"]		 = 100;
+	//param["initAct"]			 =0;
+	//param["betCost"]           = 2;
 	//param["alphCost"]			 = 3;
-	//param["namParam"]          = "baselineFit";  
+	//param["namParam"]          = "betCost";  
 	//// which parameter to vary inside the program
-	//param["rangParam"]         = { 0.2 }; 
+	//param["rangParam"]         = { 2, 4 }; 
 	//// range in which the paramenter varies
 	//param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/test_/";
 	

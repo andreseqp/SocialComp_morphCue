@@ -9,7 +9,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvol2"
+scenario<-"betCost"
 
 
 # Load files -------------------------------------------------------------------
@@ -18,7 +18,7 @@ scenario<-"nIntGroupEvol2"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-2
+fileId<-1
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -77,19 +77,19 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,value.var = c("meanAlpha","meanBeta",
                                                 "sdAlpha","sdBeta"))
-runChoi<-2
+runChoi<-1
 
 # Average trajectory
 par(plt=posPlot(numploty = 3,idploty = 2),xaxt="s",las=1)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
      ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta)]))[c(1,5)],
      xlab="",ylab="Trait \n value",cex.lab=1.5,cex.axis=1,xaxt='n',las=1)
-# polygon(x=c(evolStats$time,rev(evolStats$time)),
-#         y=c(evolStats$upIQR.alpha,rev(evolStats$lowIQR.alpha)),
-#         col=colGenesPol[1],border = NA)
-# polygon(x=c(evolStats$time,rev(evolStats$time)),
-#         y=c(evolStats$upIQR.beta,rev(evolStats$lowIQR.beta)),
-#         col=colGenesPol[2],border = NA)
+polygon(x=c(evolStats$time,rev(evolStats$time)),
+        y=c(evolStats$upIQR.alpha,rev(evolStats$lowIQR.alpha)),
+        col=colGenesPol[1],border = NA)
+polygon(x=c(evolStats$time,rev(evolStats$time)),
+        y=c(evolStats$upIQR.beta,rev(evolStats$lowIQR.beta)),
+        col=colGenesPol[2],border = NA)
 with(evolStats,{
   lines(time,m.meanAlpha,col=colGenesLin[1],lwd=3)
   lines(time,m.meanBeta,col=colGenesLin[2],lwd=3)
@@ -98,22 +98,22 @@ legend("topleft",legend = c(expression(alpha),expression(beta)),
        col=colGenesLin,lwd=2,bty = "n")
 axis(side=1,padj = -3)
 # Runs' trajectory
-polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
-        y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
-                        .SDcol=c(paste0("meanAlpha_",runChoi),
-                                 paste0("sdAlpha_",runChoi))],
-            rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
-                            .SDcols=c(paste0("meanAlpha_",runChoi),
-                                      paste0("sdAlpha_",runChoi))])),
-        col=colGenesPol[1],border = NA)
-polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
-        y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
-                        .SDcol=c(paste0("meanBeta_",runChoi),
-                                 paste0("sdBeta_",runChoi))],
-            rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
-                            .SDcols=c(paste0("meanBeta_",runChoi),
-                                      paste0("sdBeta_",runChoi))])),
-        col=colGenesPol[2],border = NA)
+# polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
+#         y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
+#                         .SDcol=c(paste0("meanAlpha_",runChoi),
+#                                  paste0("sdAlpha_",runChoi))],
+#             rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
+#                             .SDcols=c(paste0("meanAlpha_",runChoi),
+#                                       paste0("sdAlpha_",runChoi))])),
+#         col=colGenesPol[1],border = NA)
+# polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
+#         y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
+#                         .SDcol=c(paste0("meanBeta_",runChoi),
+#                                  paste0("sdBeta_",runChoi))],
+#             rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
+#                             .SDcols=c(paste0("meanBeta_",runChoi),
+#                                       paste0("sdBeta_",runChoi))])),
+#         col=colGenesPol[2],border = NA)
 
 par(new=T)
 matplot(x=traitsTrajs[,time],
@@ -188,6 +188,95 @@ for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){
 }
 rm(list=grep("temp",ls(),value = T))
 
+# Plot mean and IQRs of the genotypes and phenotypes ----------------------------
+
+# png(here("Simulations",scenario,"hawkDoveLearn_0.1.png"),
+# height = 800,width = 800)
+
+# get the trajectories for individual runs
+traitsTrajs<-dcast(evol,time~seed,value.var = c("meanAlpha","meanBeta",
+                                                "sdAlpha","sdBeta"))
+# Average trajectory
+par(plt=posPlot(numploty = 3,idploty = 2),xaxt="s",las=1)
+plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
+     ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta)]))[c(1,5)],
+     xlab="",ylab="Trait \n value",cex.lab=1.5,cex.axis=1,xaxt='n',las=1)
+polygon(x=c(evolStats$time,rev(evolStats$time)),
+        y=c(evolStats$upIQR.alpha,rev(evolStats$lowIQR.alpha)),
+        col=colGenesPol[1],border = NA)
+polygon(x=c(evolStats$time,rev(evolStats$time)),
+        y=c(evolStats$upIQR.beta,rev(evolStats$lowIQR.beta)),
+        col=colGenesPol[2],border = NA)
+with(evolStats,{
+  lines(time,m.meanAlpha,col=colGenesLin[1],lwd=3)
+  lines(time,m.meanBeta,col=colGenesLin[2],lwd=3)
+})
+legend("topleft",legend = c(expression(alpha),expression(beta)),
+       col=colGenesLin,lwd=2,bty = "n")
+axis(side=1,padj = -3)
+matlines(x=traitsTrajs[,time],
+        y=traitsTrajs[,.SD,
+                      .SDcol=grep("meanAlpha_",names(traitsTrajs),value = TRUE)],
+        col=colRuns,lty = 2,type="l",lwd=3)
+matlines(x=traitsTrajs[,time],
+        y=traitsTrajs[,.SD,
+                      .SDcol=grep("meanBeta_",names(traitsTrajs),value = TRUE)],
+        col=colRuns,lty = 1,type="l",lwd=3)
+legend("topright",legend = 1:5,col = colRuns,pch=20,bty = "n",ncol = 5)
+# Choose time range
+gen2plot<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
+# Plor the actor
+seqYax<-c("s",rep("n",3))
+# seqYlabUp<-c("Badge",rep("",3))
+seqYlabUp<-c("P(dove)",rep("",3))
+seqYlabDown<-c("Badge",rep("",3))
+seqXlabDown<-c("","Quality","")
+rangQual<-seq(0,1,length.out = 100)
+nCenters<-6
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+rangx<-seq(0,1,length=1000)
+count<-0
+for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){
+  count<-count+1
+  tempPop<-pop[time==unique(time)[genC],.SD[.N],
+               .SDcol=c(grep("WeightAct",
+                             names(evol),value = TRUE),"Quality",
+                        "alpha","beta","seed"),
+               by=indId]
+  dataIndAct<-sapply(as.list(tempPop[,indId]),
+                     function(x){x=
+                       logist(totRBF(rangx,
+                                     centers,0.01,
+                                     as.double(
+                                       tempPop[indId==x,.SD,
+                                               .SDcol=grep("WeightAct",
+                                                           names(tempPop),
+                                                           value = TRUE)
+                                               ])),alpha=0,beta = 1)})
+  
+  par(plt=posPlot(numplotx = 4,numploty = 3,idplotx = count,idploty = 3),
+      xaxt="s",las=1,new=TRUE)
+  matplot(x=rangx,y=dataIndAct,col = colRuns[tempPop[,seed]],lwd=1,lty = 1,
+       yaxt=seqYax[count],ylab=seqYlabUp[count],xlab="",type="l",
+       xaxt="n",ylim=c(0,1))
+  text(x=0.5,y=0.1,labels = paste0("time=",unique(evolStats$time)[genC]))
+  par(plt=posPlot(numplotx = 4,numploty = 3,idplotx = count,idploty = 1),
+      las=1,new=TRUE)
+  matplot(x=rangx,y=dataIndReact,col = colRuns[tempPop[,seed]],lwd=1,type='l',
+       xlab=seqXlabDown[count],ylab=seqYlabDown[count],ylim=c(0,1),
+       yaxt=seqYax[count],xaxt="s")
+  dataIndReact<-sapply(as.list(tempPop[,indId]),
+                       function(x){x=
+                         sapply(rangx, function(y)
+                           do.call(logist,as.list(c(y,as.double(tempPop[indId==x,.SD,
+                                                                        .SDcol=c("alpha","beta")])))))})
+  }
+rm(list=grep("temp",ls(),value = T))
+
+
+
+# Overall variation ------------------------------------------------------------
 
 par(plt=posPlot())
 hist(pop[,Badge])

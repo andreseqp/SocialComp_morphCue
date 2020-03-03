@@ -18,6 +18,8 @@ colGenesLin<-c(rgb(241/255,163/255,64/255),
 paletteMeans <- colorRampPalette(c('#d73027','#fc8d59','#fee090',
                                    '#e0f3f8','#91bfdb','#4575b4')[6:1],
                                  alpha=TRUE)
-colboxes<- c('#d7191c','#fdae61','#2b83ba',"black")
+colboxes<- c('#31a354','#d7191c','#fdae61','#2b83ba',"black")
+
+colRuns<-c('#e41a1c','#377eb8','#4daf4a', '#984ea3','#ff7f00')
 
 colorbreaksQual<-seq(0,1,length=100)

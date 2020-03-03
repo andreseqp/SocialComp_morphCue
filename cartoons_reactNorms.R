@@ -37,7 +37,7 @@ dev.off()
 badQualRang<-seq(-1,1,length=1000)
 alpha<-4
 beta<-6
-costFunc<-function(beta,alpha,x) {d<-1/(1+exp(-alpha-beta*x))}
+costFunc<-function(beta,alpha,x) {d<-1/(1+exp(alpha-beta*x))}
 par(plt=posPlot())
 betRang<-c(2,4,6)
 matplot(y=sapply(betRang,FUN = costFunc,alpha=alpha,x=badQualRang),x=badQualRang,
