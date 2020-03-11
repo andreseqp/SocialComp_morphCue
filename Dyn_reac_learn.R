@@ -18,7 +18,7 @@ scenario<-"betCost"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
+fileId<-3
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -77,7 +77,7 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,value.var = c("meanAlpha","meanBeta",
                                                 "sdAlpha","sdBeta"))
-runChoi<-1
+runChoi<-0
 
 # Average trajectory
 par(plt=posPlot(numploty = 3,idploty = 2),xaxt="s",las=1)
@@ -212,7 +212,7 @@ with(evolStats,{
   lines(time,m.meanBeta,col=colGenesLin[2],lwd=3)
 })
 legend("topleft",legend = c(expression(alpha),expression(beta)),
-       col=colGenesLin,lwd=2,bty = "n")
+       col=colGenesLin,lwd=2,bty = "n",lty = c(2,1))
 axis(side=1,padj = -3)
 matlines(x=traitsTrajs[,time],
         y=traitsTrajs[,.SD,
@@ -222,7 +222,7 @@ matlines(x=traitsTrajs[,time],
         y=traitsTrajs[,.SD,
                       .SDcol=grep("meanBeta_",names(traitsTrajs),value = TRUE)],
         col=colRuns,lty = 1,type="l",lwd=3)
-legend("topright",legend = 1:5,col = colRuns,pch=20,bty = "n",ncol = 5)
+legend("topright",legend = 0:5,col = colRuns,pch=20,bty = "n",ncol = 5)
 # Choose time range
 gen2plot<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
 # Plor the actor

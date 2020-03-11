@@ -198,7 +198,7 @@ void individual::update() {
 	// estimates of future state-action pair
 	double delta = curr_payoff - valueT;
 	double p0 = logist(preferenceT,0);
-	double eligVec;
+	double eligVec = 0;
 	if (phenotype==0) {
 		// if phenotype is hawk
 		eligVec = -p0;
@@ -448,10 +448,11 @@ void interactions(vector<individual>& population, ofstream& genoutput, int nint,
 	printingObj &localPrint) {
 	int ind1 = population.size();
 	int ind2 = population.size();
-	int intType;
-	bool ind1win;
-	vector<int>::iterator itSamp1;
+	int intType = 0;
+	bool ind1win = 0;
 	vector<int> sample;
+	vector<int>::iterator itSamp1 = sample.begin();
+	//cout << "track " << generat << endl;
 	if (trackPopLearn) {
 		localPrint.countPhenotypes[0] = 0, localPrint.countPhenotypes[1] = 0;
 		localPrint.countIntTypes[0] = 0, localPrint.countIntTypes[1] = 0;
@@ -472,6 +473,7 @@ void interactions(vector<individual>& population, ofstream& genoutput, int nint,
 		intType += population[ind1].set_phenotype(population[ind2],localPrint);
 		intType += population[ind2].set_phenotype(population[ind1],localPrint);
 		if (trackPopLearn) { 
+			//cout << "trackpoplearn " << generat << endl;
 			int foundInd = 0;
 			++localPrint.countIntTypes[intType];
 			//++localPrint.countIntTypesGen[intType];
@@ -492,10 +494,13 @@ void interactions(vector<individual>& population, ofstream& genoutput, int nint,
 				localPrint.countIntTypesGen[2] = 0;
 			}*/
 		}
+		//cout << "win " << generat << endl;
 		ind1win = population[ind1].Winfight(population[ind2].get_quality(),
 			strQual);
+		//cout << "payoff " << generat << endl;
 		population[ind1].get_payoff(population[ind2], payoff_matrix,ind1win);
 		population[ind2].get_payoff(population[ind1], payoff_matrix,!ind1win);
+		/*cout << "update " << generat << endl;*/
 		population[ind1].update();
 		population[ind2].update();
 		ind1 = population.size(), ind2 = population.size();
@@ -512,7 +517,7 @@ void printStats(int popsize,ofstream &evolOutput,
 	double invertTotInt = 1/(static_cast<double>(localPrint.countPhenotypes[0]) +
 		static_cast<double>	(localPrint.countPhenotypes[1]));
 	double invertPopsize = 1/static_cast<double>(popsize);
-	double invertNlearners;
+	double invertNlearners = 0;
 	if (localPrint.countGenotypes[2] != 0) {
 		invertNlearners = 1 / static_cast<double>(localPrint.countGenotypes[2]);
 	}
@@ -656,19 +661,19 @@ int main(int argc, char* argv[]){
 	//uncomment for debugging
 	//json param;
 	//param["totGen"]            = 50;   // Total number of generations
-	//param["nRep"]              = 5;     // Number of replicates
-	//param["printGen"]          = 10;     // How often data is printed	
-	//param["printLearn"]        = 10;	  // how often learning dyn are printed
-	//param["printLearnInt"]     = 40;   // How often are learning parameters printed
+	//param["nRep"]              = 10;     // Number of replicates
+	//param["printGen"]          = 1000;     // How often data is printed	
+	//param["printLearn"]        = 1000;	  // how often learning dyn are printed
+	//param["printLearnInt"]     = 3500;   // How often are learning parameters printed
 	//param["init"]              = {0,0,1};        //Initial frequencies
 	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	//param["popSize"]           = 100;
-	//param["MutSd"]             = 0.1;
-	//param["nInt"]              = 50;    // Number of interactions per individual
-	//param["mutRate"]           = 0.001;
+	//param["popSize"]           = 1000;
+	//param["MutSd"]             = 0.3;
+	//param["nInt"]              = 2000;    // Number of interactions per individual
+	//param["mutRate"]           = 0.05;
 	//param["strQual"]           = 10;
-	//param["baselineFit"]       = 1;
-	//param["mutType"]		     = 2;  
+	//param["baselineFit"]       = 2;
+	//param["mutType"]		     = 0;  
 	//// How many strategies are introduced by mutation
 	//param["sampleSize"]        = 10; 
 	//param["alphaBad"]			 = 0;
@@ -678,15 +683,15 @@ int main(int argc, char* argv[]){
 	//param["sigSq"]        	 = 0.01;
 	//param["nCenters"]     	 = 6;
 	//param["initCrit"]          = 0;
-	//param["initAct"]           = 5;
-	//param["QualStDv"]          = 0.1;
-	//param["nIntGroup"]		 = 100;
+	//param["initAct"]           = 0;
+	//param["QualStDv"]          = 1.1;
+	//param["nIntGroup"]		 = 1000;
 	//param["initAct"]			 =0;
-	//param["betCost"]           = 2;
+	//param["betCost"]           = 0;
 	//param["alphCost"]			 = 3;
-	//param["namParam"]          = "betCost";  
+	//param["namParam"]          = "nIntGroup";  
 	//// which parameter to vary inside the program
-	//param["rangParam"]         = { 2, 4 }; 
+	//param["rangParam"]         = { 10, 1000 }; 
 	//// range in which the paramenter varies
 	//param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/test_/";
 	
@@ -734,6 +739,7 @@ int main(int argc, char* argv[]){
 			}
 			for (int generation = 0; generation < paramL["totGen"]; 
 				++generation) {
+				cout << "Interactions " << generation << endl;
 				interactions(population, indOutput, paramL["nInt"],
 					paramL["payoff_matrix"], paramL["strQual"],
 					generation % static_cast<int>(paramL["printLearn"]) == 0,

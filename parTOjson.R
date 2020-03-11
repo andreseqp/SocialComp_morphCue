@@ -10,10 +10,10 @@ fileName<-"parameters.json"
 here()
 
 
-param<-list(totGen   = 20000,   nRep    = 5,
+param<-list(totGen   = 50000,   nRep    = 10,
             printGen = 1000,   printLearn = 1000,
             printLearnInt = 3500,
-            popSize  = 1000,  baselineFit = 2,   
+            popSize  = 5000,  baselineFit = 2,   
             MutSd    = 0.3,
             nInt        = 2000,  init     = c(0,0,1),
             mutRate  = 0.05,  mutType  = 0,
@@ -26,23 +26,26 @@ param<-list(totGen   = 20000,   nRep    = 5,
             alphCost	 = 3,
             nIntGroup  = 1000,
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "betCost",
-            rangParam = c(2,4,6),
+            namParam = "nIntGroup",
+            rangParam = c(10,100,5000),
             folderL=paste(here("Simulations"),"/",sep=""))
 
-apendScenar<-""
+apendScenar<-"Evol4"
 
-runTime<-"360:00:00"# "10:00:00"# 
+# runTime<-"360:00:00"# "10:00:00"# 
+# 
+# partition<-"long"#"short"#
+# 
+# memor<- "16GB"#"4096"
+# 
+# nodes<-10
 
-partition<-"long"#"short"#
-
-memor<- "16GB"#"4096"
-
-nodes<-10
-
-## For the cluster
+## For the cluster Uniandes
 param$folder<-paste0("/hpcfs/home/a.quinones/BadgeStatus/",
                     param$namParam,apendScenar,"_/")
+## for the cluster unine
+param$folder<-paste0("/home/ubuntu/BadgeStatus/",
+                     param$namParam,apendScenar,"_/")
 ## For the local pc
 param$folder<-param$folderL
 # read and edit json 
@@ -74,7 +77,7 @@ check_create.dir(here("Simulations"),param = paste0(param$namParam,apendScenar),
 for (i in 1:1) {
   param$folderL<-paste0(here("Simulations",
                             param$namParam),apendScenar,"_/")
-  param$folder<-param$folderL
+  # param$folder<-param$folderL
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   if(file.exists(paste(param$folderL,fileName,sep = ''))){
     currFile<-fromJSON(paste(param$folderL,fileName,sep = ''))
@@ -87,19 +90,19 @@ for (i in 1:1) {
       ans<-readline("Want to continue?")
       if(substr(ans, 1, 1) == "y"){
         write(outParam,paste(param$folderL,fileName,sep = ""))
-        jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
-                partition,nodes = nodes,mem = memor)
+        # jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
+        #         partition,nodes = nodes,mem = memor)
       }
     }
     else{
-      jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
-              partition,nodes = nodes,mem = memor)
+      # jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
+      #         partition,nodes = nodes,mem = memor)
     }
   }
   else{
     write(outParam,paste(param$folderL,fileName,sep = ""))
-    jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
-            partition,nodes = nodes,mem = memor)
+    # jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
+    #         partition,nodes = nodes,mem = memor)
   }
   # system(paste(exedir,
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)

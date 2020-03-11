@@ -8,7 +8,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvol2"
+scenario<-"betCost"
 
 # Load files -------------------------------------------------------------------
 
@@ -136,9 +136,9 @@ for(PAr in tempPop[,unique(get(shortSce))]){
                   numplotx = length(tempPop[,unique(get(shortSce))]),
                   idplotx = match(PAr,tempPop[,unique(get(shortSce))])),
       las=1,new=TRUE,yaxt=yaxtRang[match(PAr,tempPop[,unique(get(shortSce))])],
-      cex.axis=1.5)
-  matlines(x=rangx,y=dataIndReact,col = paletteMeans(100)[
-    findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2)
+      cex.axis=1.5,new=TRUE)
+  matplot(x=rangx,y=dataIndReact,col = paletteMeans(100)[
+    findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2,lty = 1,xaxt="s")
   
   
   matplot(x=seq(0,1,length.out = 1000),y=matCritics.tmp,col = paletteMeans(100)[
