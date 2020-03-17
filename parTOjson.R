@@ -10,10 +10,10 @@ fileName<-"parameters.json"
 here()
 
 
-param<-list(totGen   = 50000,   nRep    = 10,
+param<-list(totGen   = 20000,   nRep    = 10,
             printGen = 1000,   printLearn = 1000,
             printLearnInt = 3500,
-            popSize  = 5000,  baselineFit = 2,   
+            popSize  = 1000,  baselineFit = 2,   
             MutSd    = 0.3,
             nInt        = 2000,  init     = c(0,0,1),
             mutRate  = 0.05,  mutType  = 0,
@@ -30,8 +30,9 @@ param<-list(totGen   = 50000,   nRep    = 10,
             rangParam = c(10,100,5000),
             folderL=paste(here("Simulations"),"/",sep=""))
 
-apendScenar<-"Evol4"
-
+apendScenar<-"Evol3"
+param$folderL<-paste0(param$folderL,
+       param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
 # 
 # partition<-"long"#"short"#
