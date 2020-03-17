@@ -312,7 +312,7 @@ public:
 
 printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 	int nCenters = 6) {
-	int nInterRecords = 1 + 2.5 * nInt / printLearnInt;
+	int nInterRecords = 1 + 4 * nInt / printLearnInt;
 	for (int countRecords = 0; countRecords < nInterRecords; ++countRecords) {
 		/*countIntTypesGen.emplace_back(0);
 		countIntTypesGen[countRecords].emplace_back(0);
@@ -663,7 +663,7 @@ int main(int argc, char* argv[]){
 	//param["totGen"]            = 50;   // Total number of generations
 	//param["nRep"]              = 10;     // Number of replicates
 	//param["printGen"]          = 1000;     // How often data is printed	
-	//param["printLearn"]        = 1000;	  // how often learning dyn are printed
+	//param["printLearn"]        = 3500;	  // how often learning dyn are printed
 	//param["printLearnInt"]     = 3500;   // How often are learning parameters printed
 	//param["init"]              = {0,0,1};        //Initial frequencies
 	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
@@ -691,9 +691,9 @@ int main(int argc, char* argv[]){
 	//param["alphCost"]			 = 3;
 	//param["namParam"]          = "nIntGroup";  
 	//// which parameter to vary inside the program
-	//param["rangParam"]         = { 10, 1000 }; 
+	//param["rangParam"]         = {  10, 1000 }; 
 	//// range in which the paramenter varies
-	//param["folder"]            = "C:/Users/a.quinones/Proyectos/SocialComp_morphCue/Simulations/test_/";
+	//param["folder"]            = "I:/Projects/SocialComp_morphCue/Simulations/test_/";
 	
 	nlohmann::json* pointParam;
 		
@@ -739,7 +739,7 @@ int main(int argc, char* argv[]){
 			}
 			for (int generation = 0; generation < paramL["totGen"]; 
 				++generation) {
-				cout << "Interactions " << generation << endl;
+				//cout << "Interactions " << generation << endl;
 				interactions(population, indOutput, paramL["nInt"],
 					paramL["payoff_matrix"], paramL["strQual"],
 					generation % static_cast<int>(paramL["printLearn"]) == 0,
