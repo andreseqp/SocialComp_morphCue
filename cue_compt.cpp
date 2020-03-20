@@ -41,6 +41,67 @@ using json = nlohmann::json;
 enum strategy { hawk, dove, evaluator};
 
 class printingObj;
+class individual;
+
+class printingObj {
+
+public:
+	printingObj(int nSamples, int nInt, int printLearnInt,
+		int nCenters);
+	void recordInd(int idSamInd, individual focal);
+	int countGenotypes[3];
+	// records the frequency of genotypes for evolutionary dyn
+	int countPhenotypes[2];
+	// records the frequency of phenotypes for evolutionary dyn
+	int countIntTypes[3];
+	// records the frequency of interaction types for evolutionary dyn
+	double BadgeMeanSd[2];
+	// records the distributions of badge sizes for evolutionary dyn
+	double alphaMeanSd[2];
+	// records the distribution of alpha in the reac norm for evolutionary dyn
+	double betaMeanSd[2];
+	// records the distribution of betas in the reac norm for evolutionary dyn
+	double featActMean[20];
+	// records the distribution of Actor features at the end of learning for evolutionary dyn
+	double featCritMean[20];
+	// records the distribution of Critic features at the end of learning for evolutionary dyn
+	//vector<vector<int> > countIntTypesGen;
+	// records the frequency of interaction types for learning dyn
+	vector<int> sampledInd;
+	// Which inds are sampled for learning dyn
+	vector<int>  interacCount;
+	vector<int> counterRecords;
+	// N interactions of sampled inds for learn dyn
+	vector<vector<vector<double> > > actFeatHistory;
+	// Act feat. weigths of sampled inds for learn dyn
+	vector<vector<vector<double> > > critFeatHistory;
+	// Crit feat. weigths of sampled inds for learn dyn
+};
+
+printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
+	int nCenters = 6) {
+	int nInterRecords = 1 + 10 * nInt / printLearnInt;
+	for (int countRecords = 0; countRecords < nInterRecords; ++countRecords) {
+		/*countIntTypesGen.emplace_back(0);
+		countIntTypesGen[countRecords].emplace_back(0);
+		countIntTypesGen[countRecords].emplace_back(0);*/
+		interacCount.emplace_back(countRecords * printLearnInt);
+		actFeatHistory.emplace_back(0);
+		critFeatHistory.emplace_back(0);
+		for (int countSamples = 0; countSamples < nSamples; ++countSamples) {
+			if (countRecords == 0) {
+				sampledInd.emplace_back(0), counterRecords.emplace_back(0);
+			}
+			actFeatHistory[countRecords].emplace_back(0);
+			critFeatHistory[countRecords].emplace_back(0);
+			for (int countCenters = 0; countCenters < nCenters; ++countCenters) {
+				actFeatHistory[countRecords][countSamples].emplace_back(0);
+				critFeatHistory[countRecords][countSamples].emplace_back(0);
+			}
+		}
+	}
+}
+
 
 class individual {
 	public:
@@ -175,6 +236,16 @@ individual::individual(individual& mother, double QualStDv,
 	}
 }
 
+void printingObj::recordInd(int idSamInd, individual focal) {
+	for (int countCenters = 0; countCenters < focal.get_nCenter(); ++countCenters) {
+		actFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
+			focal.get_feat(1, countCenters);
+		critFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
+			focal.get_feat(0, countCenters);
+	}
+	++counterRecords[idSamInd];
+}
+
 void individual::calcRespValPref(individual partner) {
 	double totValue = 0;
 	double totPref = 0;
@@ -275,74 +346,6 @@ bool individual::viability(double alphaCost,double betaCost) {
 	return(rnd::bernoulli(logist(quality,own_badge,betaCost,-alphaCost)));
 }
 
-class printingObj {
-	
-public:
-	printingObj(int nSamples, int nInt, int printLearnInt,
-		int nCenters);
-	void recordInd(int idSamInd, individual focal);
-	int countGenotypes[3];
-	// records the frequency of genotypes for evolutionary dyn
-	int countPhenotypes[2];
-	// records the frequency of phenotypes for evolutionary dyn
-	int countIntTypes[3];
-	// records the frequency of interaction types for evolutionary dyn
-	double BadgeMeanSd[2];
-	// records the distributions of badge sizes for evolutionary dyn
-	double alphaMeanSd[2];
-	// records the distribution of alpha in the reac norm for evolutionary dyn
-	double betaMeanSd[2];
-	// records the distribution of betas in the reac norm for evolutionary dyn
-	double featActMean[20];
-	// records the distribution of Actor features at the end of learning for evolutionary dyn
-	double featCritMean[20];
-	// records the distribution of Critic features at the end of learning for evolutionary dyn
-	//vector<vector<int> > countIntTypesGen;
-	// records the frequency of interaction types for learning dyn
-	vector<int> sampledInd;
-	// Which inds are sampled for learning dyn
-	vector<int>  interacCount;
-	vector<int> counterRecords;
-	// N interactions of sampled inds for learn dyn
-	vector<vector<vector<double> > > actFeatHistory;
-	// Act feat. weigths of sampled inds for learn dyn
-	vector<vector<vector<double> > > critFeatHistory;
-	// Crit feat. weigths of sampled inds for learn dyn
-};
-
-printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
-	int nCenters = 6) {
-	int nInterRecords = 1 + 4 * nInt / printLearnInt;
-	for (int countRecords = 0; countRecords < nInterRecords; ++countRecords) {
-		/*countIntTypesGen.emplace_back(0);
-		countIntTypesGen[countRecords].emplace_back(0);
-		countIntTypesGen[countRecords].emplace_back(0);*/
-		interacCount.emplace_back(countRecords * printLearnInt);
-		actFeatHistory.emplace_back(0);
-		critFeatHistory.emplace_back(0);
-		for (int countSamples = 0; countSamples < nSamples; ++countSamples) {
-			if (countRecords == 0) {
-				sampledInd.emplace_back(0), counterRecords.emplace_back(0);
-			}
-			actFeatHistory[countRecords].emplace_back(0);
-			critFeatHistory[countRecords].emplace_back(0);
-			for (int countCenters = 0; countCenters < nCenters; ++countCenters) {
-				actFeatHistory[countRecords][countSamples].emplace_back(0);
-				critFeatHistory[countRecords][countSamples].emplace_back(0);
-			}
-		}
-	}
-}
-
-void printingObj::recordInd(int idSamInd, individual focal) {
-	for (int countCenters = 0; countCenters < focal.get_nCenter(); ++countCenters) {
-		actFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters]=
-			focal.get_feat(1,countCenters);
-		critFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
-			focal.get_feat(0, countCenters);
-	}
-	++counterRecords[idSamInd];
-}
 
 int individual::set_phenotype(individual partner, printingObj& localPrint) {
 	if (get_strat() == evaluator) {
@@ -667,7 +670,7 @@ int main(int argc, char* argv[]){
 	//param["printLearnInt"]     = 3500;   // How often are learning parameters printed
 	//param["init"]              = {0,0,1};        //Initial frequencies
 	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	//param["popSize"]           = 1000;
+	//param["popSize"]           = 5000;
 	//param["MutSd"]             = 0.3;
 	//param["nInt"]              = 2000;    // Number of interactions per individual
 	//param["mutRate"]           = 0.05;
