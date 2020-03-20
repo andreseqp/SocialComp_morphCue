@@ -26,6 +26,7 @@ Start date :
 #include <cstdlib>
 #include <math.h>	
 #include <vector>
+#include <string.h>
 #include <omp.h>
 //#include "tchar.h"   //Eliminate for g++
 #include "../Cpp/Routines/C++/RandomNumbers/random.h"
@@ -51,9 +52,9 @@ class individual {
 		individual(individual& mother, double QualStDv,
 			double mutRate,double mutSD, int mutType, double initCrit, 
 			double initAct);
-		double curr_payoff;
-		double cum_payoff;
-		int ninterac;
+		double curr_payoff = 0;
+		double cum_payoff = 0;
+		int ninterac = 0;
 		strategy phenotype;
 		strategy get_strat() {
 			return(genotype);
@@ -132,7 +133,7 @@ void individual::set_Badge(double stdDev=0.1) {
 
 // constructors
 individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
-	double alphaBadge_=0, double alphaCI = 0.05, 
+	double alphaBadge_=0, double alphaCI = 0.05,	
 	double alphaAI = 0.05, double gammaI = 0, double sigmaSqI = 0.01, 
 	int nCenters_=6,double initCrit=0,double initAct=0) {
 	nCenters = nCenters_;
@@ -276,43 +277,42 @@ bool individual::viability(double alphaCost,double betaCost) {
 }
 
 class printingObj {
-	
-public:
-	printingObj(int nSamples, int nInt, int printLearnInt,
-		int nCenters);
-	void recordInd(int idSamInd, individual focal);
-	int countGenotypes[3];
-	// records the frequency of genotypes for evolutionary dyn
-	int countPhenotypes[2];
-	// records the frequency of phenotypes for evolutionary dyn
-	int countIntTypes[3];
-	// records the frequency of interaction types for evolutionary dyn
-	double BadgeMeanSd[2];
-	// records the distributions of badge sizes for evolutionary dyn
-	double alphaMeanSd[2];
-	// records the distribution of alpha in the reac norm for evolutionary dyn
-	double betaMeanSd[2];
-	// records the distribution of betas in the reac norm for evolutionary dyn
-	double featActMean[20];
-	// records the distribution of Actor features at the end of learning for evolutionary dyn
-	double featCritMean[20];
-	// records the distribution of Critic features at the end of learning for evolutionary dyn
-	//vector<vector<int> > countIntTypesGen;
-	// records the frequency of interaction types for learning dyn
-	vector<int> sampledInd;
-	// Which inds are sampled for learning dyn
-	vector<int>  interacCount;
-	vector<int> counterRecords;
-	// N interactions of sampled inds for learn dyn
-	vector<vector<vector<double> > > actFeatHistory;
-	// Act feat. weigths of sampled inds for learn dyn
-	vector<vector<vector<double> > > critFeatHistory;
-	// Crit feat. weigths of sampled inds for learn dyn
+	public:
+		printingObj(int nSamples, int nInt, int printLearnInt,
+			int nCenters);
+		void recordInd(int idSamInd, individual focal);
+		int countGenotypes[3];
+		// records the frequency of genotypes for evolutionary dyn
+		int countPhenotypes[2];
+		// records the frequency of phenotypes for evolutionary dyn
+		int countIntTypes[3];
+		// records the frequency of interaction types for evolutionary dyn
+		double BadgeMeanSd[2];
+		// records the distributions of badge sizes for evolutionary dyn
+		double alphaMeanSd[2];
+		// records the distribution of alpha in the reac norm for evolutionary dyn
+		double betaMeanSd[2];
+		// records the distribution of betas in the reac norm for evolutionary dyn
+		double featActMean[20];
+		// records the distribution of Actor features at the end of learning for evolutionary dyn
+		double featCritMean[20];
+		// records the distribution of Critic features at the end of learning for evolutionary dyn
+		//vector<vector<int> > countIntTypesGen;
+		// records the frequency of interaction types for learning dyn
+		vector<int> sampledInd;
+		// Which inds are sampled for learning dyn
+		vector<int>  interacCount;
+		vector<int> counterRecords;
+		// N interactions of sampled inds for learn dyn
+		vector<vector<vector<double> > > actFeatHistory;
+		// Act feat. weigths of sampled inds for learn dyn
+		vector<vector<vector<double> > > critFeatHistory;
+		// Crit feat. weigths of sampled inds for learn dyn
 };
 
 printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 	int nCenters = 6) {
-	int nInterRecords = 1 + 4 * nInt / printLearnInt;
+	int nInterRecords = 1 + 10 * nInt / printLearnInt;
 	for (int countRecords = 0; countRecords < nInterRecords; ++countRecords) {
 		/*countIntTypesGen.emplace_back(0);
 		countIntTypesGen[countRecords].emplace_back(0);
