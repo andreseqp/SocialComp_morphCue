@@ -68,6 +68,7 @@ public:
 	//vector<vector<int> > countIntTypesGen;
 	// records the frequency of interaction types for learning dyn
 	vector<int> sampledInd;
+	vector<int> nRecords;
 	// Which inds are sampled for learning dyn
 	vector<int>  interacCount;
 	vector<int> counterRecords;
@@ -80,7 +81,7 @@ public:
 
 printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 	int nCenters = 6) {
-	int nInterRecords = 1 + 10 * nInt / printLearnInt;
+	int nInterRecords = 1 + 15* nInt / printLearnInt;
 	for (int countRecords = 0; countRecords < nInterRecords; ++countRecords) {
 		/*countIntTypesGen.emplace_back(0);
 		countIntTypesGen[countRecords].emplace_back(0);
@@ -91,6 +92,7 @@ printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 		for (int countSamples = 0; countSamples < nSamples; ++countSamples) {
 			if (countRecords == 0) {
 				sampledInd.emplace_back(0), counterRecords.emplace_back(0);
+				nRecords.emplace_back(0);
 			}
 			actFeatHistory[countRecords].emplace_back(0);
 			critFeatHistory[countRecords].emplace_back(0);
@@ -237,6 +239,7 @@ individual::individual(individual& mother, double QualStDv,
 }
 
 void printingObj::recordInd(int idSamInd, individual focal) {
+	nRecords[idSamInd] += 1;
 	for (int countCenters = 0; countCenters < focal.get_nCenter(); ++countCenters) {
 		actFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
 			focal.get_feat(1, countCenters);
@@ -418,9 +421,9 @@ void get_stats(vector<individual> &popT, int popsize, printingObj &localPrint,in
 
 void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 	int generat, int seed, printingObj &localPrint) {
-	for (int cIntRecords = 0; cIntRecords < localPrint.interacCount.size();
-		++cIntRecords) {
-		for (int cSampled = 0; cSampled < localPrint.sampledInd.size(); ++cSampled) {
+	for (int cSampled = 0; cSampled < localPrint.sampledInd.size(); ++cSampled) {
+		for (int cIntRecords = 0; cIntRecords < localPrint.nRecords[cSampled];
+				++cIntRecords) {
 			genoutput << seed << '\t' << generat << '\t' <<
 				localPrint.interacCount[cIntRecords] << '\t' <<
 				localPrint.sampledInd[cSampled] << '\t';
@@ -661,16 +664,16 @@ int main(int argc, char* argv[]){
 
 	mark_time(1);
 
-	//uncomment for debugging
+	/*uncomment for debugging*/
 	//json param;
 	//param["totGen"]            = 50;   // Total number of generations
 	//param["nRep"]              = 10;     // Number of replicates
-	//param["printGen"]          = 1000;     // How often data is printed	
+	//param["printGen"]          = 10;     // How often data is printed	
 	//param["printLearn"]        = 3500;	  // how often learning dyn are printed
 	//param["printLearnInt"]     = 3500;   // How often are learning parameters printed
 	//param["init"]              = {0,0,1};        //Initial frequencies
 	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	//param["popSize"]           = 5000;
+	//param["popSize"]           = 100;
 	//param["MutSd"]             = 0.3;
 	//param["nInt"]              = 2000;    // Number of interactions per individual
 	//param["mutRate"]           = 0.05;

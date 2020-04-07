@@ -9,7 +9,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCost"
+scenario<-"nIntGroupEvol3"
 
 
 # Load files -------------------------------------------------------------------
@@ -18,7 +18,7 @@ scenario<-"betCost"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-3
+fileId<-1
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
@@ -123,6 +123,10 @@ matplot(x=traitsTrajs[,time],
         ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta)]))[c(1,5)],
         ylab = "",xlab="",xaxt="n",yaxt="n")
 
+
+# Choose which interaction to visualize
+lastInt<-3500
+# to get last interaction: tail(pop[,unique(nInteract)],1)
 # Choose time range
 gen2plot<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
 # Plor the actor
@@ -147,10 +151,11 @@ for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){
   plot(logist(totRBF(rangx,centers,0.01,weightsAct),alpha=0,beta=1)~rangx,
        yaxt=seqYax[count],ylab=seqYlabUp[count],xlab="",type="l",
        lwd=3,xaxt="n",ylim=c(0,1))
-  tempPop<-pop[time==unique(time)[genC]&seed==runChoi,.SD[.N],
+  tempPop<-pop[(time==unique(time)[genC]&seed==runChoi)&nInteract==lastInt,.SD[.N],
                .SDcol=c(grep("WeightAct",
                            names(evol),value = TRUE),"Quality","alpha","beta"),
                by=indId]
+  pop[nInteract==3500]
   dataIndAct<-sapply(as.list(tempPop[,indId]),
                        function(x){x=
                          logist(totRBF(rangx,
@@ -222,7 +227,7 @@ matlines(x=traitsTrajs[,time],
         y=traitsTrajs[,.SD,
                       .SDcol=grep("meanBeta_",names(traitsTrajs),value = TRUE)],
         col=colRuns,lty = 1,type="l",lwd=3)
-legend("topright",legend = 0:5,col = colRuns,pch=20,bty = "n",ncol = 5)
+legend("top",legend = 0:10,col = colRuns,pch=20,bty = "n",ncol = 5)
 # Choose time range
 gen2plot<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
 # Plor the actor
@@ -239,7 +244,7 @@ rangx<-seq(0,1,length=1000)
 count<-0
 for(genC in round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]){
   count<-count+1
-  tempPop<-pop[time==unique(time)[genC],.SD[.N],
+  tempPop<-pop[time==unique(time)[genC]&nInteract==lastInt,.SD[.N],
                .SDcol=c(grep("WeightAct",
                              names(evol),value = TRUE),"Quality",
                         "alpha","beta","seed"),

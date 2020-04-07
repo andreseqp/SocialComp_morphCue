@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCost"
+scenario<-"nIntGroupEvol3"
 
 
 # Load files -------------------------------------------------------------------
@@ -105,8 +105,9 @@ Runmeans<-pop[, as.list(unlist(lapply(.SD,
 # png(here("Simulations",paste0(scenario,"_"),"weightsVarQualSt.png"),
 #     width = 1000,height = 800)
 
-gener<-tail(pop[,unique(time)],1)
-lastInt<-tail(pop[,unique(nInteract)],1)
+gener<-tail(pop[,unique(time)],10)[1]
+lastInt<-3500
+  # to get last interaction: tail(pop[,unique(nInteract)],1)
 runChoi<-0
 nCenters<-6
 interv<-1/(nCenters-1)
@@ -118,7 +119,7 @@ centers<-interv*seq(0,nCenters-1)
 rangx<-seq(0,1,length=1000)
 tempPop<-pop[time==gener&nInteract==lastInt[1],.SD[.N],
              .SDcol=c(grep("Weight",
-                           names(evol),value = TRUE),"Quality","alpha","beta"),
+                           names(evol),value = TRUE),"Quality","alpha","beta","seed"),
              by=indId]
 dataIndAct<-sapply(as.list(tempPop[,indId]),
                    function(x){x=
@@ -314,10 +315,10 @@ dataIndReact<-sapply(as.list(tempPop[,indId]),
                                      as.double(tempPop[indId==x,.SD,
                                                        .SDcol=c("alpha","beta")
                                                        ])))))})
-matlines(x=rangx,y=dataIndReact,col = paletteMeans(100)[
-  findInterval(tempPop[,Quality],colorbreaksQual)],lwd=2)
+matlines(x=rangx,y=dataIndReact,col = tempPop[,seed]+1 ,lwd=2)
 
-
+# use as input for col, to plot reac norms with the quality colour scheme
+# paletteMeans(100)[findInterval(tempPop[,Quality],colorbreaksQual)]
 
 
 # Scatterplot relating quality and central weight of the actor -----------------
