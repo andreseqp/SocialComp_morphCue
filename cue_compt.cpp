@@ -26,6 +26,7 @@ Start date :
 #include <cstdlib>
 #include <math.h>	
 #include <vector>
+#include <string.h>
 #include <omp.h>
 //#include "tchar.h"   //Eliminate for g++
 #include "../Cpp/Routines/C++/RandomNumbers/random.h"
@@ -114,9 +115,9 @@ class individual {
 		individual(individual& mother, double QualStDv,
 			double mutRate,double mutSD, int mutType, double initCrit, 
 			double initAct);
-		double curr_payoff;
-		double cum_payoff;
-		int ninterac;
+		double curr_payoff = 0;
+		double cum_payoff = 0;
+		int ninterac = 0;
 		strategy phenotype;
 		strategy get_strat() {
 			return(genotype);
@@ -195,7 +196,7 @@ void individual::set_Badge(double stdDev=0.1) {
 
 // constructors
 individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
-	double alphaBadge_=0, double alphaCI = 0.05, 
+	double alphaBadge_=0, double alphaCI = 0.05,	
 	double alphaAI = 0.05, double gammaI = 0, double sigmaSqI = 0.01, 
 	int nCenters_=6,double initCrit=0,double initAct=0) {
 	nCenters = nCenters_;
@@ -349,6 +350,40 @@ bool individual::viability(double alphaCost,double betaCost) {
 	return(rnd::bernoulli(logist(quality,own_badge,betaCost,-alphaCost)));
 }
 
+
+printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
+	int nCenters = 6) {
+	int nInterRecords = 1 + 10 * nInt / printLearnInt;
+	for (int countRecords = 0; countRecords < nInterRecords; ++countRecords) {
+		/*countIntTypesGen.emplace_back(0);
+		countIntTypesGen[countRecords].emplace_back(0);
+		countIntTypesGen[countRecords].emplace_back(0);*/
+		interacCount.emplace_back(countRecords * printLearnInt);
+		actFeatHistory.emplace_back(0);
+		critFeatHistory.emplace_back(0);
+		for (int countSamples = 0; countSamples < nSamples; ++countSamples) {
+			if (countRecords == 0) {
+				sampledInd.emplace_back(0), counterRecords.emplace_back(0);
+			}
+			actFeatHistory[countRecords].emplace_back(0);
+			critFeatHistory[countRecords].emplace_back(0);
+			for (int countCenters = 0; countCenters < nCenters; ++countCenters) {
+				actFeatHistory[countRecords][countSamples].emplace_back(0);
+				critFeatHistory[countRecords][countSamples].emplace_back(0);
+			}
+		}
+	}
+}
+
+void printingObj::recordInd(int idSamInd, individual focal) {
+	for (int countCenters = 0; countCenters < focal.get_nCenter(); ++countCenters) {
+		actFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters]=
+			focal.get_feat(1,countCenters);
+		critFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
+			focal.get_feat(0, countCenters);
+	}
+	++counterRecords[idSamInd];
+}
 
 int individual::set_phenotype(individual partner, printingObj& localPrint) {
 	if (get_strat() == evaluator) {
