@@ -731,15 +731,8 @@ int main(int argc, char* argv[]) {
 	}
 
 	
-	/*for (json::iterator itParVal = param["rangParam"].begin();
-		itParVal != param["rangParam"].end(); ++itParVal){
-		#pragma omp parallel for firstprivate(pointParam)
-		for (int seed = 0; seed < int(param["nRep"]); ++seed) {*/
-	int nThreads = omp_get_max_threads();
-	if (argc>1) {
-		nThreads = atoi(argv[2]);
-	}
 
+	int nThreads = omp_get_max_threads();
 	omp_set_num_threads(nThreads);
 	#pragma omp parallel for firstprivate(pointParam)
 	for (int itGenLoop = 0;
@@ -751,8 +744,7 @@ int main(int argc, char* argv[]) {
 		paramL[namParam] =
 			param["rangParam"][idParRange];
 		paramL["alphaCrit"] = paramL["alphaAct"];
-		// if (seed ==0) cout << omp_get_num_threads() << endl;
-#pragma omp critical
+		#pragma omp critical
 		{
 			cout << paramL["namParam"] << "=" << paramL[namParam] << "	" <<
 				"seed=" << seed << endl;
