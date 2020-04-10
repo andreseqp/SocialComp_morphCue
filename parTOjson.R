@@ -10,27 +10,27 @@ fileName<-"parameters.json"
 here()
 
 
-param<-list(totGen   = 20000,   nRep    = 10,
-            printGen = 1000,   printLearn = 1000,
-            printLearnInt = 3500,
+param<-list(totGen   =10,   nRep    = 5,
+            printGen = 1,   printLearn = 1,
+            printLearnInt = 500,
             popSize  = 1000,  baselineFit = 2,   
-            MutSd    = 0.3,
-            nInt        = 2000,  init     = c(0,0,1),
-            mutRate  = 0.05,  mutType  = 0,
-            sampleSize = 10,   strQual  = 10,
-            alphaBad	 = 0,    betaBad	 = 0,
-            alphaCrit  = 0.01,  alphaAct = 0.01,
+            MutSd    = 0.2,
+            nInt        = 30000,  init     = c(0,0,1),
+            mutRate  = 0.0,  mutType  = 0,
+            sampleSize = 30,   strQual  = 10,
+            alphaBad	 = 3,    betaBad	 = 6,
+            alphaCrit  = 0.02,  alphaAct = 0.02,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,
             QualStDv   = 1.1, betCost = 0,
             alphCost	 = 3,
             nIntGroup  = 1000,
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "nIntGroup",
-            rangParam = c(10,100,5000),
+            namParam = "alphaAct",
+            rangParam = c(0.005,0.01,0.02,0.05,0.1),
             folderL=paste(here("Simulations"),"/",sep=""))
 
-apendScenar<-"Evol3"
+apendScenar<-"Learn1"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
@@ -60,7 +60,7 @@ param$folder<-param$folderL
 # param$baselineFit<-5
 
 
-rang<-1
+# rang<-1
 
 ## Old ways of arranging folders
 # check_create.dir(here("Simulations"),param = "Centers6",

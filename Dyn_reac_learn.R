@@ -18,11 +18,11 @@ scenario<-"nIntGroupEvol3"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
+fileId<-2
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
-str(pop)
+
 # Get stats from the evolutionary simulations ----------------------------------
 
 evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
@@ -77,7 +77,7 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,value.var = c("meanAlpha","meanBeta",
                                                 "sdAlpha","sdBeta"))
-runChoi<-0
+runChoi<-4
 
 # Average trajectory
 par(plt=posPlot(numploty = 3,idploty = 2),xaxt="s",las=1)

@@ -69,7 +69,7 @@ public:
 	//vector<vector<int> > countIntTypesGen;
 	// records the frequency of interaction types for learning dyn
 	vector<int> sampledInd;
-	vector<int> nRecords;
+	//vector<int> nRecords;
 	// Which inds are sampled for learning dyn
 	vector<int>  interacCount;
 	vector<int> counterRecords;
@@ -93,7 +93,7 @@ printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 		for (int countSamples = 0; countSamples < nSamples; ++countSamples) {
 			if (countRecords == 0) {
 				sampledInd.emplace_back(0), counterRecords.emplace_back(0);
-				nRecords.emplace_back(0);
+				/*nRecords.emplace_back(0);*/
 			}
 			actFeatHistory[countRecords].emplace_back(0);
 			critFeatHistory[countRecords].emplace_back(0);
@@ -240,7 +240,7 @@ individual::individual(individual& mother, double QualStDv,
 }
 
 void printingObj::recordInd(int idSamInd, individual focal) {
-	nRecords[idSamInd] += 1;
+	//nRecords[idSamInd] += 1;
 	for (int countCenters = 0; countCenters < focal.get_nCenter(); ++countCenters) {
 		actFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
 			focal.get_feat(1, countCenters);
@@ -351,40 +351,6 @@ bool individual::viability(double alphaCost,double betaCost) {
 }
 
 
-printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
-	int nCenters = 6) {
-	int nInterRecords = 1 + 10 * nInt / printLearnInt;
-	for (int countRecords = 0; countRecords < nInterRecords; ++countRecords) {
-		/*countIntTypesGen.emplace_back(0);
-		countIntTypesGen[countRecords].emplace_back(0);
-		countIntTypesGen[countRecords].emplace_back(0);*/
-		interacCount.emplace_back(countRecords * printLearnInt);
-		actFeatHistory.emplace_back(0);
-		critFeatHistory.emplace_back(0);
-		for (int countSamples = 0; countSamples < nSamples; ++countSamples) {
-			if (countRecords == 0) {
-				sampledInd.emplace_back(0), counterRecords.emplace_back(0);
-			}
-			actFeatHistory[countRecords].emplace_back(0);
-			critFeatHistory[countRecords].emplace_back(0);
-			for (int countCenters = 0; countCenters < nCenters; ++countCenters) {
-				actFeatHistory[countRecords][countSamples].emplace_back(0);
-				critFeatHistory[countRecords][countSamples].emplace_back(0);
-			}
-		}
-	}
-}
-
-void printingObj::recordInd(int idSamInd, individual focal) {
-	for (int countCenters = 0; countCenters < focal.get_nCenter(); ++countCenters) {
-		actFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters]=
-			focal.get_feat(1,countCenters);
-		critFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
-			focal.get_feat(0, countCenters);
-	}
-	++counterRecords[idSamInd];
-}
-
 int individual::set_phenotype(individual partner, printingObj& localPrint) {
 	if (get_strat() == evaluator) {
 		calcRespValPref(partner);
@@ -457,8 +423,8 @@ void get_stats(vector<individual> &popT, int popsize, printingObj &localPrint,in
 void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 	int generat, int seed, printingObj &localPrint) {
 	for (int cSampled = 0; cSampled < localPrint.sampledInd.size(); ++cSampled) {
-		for (int cIntRecords = 0; cIntRecords < localPrint.nRecords[cSampled];
-				++cIntRecords) {
+		for (int cIntRecords = 0; 
+			cIntRecords < localPrint.counterRecords[cSampled];++cIntRecords) {
 			genoutput << seed << '\t' << generat << '\t' <<
 				localPrint.interacCount[cIntRecords] << '\t' <<
 				localPrint.sampledInd[cSampled] << '\t';
@@ -467,9 +433,11 @@ void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 				localPrint.countIntTypesGen[cIntRecords][2] << '\t';*/
 			for (int countFeat = 0; countFeat < pop[0].get_nCenter();
 				++countFeat) {
-				genoutput << localPrint.actFeatHistory[cIntRecords][cSampled][countFeat]
+				genoutput << 
+					localPrint.actFeatHistory[cIntRecords][cSampled][countFeat]
 					<< '\t'
-					<< localPrint.critFeatHistory[cIntRecords][cSampled][countFeat]
+					<< 
+					localPrint.critFeatHistory[cIntRecords][cSampled][countFeat]
 					<< '\t';
 			}
 			genoutput << pop[localPrint.sampledInd[cSampled]].get_quality() << '\t' <<
@@ -483,7 +451,7 @@ void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 	
 }
 
-void interactions(vector<individual>& population, ofstream& genoutput, int nint,
+void interactions(vector<individual>& population, int nint,
 	vector<double> payoff_matrix, double strQual, bool trackPopLearn,
 	int printLearnInt, int sampleSize, int generat, int seed, int nIntGroup,   
 	printingObj &localPrint) {
@@ -521,13 +489,15 @@ void interactions(vector<individual>& population, ofstream& genoutput, int nint,
 			itSamp1 = find(sample.begin(), sample.end(), ind1);
 			if (itSamp1 != sample.end() &&
 				(population[*itSamp1].ninterac % printLearnInt) == 0) {
-				localPrint.recordInd(itSamp1 - sample.begin(), population[*itSamp1]);
+				localPrint.recordInd(itSamp1 - sample.begin(), 
+					population[*itSamp1]);
 					++foundInd;
 			}
 			itSamp1 = find(sample.begin(), sample.end(), ind2);
 			if (itSamp1 != sample.end() &&
 				(population[*itSamp1].ninterac % printLearnInt) == 0) {
-				localPrint.recordInd(itSamp1 - sample.begin(), population[*itSamp1]);
+				localPrint.recordInd(itSamp1 - sample.begin(), 
+					population[*itSamp1]);
 				++foundInd;
 			}
 			/*if (foundInd > 0) {
@@ -619,7 +589,7 @@ void printPopSample(vector<individual> &population, ofstream &popOutput,
 	}
 }
 
-string create_filename(std::string filename, json param) {
+string create_filename(std::string filename, json param, int idRangPar) {
 	// name the file with the parameter specifications
 	filename.append("_HH");
 	filename.append(douts(param["payoff_matrix"][0]));
@@ -632,16 +602,16 @@ string create_filename(std::string filename, json param) {
 	filename.append("_");
 	std::string namParam = param["namParam"];
 	filename.append(namParam);
-	filename.append(douts(param[namParam]));
+	filename.append(douts(param["rangParam"][idRangPar]));
 	filename.append(".txt");
 	return(filename);
 }
 void initializeFiles(ofstream &evolOutput, //ofstream &popOutput, 
-	ofstream &indOutput, json param) {
+	ofstream &indOutput, json param, int idRangPar) {
 	std::string filename = param["folder"];
 	filename.append("evolLearn");
 	// File to print evolutionary dynamics
-	std::string evolFile = create_filename(filename,param);
+	std::string evolFile = create_filename(filename,param,idRangPar);
 	/*std::string namefile ="popLearn";
 	namedir.append(namefile);*/
 	evolOutput.open(evolFile.c_str());
@@ -674,7 +644,7 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	// File to print a learning dynamics within a generation
 	std::string filename1 = param["folder"];
 	filename1.append("indLearn");
-	std::string IndFile = create_filename(filename1, param);
+	std::string IndFile = create_filename(filename1, param, idRangPar);
 	indOutput.open(IndFile.c_str());
 	indOutput << "seed" << '\t' << "time" << '\t' << "nInteract" << '\t' 
 		<< "indId" << '\t';
@@ -695,22 +665,22 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	//cout << endl;
 }
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
 
 	mark_time(1);
 
 	/*uncomment for debugging*/
 	//json param;
-	//param["totGen"]            = 50;   // Total number of generations
-	//param["nRep"]              = 10;     // Number of replicates
-	//param["printGen"]          = 10;     // How often data is printed	
-	//param["printLearn"]        = 3500;	  // how often learning dyn are printed
-	//param["printLearnInt"]     = 3500;   // How often are learning parameters printed
+	//param["totGen"]            = 10;   // Total number of generations
+	//param["nRep"]              = 5;     // Number of replicates
+	//param["printGen"]          = 1;     // How often data is printed	
+	//param["printLearn"]        = 1;	  // how often learning dyn are printed
+	//param["printLearnInt"]     = 1500;   // How often are learning parameters printed
 	//param["init"]              = {0,0,1};        //Initial frequencies
 	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
 	//param["popSize"]           = 100;
 	//param["MutSd"]             = 0.3;
-	//param["nInt"]              = 2000;    // Number of interactions per individual
+	//param["nInt"]              = 1000;    // Number of interactions per individual
 	//param["mutRate"]           = 0.05;
 	//param["strQual"]           = 10;
 	//param["baselineFit"]       = 2;
@@ -732,84 +702,114 @@ int main(int argc, char* argv[]){
 	//param["alphCost"]			 = 3;
 	//param["namParam"]          = "nIntGroup";  
 	//// which parameter to vary inside the program
-	//param["rangParam"]         = {  10, 1000 }; 
+	//param["rangParam"]         = {  10, 100 }; 
 	//// range in which the paramenter varies
 	//param["folder"]            = "I:/Projects/SocialComp_morphCue/Simulations/test_/";
-	
+
 	nlohmann::json* pointParam;
-		
+
 	// Comment for debugging
 	ifstream input(argv[1]);
 	if (input.fail()) { cout << "JSON file failed" << endl; }
 	nlohmann::json param = json::parse(input);
-
+	
+	/*if (argc>1) {
+		omp_set_num_threads(atoi(argv[2]));
+	}
+	else{ omp_get_max_threads(); }*/
+	
 	pointParam = &param;
 
 	string namParam = param["namParam"];
-
-	
+	vector<ofstream>  evolOutput(param["rangParam"].size());
+	vector<ofstream>  indOutput(param["rangParam"].size());//popOutput,
 	for (json::iterator itParVal = param["rangParam"].begin();
 		itParVal != param["rangParam"].end(); ++itParVal) {
-		param[namParam] = *itParVal;
-		ofstream  evolOutput, indOutput;//popOutput,
-		initializeFiles(evolOutput,indOutput,param);//popOutput,
-		#pragma omp parallel for firstprivate(pointParam)
-		for (int seed = 0; seed < int(param["nRep"]); ++seed) {
-			nlohmann::json paramL = *pointParam;
-			// if (seed ==0) cout << omp_get_num_threads() << endl;
-			#pragma omp critical
-			{
-				cout << paramL["namParam"] << "=" << *itParVal << "	" <<
-					"seed=" << seed << endl;
-			}
-			vector<individual> population;
-			population.reserve(paramL["popSize"]);
-			printingObj localPrint = printingObj(paramL["sampleSize"], paramL["nInt"],
-				int(paramL["printLearnInt"]), int(paramL["nCenters"]));
-			// intial conditions
-			rnd::discrete_distribution initFreq(3);
-			for (json::iterator initIt = paramL["init"].begin();
-				initIt != paramL["init"].end(); ++initIt) {
-				initFreq[initIt - paramL["init"].begin()] = *initIt;
-			}
-			for (int popId = 0; popId < paramL["popSize"]; ++popId) {
-				population.push_back(individual((strategy)initFreq.sample(),
-					paramL["QualStDv"], paramL["alphaBad"],	
-					paramL["alphaCrit"],	paramL["alphaAct"],0, paramL["sigSq"], 
-					paramL["nCenters"],paramL["initCrit"],paramL["initAct"]));
-			}
-			for (int generation = 0; generation < paramL["totGen"]; 
-				++generation) {
-				//cout << "Interactions " << generation << endl;
-				interactions(population, indOutput, paramL["nInt"],
-					paramL["payoff_matrix"], paramL["strQual"],
-					generation % static_cast<int>(paramL["printLearn"]) == 0,
-					paramL["printLearnInt"], paramL["sampleSize"], generation, seed, 
-					paramL["nIntGroup"],localPrint);
-				#pragma omp critical
-				{
-					if (generation % static_cast<int>(paramL["printGen"]) == 0) {
-						get_stats(population, paramL["popSize"],localPrint, paramL["nCenters"]);
-						printStats(paramL["popSize"], evolOutput, generation, seed, 
-							localPrint, paramL["nCenters"]);
-						printLearnDynamics(indOutput,population,generation,seed,localPrint);
-					}
-					/*printPopSample(population, popOutput, generation, seed,
-					paramL["sampleSize"],paramL["nCenters"]);*/
-				}
-				Reprod(population, paramL["popSize"], paramL["mutRate"],
-					paramL["MutSd"], paramL["baselineFit"],paramL["mutType"],
-					paramL["QualStDv"],paramL["initCrit"], paramL["initAct"], 
-					paramL["alphCost"], 
-					paramL["betCost"]);
-				
-			}
-		
-		}
-		//popOutput.close();
-		evolOutput.close();
-		indOutput.close();
+		initializeFiles(evolOutput[itParVal- param["rangParam"].begin()],
+			indOutput[itParVal - param["rangParam"].begin()], param,
+			itParVal - param["rangParam"].begin());//popOutput,
 	}
+
+	
+	/*for (json::iterator itParVal = param["rangParam"].begin();
+		itParVal != param["rangParam"].end(); ++itParVal){
+		#pragma omp parallel for firstprivate(pointParam)
+		for (int seed = 0; seed < int(param["nRep"]); ++seed) {*/
+	int nThreads = omp_get_max_threads();
+	if (argc>1) {
+		nThreads = atoi(argv[2]);
+	}
+
+	omp_set_num_threads(nThreads);
+	#pragma omp parallel for firstprivate(pointParam)
+	for (int itGenLoop = 0;
+		itGenLoop < param["rangParam"].size()* static_cast<int>(param["nRep"]);
+		++itGenLoop) {
+		nlohmann::json paramL = *pointParam;
+		int idParRange = itGenLoop / static_cast<int>(param["nRep"]);
+		int seed = itGenLoop - idParRange*static_cast<int>(param["nRep"]);
+		paramL[namParam] =
+			param["rangParam"][idParRange];
+		paramL["alphaCrit"] = paramL["alphaAct"];
+		// if (seed ==0) cout << omp_get_num_threads() << endl;
+#pragma omp critical
+		{
+			cout << paramL["namParam"] << "=" << paramL[namParam] << "	" <<
+				"seed=" << seed << endl;
+		}
+		vector<individual> population;
+		population.reserve(paramL["popSize"]);
+		// intial conditions
+		rnd::discrete_distribution initFreq(3);
+		for (json::iterator initIt = paramL["init"].begin();
+			initIt != paramL["init"].end(); ++initIt) {
+			initFreq[initIt - paramL["init"].begin()] = *initIt;
+		}
+		printingObj localPrint = printingObj(paramL["sampleSize"], paramL["nInt"],
+			int(paramL["printLearnInt"]), int(paramL["nCenters"]));
+		for (int popId = 0; popId < paramL["popSize"]; ++popId) {
+			population.push_back(individual((strategy)initFreq.sample(),
+				paramL["QualStDv"], paramL["alphaBad"],
+				paramL["alphaCrit"], paramL["alphaAct"], 0, paramL["sigSq"],
+				paramL["nCenters"], paramL["initCrit"], paramL["initAct"]));
+		}
+		for (int generation = 0; generation < paramL["totGen"];
+			++generation) {
+			//cout << "Interactions " << generation << endl;
+			interactions(population, paramL["nInt"],
+				paramL["payoff_matrix"], paramL["strQual"],
+				generation % static_cast<int>(paramL["printLearn"]) == 0,
+				paramL["printLearnInt"], paramL["sampleSize"], generation, seed,
+				paramL["nIntGroup"], localPrint);
+#pragma omp critical
+			{
+				if (generation % static_cast<int>(paramL["printGen"]) == 0) {
+					get_stats(population, paramL["popSize"], localPrint,
+						paramL["nCenters"]);
+					printStats(paramL["popSize"],
+						evolOutput[idParRange],
+						generation, seed,
+						localPrint, paramL["nCenters"]);
+					printLearnDynamics(indOutput[idParRange],
+						population, generation, seed, localPrint);
+				}
+				/*printPopSample(population, popOutput, generation, seed,
+				paramL["sampleSize"],paramL["nCenters"]);*/
+			}
+			Reprod(population, paramL["popSize"], paramL["mutRate"],
+				paramL["MutSd"], paramL["baselineFit"], paramL["mutType"],
+				paramL["QualStDv"], paramL["initCrit"], paramL["initAct"],
+				paramL["alphCost"],
+				paramL["betCost"]);
+		}
+	}
+		//popOutput.close();
+	for (json::iterator itParVal = param["rangParam"].begin();
+		itParVal != param["rangParam"].end(); ++itParVal) {
+		evolOutput[itParVal - param["rangParam"].begin()].close();
+		indOutput[itParVal - param["rangParam"].begin()].close();
+	}
+	
 	
 	mark_time(0);
 	//wait_for_return();

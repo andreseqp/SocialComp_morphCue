@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvol3"
+scenario<-"alphaActLearn2"
 
 
 
@@ -20,7 +20,7 @@ scenario<-"nIntGroupEvol3"
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (List<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
+fileId<-4
 indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[fileId]))
 
 # new columns ------------------------------------------------------------------
@@ -30,7 +30,7 @@ indLearn[,diffActWeights:=abs(WeightAct_0-WeightAct_4)]
 
 # Changes in learning parameters for several individuals -----------------------
 
-gener<-indLearn[,unique(time)][3]
+gener<-3#indLearn[,unique(time)][8]
 nCenters<-6
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
@@ -50,44 +50,56 @@ county<-2
 
 plot.new()
 
-timePoints<-round(seq(1,length(unique(indLearn[time==gener,nInteract])),length.out = 10))
+indLearn[,unique(time)]
+indLearn[,unique(seed)]
 
-for(behavTime in unique(indLearn$nInteract)[timePoints]){
+# Select run and generation to plot
+tempPop<-indLearn[time==gener&seed==seedCh]
+
+timePoints<-round(seq(1,length(unique(tempPop[,nInteract])),
+                      length.out = 10))
+
+str(tempPop)
+
+for(behavTime in unique(tempPop$nInteract)[timePoints]){
   if(countx==5)  {countx<-0;county<-county-1}
   countx<-countx+1
-  dataIndsAct<-sapply(as.list(indLearn[(time==gener&nInteract==behavTime)
-                                        &seed==seedCh,indId]),
+  dataIndsAct<-sapply(as.list(tempPop[nInteract==behavTime,indId]),
                        function(x){x=
                          logist(totRBF(rangx,
                                 centers,0.01,
                                 as.double(
-                                  indLearn[(time==gener&seed==seedCh)&
-                                             (indId==x&nInteract==behavTime),.SD,
+                                  tempPop[nInteract==behavTime&indId==x,.SD,
                                            .SDcol=grep("WeightAct",
-                                                       names(indLearn),
+                                                       names(tempPop),
                                                        value = TRUE)
                                            ])),alpha = 0,beta = 1)})
   par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx),
       las=1,new=T)
   matplot(x=rangx,y=dataIndsAct,type='l',xlab="",ylab="",
           xaxt=xaxRang[county],yaxt=yaxRang[countx],lty = 1,
-          col=1+match(indLearn[(time==gener&nInteract==behavTime)
-                               &seed==seedCh,indId],
-                      indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
-                               unique(indId)]),lwd=0.5,ylim=c(0,1))
+          col=paletteMeans(100)[
+            findInterval(tempPop[nInteract==behavTime,Quality],colorbreaksQual)],
+          # Use this for colour if want to plot each individual 
+          # with a different colour
+          # 1+match(indLearn[(time==gener&nInteract==behavTime)
+          #                  &seed==seedCh,indId],
+          #         indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
+          #                  unique(indId)])
+            lwd=0.5,ylim=c(0,1))
   lines(logist(totRBF(rangx,centers,0.01,rep(0,nCenters))
               ,alpha = 0,beta = 1)~rangx,
        lwd=1,col=1)
   text(x = 0.5,y=0.58,labels = paste0("nInt=",behavTime))
 }
 
-
-# par(new=FALSE)
-# color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
-#                max = max(colorbreaksQual),nticks = 3,
-#                title = "",
-#                cex.tit = 1.2,
-#                numplotx = 15,numploty = 10,idplotx =15,idploty = 9)
+# Include if the color scheme relates to quality
+par(new=FALSE)
+color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
+               max = max(colorbreaksQual),nticks = 3,
+               title = "",
+               cex.tit = 1.2,
+               numplotx = 15,numploty = 10,idplotx =15,idploty = 9)
 
 # Critic 
 
@@ -103,7 +115,7 @@ plot.new()
 ylims<-fivenum(as.matrix(indLearn[,.SD,
                 .SDcol=grep("WeightCrit",names(indLearn),
                                      value = TRUE)]))[c(1,5)]
-for(behavTime in unique(indLearn$nInteract)[timePoints]){
+for(behavTime in indLearn[seed==seedChtime==gener&unique(indLearn$nInteract)[timePoints]){
   if(countx==5)  {countx<-0;county<-county-1}
   countx<-countx+1
   par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx),
@@ -122,10 +134,15 @@ for(behavTime in unique(indLearn$nInteract)[timePoints]){
                                        ]))})
   matplot(x=rangx,y=dataIndsCrit,type='l',xlab="",ylab="",
           xaxt=xaxRang[county],yaxt=yaxRang[countx],lty = 1,
-          col=1+match(indLearn[(time==gener&nInteract==behavTime)
-                               &seed==seedCh,indId],
-                      indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
-                                     unique(indId)]),lwd=0.5,ylim = ylims)
+          col=paletteMeans(100)[
+            findInterval(indLearn[(time==gener&nInteract==behavTime)
+                                  &seed==seedCh,Quality],colorbreaksQual)],
+          # To color each individual differently
+          # col=1+match(indLearn[(time==gener&nInteract==behavTime)
+          #                      &seed==seedCh,indId],
+          #             indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
+                                     # unique(indId)]),
+  lwd=0.5,ylim = ylims)
   lines(totRBF(rangx,centers,0.01,rep(0,nCenters))~rangx,lwd=1,col=1)
   text(x = 0.5,y=0.38,labels = paste0("nInt=",behavTime))
 }

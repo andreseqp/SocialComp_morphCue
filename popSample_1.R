@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvol3"
+scenario<-"alphaActLearn2"
 
 
 # Load files -------------------------------------------------------------------
@@ -20,10 +20,9 @@ scenario<-"nIntGroupEvol3"
 (evolList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
+fileId<-4
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
-
 
 
 # Extract means and IQR for the dynamic variables ------------------------------
@@ -105,10 +104,10 @@ Runmeans<-pop[, as.list(unlist(lapply(.SD,
 # png(here("Simulations",paste0(scenario,"_"),"weightsVarQualSt.png"),
 #     width = 1000,height = 800)
 
-gener<-tail(pop[,unique(time)],10)[1]
-lastInt<-3500
+gener <-tail(pop[,unique(time)],10)[1]
+lastInt<-tail(pop[,unique(nInteract)],1)
   # to get last interaction: tail(pop[,unique(nInteract)],1)
-runChoi<-0
+runChoi<-1
 nCenters<-6
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
