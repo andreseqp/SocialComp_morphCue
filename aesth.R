@@ -1,5 +1,11 @@
 # Aesthetic parameters of the project ------------------------------------------
 
+library("RColorBrewer")
+
+
+colIntTypesLin<-brewer.pal(3,name = "Set1")
+colIntTypesPol<-rgb(t(col2rgb(colIntTypesLin)),alpha = 100,maxColorValue = 255)
+
 colTypesPol<-c(rgb(239/255,138/255,98/255,alpha = 0.5),
             rgb(103/255,169/255,207/255,alpha = 0.5),
             rgb(153/255,142/255,195/255,alpha = 0.5))

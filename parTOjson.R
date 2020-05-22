@@ -6,31 +6,33 @@ library("here")
 source(here("AccFunc.R"))
 
 
-fileName<-"parameters.json"
+fileName<-"parameters"
 here()
 
 
-param<-list(totGen   =10,   nRep    = 5,
-            printGen = 1,   printLearn = 1,
+param<-list(totGen   =10000,   nRep    = 16,
+            printGen = 1000,   printLearn = 1000,
             printLearnInt = 500,
-            popSize  = 1000,  baselineFit = 2,   
-            MutSd    = 0.2,
-            nInt        = 30000,  init     = c(0,0,1),
-            mutRate  = 0.0,  mutType  = 0,
-            sampleSize = 30,   strQual  = 10,
-            alphaBad	 = 3,    betaBad	 = 6,
-            alphaCrit  = 0.02,  alphaAct = 0.02,
+            popSize  = 2000,  baselineFit = 2,   
+            MutSd    = 0.3,
+            nInt        = 1000,  init     = c(0,0,1),
+            mutRate  = 0.001,  mutType  = 0,
+            sampleSize = 50,   strQual  = 10,
+            alphaBad	 = 0,    betaBad	 = 0,
+            alphaCrit  = 0.1,  alphaAct = 0.1,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,
             QualStDv   = 1.1, betCost = 0,
             alphCost	 = 3,
-            nIntGroup  = 1000,
+            nIntGroup  = 2000,
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "alphaAct",
-            rangParam = c(0.005,0.01,0.02,0.05,0.1),
+            namParam = "initAct",
+            rangParam = c(2,round(log(1/2),2),-2),
             folderL=paste(here("Simulations"),"/",sep=""))
 
-apendScenar<-"Learn1"
+
+
+apendScenar<-""
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
@@ -73,15 +75,17 @@ param$folder<-param$folderL
 check_create.dir(here("Simulations"),param = paste0(param$namParam,apendScenar),
                  values = c(""))
 
+rangparam<-param$rangParam
 
-
-for (i in 1:1) {
+for (i in 1:length(rangparam)) {
   param$folderL<-paste0(here("Simulations",
                             param$namParam),apendScenar,"_/")
   # param$folder<-param$folderL
+  param$rangParam<-c(rangparam[i])
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
-  if(file.exists(paste(param$folderL,fileName,sep = ''))){
-    currFile<-fromJSON(paste(param$folderL,fileName,sep = ''))
+  filenameL<-paste0(fileName,i,".json")
+  if(file.exists(paste(param$folderL,filenameL,sep = ''))){
+    currFile<-fromJSON(paste(param$folderL,filenameL,sep = ''))
     if(sum(unlist(currFile)!=unlist(param))>0){
       warning("You are erasing old files!! n\ Check first!!!",immediate. = TRUE)
       print("OLD value")
@@ -90,7 +94,7 @@ for (i in 1:1) {
       print(unlist(param)[unlist(currFile)!=unlist(param)])
       ans<-readline("Want to continue?")
       if(substr(ans, 1, 1) == "y"){
-        write(outParam,paste(param$folderL,fileName,sep = ""))
+        write(outParam,paste(param$folderL,filenameL,sep = ""))
         # jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
         #         partition,nodes = nodes,mem = memor)
       }
@@ -101,7 +105,7 @@ for (i in 1:1) {
     }
   }
   else{
-    write(outParam,paste(param$folderL,fileName,sep = ""))
+    write(outParam,paste(param$folderL,filenameL,sep = ""))
     # jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
     #         partition,nodes = nodes,mem = memor)
   }

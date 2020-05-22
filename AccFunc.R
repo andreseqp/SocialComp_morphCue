@@ -78,11 +78,16 @@ color.bar.aeqp <- function(lut, min, max=-min, nticks=11, ticks=seq(min, max, le
 # Load all the files for a scenario varying one parameter ----------------------
 # not robust yet to filename variation CHECK!!! --------------------------------
 
-filesScenar<-function(filename,scenario){
+filesScenar<-function(filename,scenario,full.name=FALSE){
   par<-gsub(".txt","",tail(strsplit(filename,"_")[[1]],1))
   parVal<-as.numeric(gsub("[[:alpha:]]",par,replacement = ''))
   parNam<-gsub("[^[:alpha:]]",par,replacement = '')
-  tmp<-fread(here("Simulations",paste0(scenario,"_"),filename))
+  if(full.name){
+    tmp<-fread(filename)
+  }
+  else{
+    tmp<-fread(here("Simulations",paste0(scenario,"_"),filename)) 
+  }
   tmp[,eval(parNam):=parVal]
   return(tmp)
 }

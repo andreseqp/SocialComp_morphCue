@@ -60,6 +60,10 @@ public:
 	// records the distributions of badge sizes for evolutionary dyn
 	double alphaMeanSd[2];
 	// records the distribution of alpha in the reac norm for evolutionary dyn
+	double initCritMeanSd[2];
+	// records the distribution of initial values for the critic for evolutionary dyn
+	double initActMeanSd[2];
+	// records the distribution of initial values for the Actor for evolutionary dyn
 	double betaMeanSd[2];
 	// records the distribution of betas in the reac norm for evolutionary dyn
 	double featActMean[20];
@@ -72,8 +76,15 @@ public:
 	//vector<int> nRecords;
 	// Which inds are sampled for learning dyn
 	vector<int>  interacCount;
-	vector<int> counterRecords;
 	// N interactions of sampled inds for learn dyn
+	vector<int> counterRecords;
+	// Counter, # times the sample inds are recorded
+	vector<vector<int> > nTotIntHist;
+	// Historical record of total # ints at the point of sample records
+	vector<vector<int> > nTotHHIntsHist;
+	// Historical record of total # ints at the point of sample records
+	vector<vector<int> > nTotDDIntsHist;
+	// Historical record of total # ints at the point of sample records
 	vector<vector<vector<double> > > actFeatHistory;
 	// Act feat. weigths of sampled inds for learn dyn
 	vector<vector<vector<double> > > critFeatHistory;
@@ -90,13 +101,18 @@ printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 		interacCount.emplace_back(countRecords * printLearnInt);
 		actFeatHistory.emplace_back(0);
 		critFeatHistory.emplace_back(0);
+		nTotIntHist.emplace_back(0);
+		nTotHHIntsHist.emplace_back(0);
+		nTotDDIntsHist.emplace_back(0);
 		for (int countSamples = 0; countSamples < nSamples; ++countSamples) {
 			if (countRecords == 0) {
 				sampledInd.emplace_back(0), counterRecords.emplace_back(0);
-				/*nRecords.emplace_back(0);*/
 			}
 			actFeatHistory[countRecords].emplace_back(0);
 			critFeatHistory[countRecords].emplace_back(0);
+			nTotIntHist[counterRecords].emplace_back(0);
+			nTotHHIntsHist[counterRecords].emplace_back(0);
+			nTotDDIntsHist[counterRecords].emplace_back(0);
 			for (int countCenters = 0; countCenters < nCenters; ++countCenters) {
 				actFeatHistory[countRecords][countSamples].emplace_back(0);
 				critFeatHistory[countRecords][countSamples].emplace_back(0);
@@ -113,8 +129,7 @@ class individual {
 			double alphaAI, double gammaI, double sigmaSqI,	int nCenters_,
 			double initCrit, double initAct );
 		individual(individual& mother, double QualStDv,
-			double mutRate,double mutSD, int mutType, double initCrit, 
-			double initAct);
+			double mutRate,double mutSD, int mutType, bool mutLearn);
 		double curr_payoff = 0;
 		double cum_payoff = 0;
 		int ninterac = 0;
@@ -133,6 +148,10 @@ class individual {
 		}
 		double get_quality() {
 			return(quality);
+		}
+		double get_inits(bool crit) {
+			if (crit) return(initCrit);
+			else return(initAct);
 		}
 		double  get_feat(bool act,int id){
 			if(act)	return(featWeightsAct[id]);
@@ -172,6 +191,10 @@ class individual {
 		// speed of learning for the critic
 		double alphaAct;
 		// speed of learning for the actor
+		double initCrit;
+		// speed of learning for the critic
+		double initAct;
+		// speed of learning for the actor
 		double gamma;
 		// importance of future rewards 
 		strategy genotype;
@@ -198,12 +221,13 @@ void individual::set_Badge(double stdDev=0.1) {
 individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
 	double alphaBadge_=0, double alphaCI = 0.05,	
 	double alphaAI = 0.05, double gammaI = 0, double sigmaSqI = 0.01, 
-	int nCenters_=6,double initCrit=0,double initAct=0) {
+	int nCenters_=6,double initCrit_I=0,double initAct_I=0) {
 	nCenters = nCenters_;
 	alphaBadge = alphaBadge_;
 	betaBadge = alphaBadge_*2;
 	genotype = genotype_;
 	set_Badge(QualStDv);
+	initAct = initAct_I, initCrit = initCrit_I;
 	alphaAct = alphaAI, alphaCrit = alphaCI, gamma = gammaI, sigmaSq = sigmaSqI;
 	double interv = 1 / (static_cast<double>(nCenters)-1);
 	for (int i = 0; i < nCenters; i++)	{
@@ -217,8 +241,7 @@ individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
 }
 
 individual::individual(individual& mother, double QualStDv,
-	double mutRate, double mutSD, int mutType, 
-	double initCrit = 0, double initAct = 0) {
+	double mutRate, double mutSD, int mutType, bool mutLearn) {
 	genotype = mutateStr(mother.genotype,mutRate,mutType);
 	nCenters = mother.nCenters;
 	alphaBadge = mutateDoub(mother.alphaBadge,mutRate,mutSD);
@@ -226,10 +249,20 @@ individual::individual(individual& mother, double QualStDv,
 	set_Badge(QualStDv); 
 	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0, 
 	preferenceT=0;
-	alphaAct = mother.alphaAct;
-	alphaCrit = mother.alphaCrit;
-	gamma = mother.gamma;
-	sigmaSq = mother.sigmaSq;
+	if (mutLearn) {
+		alphaAct = mother.alphaAct,
+			initAct = mutateDoub(mother.initAct,mutRate,mutSD);
+		alphaCrit = mother.alphaCrit,
+			initCrit = mother.initCrit,mutRate,mutSD;
+		gamma = mother.gamma;
+		sigmaSq = mother.sigmaSq;
+	}
+	else{
+		alphaAct = mother.alphaAct, initAct = mother.initAct;
+		alphaCrit = mother.alphaCrit, initCrit = mother.initCrit;
+		gamma = mother.gamma;
+		sigmaSq = mother.sigmaSq;
+	}
 	double interv = 1 / (static_cast<double>(nCenters) - 1);
 	for (int i = 0; i < nCenters; i++) {
 		centers.emplace_back(interv * i);
@@ -365,7 +398,7 @@ int individual::set_phenotype(individual partner, printingObj& localPrint) {
 
 void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	double mutSD, double baselineFit, int mutType, double QualStDv,
-	double initCrit, double initAct,double alphaCost, double betaCost) {
+	bool mutLearn,double alphaCost, double betaCost) {
 	vector<individual> popTplus1(popsize);
 	rnd::discrete_distribution payoff_dist(popsize);
 	
@@ -377,7 +410,7 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	vector<individual>::iterator itpopTplus1 = popTplus1.begin();
 	while (	itpopTplus1 < popTplus1.end()) {
 		*itpopTplus1 = individual(popT[payoff_dist.sample()], QualStDv, mutRate,
-			mutSD, mutType, initCrit, initAct);
+			mutSD, mutType, mutLearn);
 		if (betaCost == 0) ++itpopTplus1;
 		else if (itpopTplus1->viability(alphaCost, betaCost)) {
 			++itpopTplus1;
@@ -395,6 +428,10 @@ void get_stats(vector<individual> &popT, int popsize, printingObj &localPrint,in
 	localPrint.countGenotypes[0] = 0;
 	localPrint.countGenotypes[1] = 0;
 	localPrint.countGenotypes[2] = 0;
+	localPrint.initActMeanSd[0] = 0;
+	localPrint.initActMeanSd[1] = 0;
+	localPrint.initCritMeanSd[0] = 0;
+	localPrint.initCritMeanSd[1] = 0;
 	localPrint.BadgeMeanSd[0] = 0;
 	localPrint.BadgeMeanSd[1] = 0;
 	localPrint.alphaMeanSd[0] = 0;
@@ -413,6 +450,10 @@ void get_stats(vector<individual> &popT, int popsize, printingObj &localPrint,in
 		localPrint.alphaMeanSd[1] += pow(itpop->get_alpha(),2);
 		localPrint.betaMeanSd[0] += itpop->get_beta();
 		localPrint.betaMeanSd[1] += pow(itpop->get_beta(), 2);
+		localPrint.initCritMeanSd[0] += itpop->get_inits(1);
+		localPrint.initCritMeanSd[1] += pow(itpop->get_inits(1), 2);
+		localPrint.initActMeanSd[0] += itpop->get_inits(0);
+		localPrint.initActMeanSd[1] += pow(itpop->get_inits(0), 2);
 		for(int countFeat = 0; countFeat<nFeat;++countFeat){
 			localPrint.featActMean[countFeat] += itpop->get_feat(1,countFeat);
 			localPrint.featCritMean[countFeat] += itpop->get_feat(0, countFeat);
@@ -444,7 +485,9 @@ void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 				pop[localPrint.sampledInd[cSampled]].get_strat() << '\t' <<
 				pop[localPrint.sampledInd[cSampled]].get_alpha() << '\t' <<
 				pop[localPrint.sampledInd[cSampled]].get_beta() << '\t' <<
-				pop[localPrint.sampledInd[cSampled]].get_badge() << '\t';
+				pop[localPrint.sampledInd[cSampled]].get_badge() << '\t' <<
+				pop[localPrint.sampledInd[cSampled]].get_inits(1) << '\t' <<
+				pop[localPrint.sampledInd[cSampled]].get_inits(0) << '\t';
 			genoutput << endl;
 		}
 	}
@@ -482,10 +525,8 @@ void interactions(vector<individual>& population, int nint,
 		intType += population[ind1].set_phenotype(population[ind2],localPrint);
 		intType += population[ind2].set_phenotype(population[ind1],localPrint);
 		if (trackPopLearn) { 
-			//cout << "trackpoplearn " << generat << endl;
 			int foundInd = 0;
 			++localPrint.countIntTypes[intType];
-			//++localPrint.countIntTypesGen[intType];
 			itSamp1 = find(sample.begin(), sample.end(), ind1);
 			if (itSamp1 != sample.end() &&
 				(population[*itSamp1].ninterac % printLearnInt) == 0) {
@@ -505,13 +546,10 @@ void interactions(vector<individual>& population, int nint,
 				localPrint.countIntTypesGen[2] = 0;
 			}*/
 		}
-		//cout << "win " << generat << endl;
 		ind1win = population[ind1].Winfight(population[ind2].get_quality(),
 			strQual);
-		//cout << "payoff " << generat << endl;
 		population[ind1].get_payoff(population[ind2], payoff_matrix,ind1win);
 		population[ind2].get_payoff(population[ind1], payoff_matrix,!ind1win);
-		/*cout << "update " << generat << endl;*/
 		population[ind1].update();
 		population[ind2].update();
 		ind1 = population.size(), ind2 = population.size();
@@ -538,6 +576,8 @@ void printStats(int popsize,ofstream &evolOutput,
 	double badgSD = calcSd(localPrint.BadgeMeanSd, invertPopsize);
 	double alphaSD = calcSd(localPrint.alphaMeanSd, invertPopsize);
 	double betaSD = calcSd(localPrint.betaMeanSd, invertPopsize);
+	double initCritSD = calcSd(localPrint.initCritMeanSd, invertPopsize);
+	double initActSD = calcSd(localPrint.initActMeanSd, invertPopsize);
 	evolOutput << seed << '\t';
 	evolOutput << time << '\t';
 	evolOutput << localPrint.countGenotypes[hawk]      * invertPopsize << '\t';
@@ -554,6 +594,10 @@ void printStats(int popsize,ofstream &evolOutput,
 	evolOutput << alphaSD << '\t';
 	evolOutput << localPrint.betaMeanSd[0]             * invertPopsize << '\t';
 	evolOutput << betaSD <<  '\t';
+	evolOutput << localPrint.initCritMeanSd[0] * invertPopsize << '\t';
+	evolOutput << initCritSD << '\t';
+	evolOutput << localPrint.initActMeanSd[0] * invertPopsize << '\t';
+	evolOutput << initActSD << '\t';
 	for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
 		evolOutput << localPrint.featActMean[countFeat] * invertNlearners << '\t';
 		evolOutput << localPrint.featCritMean[countFeat] * invertNlearners << '\t';
@@ -621,7 +665,8 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	evolOutput << "freqFenDoves" << '\t' << "freqHH" << '\t' << "freqHD" << '\t';
 	evolOutput << "freqDD" << '\t' << "meanCue" << '\t' << "sdCue" << '\t';
 	evolOutput << "meanAlpha" << '\t' << "sdAlpha" << '\t' << "meanBeta" << '\t';
-	evolOutput << "sdBeta" << '\t';
+	evolOutput << "sdBeta" << '\t' << "meanInitCrit" <<'\t' << "sdInitCrit" << '\t';
+	evolOutput <<  "meanInitAct" << '\t' << "sdInitAct" << '\t';
 	for(int countFeat=0;countFeat<param["nCenters"];++countFeat){
 		evolOutput << "WeightAct_" + itos(countFeat) << '\t';
 		evolOutput << "WeightCrit_" + itos(countFeat) << '\t';
@@ -655,9 +700,9 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 		indOutput << "WeightAct_" + itos(countFeat) << '\t'
 			<< "WeightCrit_" + itos(countFeat) << '\t';
 	}
-	indOutput << "Quality" << '\t' << "genotype" << '\t' << "alpha" << '\t';
-	indOutput << "beta" << '\t' << "Badge" << '\t' ;
-	indOutput << endl;
+	indOutput << "Quality" << '\t' << "genotype" << '\t' << "alpha" << '\t'
+	<< "beta" << '\t' << "Badge" << '\t'<< "initCrit" << '\t' << "initAct"
+	<< endl;
 	//for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
 	//	cout << "WeightAct_" + itos(countFeat) << '\t';
 	//	cout << "WeightCrit_" + itos(countFeat) << '\t';
@@ -695,6 +740,8 @@ int main(int argc, char* argv[]) {
 	//param["nCenters"]     	 = 6;
 	//param["initCrit"]          = 0;
 	//param["initAct"]           = 0;
+	//param["mutLearn"]			 = 0 ;   
+	// Bool, should learning parameters mutate
 	//param["QualStDv"]          = 1.1;
 	//param["nIntGroup"]		 = 1000;
 	//param["initAct"]			 =0;
@@ -790,8 +837,7 @@ int main(int argc, char* argv[]) {
 			}
 			Reprod(population, paramL["popSize"], paramL["mutRate"],
 				paramL["MutSd"], paramL["baselineFit"], paramL["mutType"],
-				paramL["QualStDv"], paramL["initCrit"], paramL["initAct"],
-				paramL["alphCost"],
+				paramL["QualStDv"],paramL["mutLearn"],paramL["alphCost"],
 				paramL["betCost"]);
 		}
 	}

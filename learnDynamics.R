@@ -11,17 +11,20 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"alphaActLearn2"
-
+scenario<-"nIntGroupEvol1"
+extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 
 # Load files -------------------------------------------------------------------
 
-(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(listTest<-list.files(extSimsDir,full.names = TRUE))
+
+
 (List<-grep("ind",listTest,value=TRUE))
 
-fileId<-4
-indLearn<-fread(here("Simulations",paste0(scenario,"_"),List[fileId]))
+fileId<-3
+indLearn<-fread(List[fileId])
 
 # new columns ------------------------------------------------------------------
 
@@ -30,7 +33,7 @@ indLearn[,diffActWeights:=abs(WeightAct_0-WeightAct_4)]
 
 # Changes in learning parameters for several individuals -----------------------
 
-gener<-3#indLearn[,unique(time)][8]
+gener<-indLearn[,unique(time)][10]
 nCenters<-6
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
@@ -42,26 +45,30 @@ colorbreaksQual<-seq(0,1,length=100)
 
 # Actor 
 
+
+
+finReps<-indLearn[time==max(time),unique(seed)]
+seedCh<-5
+  finReps[round(runif(1,0,length(finReps)))+1]
+
+
+# Select run and generation to plot
+tempPop<-indLearn[time==gener&seed==seedCh]
+
+timePoints<-round(seq(1,30,
+                      length.out = 10))
+  round(seq(1,length(unique(tempPop[,nInteract])),
+                      length.out = 10))
+
+
 yaxRang<-c("s",rep("n",4))
 xaxRang<-c("s","n")
-seedCh<-1
 countx<-0
 county<-2
 
 plot.new()
 
-indLearn[,unique(time)]
-indLearn[,unique(seed)]
-
-# Select run and generation to plot
-tempPop<-indLearn[time==gener&seed==seedCh]
-
-timePoints<-round(seq(1,length(unique(tempPop[,nInteract])),
-                      length.out = 10))
-
-str(tempPop)
-
-for(behavTime in unique(tempPop$nInteract)[timePoints]){
+for(behavTime in unique(tempPop$nInteract)){
   if(countx==5)  {countx<-0;county<-county-1}
   countx<-countx+1
   dataIndsAct<-sapply(as.list(tempPop[nInteract==behavTime,indId]),
@@ -99,7 +106,10 @@ color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
                max = max(colorbreaksQual),nticks = 3,
                title = "",
                cex.tit = 1.2,
-               numplotx = 15,numploty = 10,idplotx =15,idploty = 9)
+               numplotx = 15,numploty = 15,idplotx =15,idploty = 9)
+
+str(indLearn)
+
 
 # Critic 
 
@@ -115,19 +125,17 @@ plot.new()
 ylims<-fivenum(as.matrix(indLearn[,.SD,
                 .SDcol=grep("WeightCrit",names(indLearn),
                                      value = TRUE)]))[c(1,5)]
-for(behavTime in indLearn[seed==seedChtime==gener&unique(indLearn$nInteract)[timePoints]){
+for(behavTime in unique(tempPop$nInteract)){
   if(countx==5)  {countx<-0;county<-county-1}
   countx<-countx+1
   par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx),
       las=1,new=T)
-  dataIndsCrit<-sapply(as.list(indLearn[(time==gener&nInteract==behavTime)
-                                        &seed==seedCh,indId]),
+  dataIndsCrit<-sapply(as.list(tempPop[nInteract==behavTime,indId]),
                        function(x){x=
                          totRBF(rangx,
                                 centers,0.01,
                                 as.double(
-                                  indLearn[(time==gener&seed==seedCh)&
-                                             (indId==x&nInteract==behavTime),.SD,
+                                  tempPop[nInteract==behavTime&indId==x,.SD,
                                        .SDcol=grep("WeightCrit",
                                                    names(indLearn),
                                                    value = TRUE)
@@ -135,8 +143,7 @@ for(behavTime in indLearn[seed==seedChtime==gener&unique(indLearn$nInteract)[tim
   matplot(x=rangx,y=dataIndsCrit,type='l',xlab="",ylab="",
           xaxt=xaxRang[county],yaxt=yaxRang[countx],lty = 1,
           col=paletteMeans(100)[
-            findInterval(indLearn[(time==gener&nInteract==behavTime)
-                                  &seed==seedCh,Quality],colorbreaksQual)],
+            findInterval(tempPop[nInteract==behavTime,Quality],colorbreaksQual)],
           # To color each individual differently
           # col=1+match(indLearn[(time==gener&nInteract==behavTime)
           #                      &seed==seedCh,indId],
