@@ -11,30 +11,31 @@ library("doParallel")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"initAct"
+scenario<-"test"
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 
 # Load files -------------------------------------------------------------------
 # Project folder
-# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 # External sims folder
 (listTest<-list.files(extSimsDir,full.names = TRUE))
+
 (evolList<-grep("evolLearn",listTest,value=TRUE))
 (indList<-grep("indLearn",listTest,value=TRUE))
 
 numCores <- 3
 registerDoParallel(numCores)
 
-# val<-1
+val<-4
 
 # loop to produce pdfs for parameter values
 foreach(val = 1:3,.packages = c("data.table","here")) %dopar% {
 source(here("AccFunc.R"))
 fileId<-val
 # Project folder
-# evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
-# pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
+evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
+pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 # External sims folder
 evol<-fread(evolList[fileId])
 pop<-fread(indList[fileId])
@@ -69,6 +70,12 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
                    m.meanBeta=mean(meanBeta),
                    upIQR.beta=fivenum(meanBeta)[4],
                    lowIQR.beta=fivenum(meanBeta)[2],
+                   m.meanInCrit=mean(meanInitCrit),
+                   upIQR.InCrit=fivenum(meanInitCrit)[4],
+                   lowIQR.InCrit=fivenum(meanInitCrit)[2],
+                   m.meanInAct=mean(meanInitAct),
+                   upIQR.InAct=fivenum(meanInitAct)[4],
+                   lowIQR.InAct=fivenum(meanInitAct)[2],
                    m.freqHH = mean(freqHH),
                    m.freqHD = mean(freqHD),
                    m.freqDD = mean(freqDD),
@@ -94,13 +101,13 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 
 # Plot mean and IQRs among replicates of the genotypes and phenotypes ----------------------------
 
-pdf(paste0(extSimsDir,"/evolDyn_",nampar,Valpar,".pdf"))
+# pdf(paste0(extSimsDir,"/evolDyn_",nampar,Valpar,".pdf"))
 
 # Dynamics of genetypic traits (reaction norm)
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 2,idplotx = 1,
                 lowboundx = 8,upboundx = 93),xaxt="s",las=1)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
-     ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta)]))[c(1,5)],
+     ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta,meanInitCrit,meanInitAct)]))[c(1,5)],
      xlab="",ylab="Trait value",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
 # Variation among replicates
 polygon(x=c(evolStats$time,rev(evolStats$time)),
@@ -109,9 +116,18 @@ polygon(x=c(evolStats$time,rev(evolStats$time)),
 polygon(x=c(evolStats$time,rev(evolStats$time)),
         y=c(evolStats$upIQR.beta,rev(evolStats$lowIQR.beta)),
         col=colGenesPol[2],border = NA)
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$upIQR.InCrit,rev(evolStats$lowIQR.InCrit)),
+#         col=colGenesPol[1],border = NA)
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$upIQR.InAct,rev(evolStats$lowIQR.InAct)),
+#         col=colGenesPol[2],border = NA)
+
 with(evolStats,{
   lines(time,m.meanAlpha,col=colGenesLin[1],lwd=3)
   lines(time,m.meanBeta,col=colGenesLin[2],lwd=3)
+  # lines(time,m.meanInCrit,col=colGenesLin[1],lwd=3)
+  # lines(time,m.meanInAct,col=colGenesLin[2],lwd=3)
 })
 legend("topleft",legend = c(expression(alpha),expression(beta)),
        col=colGenesLin,lwd=2,bty = "n")

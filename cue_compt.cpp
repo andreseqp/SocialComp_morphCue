@@ -49,7 +49,7 @@ class printingObj {
 public:
 	printingObj(int nSamples, int nInt, int printLearnInt,
 		int nCenters);
-	void recordInd(int idSamInd, individual focal);
+	void recordInd(int idSamInd, individual focal, int totNint);
 	int countGenotypes[3];
 	// records the frequency of genotypes for evolutionary dyn
 	int countPhenotypes[2];
@@ -79,11 +79,11 @@ public:
 	// N interactions of sampled inds for learn dyn
 	vector<int> counterRecords;
 	// Counter, # times the sample inds are recorded
-	vector<vector<int> > nTotIntHist;
+	vector<vector<int>> nTotIntHist;
 	// Historical record of total # ints at the point of sample records
-	vector<vector<int> > nTotHHIntsHist;
+	vector<vector<int>>nTotHHIntsHist;
 	// Historical record of total # ints at the point of sample records
-	vector<vector<int> > nTotDDIntsHist;
+	vector<vector<int>> nTotDDIntsHist;
 	// Historical record of total # ints at the point of sample records
 	vector<vector<vector<double> > > actFeatHistory;
 	// Act feat. weigths of sampled inds for learn dyn
@@ -110,9 +110,9 @@ printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 			}
 			actFeatHistory[countRecords].emplace_back(0);
 			critFeatHistory[countRecords].emplace_back(0);
-			nTotIntHist[counterRecords].emplace_back(0);
-			nTotHHIntsHist[counterRecords].emplace_back(0);
-			nTotDDIntsHist[counterRecords].emplace_back(0);
+			nTotIntHist[countRecords].emplace_back(0);
+			nTotHHIntsHist[countRecords].emplace_back(0);
+			nTotDDIntsHist[countRecords].emplace_back(0);
 			for (int countCenters = 0; countCenters < nCenters; ++countCenters) {
 				actFeatHistory[countRecords][countSamples].emplace_back(0);
 				critFeatHistory[countRecords][countSamples].emplace_back(0);
@@ -206,8 +206,7 @@ class individual {
 
 // set quality and badge of status
 void individual::set_Badge(double stdDev=0.1) {
-	if (stdDev>1)
-	{
+	if (stdDev>1){
 		quality = rnd::uniform();
 	}
 	else {
@@ -272,13 +271,26 @@ individual::individual(individual& mother, double QualStDv,
 	}
 }
 
-void printingObj::recordInd(int idSamInd, individual focal) {
+void printingObj::recordInd(int idSamInd, individual focal, int totNint) {
 	//nRecords[idSamInd] += 1;
 	for (int countCenters = 0; countCenters < focal.get_nCenter(); ++countCenters) {
 		actFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
 			focal.get_feat(1, countCenters);
 		critFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
 			focal.get_feat(0, countCenters);
+	}
+	if (counterRecords[idSamInd] == 0) {
+		nTotIntHist[counterRecords[idSamInd]][idSamInd] = totNint;
+		nTotHHIntsHist[counterRecords[idSamInd]][idSamInd] = countIntTypes[0];
+		nTotDDIntsHist[counterRecords[idSamInd]][idSamInd] = countIntTypes[2];
+	}
+	else {
+		nTotIntHist[counterRecords[idSamInd]][idSamInd] = 
+			totNint - nTotIntHist[counterRecords[idSamInd]-1][idSamInd];
+		nTotHHIntsHist[counterRecords[idSamInd]][idSamInd] = 
+			countIntTypes[0] - nTotHHIntsHist[counterRecords[idSamInd]-1][idSamInd];
+		nTotDDIntsHist[counterRecords[idSamInd]][idSamInd] = 
+			countIntTypes[2] - nTotDDIntsHist[counterRecords[idSamInd]-1][idSamInd];
 	}
 	++counterRecords[idSamInd];
 }
@@ -468,7 +480,10 @@ void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 			cIntRecords < localPrint.counterRecords[cSampled];++cIntRecords) {
 			genoutput << seed << '\t' << generat << '\t' <<
 				localPrint.interacCount[cIntRecords] << '\t' <<
-				localPrint.sampledInd[cSampled] << '\t';
+				localPrint.sampledInd[cSampled] << '\t'
+				<< localPrint.nTotIntHist[cIntRecords][cSampled] << '\t'
+				<< localPrint.nTotHHIntsHist[cIntRecords][cSampled] << '\t'
+				<< localPrint.nTotDDIntsHist[cIntRecords][cSampled] << '\t';
 				/*genoutput << localPrint.countIntTypesGen[cIntRecords][0] << '\t' <<
 				localPrint.countIntTypesGen[cIntRecords][1] << '\t' <<
 				localPrint.countIntTypesGen[cIntRecords][2] << '\t';*/
@@ -531,14 +546,14 @@ void interactions(vector<individual>& population, int nint,
 			if (itSamp1 != sample.end() &&
 				(population[*itSamp1].ninterac % printLearnInt) == 0) {
 				localPrint.recordInd(itSamp1 - sample.begin(), 
-					population[*itSamp1]);
+					population[*itSamp1],i+1);
 					++foundInd;
 			}
 			itSamp1 = find(sample.begin(), sample.end(), ind2);
 			if (itSamp1 != sample.end() &&
 				(population[*itSamp1].ninterac % printLearnInt) == 0) {
 				localPrint.recordInd(itSamp1 - sample.begin(), 
-					population[*itSamp1]);
+					population[*itSamp1],i+1);
 				++foundInd;
 			}
 			/*if (foundInd > 0) {
@@ -691,17 +706,16 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	filename1.append("indLearn");
 	std::string IndFile = create_filename(filename1, param, idRangPar);
 	indOutput.open(IndFile.c_str());
-	indOutput << "seed" << '\t' << "time" << '\t' << "nInteract" << '\t' 
-		<< "indId" << '\t';
-		/*indOutput << "nint_HH" << '\t' <<
-		"nint_HD" << '\t' << "nint_DD" << '\t';*/
+	indOutput << "seed" << '\t' << "time" << '\t' << "nInteract" << '\t'
+		<< "indId" << '\t' << "ntotInteract" << '\t' << "nint_HH" << '\t' 
+		<< "nint_DD" << '\t';
 	for (int countFeat = 0; countFeat < param["nCenters"];
 		++countFeat) {
 		indOutput << "WeightAct_" + itos(countFeat) << '\t'
 			<< "WeightCrit_" + itos(countFeat) << '\t';
 	}
 	indOutput << "Quality" << '\t' << "genotype" << '\t' << "alpha" << '\t'
-	<< "beta" << '\t' << "Badge" << '\t'<< "initCrit" << '\t' << "initAct"
+	<< "beta" << '\t' << "Badge" << '\t' << "initCrit" << '\t' << "initAct" << '\t'
 	<< endl;
 	//for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
 	//	cout << "WeightAct_" + itos(countFeat) << '\t';
@@ -720,7 +734,7 @@ int main(int argc, char* argv[]) {
 	//param["nRep"]              = 5;     // Number of replicates
 	//param["printGen"]          = 1;     // How often data is printed	
 	//param["printLearn"]        = 1;	  // how often learning dyn are printed
-	//param["printLearnInt"]     = 1500;   // How often are learning parameters printed
+	//param["printLearnInt"]     = 200;   // How often are learning parameters printed
 	//param["init"]              = {0,0,1};        //Initial frequencies
 	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
 	//param["popSize"]           = 100;
@@ -740,8 +754,8 @@ int main(int argc, char* argv[]) {
 	//param["nCenters"]     	 = 6;
 	//param["initCrit"]          = 0;
 	//param["initAct"]           = 0;
-	//param["mutLearn"]			 = 0 ;   
-	// Bool, should learning parameters mutate
+	//param["mutLearn"]			 = true ;   
+	//// Bool, should learning parameters mutate
 	//param["QualStDv"]          = 1.1;
 	//param["nIntGroup"]		 = 1000;
 	//param["initAct"]			 =0;

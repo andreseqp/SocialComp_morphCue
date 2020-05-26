@@ -11,19 +11,20 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvol1"
+scenario<-"test"
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 
 # Load files -------------------------------------------------------------------
 
-# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (listTest<-list.files(extSimsDir,full.names = TRUE))
 
 
 (List<-grep("ind",listTest,value=TRUE))
 
-fileId<-3
+fileId<-1
+indLearn<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 indLearn<-fread(List[fileId])
 
 # new columns ------------------------------------------------------------------
@@ -48,8 +49,7 @@ colorbreaksQual<-seq(0,1,length=100)
 
 
 finReps<-indLearn[time==max(time),unique(seed)]
-seedCh<-5
-  finReps[round(runif(1,0,length(finReps)))+1]
+seedCh<-finReps[round(runif(1,0,length(finReps)))+1]
 
 
 # Select run and generation to plot
@@ -68,7 +68,7 @@ county<-2
 
 plot.new()
 
-for(behavTime in unique(tempPop$nInteract)){
+for(behavTime in unique(tempPop$nInteract)[1:10]){
   if(countx==5)  {countx<-0;county<-county-1}
   countx<-countx+1
   dataIndsAct<-sapply(as.list(tempPop[nInteract==behavTime,indId]),
@@ -100,6 +100,8 @@ for(behavTime in unique(tempPop$nInteract)){
   text(x = 0.5,y=0.58,labels = paste0("nInt=",behavTime))
 }
 
+
+
 # Include if the color scheme relates to quality
 par(new=FALSE)
 color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
@@ -110,7 +112,19 @@ color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
 
 str(indLearn)
 
+indLearn[,`:=`(freqHH=nint_HH/ntotInteract,
+               freqHD=(ntotInteract-nint_HH-nint_DD)/ntotInteract,
+               freqDD=nint_DD/ntotInteract)]
+indLearn[is.na(freqHH),]
 
+par(plt=posPlot())
+
+with(indLearn[seed==1],{
+  matplot(x=ntotInteract,y=cbind(freqHH,freqHD,freqDD),pch=20)
+  lines(x=c(0,50000),y=c(0.666,0.666)^2,col="grey")
+})
+
+indLearn[freqHH>1]
 # Critic 
 
 
