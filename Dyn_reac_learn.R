@@ -11,31 +11,31 @@ library("doParallel")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"test"
+scenario<-"nIntGroupEvolLear"
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 
 # Load files -------------------------------------------------------------------
 # Project folder
-(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 # External sims folder
 (listTest<-list.files(extSimsDir,full.names = TRUE))
 
 (evolList<-grep("evolLearn",listTest,value=TRUE))
 (indList<-grep("indLearn",listTest,value=TRUE))
 
-numCores <- 3
+numCores <- 2
 registerDoParallel(numCores)
 
-val<-4
+val<-1
 
 # loop to produce pdfs for parameter values
-foreach(val = 1:3,.packages = c("data.table","here")) %dopar% {
+foreach(val = 1:2,.packages = c("data.table","here")) %dopar% {
 source(here("AccFunc.R"))
 fileId<-val
 # Project folder
-evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
-pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
+# evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
+# pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 # External sims folder
 evol<-fread(evolList[fileId])
 pop<-fread(indList[fileId])
@@ -101,13 +101,14 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
 
 # Plot mean and IQRs among replicates of the genotypes and phenotypes ----------------------------
 
-# pdf(paste0(extSimsDir,"/evolDyn_",nampar,Valpar,".pdf"))
+pdf(paste0(extSimsDir,"/evolDyn_",nampar,Valpar,".pdf"))
 
 # Dynamics of genetypic traits (reaction norm)
-par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 2,idplotx = 1,
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
                 lowboundx = 8,upboundx = 93),xaxt="s",las=1)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
-     ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta,meanInitCrit,meanInitAct)]))[c(1,5)],
+     ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta,meanInitCrit,
+                                    meanInitAct)]))[c(1,5)],
      xlab="",ylab="Trait value",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
 # Variation among replicates
 polygon(x=c(evolStats$time,rev(evolStats$time)),
@@ -116,12 +117,7 @@ polygon(x=c(evolStats$time,rev(evolStats$time)),
 polygon(x=c(evolStats$time,rev(evolStats$time)),
         y=c(evolStats$upIQR.beta,rev(evolStats$lowIQR.beta)),
         col=colGenesPol[2],border = NA)
-# polygon(x=c(evolStats$time,rev(evolStats$time)),
-#         y=c(evolStats$upIQR.InCrit,rev(evolStats$lowIQR.InCrit)),
-#         col=colGenesPol[1],border = NA)
-# polygon(x=c(evolStats$time,rev(evolStats$time)),
-#         y=c(evolStats$upIQR.InAct,rev(evolStats$lowIQR.InAct)),
-#         col=colGenesPol[2],border = NA)
+
 
 with(evolStats,{
   lines(time,m.meanAlpha,col=colGenesLin[1],lwd=3)
@@ -132,9 +128,30 @@ with(evolStats,{
 legend("topleft",legend = c(expression(alpha),expression(beta)),
        col=colGenesLin,lwd=2,bty = "n")
 axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
-# Dynamics of behavioural interactions 
 
-par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 2, idplotx = 2,
+# Evolutionary Dynamics of learing parameters
+
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 2,
+                lowboundx = 8,upboundx = 93),xaxt="s",las=1,new=TRUE)
+plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
+     ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta,meanInitCrit,
+                                    meanInitAct)]))[c(1,5)],yaxt="n",
+     xlab="",ylab="",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
+polygon(x=c(evolStats$time,rev(evolStats$time)),
+        y=c(evolStats$upIQR.InCrit,rev(evolStats$lowIQR.InCrit)),
+        col=colGenesPol[1],border = NA)
+polygon(x=c(evolStats$time,rev(evolStats$time)),
+        y=c(evolStats$upIQR.InAct,rev(evolStats$lowIQR.InAct)),
+        col=colGenesPol[2],border = NA)
+with(evolStats,{
+  lines(time,m.meanInCrit,col=colGenesLin[1],lwd=3)
+  lines(time,m.meanInAct,col=colGenesLin[2],lwd=3)
+})
+legend("topleft",legend = c("initCrit","initAct"),
+       col=colGenesLin,lwd=2,bty = "n")
+axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
+# Dynamics of behavioural interactions 
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3, idplotx = 3,
                 lowboundx = 8,upboundx = 93),
     xaxt="s",las=1,new=TRUE)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col=0,
@@ -257,9 +274,11 @@ rm(list=grep("temp",ls(),value = T))
 # height = 800,width = 800)
 
 # get the trajectories for individual runs
-traitsTrajs<-dcast(evol,time~seed,value.var = c("meanAlpha","meanBeta",
-                                                "sdAlpha","sdBeta","freqHH",
-                                                "freqHD","freqDD"))
+traitsTrajs<-dcast(evol,time~seed,
+                   value.var = c("meanAlpha","meanBeta","meanInitCrit",
+                                  "meanInitAct","sdInitCrit","sdInitAct",
+                                  "sdAlpha","sdBeta","freqHH",
+                                  "freqHD","freqDD"))
 finReps<-evol[time==max(time),seed]
 
 
@@ -267,10 +286,11 @@ for(runChoi in finReps){
 # runChoi<-8
 
 # Average trajectory
-par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 2,idplotx = 1,lowboundx = 8, upboundx = 93),
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
+                lowboundx = 8, upboundx = 93),
     xaxt="s",las=1)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
-     ylim=fivenum(as.matrix(pop[,.(alpha,beta)]))[c(1,5)],
+     ylim=fivenum(as.matrix(pop[,.(alpha,beta,initCrit,initAct)]))[c(1,5)],
      xlab="",ylab="Trait value",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
 axis(side=1,padj = -3)
 legend("topleft",legend = c(expression(alpha),expression(beta)),
@@ -298,8 +318,43 @@ matlines(x=traitsTrajs[,time],
                        .SDcol=paste0(c("meanAlpha_","meanBeta_"),runChoi)],
          col=colGenesLin,lty = 2,type="l",lwd=3)
 
+# Evolutionary trajectory of learning parameters
 
-par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 2, idplotx = 2,
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 2,
+                lowboundx = 8, upboundx = 93),new=TRUE,
+    xaxt="s",las=1)
+plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
+     ylim=fivenum(as.matrix(pop[,.(alpha,beta,initCrit,initAct)]))[c(1,5)],
+     xlab="",ylab="",cex.lab=1.2,cex.axis=1,xaxt='n',las=1,yaxt="n")
+axis(side=1,padj = -3)
+legend("topleft",legend = c("initCrit","initAct"),
+       col=colGenesLin,lwd=2,bty = "n")
+
+# Variation among individuals
+polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
+        y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
+                        .SDcol=c(paste0("meanInitCrit_",runChoi),
+                                 paste0("sdInitCrit_",runChoi))],
+            rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
+                            .SDcols=c(paste0("meanInitCrit_",runChoi),
+                                      paste0("sdInitCrit_",runChoi))])),
+        col=colGenesPol[1],border = NA)
+polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
+        y=c(traitsTrajs[,apply(.SD,FUN=sum,MARGIN=1),
+                        .SDcol=c(paste0("meanInitAct_",runChoi),
+                                 paste0("sdInitAct_",runChoi))],
+            rev(traitsTrajs[,apply(.SD, MARGIN = 1,FUN = function(x){x[1]-x[2]}),
+                            .SDcols=c(paste0("meanInitAct_",runChoi),
+                                      paste0("sdInitAct_",runChoi))])),
+        col=colGenesPol[2],border = NA)
+
+matlines(x=traitsTrajs[,time],
+         y=traitsTrajs[,.SD,
+                       .SDcol=paste0(c("meanInitCrit_","meanInitAct_"),runChoi)],
+         col=colGenesLin,lty = 2,type="l",lwd=3)
+
+# Evolutionary trajectories of behavioral interactions
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3, idplotx = 3,
                 lowboundx = 8, upboundx = 93),
     xaxt="s",las=1,new=TRUE)
 plot(x=c(0,max(evol$time)),y=c(0,0),type="l",lwd=2,col=0,

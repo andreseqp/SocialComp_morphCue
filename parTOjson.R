@@ -23,16 +23,16 @@ param<-list(totGen   =10000,   nRep    = 16,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,
             QualStDv   = 1.1, betCost = 0,
-            alphCost	 = 3, mutLearn = FALSE,
+            alphCost	 = 3, mutLearn = TRUE,
             nIntGroup  = 2000,
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "initAct",
-            rangParam = c(2,round(log(1/2),2),-2),
+            namParam = "nIntGroup",
+            rangParam = c(10,50,2000),
             folderL=paste(here("Simulations"),"/",sep=""))
 
 
 
-apendScenar<-""
+apendScenar<-"EvolLear"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 

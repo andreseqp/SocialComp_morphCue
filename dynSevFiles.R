@@ -135,7 +135,6 @@ legend("bottomright",legend=c("HH","HD","DD"),
 pdf(paste0(extSimsDir,"/summ_",nampar,".pdf"))
 
 # Jitter for the replicates
-evol[,sort(unique(get(variable)))]
 
 evol[,posX:=match(get(variable),sort(unique(get(variable))))+
        runif(length(get(variable)),

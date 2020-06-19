@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"test"
+scenario<-"nIntGroupEvolLear"
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 
@@ -23,18 +23,27 @@ extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 (List<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
-indLearn<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
+fileId<-2
+
+# indLearn<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 indLearn<-fread(List[fileId])
 
 # new columns ------------------------------------------------------------------
 
 indLearn[,diffActWeights:=abs(WeightAct_0-WeightAct_4)]
 
+indLearn[,`:=`(freqHH=nint_HH/ntotInteract,
+               freqHD=(ntotInteract-nint_HH-nint_DD)/ntotInteract,
+               freqDD=nint_DD/ntotInteract)]
+
+length(indLearn[seed==8&time==0,unique(indId)])
+
+indLearn[(seed==1&time==0)&indId==833]
+
 
 # Changes in learning parameters for several individuals -----------------------
 
-gener<-indLearn[,unique(time)][10]
+gener<-tail(indLearn[,unique(time)],1)
 nCenters<-6
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
@@ -110,21 +119,31 @@ color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
                cex.tit = 1.2,
                numplotx = 15,numploty = 15,idplotx =15,idploty = 9)
 
-str(indLearn)
+## plots for the change in interaction frequency
 
-indLearn[,`:=`(freqHH=nint_HH/ntotInteract,
-               freqHD=(ntotInteract-nint_HH-nint_DD)/ntotInteract,
-               freqDD=nint_DD/ntotInteract)]
-indLearn[is.na(freqHH),]
 
-par(plt=posPlot())
+par(plt=posPlot(numploty = 2,idploty = 1),new=TRUE)
 
-with(indLearn[seed==1],{
-  matplot(x=ntotInteract,y=cbind(freqHH,freqHD,freqDD),pch=20)
-  lines(x=c(0,50000),y=c(0.666,0.666)^2,col="grey")
+with(tempPop,{
+  plot(x=ntotInteract,y=freqHH,pch=20,
+          col = match(nInteract,unique(nInteract)))
+  lines(x=c(0,1000000),y=c(0.666,0.666)^2,col="grey")
+  legend("topleft",legend = unique(nInteract),col=1:5,pch=20)
 })
 
-indLearn[freqHH>1]
+tempPop[nInteract>1500,indId]
+par(plt=posPlot())
+
+indLearn[seed==8,unique(indId)]
+
+maxInt<-indLearn[,max(nInteract),by=.(seed,indId,time)]
+
+hist(maxInt[,V1])
+
+maxInt[V1>2000,length(indId),by=.(time,seed)]
+
+barplot()
+
 # Critic 
 
 
