@@ -1,34 +1,47 @@
-\documentclass[]{article}
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-\else % if luatex or xelatex
-  \ifxetex
-    \usepackage{mathspec}
-  \else
-    \usepackage{fontspec}
-  \fi
-  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
-% use upquote if available, for straight quotes in verbatim environments
+% Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={The evolution of badges of status with learners},
+  pdfauthor={Andrés Quiñones},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
-\usepackage{hyperref}
-\hypersetup{unicode=true,
-            pdftitle={The evolution of badges of status with learners},
-            pdfauthor={Andrés Quiñones},
-            pdfborder={0 0 0},
-            breaklinks=true}
-\urlstyle{same}  % don't use monospace font for urls
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -38,52 +51,19 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-}
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{0}
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
-
-%%% Use protect on footnotes to avoid problems with footnotes in titles
-\let\rmarkdownfootnote\footnote%
-\def\footnote{\protect\rmarkdownfootnote}
-
-%%% Change title format to be more compact
-\usepackage{titling}
-
-% Create subtitle command for use in maketitle
-\providecommand{\subtitle}[1]{
-  \posttitle{
-    \begin{center}\large#1\end{center}
-    }
-}
-
-\setlength{\droptitle}{-2em}
-
-  \title{The evolution of badges of status with learners}
-    \pretitle{\vspace{\droptitle}\centering\huge}
-  \posttitle{\par}
-    \author{Andrés Quiñones}
-    \preauthor{\centering\large\emph}
-  \postauthor{\par}
-    \date{}
-    \predate{}\postdate{}
-  
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{float}
+
+\title{The evolution of badges of status with learners}
+\author{Andrés Quiñones}
+\date{}
 
 \begin{document}
 \maketitle
@@ -124,10 +104,6 @@ who wins the contest. Individuals' reproductive success is proportional
 to the payoff accumulated throughout their life. Figure
 \ref{fig:HD_game} shows the evolutionary dynamics of the two genotypes,
 which fit the game theoretical prediction.
-
-\begin{figure}
-\includegraphics[width=0.8\linewidth]{Simulations/mutType_/basicHawkDove} \caption{\label{fig:HD_game}Hawk-dove game. Dashed line is the  game theoretical prediction for frequency of hawks.}\label{fig:fig1}
-\end{figure}
 
 \hypertarget{the-effect-of-learning}{%
 \section{The effect of learning}\label{the-effect-of-learning}}
@@ -185,10 +161,6 @@ of how the function approximation works for the actor (top panel -
 probability of choosing dove) and the critic (bottom panel - expected
 payoff from facing an individual with a given badge size).
 
-\begin{figure}
-\includegraphics[width=0.8\linewidth]{cartoonRBF} \caption{\label{fig:learning_cartoonRBF}Function approximation for the actor and the critic. Using random values for the responses of each center. Circles show the location of the centers and the maximum response they trigger, while the lines show the total response along the badge size continium.}\label{fig:fig2}
-\end{figure}
-
 \hypertarget{results-when-individuals-do-not-vary-in-their-quality}{%
 \subsection{Results when individuals do NOT vary in their
 quality}\label{results-when-individuals-do-not-vary-in-their-quality}}
@@ -204,10 +176,6 @@ results show that under quality invariance, the learning algorithm
 develops similar phenotypic frequencies as the evolutionary dynamics of
 the pure strategies.
 
-\begin{figure}
-\includegraphics[width=0.8\linewidth]{Simulations//QualStDv_//hawkDoveLearn} \caption{\label{fig:learning_invar}Learning equilibrium when individuals do not vary in quality. Dashed line is the  game theoretical prediction for frequency of hawks.}\label{fig:fig3}
-\end{figure}
-
 \hypertarget{results-when-individuals-vary-in-their-quality}{%
 \subsection{Results when individuals vary in their
 quality}\label{results-when-individuals-vary-in-their-quality}}
@@ -222,10 +190,6 @@ therefore lower levels of escalated conflict. At this point individuals
 do not respond adaptively to the quality of their partner, instead their
 preference for a given action is dependent on their own quality.
 
-\begin{figure}
-\includegraphics[width=0.8\linewidth]{Simulations//QualStDv_//hawkDoveLearn_0.1} \caption{\label{fig:learning_var0.1}Learning equilibrium when individuals vary in quality. Dashed lines are the  game theoretical predictions in the standard game.}\label{fig:fig4}
-\end{figure}
-
 \hypertarget{overall-effect-of-variance}{%
 \subsection{Overall effect of
 variance}\label{overall-effect-of-variance}}
@@ -233,10 +197,6 @@ variance}\label{overall-effect-of-variance}}
 In figure \ref{fig:learning_all_var} we show how the effect of
 increasing variance in quality further decreases the amount of
 individuals in a population expressing the hawk phenotype.
-
-\begin{figure}
-\includegraphics[width=0.8\linewidth]{Simulations//QualStDv_//effectQualVariance} \caption{\label{fig:learning_all_var}Effect of variation in quality for the learning equilibrium.}\label{fig:fig5}
-\end{figure}
 
 \hypertarget{how-does-learning-look-like-in-the-hawk-dove-game}{%
 \subsection{How does learning look like in the Hawk-Dove
@@ -260,10 +220,6 @@ individuals obviously only holds in scenarios with variance in quality.
 In the scenario with quality invariance, the split of individuals in two
 groups with a tendency for each behavior nevertheless remains.
 
-\begin{figure}
-\includegraphics[width=0.7\linewidth]{Simulations//QualStDv_//WeightsVarQualSt} \caption{\label{fig:AC_HD}Within population variation in the learning parameters at the end of learning for three scenarios of variation in the quality of individuals.}\label{fig:fig6}
-\end{figure}
-
 \hypertarget{how-do-the-learning-dynamics-look-like}{%
 \subsection{How do the learning dynamics look
 like}\label{how-do-the-learning-dynamics-look-like}}
@@ -274,10 +230,6 @@ how individuals split in the two groups according to their experiences.
 Despite the robustness of the bi-modal distribution along the learning
 dynamics, it is not uncommon that individual go from one group to the
 other.
-
-\begin{figure}
-\includegraphics[width=0.8\linewidth]{Simulations//mutType_//learnDyn200} \caption{\label{fig:learn_dyn}Learning dynamics of the individuals in a population.}\label{fig:fig7}
-\end{figure}
 
 \hypertarget{how-do-learners-fare-against-the-pure-strategies}{%
 \section{How do learners fare against the ``pure''
@@ -293,17 +245,9 @@ pure strategies. In the end, there is a polymorphic equilibrium with the
 three strategies coexisting, with learners being the most frequent of
 the three.
 
-\begin{figure}
-\includegraphics[width=0.8\linewidth]{Simulations//mutType_//evolDynTypes} \caption{\label{fig:types_comp}Evolutionary dynamics of the learners competing against pure strategies.}\label{fig:fig8}
-\end{figure}
-
 \hypertarget{how-do-learners-behave-when-signals-are-honest}{%
 \section{How do learners behave when signals are
 honest?}\label{how-do-learners-behave-when-signals-are-honest}}
-
-\begin{figure}
-\includegraphics[width=1\linewidth]{Simulations//learHonest_//QualStDv_//weightsVarQualSt} \caption{\label{fig:honest_learn}Actor and critic developed when signals are honest. Left panel: honest signal. Right panel: learners behavioral response }\label{fig:fig9}
-\end{figure}
 
 \hypertarget{whats-next}{%
 \section{What's next?}\label{whats-next}}
@@ -319,6 +263,5 @@ Let reaction norm evolve, under different initial conditions.
 Sutton, Richard S., and Andrew G. Barto. 2018. \emph{Reinforcement
 Learning: An Introduction}. Edited by Francis Bach. Second edition
 edition. Cambridge, MA: A Bradford Book.
-
 
 \end{document}

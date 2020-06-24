@@ -49,7 +49,7 @@ class printingObj {
 public:
 	printingObj(int nSamples, int nInt, int printLearnInt,
 		int nCenters);
-	void recordInd(int idSamInd, individual focal, int totNint);
+	void recordInd(int idSamInd, individual focal, int totNint, int	rivalId);
 	int countGenotypes[3];
 	// records the frequency of genotypes for evolutionary dyn
 	int countPhenotypes[2];
@@ -85,10 +85,13 @@ public:
 	// Historical record of total # ints at the point of sample records
 	vector<vector<int>> nTotDDIntsHist;
 	// Historical record of total # ints at the point of sample records
+	vector<vector<int>> rivals;
+	// Historical record of the rivals faced at the point of sample records
 	vector<vector<vector<double> > > actFeatHistory;
 	// Act feat. weigths of sampled inds for learn dyn
 	vector<vector<vector<double> > > critFeatHistory;
 	// Crit feat. weigths of sampled inds for learn dyn
+	
 };
 
 printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
@@ -104,6 +107,7 @@ printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 		nTotIntHist.emplace_back(0);
 		nTotHHIntsHist.emplace_back(0);
 		nTotDDIntsHist.emplace_back(0);
+		rivals.emplace_back(0);
 		for (int countSamples = 0; countSamples < nSamples; ++countSamples) {
 			if (countRecords == 0) {
 				sampledInd.emplace_back(0), counterRecords.emplace_back(0);
@@ -113,6 +117,7 @@ printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 			nTotIntHist[countRecords].emplace_back(0);
 			nTotHHIntsHist[countRecords].emplace_back(0);
 			nTotDDIntsHist[countRecords].emplace_back(0);
+			rivals[countRecords].emplace_back(0);
 			for (int countCenters = 0; countCenters < nCenters; ++countCenters) {
 				actFeatHistory[countRecords][countSamples].emplace_back(0);
 				critFeatHistory[countRecords][countSamples].emplace_back(0);
@@ -271,7 +276,8 @@ individual::individual(individual& mother, double QualStDv,
 	}
 }
 
-void printingObj::recordInd(int idSamInd, individual focal, int totNint) {
+void printingObj::recordInd(int idSamInd, individual focal, int totNint,
+	int rivalId) {
 	//nRecords[idSamInd] += 1;
 	for (int countCenters = 0; countCenters < focal.get_nCenter(); ++countCenters) {
 		actFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
@@ -292,6 +298,7 @@ void printingObj::recordInd(int idSamInd, individual focal, int totNint) {
 		nTotDDIntsHist[counterRecords[idSamInd]][idSamInd] = 
 			countIntTypes[2] - nTotDDIntsHist[counterRecords[idSamInd]-1][idSamInd];
 	}
+	rivals[counterRecords[idSamInd]][idSamInd] = rivalId;
 	++counterRecords[idSamInd];
 }
 
@@ -483,7 +490,8 @@ void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 				localPrint.sampledInd[cSampled] << '\t'
 				<< localPrint.nTotIntHist[cIntRecords][cSampled] << '\t'
 				<< localPrint.nTotHHIntsHist[cIntRecords][cSampled] << '\t'
-				<< localPrint.nTotDDIntsHist[cIntRecords][cSampled] << '\t';
+				<< localPrint.nTotDDIntsHist[cIntRecords][cSampled] << '\t'
+				<< localPrint.rivals[cIntRecords][cSampled] << '\t';
 				/*genoutput << localPrint.countIntTypesGen[cIntRecords][0] << '\t' <<
 				localPrint.countIntTypesGen[cIntRecords][1] << '\t' <<
 				localPrint.countIntTypesGen[cIntRecords][2] << '\t';*/
@@ -534,7 +542,7 @@ void interactions(vector<individual>& population, int nint,
 	}
 	for (int i = 0; i < nint*population.size(); ++i) {
 		ind1 = rnd::integer(population.size());
-		ind2 = ind1+1+rnd::integer(nIntGroup-1);
+		ind2 = ind1 + 1 + rnd::integer(nIntGroup);
 		if (ind2 >= population.size()) ind2 = ind2 - population.size();
 		intType = 0;
 		intType += population[ind1].set_phenotype(population[ind2],localPrint);
@@ -546,14 +554,14 @@ void interactions(vector<individual>& population, int nint,
 			if (itSamp1 != sample.end() &&
 				(population[*itSamp1].ninterac % printLearnInt) == 0) {
 				localPrint.recordInd(itSamp1 - sample.begin(), 
-					population[*itSamp1],i+1);
+					population[*itSamp1],i+1,ind2);
 					++foundInd;
 			}
 			itSamp1 = find(sample.begin(), sample.end(), ind2);
 			if (itSamp1 != sample.end() &&
 				(population[*itSamp1].ninterac % printLearnInt) == 0) {
 				localPrint.recordInd(itSamp1 - sample.begin(), 
-					population[*itSamp1],i+1);
+					population[*itSamp1],i+1,ind1);
 				++foundInd;
 			}
 			/*if (foundInd > 0) {
@@ -708,7 +716,7 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	indOutput.open(IndFile.c_str());
 	indOutput << "seed" << '\t' << "time" << '\t' << "nInteract" << '\t'
 		<< "indId" << '\t' << "ntotInteract" << '\t' << "nint_HH" << '\t' 
-		<< "nint_DD" << '\t';
+		<< "nint_DD" << '\t' << "rivalId" << '\t';
 	for (int countFeat = 0; countFeat < param["nCenters"];
 		++countFeat) {
 		indOutput << "WeightAct_" + itos(countFeat) << '\t'
@@ -729,50 +737,50 @@ int main(int argc, char* argv[]) {
 	mark_time(1);
 
 	/*uncomment for debugging*/
-	//json param;
-	//param["totGen"]            = 10;   // Total number of generations
-	//param["nRep"]              = 5;     // Number of replicates
-	//param["printGen"]          = 1;     // How often data is printed	
-	//param["printLearn"]        = 1;	  // how often learning dyn are printed
-	//param["printLearnInt"]     = 200;   // How often are learning parameters printed
-	//param["init"]              = {0,0,1};        //Initial frequencies
-	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	//param["popSize"]           = 100;
-	//param["MutSd"]             = 0.3;
-	//param["nInt"]              = 1000;    // Number of interactions per individual
-	//param["mutRate"]           = 0.05;
-	//param["strQual"]           = 10;
-	//param["baselineFit"]       = 2;
-	//param["mutType"]		     = 0;  
-	//// How many strategies are introduced by mutation
-	//param["sampleSize"]        = 10; 
-	//param["alphaBad"]			 = 0;
-	//param["betaBad"]			 = 0;
-	//param["alphaCrit"]     	 = 0.01;
-	//param["alphaAct"]     	 = 0.01;
-	//param["sigSq"]        	 = 0.01;
-	//param["nCenters"]     	 = 6;
-	//param["initCrit"]          = 0;
-	//param["initAct"]           = 0;
-	//param["mutLearn"]			 = true ;   
-	//// Bool, should learning parameters mutate
-	//param["QualStDv"]          = 1.1;
-	//param["nIntGroup"]		 = 1000;
-	//param["initAct"]			 =0;
-	//param["betCost"]           = 0;
-	//param["alphCost"]			 = 3;
-	//param["namParam"]          = "nIntGroup";  
-	//// which parameter to vary inside the program
-	//param["rangParam"]         = {  10, 100 }; 
-	//// range in which the paramenter varies
-	//param["folder"]            = "I:/Projects/SocialComp_morphCue/Simulations/test_/";
+	json param;
+	param["totGen"]            = 10;   // Total number of generations
+	param["nRep"]              = 5;     // Number of replicates
+	param["printGen"]          = 1;     // How often data is printed	
+	param["printLearn"]        = 1;	  // how often learning dyn are printed
+	param["printLearnInt"]     = 10;   // How often are learning parameters printed
+	param["init"]              = {0,0,1};        //Initial frequencies
+	param["payoff_matrix"]     = {1.5,1,0,0.5};  
+	param["popSize"]           = 100;
+	param["MutSd"]             = 0.3;
+	param["nInt"]              = 1000;    // Number of interactions per individual
+	param["mutRate"]           = 0.05;
+	param["strQual"]           = 10;
+	param["baselineFit"]       = 2;
+	param["mutType"]		     = 0;  
+	// How many strategies are introduced by mutation
+	param["sampleSize"]        = 50; 
+	param["alphaBad"]			 = 0;
+	param["betaBad"]			 = 0;
+	param["alphaCrit"]     	 = 0.01;
+	param["alphaAct"]     	 = 0.01;
+	param["sigSq"]        	 = 0.01;
+	param["nCenters"]     	 = 6;
+	param["initCrit"]          = 0;
+	param["initAct"]           = 0;
+	param["mutLearn"]			 = true ;   
+	// Bool, should learning parameters mutate
+	param["QualStDv"]          = 1.1;
+	param["nIntGroup"]		 = 1000;
+	param["initAct"]			 =0;
+	param["betCost"]           = 0;
+	param["alphCost"]			 = 3;
+	param["namParam"]          = "nIntGroup";  
+	// which parameter to vary inside the program
+	param["rangParam"]         = {  10, 20, 30 }; 
+	// range in which the paramenter varies
+	param["folder"]            = "I:/Projects/SocialComp_morphCue/Simulations/test_/";
 
 	nlohmann::json* pointParam;
 
 	// Comment for debugging
-	ifstream input(argv[1]);
+	/*ifstream input(argv[1]);
 	if (input.fail()) { cout << "JSON file failed" << endl; }
-	nlohmann::json param = json::parse(input);
+	nlohmann::json param = json::parse(input);*/
 	
 	/*if (argc>1) {
 		omp_set_num_threads(atoi(argv[2]));
@@ -800,10 +808,10 @@ int main(int argc, char* argv[]) {
 		itGenLoop < param["rangParam"].size()* static_cast<int>(param["nRep"]);
 		++itGenLoop) {
 		nlohmann::json paramL = *pointParam;
-		int idParRange = itGenLoop / static_cast<int>(param["nRep"]);
-		int seed = itGenLoop - idParRange*static_cast<int>(param["nRep"]);
+		int idParRange = itGenLoop / static_cast<int>(paramL["nRep"]);
+		int seed = itGenLoop - idParRange*static_cast<int>(paramL["nRep"]);
 		paramL[namParam] =
-			param["rangParam"][idParRange];
+			paramL["rangParam"][idParRange];
 		paramL["alphaCrit"] = paramL["alphaAct"];
 		#pragma omp critical
 		{

@@ -1,0 +1,59 @@
+---
+title: |
+  | Learning can mediate both badges of status and individual recognition
+author:
+  - name: Andrés E. Quiñones
+    affiliation: "1"
+  - name: C. Daniel Cadena
+    affiliation: "1"
+  - name: Olof Leimar
+    affiliation: "2"
+  - name: Redouan Bshary
+    affiliation: "3"
+address:
+  - code: "1"
+    address: Laboratorio de Biología Evolutiva de Vertebrados, Departamento de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia
+  - code: "2"
+    address: Department of Zoology, Stockholm University, Stockholm, Sweden
+  - code: "3"
+    address: Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+bibliography: SocialMorphCue.bib
+header-includes: 
+  - \usepackage{float}
+  - \usepackage{setspace}\doublespacing
+  - \linespread{2}
+  - \usepackage{lineno}
+  - \linenumbers
+spacing: double
+abstract: My abstract which has to be long enough to take multiple
+  lines otherwise one does not see the effect of single-spacing.
+keywords: "My keywords"
+fig_caption: yes
+keep_tex: yes
+fontsize: 12pt
+linespread: 2
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction 
+
+For social animals the outcome of interactions with conspecifics is an important 
+determinant of fitness. Irrespective of whether such interactions are of cooperative or competitive nature, individual's actions will partly determine their success in the reproductive arena. However, the best action for an invidual might vary depending on it's 
+own conditions, and on who they are interacting with. Thus, an individual making their action dependent on information about interacting partners is typically adaptive [@quinones_Negotiation_2016].The source of this information however is far from trivial. In some cases interacting
+partners (signallers) might be 'willing' to provide accurate information, but in 
+others it might be in their own interest to conceal information [@johnstone_Recognition_1997],
+or to provide erroneous information. Typically, in a given context, some proportion of 
+individuals will be interested in broadcasting accurate information, and some others 
+in hiding it. Take for instance an interaction between two individuals where one can help the other. Given some conditions, the donor will be interested in helping a related individual. So for a relative of the donor, broadcasting kinship is advantageous; while for an unrelated
+individual, conceling the lack of kinship will be better. This same pattern applies to 
+many aspects social life such as finding mates, feeding offspring, dominance relationships and aggressive interactions. In dominance and aggressive interactions an important 
+information to make actions dependent on is interacting partners fighting ability, 
+which is sometimes refered to as Resource Holding Potential (RHP) [@parker_Assesment_1974] , or simply quality. Stable communication systems can evolve where a signal conveys quality can be 
+evolutionarily stable whenever the signal imposes a fitness cost which increases with the quality of an individual 
+
+## References

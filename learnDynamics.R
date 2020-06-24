@@ -11,22 +11,22 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvolLear"
+scenario<-"test"
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 
 # Load files -------------------------------------------------------------------
 
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
-(listTest<-list.files(extSimsDir,full.names = TRUE))
+# (listTest<-list.files(extSimsDir,full.names = TRUE))
 
 
-(List<-grep("ind",listTest,value=TRUE))
+(indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-2
+fileId<-1
 
-# indLearn<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
-indLearn<-fread(List[fileId])
+indLearn<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
+# indLearn<-fread(indList[fileId])
 
 # new columns ------------------------------------------------------------------
 
@@ -36,10 +36,31 @@ indLearn[,`:=`(freqHH=nint_HH/ntotInteract,
                freqHD=(ntotInteract-nint_HH-nint_DD)/ntotInteract,
                freqDD=nint_DD/ntotInteract)]
 
-length(indLearn[seed==8&time==0,unique(indId)])
 
-indLearn[(seed==1&time==0)&indId==833]
+tempPop[nInteract>1500,indId]
+par(plt=posPlot())
 
+indLearn[seed==8,unique(indId)]
+
+maxInt<-indLearn[,max(nInteract),by=.(seed,indId,time)]
+
+hist(maxInt[,V1])
+
+maxInt[V1>2000,length(indId),by=.(time,seed)]
+
+indLearn[,unique(indId-rivalId)]
+indLearn[10<indId & indId<90,unique(indId-rivalId)]
+
+temphist<-hist(indLearn[10<indId & indId<90,abs(indId-rivalId)],breaks = 80)
+temphist<-hist(indLearn[,abs(indId-rivalId)],breaks = 80)
+
+indLearn[,dist:=abs(indId-rivalId)]
+
+weirddata<-indLearn[dist>10&dist<90,]
+
+hist(weirddata[,dist])
+plot(indLearn[,.(indId,rivalId)])
+points(weirddata[,.(indId,rivalId)],col=2,pch=20)
 
 # Changes in learning parameters for several individuals -----------------------
 
@@ -130,19 +151,6 @@ with(tempPop,{
   lines(x=c(0,1000000),y=c(0.666,0.666)^2,col="grey")
   legend("topleft",legend = unique(nInteract),col=1:5,pch=20)
 })
-
-tempPop[nInteract>1500,indId]
-par(plt=posPlot())
-
-indLearn[seed==8,unique(indId)]
-
-maxInt<-indLearn[,max(nInteract),by=.(seed,indId,time)]
-
-hist(maxInt[,V1])
-
-maxInt[V1>2000,length(indId),by=.(time,seed)]
-
-barplot()
 
 # Critic 
 
