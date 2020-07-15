@@ -23,7 +23,7 @@ extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 (indList<-grep("ind",listTest,value=TRUE))
 
-fileId<-1
+fileId<-5
 
 indLearn<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 # indLearn<-fread(indList[fileId])
@@ -37,21 +37,24 @@ indLearn[,`:=`(freqHH=nint_HH/ntotInteract,
                freqDD=nint_DD/ntotInteract)]
 
 
-tempPop[nInteract>1500,indId]
-par(plt=posPlot())
 
-indLearn[seed==8,unique(indId)]
+par(plt=posPlot())
 
 maxInt<-indLearn[,max(nInteract),by=.(seed,indId,time)]
 
 hist(maxInt[,V1])
 
-maxInt[V1>2000,length(indId),by=.(time,seed)]
 
 indLearn[,unique(indId-rivalId)]
+
 indLearn[10<indId & indId<90,unique(indId-rivalId)]
+indLearn[20<indId & indId<80,unique(indId-rivalId)]
+indLearn[30<indId & indId<70,unique(indId-rivalId)]
 
 temphist<-hist(indLearn[10<indId & indId<90,abs(indId-rivalId)],breaks = 80)
+temphist<-hist(indLearn[20<indId & indId<80,abs(indId-rivalId)],breaks = 80)
+temphist<-hist(indLearn[30<indId & indId<70,abs(indId-rivalId)],breaks = 80)
+
 temphist<-hist(indLearn[,abs(indId-rivalId)],breaks = 80)
 
 indLearn[,dist:=abs(indId-rivalId)]
@@ -59,9 +62,9 @@ indLearn[,dist:=abs(indId-rivalId)]
 weirddata<-indLearn[dist>10&dist<90,]
 
 hist(weirddata[,dist])
-plot(indLearn[,.(indId,rivalId)])
-points(weirddata[,.(indId,rivalId)],col=2,pch=20)
-
+plot(indLearn[,.(indId,rivalId)],col=indLearn[,seed]+1)
+points(weirddata[,.(indId,rivalId)],col=weirddata[,seed]+1,pch=20)
+legend("top",legend = weirddata[,unique(seed)],col = weirddata[,unique(seed)]+1,pch=20)
 # Changes in learning parameters for several individuals -----------------------
 
 gener<-tail(indLearn[,unique(time)],1)
@@ -75,8 +78,6 @@ rangx<-seq(0,1,length=1000)
 colorbreaksQual<-seq(0,1,length=100)
 
 # Actor 
-
-
 
 finReps<-indLearn[time==max(time),unique(seed)]
 seedCh<-finReps[round(runif(1,0,length(finReps)))+1]

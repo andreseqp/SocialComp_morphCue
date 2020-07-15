@@ -519,12 +519,14 @@ void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 
 void interactions(vector<individual>& population, int nint,
 	vector<double> payoff_matrix, double strQual, bool trackPopLearn,
-	int printLearnInt, int sampleSize, int generat, int seed, int nIntGroup,   
-	printingObj &localPrint) {
+	int printLearnInt, int sampleSize, int generat, int nIntGroup,   
+	printingObj &localPrint, std::mt19937 rngT) {
 	int ind1 = population.size();
 	int ind2 = population.size();
 	int intType = 0;
 	bool ind1win = 0;
+	std::uniform_int_distribution<int> randInd(0,population.size()-1);
+	std::uniform_int_distribution<int> randPeer(0,nIntGroup-1);
 	vector<int> sample;
 	vector<int>::iterator itSamp1 = sample.begin();
 	//cout << "track " << generat << endl;
@@ -535,14 +537,17 @@ void interactions(vector<individual>& population, int nint,
 		/*localPrint.countIntTypesGen[0];
 		localPrint.countIntTypesGen[1], localPrint.countIntTypesGen[2] = 0;*/
 		for (int countSam = 0; countSam < sampleSize; ++countSam) {
-			sample.emplace_back(rnd::integer(population.size()));
+			sample.emplace_back(randInd(rngT));
 			localPrint.sampledInd[countSam] = sample[countSam];
 			localPrint.counterRecords[countSam] = 0;
 		}
 	}
 	for (int i = 0; i < nint*population.size(); ++i) {
-		ind1 = rnd::integer(population.size());
-		ind2 = ind1 + 1 + rnd::integer(nIntGroup);
+		ind1 = randInd(rngT);
+		ind2 = ind1 + 1 + randPeer(rngT);
+		if (abs(ind2 - ind1) > nIntGroup) {
+			cout << "WTF!!!!!" << endl;
+		}
 		if (ind2 >= population.size()) ind2 = ind2 - population.size();
 		intType = 0;
 		intType += population[ind1].set_phenotype(population[ind2],localPrint);
@@ -634,27 +639,27 @@ void printStats(int popsize,ofstream &evolOutput,
 	//cout << endl;
 }
 
-void printPopSample(vector<individual> &population, ofstream &popOutput,
-	int time, int seed, int sampleSize, int nFeat = 5) {
-	int sample;
-	for (int countSample = 0; countSample < sampleSize; ++countSample) {
-		sample = rnd::integer(population.size());
-		popOutput << seed << '\t';
-		popOutput << time << '\t';
-		popOutput << sample << '\t';
-		popOutput << population[sample].get_quality() << '\t';
-		popOutput << population[sample].get_strat() << '\t';
-		popOutput << population[sample].get_alpha() << '\t';
-		popOutput << population[sample].get_beta() << '\t';
-		popOutput << population[sample].get_badge() << '\t';
-		popOutput << population[sample].ninterac << '\t';
-		for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
-			popOutput << population[sample].get_feat(1,countFeat) << '\t';
-			popOutput << population[sample].get_feat(0,countFeat) << '\t';
-		}
-		popOutput << endl;
-	}
-}
+//void printPopSample(vector<individual> &population, ofstream &popOutput,
+//	int time, int seed, int sampleSize, int nFeat = 5) {
+//	int sample;
+//	for (int countSample = 0; countSample < sampleSize; ++countSample) {
+//		sample = rnd::integer(population.size());
+//		popOutput << seed << '\t';
+//		popOutput << time << '\t';
+//		popOutput << sample << '\t';
+//		popOutput << population[sample].get_quality() << '\t';
+//		popOutput << population[sample].get_strat() << '\t';
+//		popOutput << population[sample].get_alpha() << '\t';
+//		popOutput << population[sample].get_beta() << '\t';
+//		popOutput << population[sample].get_badge() << '\t';
+//		popOutput << population[sample].ninterac << '\t';
+//		for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
+//			popOutput << population[sample].get_feat(1,countFeat) << '\t';
+//			popOutput << population[sample].get_feat(0,countFeat) << '\t';
+//		}
+//		popOutput << endl;
+//	}
+//}
 
 string create_filename(std::string filename, json param, int idRangPar) {
 	// name the file with the parameter specifications
@@ -739,13 +744,13 @@ int main(int argc, char* argv[]) {
 	/*uncomment for debugging*/
 	json param;
 	param["totGen"]            = 10;   // Total number of generations
-	param["nRep"]              = 5;     // Number of replicates
+	param["nRep"]			   = 5;     // Number of replicates
 	param["printGen"]          = 1;     // How often data is printed	
 	param["printLearn"]        = 1;	  // how often learning dyn are printed
-	param["printLearnInt"]     = 10;   // How often are learning parameters printed
+	param["printLearnInt"]	   = 1;   // How often are learning parameters printed
 	param["init"]              = {0,0,1};        //Initial frequencies
 	param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	param["popSize"]           = 100;
+	param["popSize"]           = 50;
 	param["MutSd"]             = 0.3;
 	param["nInt"]              = 1000;    // Number of interactions per individual
 	param["mutRate"]           = 0.05;
@@ -771,7 +776,7 @@ int main(int argc, char* argv[]) {
 	param["alphCost"]			 = 3;
 	param["namParam"]          = "nIntGroup";  
 	// which parameter to vary inside the program
-	param["rangParam"]         = {  10, 20, 30 }; 
+	param["rangParam"]         = {  10, 20, 30}; 
 	// range in which the paramenter varies
 	param["folder"]            = "I:/Projects/SocialComp_morphCue/Simulations/test_/";
 
@@ -787,7 +792,7 @@ int main(int argc, char* argv[]) {
 	}
 	else{ omp_get_max_threads(); }*/
 	
-	pointParam = &param;
+	//pointParam = &param;
 
 	string namParam = param["namParam"];
 	vector<ofstream>  evolOutput(param["rangParam"].size());
@@ -803,13 +808,16 @@ int main(int argc, char* argv[]) {
 
 	int nThreads = omp_get_max_threads();
 	omp_set_num_threads(nThreads);
-	#pragma omp parallel for firstprivate(pointParam)
+	nlohmann::json paramL = param;
+	#pragma omp parallel for firstprivate(paramL) 
 	for (int itGenLoop = 0;
-		itGenLoop < param["rangParam"].size()* static_cast<int>(param["nRep"]);
+		itGenLoop < paramL["rangParam"].size()*int(paramL["nRep"]);
 		++itGenLoop) {
-		nlohmann::json paramL = *pointParam;
-		int idParRange = itGenLoop / static_cast<int>(paramL["nRep"]);
-		int seed = itGenLoop - idParRange*static_cast<int>(paramL["nRep"]);
+		//nlohmann::json paramL = *pointParam;
+		int idParRange = itGenLoop / int(paramL["nRep"]);
+		int seed = itGenLoop - idParRange*paramL["nRep"];
+		std::mt19937 rngT;
+		rngT.seed(seed);
 		paramL[namParam] =
 			paramL["rangParam"][idParRange];
 		paramL["alphaCrit"] = paramL["alphaAct"];
@@ -817,6 +825,7 @@ int main(int argc, char* argv[]) {
 		{
 			cout << paramL["namParam"] << "=" << paramL[namParam] << "	" <<
 				"seed=" << seed << endl;
+			rnd::set_seed(seed);
 		}
 		vector<individual> population;
 		population.reserve(paramL["popSize"]);
@@ -839,12 +848,12 @@ int main(int argc, char* argv[]) {
 			//cout << "Interactions " << generation << endl;
 			interactions(population, paramL["nInt"],
 				paramL["payoff_matrix"], paramL["strQual"],
-				generation % static_cast<int>(paramL["printLearn"]) == 0,
-				paramL["printLearnInt"], paramL["sampleSize"], generation, seed,
-				paramL["nIntGroup"], localPrint);
+				generation % paramL["printLearn"] == 0,
+				paramL["printLearnInt"], paramL["sampleSize"], generation,
+				paramL["nIntGroup"], localPrint, rngT);
 #pragma omp critical
 			{
-				if (generation % static_cast<int>(paramL["printGen"]) == 0) {
+				if (generation % int(paramL["printGen"]) == 0) {
 					get_stats(population, paramL["popSize"], localPrint,
 						paramL["nCenters"]);
 					printStats(paramL["popSize"],

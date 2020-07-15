@@ -2,23 +2,13 @@
 title: |
   | Learning can mediate both badges of status and individual recognition
 author:
-  - name: Andrés E. Quiñones
-    affiliation: "1"
-  - name: C. Daniel Cadena
-    affiliation: "1"
-  - name: Olof Leimar
-    affiliation: "2"
-  - name: Redouan Bshary
-    affiliation: "3"
-address:
-  - code: "1"
-    address: Laboratorio de Biología Evolutiva de Vertebrados, Departamento de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia
-  - code: "2"
-    address: Department of Zoology, Stockholm University, Stockholm, Sweden
-  - code: "3"
-    address: Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland
+  - Andrés E. Quiñones^[Laboratorio de Biología Evolutiva de Vertebrados, Departamento de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia]
+  - C. Daniel Cadena^[Laboratorio de Biología Evolutiva de Vertebrados, Departamento de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia]
+  - Olof Leimar^[Department of Zoology, Stockholm University, Stockholm, Sweden]
+  - Redouan Bshary^[Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland]
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 bibliography: SocialMorphCue.bib
+style: C:\Users\andre\Zotero\styles\elife.csl
 header-includes: 
   - \usepackage{float}
   - \usepackage{setspace}\doublespacing
@@ -42,18 +32,46 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction 
 
-For social animals the outcome of interactions with conspecifics is an important 
-determinant of fitness. Irrespective of whether such interactions are of cooperative or competitive nature, individual's actions will partly determine their success in the reproductive arena. However, the best action for an invidual might vary depending on it's 
-own conditions, and on who they are interacting with. Thus, an individual making their action dependent on information about interacting partners is typically adaptive [@quinones_Negotiation_2016].The source of this information however is far from trivial. In some cases interacting
-partners (signallers) might be 'willing' to provide accurate information, but in 
-others it might be in their own interest to conceal information [@johnstone_Recognition_1997],
-or to provide erroneous information. Typically, in a given context, some proportion of 
-individuals will be interested in broadcasting accurate information, and some others 
-in hiding it. Take for instance an interaction between two individuals where one can help the other. Given some conditions, the donor will be interested in helping a related individual. So for a relative of the donor, broadcasting kinship is advantageous; while for an unrelated
-individual, conceling the lack of kinship will be better. This same pattern applies to 
-many aspects social life such as finding mates, feeding offspring, dominance relationships and aggressive interactions. In dominance and aggressive interactions an important 
+For social animals the outcome of interactions with con-specifics is an important 
+determinant of fitness. Irrespective of whether such interactions are of cooperative 
+or competitive nature, individual's actions and their partners will partly determine 
+their success in the reproductive arena. However, the best action for an individual 
+might vary depending on it's own conditions, and with whom they interact. 
+Thus, an individual making their action dependent on information about interacting 
+partners is typically adaptive [@quinones_Negotiation_2016].
+The source of this information however is far from trivial. 
+In some cases interacting partners (signalers) might be 'willing' to provide accurate
+information, but in others it might be in their own interest to conceal information
+[@johnstone_Recognition_1997], or to provide erroneous information [@johnstone_Badges_1993]. 
+Typically, in a given context, some proportion of individuals will be interested 
+in broadcasting accurate information, and some others in hiding it. 
+Take for instance an interaction between two individuals where one can help the other. 
+Given some conditions of cost and benefits, the donor will be interested in helping 
+a related individual. So for a relative of the donor, 
+broadcasting kinship is advantageous; while for an unrelated individual, 
+concealing the lack of kinship will be better. This same pattern applies to 
+many aspects of social life such as finding mates, feeding offspring, dominance relationships 
+and aggressive interactions. In dominance and aggressive interactions an important 
 information to make actions dependent on is interacting partners fighting ability, 
-which is sometimes refered to as Resource Holding Potential (RHP) [@parker_Assesment_1974] , or simply quality. Stable communication systems can evolve where a signal conveys quality can be 
-evolutionarily stable whenever the signal imposes a fitness cost which increases with the quality of an individual 
+which is sometimes referred to as Resource Holding Potential (RHP) [@parker_Assessment_1974], 
+or as we will here simply quality. This responsiveness to the quality of the partner is achieved in
+communication systems such as badges of status (BS), where an arbitrary signal conveys quality. 
+BS can be evolutionarily stable whenever the signal imposes a fitness cost which 
+decreases with the quality of an individual  [@botero_Evolution_2010; @johnstone_Badges_1993]. 
+So, low quality individuals can't afford the cost of the signal, 
+and it's no longer in their interest to fake quality. 
+The cost of the honest signal is a more general principle of communications systems, 
+usually referred to as the handicap principle [@grafen_Biological_1990; @zahavi_Mate_1975]. 
+An alternative system of communication is one where individuals gather and store information
+about each individual they interact with. This information, directly collected by 
+each individual, should reliably allow them to react adaptively to the 
+quality difference with their opponent. This type of assessment strategy is often referred to as 
+individual recognition [IR, @whitfield_Plumage_1986]. Evidently, IR is restricted to 
+certain interaction structures, individuals are limited by cognitive adaptations in how many
+individuals they can recognize and track. Thus, IR and BS have been assumed to be alternative
+communication systems fulfilling the same function, but expected to evolve in populations 
+under different interaction structures [@dale_Signaling_2001; @sheehan_There_2016].
+
+
 
 ## References
