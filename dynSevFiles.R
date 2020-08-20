@@ -9,7 +9,7 @@ library("plotrix")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"initAct"
+scenario<-"betCostEvol1"
 variable<-gsub("[^[:alpha:]]",scenario,replacement = '')
 variable<-gsub("Evol",variable,replacement = '')
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
@@ -72,9 +72,9 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
                    m.weightCrit_2=mean(WeightCrit_2),
                    m.weightCrit_3=mean(WeightCrit_3),
                    m.weightCrit_4=mean(WeightCrit_4)),
-                by=.(time,get(variable))]
+                by=.(time,get(nampar))]
 
-setnames(evolStats,"get",variable)
+setnames(evolStats,"get",nampar)
 
 timeChoi<-max(evolStats[,time])
 
@@ -82,17 +82,25 @@ timeChoi<-max(evolStats[,time])
 
 # png(here("Simulations",paste0(scenario,"_"),"effectQualVariance.png"),height = 800,width = 800)
 
+evol[time==timeChoi,]
+with(evol[time==timeChoi],{
+boxplot(freqFenHawks~get(nampar),
+       xlab='',ylab='',cex.axis=1.3,yaxt='s')
+points(x=posX,y=freqFenHawks,pch=21)
+  })
+
+
 
 par(plt=posPlot(numploty = 2,idploty = 2),xaxt="n",las=1)
 with(evolStats[time==timeChoi],{
-  plotCI(x=as.factor(get(variable)),y=m.freqFenHawk,
+  plotCI(x=as.factor(get(nampar)),y=m.freqFenHawk,
          ui = upIQR.freqFenHawk,li=lowIQR.freqFenHawk,
          pch=16,xlab='',ylab='',
          col=colTypesLin[1],
          sfrac=0.005,cex.axis=1.3,yaxt='s',ylim=c(0,0.8))
-  lines(x=c(0,max(get(variable))),y=c(0.66,0.66),col='grey')
+  lines(x=c(0,max(get(nampar))),y=c(0.66,0.66),col='grey')
   par(new=T)
-  plotCI(x=as.factor(get(variable)),y=m.freqFenDove,new=T,
+  plotCI(x=as.factor(get(nampar)),y=m.freqFenDove,new=T,
          ui = upIQR.freqFenDove,li=lowIQR.freqFenDove,
          pch=16,xlab='',ylab='',
          col=colTypesLin[2],ylim=c(0,0.8),
@@ -105,24 +113,24 @@ legend("bottomright",legend=c("Hawk","Dove"),
 
 par(plt=posPlot(numploty = 2,idploty = 1),xaxt="s",las=1,new=TRUE,xpd=T)
 with(evolStats[time==timeChoi],{
-  plotCI(x=get(variable),y=m.freqHH,
+  plotCI(x=get(nampar),y=m.freqHH,
          ui = upIQR.freqHH,li=lowIQR.freqHH,
          pch=16,xlab=expression(sigma^2~"of the quality distribution")
          ,ylab='',col=colTypesLin[1],
          sfrac=0.005,cex.axis=1.3,yaxt='s',ylim=c(0,0.5))
   par(new=T)
-  plotCI(x=get(variable),y=m.freqHD,
+  plotCI(x=get(nampar),y=m.freqHD,
          ui = upIQR.freqHD,li=lowIQR.freqHD,
          pch=16,xlab='',ylab='',
          col=colTypesLin[2],
          sfrac=0.005,cex.axis=1.3,yaxt='s',ylim=c(0,0.5))
   par(new=T)
-  plotCI(x=get(variable),y=m.freqDD,
+  plotCI(x=get(nampar),y=m.freqDD,
          ui = upIQR.freqDD,li=lowIQR.freqDD,
          pch=16,xlab='',ylab='',
          col=colTypesLin[3],
          sfrac=0.005,cex.axis=1.3,yaxt='s',ylim=c(0,0.5))
-  lines(x=c(0,max(get(variable))),y=c(0.4356,0.4356),col='grey')
+  lines(x=c(0,max(get(nampar))),y=c(0.4356,0.4356),col='grey')
 })
 legend("bottomright",legend=c("HH","HD","DD"),
        lty=c(1,1,1),lwd=2,col=colTypesLin,bty="o",cex=1.)
@@ -136,109 +144,155 @@ pdf(paste0(extSimsDir,"/summ_",nampar,".pdf"))
 
 # Jitter for the replicates
 
-evol[,posX:=match(get(variable),sort(unique(get(variable))))+
-       runif(length(get(variable)),
+png(here("Simulations",paste0(scenario,"_"),
+         paste0("BehavIntALL",".png")),
+    width = 1400,height = 1000)
+
+evol[,posX:=match(get(nampar),sort(unique(get(nampar))))+
+       runif(length(get(nampar)),
              min = -0.2,max = 0.2)]
-cexAxis<-1.3
+cexAxis<-2;cexPoints<-2
 yLim<-as.numeric(evol[,.(min(c(freqHH,freqHD,freqDD)),
               max(c(freqHH,freqHD,freqDD)))])+c(0,0.02)
-par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 3,
-                idplotx = 1),xaxt="s",las=1)
-bbHH<-boxplot(freqHH~get(variable),data=evol[time==timeChoi],
-         pch=16,xlab=variable,
-         ylab='',ylim=yLim,
-         cex.axis=cexAxis,yaxt='s')
-with(evol[time==timeChoi],{
-  points(x=posX,y=freqHH,col = 'darkGrey',pch = 20)
-  lines(y=rep(0.666^2,2),x=c(0.5,3.5))
-  # text(x=posX+0.1,y=freqHH,labels = seed,cex=0.8)
-  })
-mtext("HH",3,line = -3,cex=2)
+par(mfrow=c(1,3),xaxt="s",las=1)
 
-par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 3,
-                idplotx = 2),xaxt="s",las=1,new=T)
-bbHH<-boxplot(freqHD~get(variable),data=evol[time==timeChoi],
-              pch=16,xlab=variable,ylim=yLim,
-              ylab='',yaxt="n",
+# frequency of interactions types
+
+bbHH<-boxplot(freqHH~get(nampar),data=evol[time>max(time)/2],
+         pch=16,xlab="Badge cost",cex.lab=2,
+         #xlab=variable,
+         ylab='',ylim=fivenum(evol$freqHH)[c(1,5)]+c(0,0.005),
+         cex.axis=cexAxis,yaxt='s')
+with(evol[time>max(time)/2],{
+  points(x=posX,y=freqHH,
+         col = colSeeds[match(seed,unique(seed))],pch = 20,cex=cexPoints)
+  lines(y=rep(0.666^2,2),x=c(0.5,3.5))
+  ##text(x=posX+0.1,y=freqHH,labels = seed,cex=0.8)
+  })
+mtext("HH",3,line = -2.5,cex=2)
+
+par(xaxt="s",las=1)
+bbHH<-boxplot(freqHD~get(nampar),data=evol[time>max(time)/2],
+              pch=16,ylim=fivenum(evol$freqHD)[c(1,5)]+c(0,0.005),
+              xlab="Badge cost",#xlab=nampar,
+              ylab='',cex.lab=2,
               cex.axis=cexAxis)
 # axis(2,line = -2)
-with(evol[time==timeChoi],{
-  points(x=posX,y=freqHD,col = 'darkGrey',pch = 20)
+with(evol[time>max(time)/2],{
+  points(x=posX,y=freqHD,col = colSeeds[match(seed,unique(seed))],pch = 20,
+         cex=cexPoints)
   lines(y=rep(2*0.666*0.333,2),x=c(0.5,3.5))
-  # text(x=posX+0.1,y=freqHD,labels = seed)
+  #text(x=posX+0.1,y=freqHD,labels = seed)
 })
-mtext("HD",3,line = -3,cex=2)
+mtext("HD",3,line = -2.5,cex=2)
 
-par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 3,
-                idplotx = 3),xaxt="s",las=1,new=T)
-bbHH<-boxplot(freqDD~get(variable),data=evol[time==timeChoi],
-              pch=16,xlab=variable,ylim=yLim,
-              ylab='',yaxt="n",
+bbHH<-boxplot(freqDD~get(nampar),data=evol[time>max(time)/2],
+              pch=16,ylim=fivenum(evol$freqDD)[c(1,5)],#+c(0,0.0001),
+              ylab='',cex.lab=2,
+              #xlab=variable,
+              xlab="Badge cost",
               cex.axis=cexAxis)
  # axis(2,line = -2)
-with(evol[time==timeChoi],{
-  points(x=posX,y=freqDD,col = 'darkGrey',pch = 20)
+with(evol[time>max(time)/2],{
+  points(x=posX,y=freqDD,col = colSeeds[match(seed,unique(seed))],pch = 20,
+         cex=cexPoints)
   lines(y=rep(0.333^2,2),x=c(0.5,3.5))
-  # text(x=posX+0.1,y=freqDD,labels = seed)
+  #text(x=posX+0.1,y=freqDD,labels = seed)
 })
-mtext("DD",3,line = -3,cex=2)
+mtext("DD",3,line = -2.5,cex=2)
 
+dev.off()
 
-par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 2,
-                idplotx = 1),xaxt="s",las=1)
-bpCue<-boxplot(meanCue~get(variable),data=evol[time==timeChoi],
+par(mfrow=c(1,2),xaxt="s",las=1)
+bpCue<-boxplot(meanCue~get(nampar),data=evol[time>max(time)/2],
               pch=16,xlab=variable,
               ylab='',ylim=c(0,1.1),
               cex.axis=cexAxis,yaxt='s')
 # axis(2,line = -2)
-with(evol[time==timeChoi],{
-  points(x=posX,y=meanCue,col = 'darkGrey',pch = 20)
-  # text(x=posX+0.1,y=meanCue,labels = seed)
+with(evol[time>max(time)/2],{
+  points(x=posX,y=meanCue,col = colSeeds[match(seed,unique(seed))],pch = 20)
+  #text(x=posX+0.1,y=meanCue,labels = seed)
 })
 mtext("Mean cue size",3,line = -3,cex=1)
 
 
-par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 2,
-                idplotx = 2),xaxt="s",las=1,new=TRUE)
-bpCue<-boxplot(sdCue~get(variable),data=evol[time==timeChoi],
+bpCue<-boxplot(sdCue~get(nampar),data=evol[time>max(time)/2],
                pch=16,xlab=variable,
                ylab='',
-               cex.axis=0.8,yaxt='n')
-axis(4)
-with(evol[time==timeChoi],{
-  points(x=posX,y=sdCue,col = 'darkGrey',pch = 20)
-  # text(x=posX+0.1,y=sdCue,labels = seed)
+               cex.axis=0.8,yaxt='s')
+
+with(evol[time>max(time)/2],{
+  points(x=posX,y=sdCue,col = colSeeds[match(seed,unique(seed))],pch = 20)
+  #text(x=posX+0.1,y=sdCue,labels = seed)
 })
 mtext("Cue sd",3,line = -15,cex=1)
 
 
-par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 2,
-                idplotx = 1),xaxt="s",las=1)
-bpCue<-boxplot(meanAlpha~get(variable),data=evol[time==timeChoi],
+bpCue<-boxplot(meanAlpha~get(nampar),data=evol[time>max(time)/2],
                pch=16,xlab=variable,
                ylab='',ylim=as.numeric(evol[,.(min(meanAlpha),
                                                      max(meanAlpha))])+c(0,0.4),
                cex.axis=0.8,yaxt='n')
 axis(2)
-with(evol[time==timeChoi],{
-  points(x=posX,y=meanAlpha,col = 'darkGrey',pch = 20)
-  # text(x=posX+0.1,y=meanAlpha,labels = seed)
+with(evol[time>max(time)/2],{
+  points(x=posX,y=meanAlpha,col = colSeeds[match(seed,unique(seed))],pch = 20)
+  #text(x=posX+0.1,y=meanAlpha,labels = seed)
 })
 mtext("Alpha mean",3,line = -3,cex=1)
 
-par(plt=posPlot(numploty = 1,idploty = 1,numplotx = 2,
-                idplotx = 2),xaxt="s",las=1,new=T)
-bpCue<-boxplot(meanBeta~get(variable),data=evol[time==timeChoi],
+
+bpCue<-boxplot(sdAlpha~get(nampar),data=evol[time>max(time)/2],
+               pch=16,xlab=variable,
+               ylab='',ylim=as.numeric(evol[,.(min(sdAlpha),
+                                               max(sdAlpha))])+c(0,0.4),
+               cex.axis=0.8,yaxt='n')
+axis(2)
+with(evol[time>max(time)/2],{
+  points(x=posX,y=sdAlpha,col = colSeeds[match(seed,unique(seed))],pch = 20)
+  #text(x=posX+0.1,y=meanAlpha,labels = seed)
+})
+mtext("Alpha sd",3,line = -3,cex=1)
+
+
+bpCue<-boxplot(meanBeta~get(nampar),data=evol[time>max(time)/2],
                pch=16,xlab=variable,
                ylab='',ylim=as.numeric(evol[,.(min(meanBeta),
                                                max(meanBeta))])+c(0,0.4),
                cex.axis=0.8,yaxt='n')
-axis(4)
-with(evol[time==timeChoi],{
-  points(x=posX,y=meanBeta,col = 'darkGrey',pch = 20)
-  # text(x=posX+0.1,y=meanBeta,labels = seed)
+axis(2)
+with(evol[time>max(time)/2],{
+  points(x=posX,y=meanBeta,col = colSeeds[match(seed,unique(seed))],pch = 20)
+  #text(x=posX+0.1,y=meanBeta,labels = seed)
 })
 mtext("Beta mean",3,line = -3,cex=1)
 
 
+bpCue<-boxplot(sdBeta~get(nampar),data=evol[time>max(time)/2],
+               pch=16,xlab=variable,
+               ylab='',ylim=as.numeric(evol[,.(min(sdBeta),
+                                               max(sdBeta))])+c(0,0.4),
+               cex.axis=0.8,yaxt='n')
+axis(2)
+with(evol[time>max(time)/2],{
+  points(x=posX,y=sdBeta,col = colSeeds[match(seed,unique(seed))],pch = 20)
+  #text(x=posX+0.1,y=meanBeta,labels = seed)
+})
+mtext("Beta sd",3,line = -3,cex=1)
+
+par(plt=posPlot())
+plot(data=evol[time!=0],freqHH~sdCue,
+     col=colTypesLin[match(get(nampar),sort(unique(get(nampar))))],pch=20)
+legend("bottomright",legend = sort(evol[,unique(get(nampar))]),pch=20,
+       col=colTypesLin)
+
+par(plt=posPlot())
+plot(data=evol[time!=0],freqHH~abs(meanBeta),
+     col=colTypesLin[match(get(nampar),sort(unique(get(nampar))))],pch=20)
+legend("bottomright",legend = sort(evol[,unique(get(nampar))]),pch=20,
+       col=colTypesLin)
+
+
 dev.off()
+
+
+

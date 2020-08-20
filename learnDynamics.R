@@ -11,64 +11,46 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"test"
+scenario<-"alphaAct"
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
+
 
 
 # Load files -------------------------------------------------------------------
 
-(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
-# (listTest<-list.files(extSimsDir,full.names = TRUE))
-
-
+# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(listTest<-list.files(extSimsDir,full.names = TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
+# parameter values from project folder
+paramName<-list.files(here("Simulations",paste0(scenario,"_")))
+paramName<-grep(".json",paramName,value=TRUE)
+param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[2]))
 
-fileId<-5
 
-indLearn<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
-# indLearn<-fread(indList[fileId])
+fileId<-6
+
+
+# indLearn<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
+indLearn<-fread(indList[fileId])
+
+# names(indLearn)[29:35]<-c("Quality", "genotype","alpha","beta","Badge","initCrit","initAct")
+# names(indLearn)[9:28]<-do.call(rbind,as.list(sapply(0:9,FUN = function(x){
+#   return(rbind(paste0("WeightAct_",x),paste0("WeightCrit_",x)))
+# })))
+
+Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(indList[fileId],"_")[[1]],1)),
+             replacement = "")
+nampar<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[fileId],"_")[[1]],1)),
+             replacement = "")
 
 # new columns ------------------------------------------------------------------
 
-indLearn[,diffActWeights:=abs(WeightAct_0-WeightAct_4)]
 
-indLearn[,`:=`(freqHH=nint_HH/ntotInteract,
-               freqHD=(ntotInteract-nint_HH-nint_DD)/ntotInteract,
-               freqDD=nint_DD/ntotInteract)]
-
-
-
-par(plt=posPlot())
-
-maxInt<-indLearn[,max(nInteract),by=.(seed,indId,time)]
-
-hist(maxInt[,V1])
-
-
-indLearn[,unique(indId-rivalId)]
-
-indLearn[10<indId & indId<90,unique(indId-rivalId)]
-indLearn[20<indId & indId<80,unique(indId-rivalId)]
-indLearn[30<indId & indId<70,unique(indId-rivalId)]
-
-temphist<-hist(indLearn[10<indId & indId<90,abs(indId-rivalId)],breaks = 80)
-temphist<-hist(indLearn[20<indId & indId<80,abs(indId-rivalId)],breaks = 80)
-temphist<-hist(indLearn[30<indId & indId<70,abs(indId-rivalId)],breaks = 80)
-
-temphist<-hist(indLearn[,abs(indId-rivalId)],breaks = 80)
-
-indLearn[,dist:=abs(indId-rivalId)]
-
-weirddata<-indLearn[dist>10&dist<90,]
-
-hist(weirddata[,dist])
-plot(indLearn[,.(indId,rivalId)],col=indLearn[,seed]+1)
-points(weirddata[,.(indId,rivalId)],col=weirddata[,seed]+1,pch=20)
-legend("top",legend = weirddata[,unique(seed)],col = weirddata[,unique(seed)]+1,pch=20)
 # Changes in learning parameters for several individuals -----------------------
 
-gener<-tail(indLearn[,unique(time)],1)
-nCenters<-6
+gener<-tail(indLearn[,unique(time)],2)[1]
+nCenters<-param$nCenters
+sigSquar<-param$sigSq
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
 # nCenters<-5
@@ -86,26 +68,31 @@ seedCh<-finReps[round(runif(1,0,length(finReps)))+1]
 # Select run and generation to plot
 tempPop<-indLearn[time==gener&seed==seedCh]
 
-timePoints<-round(seq(1,30,
-                      length.out = 10))
-  round(seq(1,length(unique(tempPop[,nInteract])),
+timePoints<-round(seq(1,length(unique(tempPop[,nInteract]))-1,
                       length.out = 10))
 
+png(here("Simulations",paste0(scenario,"_"),paste0(nampar,Valpar,"learnDyn.png")),
+    width = 1000,height = 600)
 
 yaxRang<-c("s",rep("n",4))
 xaxRang<-c("s","n")
+xAxLabs<-rep("",5)
+xAxLabs[3]<-"Badge size"
+yAxLabs<-c("p(dove)","")
 countx<-0
 county<-2
 
+
 plot.new()
 
-for(behavTime in unique(tempPop$nInteract)[1:10]){
+# for(behavTime in unique(tempPop$nInteract)[1:5]){
+  for(behavTime in unique(tempPop$nInteract)[timePoints]){
   if(countx==5)  {countx<-0;county<-county-1}
   countx<-countx+1
   dataIndsAct<-sapply(as.list(tempPop[nInteract==behavTime,indId]),
                        function(x){x=
                          logist(totRBF(rangx,
-                                centers,0.01,
+                                centers,sigSquar,
                                 as.double(
                                   tempPop[nInteract==behavTime&indId==x,.SD,
                                            .SDcol=grep("WeightAct",
@@ -124,34 +111,94 @@ for(behavTime in unique(tempPop$nInteract)[1:10]){
           #                  &seed==seedCh,indId],
           #         indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
           #                  unique(indId)])
-            lwd=0.5,ylim=c(0,1))
-  lines(logist(totRBF(rangx,centers,0.01,rep(0,nCenters))
+            lwd=0.5,ylim=c(0,1.1),cex.axis=1.3)
+  lines(logist(totRBF(rangx,centers,sigSquar,rep(0,nCenters))
               ,alpha = 0,beta = 1)~rangx,
        lwd=1,col=1)
-  text(x = 0.5,y=0.58,labels = paste0("nInt=",behavTime))
+  text(x = 0.5,y=1.06,labels = paste0("t =",behavTime),cex=2)
+  if(county==1) mtext(xAxLabs[countx],1,line = 3,cex=2)
+  if(countx==1) mtext(yAxLabs[county],2,line = 3,cex=2)
 }
-
 
 
 # Include if the color scheme relates to quality
 par(new=FALSE)
 color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
                max = max(colorbreaksQual),nticks = 3,
-               title = "",
-               cex.tit = 1.2,
-               numplotx = 15,numploty = 15,idplotx =15,idploty = 9)
+               title = "Quality",
+               cex.tit = 1.1,
+               numplotx = 15,numploty = 15,idplotx =2,idploty = 9)
 
-## plots for the change in interaction frequency
+dev.off()
+
+## Plot learning dynamics of the actor for a single random individual ----------
+
+timePoints<-round(seq(1,13,
+                      length.out = 10))
+round(seq(1,length(unique(tempPop[,nInteract])),
+          length.out = 10))
+(randomInd<-tempPop[,unique(indId)][round(runif(1,0,length(finReps)))+1])
+
+yaxRang<-c("s",rep("n",4))
+xaxRang<-c("s","n")
+countx<-0
+county<-2
+
+plot.new()
+
+# for(behavTime in unique(tempPop$nInteract)[1:5]){
+for(behavTime in unique(tempPop$nInteract)[timePoints]){
+  if(countx==5)  {countx<-0;county<-county-1}
+  countx<-countx+1
+  dataIndsAct<-logist(totRBF(rangx,centers,sigSquar,as.double(
+                                        tempPop[nInteract==behavTime&indId==randomInd,.SD,
+                                                .SDcol=grep("WeightAct",
+                                                            names(tempPop),
+                                                            value = TRUE)
+                                                ])),alpha = 0,beta = 1)
+  par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx),
+      las=1,new=T)
+  plot(x=rangx,y=dataIndsAct,type='l',xlab="",ylab="",
+          xaxt=xaxRang[county],yaxt=yaxRang[countx],lty = 1,
+          col=paletteMeans(100)[
+            findInterval(tempPop[nInteract==behavTime&indId==randomInd
+                                   ,Quality],colorbreaksQual)],
+          # Use this for colour if want to plot each individual 
+          # with a different colour
+          # 1+match(indLearn[(time==gener&nInteract==behavTime)
+          #                  &seed==seedCh,indId],
+          #         indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
+          #                  unique(indId)])
+          lwd=2,ylim=c(0,1))
+  lines(logist(totRBF(rangx,centers,sigSquar,rep(0,nCenters))
+               ,alpha = 0,beta = 1)~rangx,
+        lwd=1,col=1)
+  text(x = 0.5,y=0.58,labels = paste0("nInt=",behavTime))
+}
 
 
-par(plt=posPlot(numploty = 2,idploty = 1),new=TRUE)
+## plots for the change in interaction frequency -------------------------------
+
+
+par(plt=posPlot(numploty = 2,idploty = 2))
 
 with(tempPop,{
   plot(x=ntotInteract,y=freqHH,pch=20,
           col = match(nInteract,unique(nInteract)))
   lines(x=c(0,1000000),y=c(0.666,0.666)^2,col="grey")
-  legend("topleft",legend = unique(nInteract),col=1:5,pch=20)
+  legend("topleft",legend = unique(nInteract),col=1:5,pch=20,ncol = 15)
 })
+
+par(plt=posPlot(numploty = 2,idploty = 1),new=TRUE)
+
+with(indLearn[time==20000&seed==seedCh],{
+  plot(x=ntotInteract,y=freqHH,pch=20,
+       col = match(nInteract,unique(nInteract)))
+  lines(x=c(0,1000000),y=c(0.666,0.666)^2,col="grey")
+  legend("topleft",legend = unique(nInteract),col=1:5,pch=20,ncol=15)
+})
+
+
 
 # Critic 
 
@@ -237,9 +284,9 @@ par(plt=posPlot())
 plot(pop[time==min(time),WeightAct_3]~pop[time==min(time),Quality],
      xlab="Quality",ylab = "Central actor weight")
 
-hist(pop[,nInteract],xaxt="s")
-hist(pop[,Badge],xaxt="s")
-hist(pop[,Quality],xaxt="s")
+hist(indLearn[,nInteract],xaxt="s")
+hist(indLearn[,Badge],xaxt="s")
+hist(indLearn[,Quality],xaxt="s")
 
 
 # Dynamic changes in the responsiveness of the actor  --------------------------

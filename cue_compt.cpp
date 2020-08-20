@@ -9,11 +9,11 @@ traditional hawk-dove game.
 
 Written by :
 
-Andrés E.Quiñones
+Andr?s E.Qui?ones
 Posdoctoral researcher
-Departamento de ciencias biológicas
+Departamento de ciencias biol?gicas
 Universidad de los Andes
-Bogotá Colombia
+Bogot? Colombia
 
 Start date :
 11 June 2018
@@ -132,9 +132,10 @@ class individual {
 		individual(strategy genotype_, double QualStDv,
 			double alphaBadge_, double alphaCI, 
 			double alphaAI, double gammaI, double sigmaSqI,	int nCenters_,
-			double initCrit, double initAct );
+			double initCrit, double initAct, double errorQual);
 		individual(individual& mother, double QualStDv,
-			double mutRate,double mutSD, int mutType, bool mutLearn);
+			double mutRate,double mutSD, int mutType, bool mutLearn,
+			double errorQual);
 		double curr_payoff = 0;
 		double cum_payoff = 0;
 		int ninterac = 0;
@@ -167,7 +168,7 @@ class individual {
 		}
 		int set_phenotype(individual partner, printingObj &localPrint);
 		void get_payoff(individual partner, vector<double> param, bool win);
-		void set_Badge(double stdDev);
+		void set_Badge(double stdDev, double errorQual);
 		bool Winfight(double otherQuality, double strQual);
 		strategy mutateStr(strategy genotype,double mutRate,int mutType);
 		double mutateDoub(double value, double mutRate, double mutSD);
@@ -210,7 +211,7 @@ class individual {
 };
 
 // set quality and badge of status
-void individual::set_Badge(double stdDev=0.1) {
+void individual::set_Badge(double stdDev=0.1,double errorQual = 0) {
 	if (stdDev>1){
 		quality = rnd::uniform();
 	}
@@ -218,19 +219,20 @@ void individual::set_Badge(double stdDev=0.1) {
 		quality = rnd::normal(0.5, stdDev);
 		clip_range(quality, 0, 1);
 	}
-	own_badge = 1 / (1 + exp(alphaBadge - betaBadge * quality));
+	own_badge = 1 / (1 + exp(alphaBadge - 
+		betaBadge * (quality+rnd::normal(0,errorQual))));
 }
 
 // constructors
 individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
 	double alphaBadge_=0, double alphaCI = 0.05,	
 	double alphaAI = 0.05, double gammaI = 0, double sigmaSqI = 0.01, 
-	int nCenters_=6,double initCrit_I=0,double initAct_I=0) {
+	int nCenters_=6,double initCrit_I=0,double initAct_I=0, double errorQual=0) {
 	nCenters = nCenters_;
 	alphaBadge = alphaBadge_;
 	betaBadge = alphaBadge_*2;
 	genotype = genotype_;
-	set_Badge(QualStDv);
+	set_Badge(QualStDv,errorQual);
 	initAct = initAct_I, initCrit = initCrit_I;
 	alphaAct = alphaAI, alphaCrit = alphaCI, gamma = gammaI, sigmaSq = sigmaSqI;
 	double interv = 1 / (static_cast<double>(nCenters)-1);
@@ -245,12 +247,13 @@ individual::individual(strategy genotype_=hawk, double QualStDv = 0.1,
 }
 
 individual::individual(individual& mother, double QualStDv,
-	double mutRate, double mutSD, int mutType, bool mutLearn) {
+	double mutRate, double mutSD, int mutType, bool mutLearn, 
+	double errorQual=0) {
 	genotype = mutateStr(mother.genotype,mutRate,mutType);
 	nCenters = mother.nCenters;
 	alphaBadge = mutateDoub(mother.alphaBadge,mutRate,mutSD);
 	betaBadge = mutateDoub(mother.betaBadge,mutRate,mutSD);
-	set_Badge(QualStDv); 
+	set_Badge(QualStDv,errorQual); 
 	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0, 
 	preferenceT=0;
 	if (mutLearn) {
@@ -417,7 +420,7 @@ int individual::set_phenotype(individual partner, printingObj& localPrint) {
 
 void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	double mutSD, double baselineFit, int mutType, double QualStDv,
-	bool mutLearn,double alphaCost, double betaCost) {
+	bool mutLearn,double alphaCost, double betaCost, double errorQual) {
 	vector<individual> popTplus1(popsize);
 	rnd::discrete_distribution payoff_dist(popsize);
 	
@@ -429,7 +432,7 @@ void Reprod(vector<individual> &popT, int popsize, double mutRate,
 	vector<individual>::iterator itpopTplus1 = popTplus1.begin();
 	while (	itpopTplus1 < popTplus1.end()) {
 		*itpopTplus1 = individual(popT[payoff_dist.sample()], QualStDv, mutRate,
-			mutSD, mutType, mutLearn);
+			mutSD, mutType, mutLearn, errorQual);
 		if (betaCost == 0) ++itpopTplus1;
 		else if (itpopTplus1->viability(alphaCost, betaCost)) {
 			++itpopTplus1;
@@ -495,15 +498,6 @@ void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 				/*genoutput << localPrint.countIntTypesGen[cIntRecords][0] << '\t' <<
 				localPrint.countIntTypesGen[cIntRecords][1] << '\t' <<
 				localPrint.countIntTypesGen[cIntRecords][2] << '\t';*/
-			for (int countFeat = 0; countFeat < pop[0].get_nCenter();
-				++countFeat) {
-				genoutput << 
-					localPrint.actFeatHistory[cIntRecords][cSampled][countFeat]
-					<< '\t'
-					<< 
-					localPrint.critFeatHistory[cIntRecords][cSampled][countFeat]
-					<< '\t';
-			}
 			genoutput << pop[localPrint.sampledInd[cSampled]].get_quality() << '\t' <<
 				pop[localPrint.sampledInd[cSampled]].get_strat() << '\t' <<
 				pop[localPrint.sampledInd[cSampled]].get_alpha() << '\t' <<
@@ -511,6 +505,15 @@ void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 				pop[localPrint.sampledInd[cSampled]].get_badge() << '\t' <<
 				pop[localPrint.sampledInd[cSampled]].get_inits(1) << '\t' <<
 				pop[localPrint.sampledInd[cSampled]].get_inits(0) << '\t';
+			for (int countFeat = 0; countFeat < pop[0].get_nCenter();
+				++countFeat) {
+				genoutput <<
+					localPrint.actFeatHistory[cIntRecords][cSampled][countFeat]
+					<< '\t'
+					<<
+					localPrint.critFeatHistory[cIntRecords][cSampled][countFeat]
+					<< '\t';
+			}
 			genoutput << endl;
 		}
 	}
@@ -526,7 +529,7 @@ void interactions(vector<individual>& population, int nint,
 	int intType = 0;
 	bool ind1win = 0;
 	std::uniform_int_distribution<int> randInd(0,population.size()-1);
-	std::uniform_int_distribution<int> randPeer(0,nIntGroup-1);
+	std::uniform_int_distribution<int> randPeer(0,(nIntGroup/2)-1);
 	vector<int> sample;
 	vector<int>::iterator itSamp1 = sample.begin();
 	//cout << "track " << generat << endl;
@@ -721,15 +724,16 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	indOutput.open(IndFile.c_str());
 	indOutput << "seed" << '\t' << "time" << '\t' << "nInteract" << '\t'
 		<< "indId" << '\t' << "ntotInteract" << '\t' << "nint_HH" << '\t' 
-		<< "nint_DD" << '\t' << "rivalId" << '\t';
+		<< "nint_DD" << '\t' << "rivalId" << '\t'
+		<< "Quality" << '\t' << "genotype" << '\t' << "alpha" << '\t'
+		<< "beta" << '\t' << "Badge" << '\t' << "initCrit" << '\t' << "initAct" 
+		<< '\t';
 	for (int countFeat = 0; countFeat < param["nCenters"];
 		++countFeat) {
 		indOutput << "WeightAct_" + itos(countFeat) << '\t'
 			<< "WeightCrit_" + itos(countFeat) << '\t';
 	}
-	indOutput << "Quality" << '\t' << "genotype" << '\t' << "alpha" << '\t'
-	<< "beta" << '\t' << "Badge" << '\t' << "initCrit" << '\t' << "initAct" << '\t'
-	<< endl;
+	indOutput 	<< endl;
 	//for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
 	//	cout << "WeightAct_" + itos(countFeat) << '\t';
 	//	cout << "WeightCrit_" + itos(countFeat) << '\t';
@@ -742,50 +746,53 @@ int main(int argc, char* argv[]) {
 	mark_time(1);
 
 	/*uncomment for debugging*/
-	json param;
-	param["totGen"]            = 10;   // Total number of generations
-	param["nRep"]			   = 5;     // Number of replicates
-	param["printGen"]          = 1;     // How often data is printed	
-	param["printLearn"]        = 1;	  // how often learning dyn are printed
-	param["printLearnInt"]	   = 1;   // How often are learning parameters printed
-	param["init"]              = {0,0,1};        //Initial frequencies
-	param["payoff_matrix"]     = {1.5,1,0,0.5};  
-	param["popSize"]           = 50;
-	param["MutSd"]             = 0.3;
-	param["nInt"]              = 1000;    // Number of interactions per individual
-	param["mutRate"]           = 0.05;
-	param["strQual"]           = 10;
-	param["baselineFit"]       = 2;
-	param["mutType"]		     = 0;  
-	// How many strategies are introduced by mutation
-	param["sampleSize"]        = 50; 
-	param["alphaBad"]			 = 0;
-	param["betaBad"]			 = 0;
-	param["alphaCrit"]     	 = 0.01;
-	param["alphaAct"]     	 = 0.01;
-	param["sigSq"]        	 = 0.01;
-	param["nCenters"]     	 = 6;
-	param["initCrit"]          = 0;
-	param["initAct"]           = 0;
-	param["mutLearn"]			 = true ;   
-	// Bool, should learning parameters mutate
-	param["QualStDv"]          = 1.1;
-	param["nIntGroup"]		 = 1000;
-	param["initAct"]			 =0;
-	param["betCost"]           = 0;
-	param["alphCost"]			 = 3;
-	param["namParam"]          = "nIntGroup";  
-	// which parameter to vary inside the program
-	param["rangParam"]         = {  10, 20, 30}; 
-	// range in which the paramenter varies
-	param["folder"]            = "I:/Projects/SocialComp_morphCue/Simulations/test_/";
+	//json param;
+	//param["totGen"]            = 10;   // Total number of generations
+	//param["nRep"]			   = 5;     // Number of replicates
+	//param["printGen"]          = 1;     // How often data is printed	
+	//param["printLearn"]        = 1;	  // how often learning dyn are printed
+	//param["printLearnInt"]	   = 1;   // How often are learning parameters printed
+	//param["init"]              = {0,0,1};        //Initial frequencies
+	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
+	//param["popSize"]           = 50;
+	//param["MutSd"]             = 0.3;
+	//param["nInt"]              = 1000;    // Number of interactions per individual
+	//param["mutRate"]           = 0.05;
+	//param["strQual"]           = 10;
+	//param["baselineFit"]       = 2;
+	//param["mutType"]		     = 0;  
+	//// How many strategies are introduced by mutation
+	//param["sampleSize"]        = 50; 
+	//param["alphaBad"]			 = 0;
+	//param["betaBad"]			 = 0;
+	//param["alphaCrit"]     	 = 0.01;
+	//param["alphaAct"]     	 = 0.01;
+	//paramL["gamma"]          = 0;
+	//param["sigSq"]        	 = 0.01;
+	//param["nCenters"]     	 = 6;
+	//param["initCrit"]          = 0;
+	//param["initAct"]           = 0;
+	//param["mutLearn"]			 = true ;   
+	//// Bool, should learning parameters mutate
+	//param["QualStDv"]          = 1.1;
+	//param["errorQual"]		   = 0;
+	//param["nIntGroup"]		   = 1000;
+	//param["initAct"]			 =0;
+	//param["betCost"]           = 0;
+	//param["alphCost"]			 = 3;
+	//param["namParam"]          = "nIntGroup";  
+	//// which parameter to vary inside the program
+	//param["rangParam"]         = {  10, 20, 30}; 
+	//// range in which the paramenter varies
+	//param["folder"]            = "I:/Projects/SocialComp_morphCue/Simulations/test_/";
 
-	nlohmann::json* pointParam;
+	//nlohmann::json* pointParam;
 
 	// Comment for debugging
-	/*ifstream input(argv[1]);
+	ifstream input(argv[1]);
+	//ifstream input("i:/Projects/SocialComp_morphCue/Simulations/alphaActIR_/parameters.json");
 	if (input.fail()) { cout << "JSON file failed" << endl; }
-	nlohmann::json param = json::parse(input);*/
+	nlohmann::json param = json::parse(input);
 	
 	/*if (argc>1) {
 		omp_set_num_threads(atoi(argv[2]));
@@ -815,7 +822,7 @@ int main(int argc, char* argv[]) {
 		++itGenLoop) {
 		//nlohmann::json paramL = *pointParam;
 		int idParRange = itGenLoop / int(paramL["nRep"]);
-		int seed = itGenLoop - idParRange*paramL["nRep"];
+		int seed = itGenLoop - idParRange*int(paramL["nRep"]);
 		std::mt19937 rngT;
 		rngT.seed(seed);
 		paramL[namParam] =
@@ -825,7 +832,7 @@ int main(int argc, char* argv[]) {
 		{
 			cout << paramL["namParam"] << "=" << paramL[namParam] << "	" <<
 				"seed=" << seed << endl;
-			rnd::set_seed(seed);
+			//rnd::set_seed(seed);
 		}
 		vector<individual> population;
 		population.reserve(paramL["popSize"]);
@@ -840,15 +847,16 @@ int main(int argc, char* argv[]) {
 		for (int popId = 0; popId < paramL["popSize"]; ++popId) {
 			population.push_back(individual((strategy)initFreq.sample(),
 				paramL["QualStDv"], paramL["alphaBad"],
-				paramL["alphaCrit"], paramL["alphaAct"], 0, paramL["sigSq"],
-				paramL["nCenters"], paramL["initCrit"], paramL["initAct"]));
+				paramL["alphaCrit"], paramL["alphaAct"],paramL["gamma"],
+        paramL["sigSq"],	paramL["nCenters"], paramL["initCrit"], 
+        paramL["initAct"], paramL["errorQual"]));
 		}
-		for (int generation = 0; generation < paramL["totGen"];
+		for (int generation = 0; generation < (int(paramL["totGen"])+1);
 			++generation) {
 			//cout << "Interactions " << generation << endl;
 			interactions(population, paramL["nInt"],
 				paramL["payoff_matrix"], paramL["strQual"],
-				generation % paramL["printLearn"] == 0,
+				generation % int(paramL["printLearn"]) == 0,
 				paramL["printLearnInt"], paramL["sampleSize"], generation,
 				paramL["nIntGroup"], localPrint, rngT);
 #pragma omp critical
@@ -856,10 +864,7 @@ int main(int argc, char* argv[]) {
 				if (generation % int(paramL["printGen"]) == 0) {
 					get_stats(population, paramL["popSize"], localPrint,
 						paramL["nCenters"]);
-					printStats(paramL["popSize"],
-						evolOutput[idParRange],
-						generation, seed,
-						localPrint, paramL["nCenters"]);
+					printStats(paramL["popSize"],evolOutput[idParRange],generation, seed,localPrint, paramL["nCenters"]);
 					printLearnDynamics(indOutput[idParRange],
 						population, generation, seed, localPrint);
 				}
@@ -869,7 +874,7 @@ int main(int argc, char* argv[]) {
 			Reprod(population, paramL["popSize"], paramL["mutRate"],
 				paramL["MutSd"], paramL["baselineFit"], paramL["mutType"],
 				paramL["QualStDv"],paramL["mutLearn"],paramL["alphCost"],
-				paramL["betCost"]);
+				paramL["betCost"], paramL["errorQual"]);
 		}
 	}
 		//popOutput.close();

@@ -2,28 +2,30 @@
 title: |
   | Learning can mediate both badges of status and individual recognition
 author:
-  - Andrés E. Quiñones^[Laboratorio de Biología Evolutiva de Vertebrados, Departamento de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia]
-  - C. Daniel Cadena^[Laboratorio de Biología Evolutiva de Vertebrados, Departamento de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia]
-  - Olof Leimar^[Department of Zoology, Stockholm University, Stockholm, Sweden]
-  - Redouan Bshary^[Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland]
+- Andrés E. Quiñones^[Laboratorio de Biología Evolutiva de Vertebrados, Departamento
+  de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia]
+- C. Daniel Cadena*
+- Olof Leimar^[Department of Zoology, Stockholm University, Stockholm, Sweden]
+- Redouan Bshary^[Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland]
 date: "`r format(Sys.time(), '%B %d, %Y')`"
-bibliography: SocialMorphCue.bib
-style: C:\Users\andre\Zotero\styles\elife.csl
-header-includes: 
-  - \usepackage{float}
-  - \usepackage{setspace}\doublespacing
-  - \linespread{2}
-  - \usepackage{lineno}
-  - \linenumbers
-spacing: double
-abstract: My abstract which has to be long enough to take multiple
-  lines otherwise one does not see the effect of single-spacing.
-keywords: "My keywords"
+output:
+  word_document: default
+  pdf_document: default
 fig_caption: yes
-keep_tex: yes
 fontsize: 12pt
+header-includes:
+- \usepackage{float}
+- \usepackage{setspace}\doublespacing
+- \linespread{2}
+- \usepackage{lineno}
+- \linenumbers
+keep_tex: yes
+keywords: My keywords
 linespread: 2
-output: pdf_document
+bibliography: SocialMorphCue.bib
+spacing: double
+style: C:\Users\andre\Zotero\styles\elife.csl
+abstract: Learning rules.
 ---
 
 ```{r setup, include=FALSE}
@@ -54,8 +56,9 @@ many aspects of social life such as finding mates, feeding offspring, dominance 
 and aggressive interactions. In dominance and aggressive interactions an important 
 information to make actions dependent on is interacting partners fighting ability, 
 which is sometimes referred to as Resource Holding Potential (RHP) [@parker_Assessment_1974], 
-or as we will here simply quality. This responsiveness to the quality of the partner is achieved in
-communication systems such as badges of status (BS), where an arbitrary signal conveys quality. 
+or as we will here simply quality. This responsiveness to the quality of the 
+partner is achieved in communication systems such as badges of status (BS), 
+where an arbitrary signal conveys quality. 
 BS can be evolutionarily stable whenever the signal imposes a fitness cost which 
 decreases with the quality of an individual  [@botero_Evolution_2010; @johnstone_Badges_1993]. 
 So, low quality individuals can't afford the cost of the signal, 
@@ -65,13 +68,67 @@ usually referred to as the handicap principle [@grafen_Biological_1990; @zahavi_
 An alternative system of communication is one where individuals gather and store information
 about each individual they interact with. This information, directly collected by 
 each individual, should reliably allow them to react adaptively to the 
-quality difference with their opponent. This type of assessment strategy is often referred to as 
-individual recognition [IR, @whitfield_Plumage_1986]. Evidently, IR is restricted to 
-certain interaction structures, individuals are limited by cognitive adaptations in how many
-individuals they can recognize and track. Thus, IR and BS have been assumed to be alternative
-communication systems fulfilling the same function, but expected to evolve in populations 
-under different interaction structures [@dale_Signaling_2001; @sheehan_There_2016].
+quality difference with their opponent. This type of assessment strategy is often 
+referred to as individual recognition [IR, @whitfield_Plumage_1986]. Evidently, 
+IR is restricted to certain interaction structures, individuals are limited by cognitive 
+abilities in how many individuals they can recognize and track. Thus, IR and BS 
+have been assumed to be alternative communication systems fulfilling the same function, 
+but expected to evolve in populations under different conditions
+[@dale_Signaling_2001; @sheehan_There_2016]. There is no clear cut reason, however, 
+why both systems could not work together, in fact there is some evidence
+that they can [@chaine_Manipulating_2018].
 
+A somewhat ignored aspect of communication systems, in the context of aggressive 
+interactions, is the cognitive aspects of the receiver module. 
+BS are often assume to be cognitively less demanding than IR 
+[@sheehan_There_2016]. The idea is that using IR, individuals need to store identity 
+and associated information about each individual they interact with. All this 
+information requires more memory and therefore is more demanding. In contrast,
+the response using BS have been thought as an innate response 
+[@botero_Evolution_2010; @johnstone_Badges_1993], where individuals use their 
+own quality and the opponent's badge to determine whether to aggressively contest 
+a resource. An alternative view of BS is that individuals learn to react to the signal
+based on their experiences [@guilford_Receiver_1991]. In line with that view, both
+communication systems would require the receivers to learn an association between
+the signal and the fighting ability of the bearer. In BS, this association would be a 
+a simple monotonic increase of fighting ability with the size of the badge, 
+and would be reinforced by every interaction, so in  principle it would be 
+quicker to learn. While in IR, the association would 
+be different for every individual, depending on the interacting partners. 
+Learning could be a unifying cognitive mechanism behind both types of communication 
+systems. This idea of learning being a general response mechanism has not been 
+thoroughly explored, nor in the empirical or theoretical literature. 
+
+Associative learning is a key cognitive mechanism that allows individuals to associate
+rewards with environmental stimuli and appropriate behavior [@staddon_Adaptive_2016]. 
+Since it was originally described, associative learning has been found in all major
+vertebrate taxon, and many invertebrates [@heyes_Simple_2012;
+@macphail_Brain_1982; @staddon_Adaptive_2016; @behrens_Associative_2008].
+Using these associations to respond to environmental changes is particularly adaptive in
+complex environments [@dridi_Environmental_2016]. Besides its wide taxonomic and
+ecological relevance, associative learning has shown to be a flexible cognitive mechanism
+that can be tuned to different roles depending on the ecological situation 
+[@enquist_Power_2016; @quinones_Reinforcement_2019]. Despite all this, associative 
+learning is not often included in evolutionary explanations 
+[@fawcett_Exposing_2013; @kamil_Optimal_1983; @mcauliffe_Psychology_2015]. 
+Computational models of evolution can play an important role to overcome the 
+lack of integration between learning and evolution. Reinforcement learning theory 
+encompases a series of computational methods inspired on the psychological and 
+neurological mechanisms of associative learning [@sutton_Reinforcement_2018].
+These set of algorithms allow the implementation of biologically realistic problems, 
+capturing the essence of learning processes [@frankenhuis_Enriching_2018; @quinones_Reinforcement_2019]. 
+Furthermore, these algorithms can be embebed in evolutionary simulations in order 
+to have theoretical predictions of the effect that learning can have in behavioral [@leimar_Learning_2019]
+and morphological evolution.
+
+In here we present an evolutionary model where individuals use associative learning 
+to develop a tendency to behave aggressively (or  peacefully), in the context of
+competition over resoureces, depending on the quantitative morphological trait 
+they perceive in their opponent (badge). Over evolutionary time individuals evolve
+the size of their badge, and whether it depends on their quality. Under this simple
+set up, individuals can use the badge both as a signal of quality (BS)
+or as a trait for IR. We use the model to asses under what conditions of interaction
+structure we expect different communication signals evolve. 
 
 
 ## References

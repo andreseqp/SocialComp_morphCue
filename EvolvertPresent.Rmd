@@ -1,0 +1,216 @@
+---
+title: "Badges of status and IR mediated by learning"
+author: "Andrés Quiñones"
+bibliography: SocialMorphCue.bib
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+    beamer_presentation: 
+      fig_caption: yes
+      keep_tex: yes
+header-includes: 
+    \usepackage{float}
+    \usepackage{multicol}
+    \usepackage{amsmath} 
+    \usepackage{graphicx}
+    \usepackage{array}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+source("../R_files/posPlots.R")
+require("here")
+source(here("AccFunc.R"))
+
+```
+
+## The Hawk-Dove game
+
+Individuals have one of two genetically determined phenotypic strategies. _Hawks_ are willing to start a conflict over resources, while _doves_ prefer to stand down in the hope to share the resource without an aggressive contest.
+
+```{r,echo=FALSE,fig.align="center",out.width='50%'}
+knitr::include_graphics("Images//HDgame.png")
+```
+
+## The hawk-dove game
+
+\begin{align*}
+w_H &= p_H \frac{V-C}{2}+(1-p_h) V\\
+w_D &= p_H 0 + (1-p_H)\frac{V}{2}
+\end{align*}
+\vspace{-0.8cm}
+```{r, echo=FALSE,fig.align="center", out.width = '55%'}
+knitr::include_graphics("Images//Hawk_dove_plot.png")
+```
+
+
+<!-- ## The hawk-dove game -->
+
+<!-- ```{r, echo=FALSE, fig.cap="\\label{fig:HD_game}Hawk-dove game. Dashed line is the  game theoretical prediction for frequency of hawks.", out.width = '80%'} -->
+<!-- knitr::include_graphics("Simulations/mutType_/basicHawkDove.png") -->
+<!-- ``` -->
+
+## What about signals?
+
+```{r,echo=FALSE,fig.align='center',out.height='80%'}
+knitr::include_graphics("Images//hosp_alexandra_mackenzie.jpg")
+
+```
+
+
+## What about signals?
+
+### When are signals honest?
+
+* Impossible to fake
+* Individuals have common interests
+* Handicap principle (signal´s cost is proportional to quality)
+  + Social costs? 
+  
+```{r,echo=FALSE, fig.align='center',out.width='100%'}
+knitr::include_graphics("Images//social_costs.png")
+```
+
+## What about signals?
+
+```{r,echo=FALSE,fig.align='center',out.width='90%'}
+knitr::include_graphics("Images//comSystemBot.png")
+```
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.width='90%'}
+knitr::include_graphics("Images//pavlov.jpg")
+```
+
+# Associative learning
+
+## Reinforcement learning theory
+
+\begin{columns}[T]
+ \column{0.5\linewidth}
+ \begin{equation*}
+  \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error}
+  \end{equation*}
+  \pause
+  \includegraphics[width=1\textwidth]{Images//learn_curve.png}
+ \column{0.5\linewidth}
+  \pause
+  \includegraphics[height=.9\textheight]{Images//predErrorNeur.png}
+\end{columns}
+  
+## Reinforcement learning theory
+
+```{r,echo=FALSE,fig.align='center',out.width='90%'}
+knitr::include_graphics("Images//learnUpdate.png")
+```
+
+## Environmental states
+
+### Discrete states
+\includegraphics[width=0.8\textwidth]{Images//discreteStates.png}
+
+\pause
+
+### Continuos states
+\includegraphics[width=0.8\textwidth]{Images//contStates.png}
+
+## Continuos environmental states
+\begin{equation*}
+  \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error}
+\end{equation*}
+
+```{r fig2, echo=FALSE, fig.cap="\\label{fig:learning_cartoonRBF}Function approximation for the actor and the critic. Using random values for the responses of each center. Circles show the location of the centers and the maximum response they trigger, while the lines show the total response along the badge size continium.", out.width = '60%'}
+knitr::include_graphics("Images/cartoonRBF.png")
+```
+
+# Our model
+
+## The hawk-dove game 2.0
+
+\begin{center}
+\begin{tabular}{ >{\centering\arraybackslash}p{1cm} | >{\centering\arraybackslash}p{4.5cm} | >{\centering\arraybackslash}p{4.5cm} }
+& H & D \\ \hline
+H & $p_w V\frac{-C}{2} + (1-p_w) \frac{-C}{2}$ & $V$ \\ \hline
+V & $0$ & $\frac{V}{2}$\\
+\end{tabular}
+\end{center}
+
+\begin{equation*}
+p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
+\end{equation*}
+
+```{r,echo=FALSE,fig.align='center',out.width='50%'}
+par(plt=posPlot(),las=1)
+plot(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 2)~
+       seq(-1,1,length.out = 1000),type="l",xlab="Difference in quality",
+     ylab = expression(p[w]),cex.lab=2,lwd=3,col="red",cex.axis=2,ylim=c(0,1))
+lines(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 10)~
+       seq(-1,1,length.out = 1000),lwd=3,col="green")
+legend("topleft",legend=c(2,10),col=c("red","green"),lwd=3,title = expression(beta),cex=2,bty="n")
+
+```
+
+## Sender Code
+
+\begin{equation*}
+s_i = \frac{1}{1+e^{-(\epsilon_i+\gamma_iQ_i)}}
+\label{eq:react_norm}
+\end{equation*}
+
+```{r,echo=FALSE,fig.align='center',out.width='50%'}
+par(plt=posPlot(),las=1)
+plot(logist(seq(0,1,length.out = 1000),alpha = 2,beta = 4)~
+       seq(0,1,length.out = 1000),type="l",xlab="Quality",
+     ylab = expression(p[w]),cex.lab=2,lwd=3,col="red",cex.axis=2,ylim=c(0,1))
+lines(logist(seq(0,1,length.out = 1000),alpha = 5,beta = 10)~
+       seq(0,1,length.out = 1000),lwd=3,col="green")
+legend("topleft",legend=c(4,10),col=c("red","green"),lwd=3,title = expression(gamma),cex=2,bty="n")
+
+```
+
+## Receiver code
+
+\begin{equation*}
+  \Delta V_{t(s)}=\alpha (R_t-V_t)
+\end{equation*}
+
+
+```{r, echo=FALSE,fig.align='center', out.width = '60%'}
+knitr::include_graphics("Images/cartoonRBF.png")
+```
+
+# Results
+
+## Learning under honest signalling 
+
+```{r, echo=FALSE,fig.align='center', out.width = '100%'}
+knitr::include_graphics("Simulations/alphaAct_/alphaAct0.6learnDyn.png")
+```
+
+## Learning can mediate the evolution of Badges of Status
+### Variation among replicates
+```{r, echo=FALSE,fig.align='center', out.width='100%'}
+knitr::include_graphics("Simulations/betCostEvol1_/evolDynAll_betCost5.png")
+```
+
+
+## Learning can mediate the evolution of Badges of Status
+### Individual replicates: Badges
+```{r, echo=FALSE,fig.align='center', out.width='100%'}
+knitr::include_graphics("Simulations/betCostEvol1_/evolDyn0_betCost5.png")
+```
+
+## Learning can mediate the evolution of Badges of Status
+### Individual replicates: no badges
+```{r, echo=FALSE,fig.align='center', out.width='100%'}
+knitr::include_graphics("Simulations/betCostEvol1_/evolDyn5_betCost5.png")
+```
+
+## The effect of costs on Badges of Status
+### Behavioural interactions
+
+```{r, echo=FALSE,fig.align='center', out.width='100%'}
+knitr::include_graphics("Simulations/betCostEvol1_/BehavIntALL.png")
+```
+
+

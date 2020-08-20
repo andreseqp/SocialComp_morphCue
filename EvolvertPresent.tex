@@ -1,0 +1,327 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  ignorenonframetext,
+]{beamer}
+\usepackage{pgfpages}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+% Prevent slide breaks in the middle of a paragraph
+\widowpenalties 1 10000
+\raggedbottom
+\setbeamertemplate{part page}{
+  \centering
+  \begin{beamercolorbox}[sep=16pt,center]{part title}
+    \usebeamerfont{part title}\insertpart\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center]{part title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{part title}
+    \usebeamerfont{subsection title}\insertsubsection\par
+  \end{beamercolorbox}
+}
+\AtBeginPart{
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \frame{\sectionpage}
+  \fi
+}
+\AtBeginSubsection{
+  \frame{\subsectionpage}
+}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Badges of status and IR mediated by learning},
+  pdfauthor={Andrés Quiñones},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\newif\ifbibliography
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{float} \usepackage{multicol} \usepackage{amsmath} \usepackage{graphicx} \usepackage{array}
+
+\title{Badges of status and IR mediated by learning}
+\author{Andrés Quiñones}
+\date{August 20, 2020}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}{The Hawk-Dove game}
+\protect\hypertarget{the-hawk-dove-game}{}
+
+Individuals have one of two genetically determined phenotypic
+strategies. \emph{Hawks} are willing to start a conflict over resources,
+while \emph{doves} prefer to stand down in the hope to share the
+resource without an aggressive contest.
+
+\begin{center}\includegraphics[width=0.5\linewidth]{Images//HDgame} \end{center}
+
+\end{frame}
+
+\begin{frame}{The hawk-dove game}
+\protect\hypertarget{the-hawk-dove-game-1}{}
+
+\begin{align*}
+w_H &= p_H \frac{V-C}{2}+(1-p_h) V\\
+w_D &= p_H 0 + (1-p_H)\frac{V}{2}
+\end{align*} \vspace{-0.8cm}
+
+\begin{center}\includegraphics[width=0.55\linewidth]{Images//Hawk_dove_plot} \end{center}
+
+\end{frame}
+
+\begin{frame}{What about signals?}
+\protect\hypertarget{what-about-signals}{}
+
+\begin{center}\includegraphics[height=0.8\textheight]{Images//hosp_alexandra_mackenzie} \end{center}
+
+\end{frame}
+
+\begin{frame}{What about signals?}
+\protect\hypertarget{what-about-signals-1}{}
+
+\begin{block}{When are signals honest?}
+
+\begin{itemize}
+\tightlist
+\item
+  Impossible to fake
+\item
+  Individuals have common interests
+\item
+  Handicap principle (signal´s cost is proportional to quality)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Social costs?
+  \end{itemize}
+\end{itemize}
+
+\begin{center}\includegraphics[width=1\linewidth]{Images//social_costs} \end{center}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{What about signals?}
+\protect\hypertarget{what-about-signals-2}{}
+
+\begin{center}\includegraphics[width=0.9\linewidth]{Images//comSystemBot} \end{center}
+
+\end{frame}
+
+\begin{frame}{What about learning?}
+\protect\hypertarget{what-about-learning}{}
+
+\begin{center}\includegraphics[width=0.9\linewidth]{Images//pavlov} \end{center}
+
+\end{frame}
+
+\hypertarget{associative-learning}{%
+\section{Associative learning}\label{associative-learning}}
+
+\begin{frame}{Reinforcement learning theory}
+\protect\hypertarget{reinforcement-learning-theory}{}
+
+\begin{columns}[T]
+ \column{0.5\linewidth}
+ \begin{equation*}
+  \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error}
+  \end{equation*}
+  \pause
+  \includegraphics[width=1\textwidth]{Images//learn_curve.png}
+ \column{0.5\linewidth}
+  \pause
+  \includegraphics[height=.9\textheight]{Images//predErrorNeur.png}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}{Reinforcement learning theory}
+\protect\hypertarget{reinforcement-learning-theory-1}{}
+
+\begin{center}\includegraphics[width=0.9\linewidth]{Images//learnUpdate} \end{center}
+
+\end{frame}
+
+\begin{frame}{Environmental states}
+\protect\hypertarget{environmental-states}{}
+
+\begin{block}{Discrete states}
+
+\includegraphics[width=0.8\textwidth]{Images//discreteStates.png}
+
+\pause
+
+\end{block}
+
+\begin{block}{Continuos states}
+
+\includegraphics[width=0.8\textwidth]{Images//contStates.png}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Continuos environmental states}
+\protect\hypertarget{continuos-environmental-states}{}
+
+\begin{equation*}
+  \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error}
+\end{equation*}
+
+\begin{figure}
+\includegraphics[width=0.6\linewidth]{Images/cartoonRBF} \caption{\label{fig:learning_cartoonRBF}Function approximation for the actor and the critic. Using random values for the responses of each center. Circles show the location of the centers and the maximum response they trigger, while the lines show the total response along the badge size continium.}\label{fig:fig2}
+\end{figure}
+
+\end{frame}
+
+\hypertarget{our-model}{%
+\section{Our model}\label{our-model}}
+
+\begin{frame}{The hawk-dove game 2.0}
+\protect\hypertarget{the-hawk-dove-game-2.0}{}
+
+\begin{center}
+\begin{tabular}{ >{\centering\arraybackslash}p{1cm} | >{\centering\arraybackslash}p{4.5cm} | >{\centering\arraybackslash}p{4.5cm} }
+& H & D \\ \hline
+H & $p_w V\frac{-C}{2} + (1-p_w) \frac{-C}{2}$ & $V$ \\ \hline
+V & $0$ & $\frac{V}{2}$\\
+\end{tabular}
+\end{center}
+
+\begin{equation*}
+p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
+\end{equation*}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{EvolvertPresent_files/figure-beamer/unnamed-chunk-8-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Sender Code}
+\protect\hypertarget{sender-code}{}
+
+\begin{equation*}
+s_i = \frac{1}{1+e^{-(\epsilon_i+\gamma_iQ_i)}}
+\label{eq:react_norm}
+\end{equation*}
+
+\begin{center}\includegraphics[width=0.5\linewidth]{EvolvertPresent_files/figure-beamer/unnamed-chunk-9-1} \end{center}
+
+\end{frame}
+
+\begin{frame}{Receiver code}
+\protect\hypertarget{receiver-code}{}
+
+\begin{equation*}
+  \Delta V_{t(s)}=\alpha (R_t-V_t)
+\end{equation*}
+
+\begin{center}\includegraphics[width=0.6\linewidth]{Images/cartoonRBF} \end{center}
+
+\end{frame}
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+\begin{frame}{Learning under honest signalling}
+\protect\hypertarget{learning-under-honest-signalling}{}
+
+\begin{center}\includegraphics[width=1\linewidth]{Simulations/alphaAct_/alphaAct0.6learnDyn} \end{center}
+
+\end{frame}
+
+\begin{frame}{Learning can mediate the evolution of Badges of Status}
+\protect\hypertarget{learning-can-mediate-the-evolution-of-badges-of-status}{}
+
+\begin{block}{Variation among replicates}
+
+\begin{center}\includegraphics[width=1\linewidth]{Simulations/betCostEvol1_/evolDynAll_betCost5} \end{center}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Learning can mediate the evolution of Badges of Status}
+\protect\hypertarget{learning-can-mediate-the-evolution-of-badges-of-status-1}{}
+
+\begin{block}{Individual replicates: Badges}
+
+\begin{center}\includegraphics[width=1\linewidth]{Simulations/betCostEvol1_/evolDyn0_betCost5} \end{center}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Learning can mediate the evolution of Badges of Status}
+\protect\hypertarget{learning-can-mediate-the-evolution-of-badges-of-status-2}{}
+
+\begin{block}{Individual replicates: no badges}
+
+\begin{center}\includegraphics[width=1\linewidth]{Simulations/betCostEvol1_/evolDyn5_betCost5} \end{center}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{The effect of costs on Badges of Status}
+\protect\hypertarget{the-effect-of-costs-on-badges-of-status}{}
+
+\begin{block}{Behavioural interactions}
+
+\begin{center}\includegraphics[width=1\linewidth]{Simulations/betCostEvol1_/BehavIntALL} \end{center}
+
+\end{block}
+
+\end{frame}
+
+\end{document}

@@ -9,30 +9,30 @@ source(here("AccFunc.R"))
 fileName<-"parameters"
 here()
 
+param1<-fromJSON(here("Simulations","alphaAct_","parameters21.json"))
 
-param<-list(totGen   =10000,   nRep    = 16,
-            printGen = 1000,   printLearn = 1000,
-            printLearnInt = 500,
+param<-list(totGen   =5,   nRep    = 30,
+            printGen = 1,   printLearn = 1,
+            printLearnInt = 50,
             popSize  = 2000,  baselineFit = 2,   
             MutSd    = 0.3,
             nInt        = 1000,  init     = c(0,0,1),
             mutRate  = 0.001,  mutType  = 0,
             sampleSize = 50,   strQual  = 10,
-            alphaBad	 = 0,    betaBad	 = 0,
-            alphaCrit  = 0.1,  alphaAct = 0.1,
-            sigSq   	 = 0.01, nCenters = 6,
-            initCrit = 0,      initAct=0,
+            errorQual = 0,    alphaBad	 = 3,    betaBad	 = 6,
+            alphaCrit  = 0.5,  alphaAct = 0.5,
+            sigSq   	 = 0.001, nCenters = 10,
+            initCrit = 0,      initAct=0,   gamma = 0,
             QualStDv   = 1.1, betCost = 0,
-            alphCost	 = 3, mutLearn = TRUE,
+            alphCost	 = 3, mutLearn = FALSE,
             nIntGroup  = 2000,
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "nIntGroup",
-            rangParam = c(10,50,2000),
+            rangParam = c(4,6,8,10,20,50,1000),
             folderL=paste(here("Simulations"),"/",sep=""))
 
 
-
-apendScenar<-"EvolLear"
+apendScenar<-"LearnIR"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
@@ -44,13 +44,13 @@ param$folderL<-paste0(param$folderL,
 # nodes<-10
 
 ## For the cluster Uniandes
-param$folder<-paste0("/hpcfs/home/a.quinones/BadgeStatus/",
-                    param$namParam,apendScenar,"_/")
+# param$folder<-paste0("/hpcfs/home/a.quinones/BadgeStatus/",
+#                     param$namParam,apendScenar,"_/")
 ## for the cluster unine
 param$folder<-paste0("/home/ubuntu/BadgeStatus/",
                      param$namParam,apendScenar,"_/")
 ## For the local pc
-param$folder<-param$folderL
+param$folder<-paste0("e:/BadgeSims/",param$namParam,apendScenar,"_/")
 # read and edit json 
 # oldJson<-fromJSON(here("Simulations","strQualEvol_",fileName))
 # diffJsons(oldJson,param)
@@ -74,16 +74,19 @@ param$folder<-param$folderL
 
 check_create.dir(here("Simulations"),param = paste0(param$namParam,apendScenar),
                  values = c(""))
+check_create.dir("e:/BadgeSims",param = paste0(param$namParam,apendScenar),
+                 values = c(""))
 
 rangparam<-param$rangParam
 
-for (i in 1:length(rangparam)) {
+for (i in 1:1) {
   param$folderL<-paste0(here("Simulations",
                             param$namParam),apendScenar,"_/")
   # param$folder<-param$folderL
-  param$rangParam<-c(rangparam[i])
+  # param$rangParam<-c(rangparam[i])
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
-  filenameL<-paste0(fileName,i,".json")
+  # filenameL<-paste0(fileName,i,".json")
+  filenameL<-paste0(fileName,".json")
   if(file.exists(paste(param$folderL,filenameL,sep = ''))){
     currFile<-fromJSON(paste(param$folderL,filenameL,sep = ''))
     if(sum(unlist(currFile)!=unlist(param))>0){
