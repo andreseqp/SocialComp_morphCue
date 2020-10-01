@@ -34,92 +34,80 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction 
 
-For social animals the outcome of interactions with con-specifics is an important 
-determinant of fitness. Irrespective of whether such interactions are of cooperative 
-or competitive nature, individual's actions and their partners will partly determine 
-their success in the reproductive arena. However, the best action for an individual 
-might vary depending on it's own conditions, and with whom they interact. 
-Thus, an individual making their action dependent on information about interacting 
+The outcome of interactions with con-specifics is an important 
+determinant of fitness in social animals. Irrespective of whether such interactions are cooperative 
+or competitive, the actions of interacting individual partly determine 
+their reproductive success. However, the best action for an individual 
+might vary depending on its condition, and that of individuals with whom it interacts. 
+Thus, acting based on information about interacting 
 partners is typically adaptive [@quinones_Negotiation_2016].
-The source of this information however is far from trivial. 
-In some cases interacting partners (signalers) might be 'willing' to provide accurate
+Acquiring this information, however, is far from trivial. 
+In some cases, interacting partners (signalers) might be 'willing' to provide accurate
 information, but in others it might be in their own interest to conceal information
 [@johnstone_Recognition_1997], or to provide erroneous information [@johnstone_Badges_1993]. 
-Typically, in a given context, some proportion of individuals will be interested 
-in broadcasting accurate information, and some others in hiding it. 
-Take for instance an interaction between two individuals where one can help the other. 
-Given some conditions of cost and benefits, the donor will be interested in helping 
-a related individual. So for a relative of the donor, 
-broadcasting kinship is advantageous; while for an unrelated individual, 
-concealing the lack of kinship will be better. This same pattern applies to 
+Typically, in a given context, some proportion of individuals will beenefit 
+from broadcasting accurate information, whereas others will benefit from hiding it. 
+Take, for instance, an interaction between two individuals where one can help the other. 
+Given some costs and benefits, a potential donor will be interested in helping 
+related individuals. Therefore, for a relative of the donor, 
+broadcasting kinship is advantageous, whereas for an unrelated individual, 
+concealing the lack of kinship is better. Similar scenarios may apply to 
 many aspects of social life such as finding mates, feeding offspring, dominance relationships 
-and aggressive interactions. In dominance and aggressive interactions an important 
-information to make actions dependent on is interacting partners fighting ability, 
+and aggressive interactions [@bradbury_Principles_2011; @moller_Female_1988; @tibbetts_Socially_2004].
+In dominance and aggressive interactions, an important piece of
+information to guide individual actions is interacting partners fighting ability, 
 which is sometimes referred to as Resource Holding Potential (RHP) [@parker_Assessment_1974], 
-or as we will here simply quality. This responsiveness to the quality of the 
-partner is achieved in communication systems such as badges of status (BS), 
-where an arbitrary signal conveys quality. 
-BS can be evolutionarily stable whenever the signal imposes a fitness cost which 
-decreases with the quality of an individual  [@botero_Evolution_2010; @johnstone_Badges_1993]. 
-So, low quality individuals can't afford the cost of the signal, 
-and it's no longer in their interest to fake quality. 
-The cost of the honest signal is a more general principle of communications systems, 
+or simply as quality. Responsiveness to the quality of the 
+partner is central to communication systems such as badges of status, 
+where an arbitrary signal conveys quality [@johnstone_Badges_1993; @rohwer_Social_1975a]. 
+Here, arbitrary refers to a signal which is not ontogeneteically correlated with quality. 
+Badges of status can be evolutionarily stable whenever the signal imposes a fitness cost which 
+decreases with the quality of an individual  [@botero_Evolution_2010; @johnstone_Badges_1993], 
+such that it's no longer in the interest of low quality individuals to fake quality by producing a
+large badge. The cost of honest signals is a more general principle of communications systems, 
 usually referred to as the handicap principle [@grafen_Biological_1990; @zahavi_Mate_1975]. 
 An alternative system of communication is one where individuals gather and store information
-about each individual they interact with. This information, directly collected by 
-each individual, should reliably allow them to react adaptively to the 
-quality difference with their opponent. This type of assessment strategy is often 
-referred to as individual recognition [IR, @whitfield_Plumage_1986]. Evidently, 
-IR is restricted to certain interaction structures, individuals are limited by cognitive 
-abilities in how many individuals they can recognize and track. Thus, IR and BS 
-have been assumed to be alternative communication systems fulfilling the same function, 
-but expected to evolve in populations under different conditions
-[@dale_Signaling_2001; @sheehan_There_2016]. There is no clear cut reason, however, 
-why both systems could not work together, in fact there is some evidence
+about each individual they interact with. This information should reliably allow 
+each individual to react adaptively to the quality difference with their opponent. 
+This type of assessment strategy is often referred to as individual recognition [@whitfield_Plumage_1986]. Evidently, individual recognition is restricted to 
+certain interaction structures, because individuals are limited by cognitive 
+abilities in how many individuals they can recognize and track. Thus, individual 
+recognition and badges of status have been assumed to be alternative communication 
+systems fulfilling the same function, reducing the costs of aggression in contests over resources. 
+Furthermore, badges of status and individual recognition are expected to evolve under different interaction structures, badges of status under global interactions and individual recognition
+under local interactions [@dale_Signaling_2001; @sheehan_There_2016].  There is no clear cut reason, however, why both systems could not work together, in fact there is some evidence
 that they can [@chaine_Manipulating_2018].
 
-A somewhat ignored aspect of communication systems, in the context of aggressive 
-interactions, is the cognitive aspects of the receiver module. 
-BS are often assume to be cognitively less demanding than IR 
-[@sheehan_There_2016]. The idea is that using IR, individuals need to store identity 
-and associated information about each individual they interact with. All this 
-information requires more memory and therefore is more demanding. In contrast,
-the response using BS have been thought as an innate response 
-[@botero_Evolution_2010; @johnstone_Badges_1993], where individuals use their 
-own quality and the opponent's badge to determine whether to aggressively contest 
-a resource. An alternative view of BS is that individuals learn to react to the signal
-based on their experiences [@guilford_Receiver_1991]. In line with that view, both
-communication systems would require the receivers to learn an association between
-the signal and the fighting ability of the bearer. In BS, this association would be a 
-a simple monotonic increase of fighting ability with the size of the badge, 
-and would be reinforced by every interaction, so in  principle it would be 
-quicker to learn. While in IR, the association would 
-be different for every individual, depending on the interacting partners. 
-Learning could be a unifying cognitive mechanism behind both types of communication 
-systems. This idea of learning being a general response mechanism has not been 
-thoroughly explored, nor in the empirical or theoretical literature. 
+A somewhat ignored component of communication systems, in the context of aggressive 
+interactions, is the cognitive aspects of the receiver module. Communication systems
+relying on badges of status are often assumed to be cognitively less demanding 
+than those involving individual recognition [@sheehan_There_2016] because in the latter, 
+individuals need to store identity and associated information about each individual 
+they interact with. In contrast, the response towards badges of status is often 
+thought to be innate [@botero_Evolution_2010; @johnstone_Badges_1993], with 
+individuals using their own quality and the opponent's badge to determine whether to aggressively
+engage in contest. An alternative view of badges of status is that individuals learn 
+to react to them based on their experiences [@guilford_Receiver_1991], which would imply that receivers must learn to associate signals with the fighting ability of bearers just as in systems based on individual recognition. In cases where badges of status vary quantitatively (e.g. in size or intensity), fighting ability may increase monotonically with attributes of the badge and would be reinforced by every interaction, so in principle learning would be faster than in systems involving individual recognition in which the association between signals and their meaning would vary depending on the interacting partners. In any case, learning could be a central cognitive mechanism in both types of communication systems, but the role of learning in these contexts has not been thoroughly explored in the empirical nor theoretical literature. 
 
 Associative learning is a key cognitive mechanism that allows individuals to associate
-rewards with environmental stimuli and appropriate behavior [@staddon_Adaptive_2016]. 
-Since it was originally described, associative learning has been found in all major
-vertebrate taxon, and many invertebrates [@heyes_Simple_2012;
-@macphail_Brain_1982; @staddon_Adaptive_2016; @behrens_Associative_2008].
-Using these associations to respond to environmental changes is particularly adaptive in
-complex environments [@dridi_Environmental_2016]. Besides its wide taxonomic and
-ecological relevance, associative learning has shown to be a flexible cognitive mechanism
-that can be tuned to different roles depending on the ecological situation 
-[@enquist_Power_2016; @quinones_Reinforcement_2019]. Despite all this, associative 
-learning is not often included in evolutionary explanations 
-[@fawcett_Exposing_2013; @kamil_Optimal_1983; @mcauliffe_Psychology_2015]. 
+rewards with environmental stimuli and thus behave adaptively [@staddon_Adaptive_2016]. 
+Associative learning exists in all major vertebrate taxa, and in many invertebrates [@heyes_Simple_2012;@macphail_Brain_1982; @staddon_Adaptive_2016; @behrens_Associative_2008].
+Theory has shown that natural selection favors these associations in complex environments
+where conditions are hard to predict [@dridi_Environmental_2016]. Besides its wide taxonomic and
+ecological relevance, associative learning is a flexible cognitive mechanism whose underpinings
+show interspecific variation [@enquist_Power_2016; @quinones_Reinforcement_2019], so 
+presumably, it has been modified by natural selection. Despite all this, associative 
+learning is not often included in the narrative of evolutionary explanations of 
+behavioural patterns [@fawcett_Exposing_2013; @kamil_Optimal_1983; @mcauliffe_Psychology_2015]. 
 Computational models of evolution can play an important role to overcome the 
 lack of integration between learning and evolution. Reinforcement learning theory 
-encompass a series of computational methods inspired on the psychological and 
+encompases a series of computational methods inspired on the psychological and 
 neurological mechanisms of associative learning [@sutton_Reinforcement_2018].
 These set of algorithms allow the implementation of biologically realistic problems, 
 capturing the essence of learning processes [@frankenhuis_Enriching_2018; @quinones_Reinforcement_2019]. 
-Furthermore, these algorithms can be embedded in evolutionary simulations in order 
-to have theoretical predictions of the effect that learning can have in behavioral [@leimar_Learning_2019]
-and morphological evolution.
+Furthermore, these algorithms can be embedded in evolutionary simulations to 
+generate theoretical predictions of the effect that learning can have in behavioral
+evolution [@leimar_Learning_2019].
 
 In here we present an evolutionary model where individuals use associative learning 
 to develop a tendency to behave aggressively (or  peacefully), in the context of
@@ -127,8 +115,8 @@ competition over resources, depending on the quantitative morphological trait
 they perceive in their opponent (badge). Over evolutionary time individuals evolve
 the size of their badge, and whether it depends on their quality. Under this simple
 set up, individuals can use the badge both as a signal of quality (BS)
-or as a trait for IR. We use the model to asses under what conditions of interaction
-structure we expect different communication signals evolve. 
+or as a trait for IR. We use the model to assess under what conditions of interaction
+structure we expect different communication signals to evolve. 
 
 
 ## References
