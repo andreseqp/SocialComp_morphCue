@@ -9,7 +9,7 @@ library("plotrix")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCostEvol1"
+scenario<-"nIntGroupEvolLear"
 variable<-gsub("[^[:alpha:]]",scenario,replacement = '')
 variable<-gsub("Evol",variable,replacement = '')
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
@@ -22,6 +22,7 @@ extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 nampar<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[1],"_")[[1]],1)),
              replacement = "")
+
 
 # (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 # (sdList<-grep("evol",listTest,value=TRUE))
@@ -142,46 +143,48 @@ legend("bottomright",legend=c("HH","HD","DD"),
 
 pdf(paste0(extSimsDir,"/summ_",nampar,".pdf"))
 
+# png(here("Simulations",paste0(scenario,"_"),
+#          paste0("BehavIntALL",".png")),
+#     width = 1400,height = 500)
+
+
 # Jitter for the replicates
-
-png(here("Simulations",paste0(scenario,"_"),
-         paste0("BehavIntALL",".png")),
-    width = 1400,height = 1000)
-
 evol[,posX:=match(get(nampar),sort(unique(get(nampar))))+
        runif(length(get(nampar)),
-             min = -0.2,max = 0.2)]
-cexAxis<-2;cexPoints<-2
+             min = -0.3,max = 0.3)]
+cexAxis<-1.5;cexPoints<-1.5
 yLim<-as.numeric(evol[,.(min(c(freqHH,freqHD,freqDD)),
               max(c(freqHH,freqHD,freqDD)))])+c(0,0.02)
-par(mfrow=c(1,3),xaxt="s",las=1)
+par(mfrow=c(1,3),xaxt="s",las=1,plt=posPlot())
 
 # frequency of interactions types
 
-bbHH<-boxplot(freqHH~get(nampar),data=evol[time>max(time)/2],
-         pch=16,xlab="Badge cost",cex.lab=2,
-         #xlab=variable,
+bbHH<-boxplot(freqHH~get(nampar),data=evol,
+         pch=16,cex.lab=2,
+         xlab=variable,
+         #xlab="Badge cost",
          ylab='',ylim=fivenum(evol$freqHH)[c(1,5)]+c(0,0.005),
          cex.axis=cexAxis,yaxt='s')
-with(evol[time>max(time)/2],{
+with(evol,{
   points(x=posX,y=freqHH,
          col = colSeeds[match(seed,unique(seed))],pch = 20,cex=cexPoints)
-  lines(y=rep(0.666^2,2),x=c(0.5,3.5))
-  ##text(x=posX+0.1,y=freqHH,labels = seed,cex=0.8)
+  # lines(y=rep(0.666^2,2),x=c(0.5,3.5))
+  text(x=posX+0.2,y=freqHH,labels = seed,cex=0.8)
   })
 mtext("HH",3,line = -2.5,cex=2)
 
 par(xaxt="s",las=1)
 bbHH<-boxplot(freqHD~get(nampar),data=evol[time>max(time)/2],
               pch=16,ylim=fivenum(evol$freqHD)[c(1,5)]+c(0,0.005),
-              xlab="Badge cost",#xlab=nampar,
+              #xlab="Badge cost",
+              xlab=nampar,
               ylab='',cex.lab=2,
               cex.axis=cexAxis)
 # axis(2,line = -2)
 with(evol[time>max(time)/2],{
   points(x=posX,y=freqHD,col = colSeeds[match(seed,unique(seed))],pch = 20,
          cex=cexPoints)
-  lines(y=rep(2*0.666*0.333,2),x=c(0.5,3.5))
+  # lines(y=rep(2*0.666*0.333,2),x=c(0.5,3.5))
   #text(x=posX+0.1,y=freqHD,labels = seed)
 })
 mtext("HD",3,line = -2.5,cex=2)
@@ -189,8 +192,8 @@ mtext("HD",3,line = -2.5,cex=2)
 bbHH<-boxplot(freqDD~get(nampar),data=evol[time>max(time)/2],
               pch=16,ylim=fivenum(evol$freqDD)[c(1,5)],#+c(0,0.0001),
               ylab='',cex.lab=2,
-              #xlab=variable,
-              xlab="Badge cost",
+              xlab=variable,
+              #xlab="Badge cost",
               cex.axis=cexAxis)
  # axis(2,line = -2)
 with(evol[time>max(time)/2],{
@@ -201,35 +204,46 @@ with(evol[time>max(time)/2],{
 })
 mtext("DD",3,line = -2.5,cex=2)
 
-dev.off()
+# dev.off()
+# 
+# png(here("Simulations",paste0(scenario,"_"),
+#          paste0("CueALL",".png")),
+#     width = 1400,height = 500)
+
 
 par(mfrow=c(1,2),xaxt="s",las=1)
 bpCue<-boxplot(meanCue~get(nampar),data=evol[time>max(time)/2],
               pch=16,xlab=variable,
+              #xlab = "Badge cost",
               ylab='',ylim=c(0,1.1),
               cex.axis=cexAxis,yaxt='s')
 # axis(2,line = -2)
 with(evol[time>max(time)/2],{
-  points(x=posX,y=meanCue,col = colSeeds[match(seed,unique(seed))],pch = 20)
+  points(x=posX,y=meanCue,col = colSeeds[match(seed,unique(seed))],pch = 20,
+         cex=cexPoints)
   #text(x=posX+0.1,y=meanCue,labels = seed)
 })
-mtext("Mean cue size",3,line = -3,cex=1)
+mtext("Mean cue size",3,line = -2,cex=2)
 
 
 bpCue<-boxplot(sdCue~get(nampar),data=evol[time>max(time)/2],
                pch=16,xlab=variable,
+               #xlab = "Badge cost",
                ylab='',
-               cex.axis=0.8,yaxt='s')
+               cex.axis=cexAxis,yaxt='s')
 
 with(evol[time>max(time)/2],{
-  points(x=posX,y=sdCue,col = colSeeds[match(seed,unique(seed))],pch = 20)
+  points(x=posX,y=sdCue,col = colSeeds[match(seed,unique(seed))],pch = 20,
+         cex=cexPoints)
   #text(x=posX+0.1,y=sdCue,labels = seed)
 })
-mtext("Cue sd",3,line = -15,cex=1)
+mtext("Cue sd",3,line = -2,cex=2)
 
+# dev.off()
 
 bpCue<-boxplot(meanAlpha~get(nampar),data=evol[time>max(time)/2],
                pch=16,xlab=variable,
+               #xlab = "Badge cost",
                ylab='',ylim=as.numeric(evol[,.(min(meanAlpha),
                                                      max(meanAlpha))])+c(0,0.4),
                cex.axis=0.8,yaxt='n')
@@ -248,7 +262,8 @@ bpCue<-boxplot(sdAlpha~get(nampar),data=evol[time>max(time)/2],
                cex.axis=0.8,yaxt='n')
 axis(2)
 with(evol[time>max(time)/2],{
-  points(x=posX,y=sdAlpha,col = colSeeds[match(seed,unique(seed))],pch = 20)
+  points(x=posX,y=sdAlpha,col = colSeeds[match(seed,unique(seed))],pch = 20,
+         cex=cexPoints)
   #text(x=posX+0.1,y=meanAlpha,labels = seed)
 })
 mtext("Alpha sd",3,line = -3,cex=1)

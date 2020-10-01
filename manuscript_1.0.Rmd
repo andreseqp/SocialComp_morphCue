@@ -9,8 +9,8 @@ author:
 - Redouan Bshary^[Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland]
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
-  word_document: default
   pdf_document: default
+  word_document: default
 fig_caption: yes
 fontsize: 12pt
 header-includes:
@@ -25,7 +25,7 @@ linespread: 2
 bibliography: SocialMorphCue.bib
 spacing: double
 style: C:\Users\andre\Zotero\styles\elife.csl
-abstract: Learning rules.
+abstract: Adaptive behavioural responses often depend on qualities of the interacting partner of an individual. For example, when competing for resources, an individual might be better off escalating fights with individuals of lower quality, while restraining from fighting individuals of higher quality. Communication systems involving signals of quality allow individuals to reduce uncertainty regarding the fighting ability of their partners and make more adaptive behavioral decisions. However, dishonest individuals can destabilize such communications systems. One open question is whether cognitive mechanisms, such as learning, can maintain the honesty of signals, thus, favoring their evolutionary stability. Here we present evolutionary simulations, where individuals can produce a signal proportional to their quality; and learn along their lifetime the best response to the signal emitted by their peers. In these simulations, learning on the receiver side can mediate the evolution of signals of quality on the sender side. When the cost of the signal is proportional to the quality of the sender populations are only composed of honest signalers. When the cost is not proportional to the quality of the signaler, the population is composed of both honest and dishonest signalers. We argue that learning can be a general cognitive mechanism playing a role in a wide range of communication systems.  
 ---
 
 ```{r setup, include=FALSE}
@@ -113,17 +113,17 @@ learning is not often included in evolutionary explanations
 [@fawcett_Exposing_2013; @kamil_Optimal_1983; @mcauliffe_Psychology_2015]. 
 Computational models of evolution can play an important role to overcome the 
 lack of integration between learning and evolution. Reinforcement learning theory 
-encompases a series of computational methods inspired on the psychological and 
+encompass a series of computational methods inspired on the psychological and 
 neurological mechanisms of associative learning [@sutton_Reinforcement_2018].
 These set of algorithms allow the implementation of biologically realistic problems, 
 capturing the essence of learning processes [@frankenhuis_Enriching_2018; @quinones_Reinforcement_2019]. 
-Furthermore, these algorithms can be embebed in evolutionary simulations in order 
+Furthermore, these algorithms can be embedded in evolutionary simulations in order 
 to have theoretical predictions of the effect that learning can have in behavioral [@leimar_Learning_2019]
 and morphological evolution.
 
 In here we present an evolutionary model where individuals use associative learning 
 to develop a tendency to behave aggressively (or  peacefully), in the context of
-competition over resoureces, depending on the quantitative morphological trait 
+competition over resources, depending on the quantitative morphological trait 
 they perceive in their opponent (badge). Over evolutionary time individuals evolve
 the size of their badge, and whether it depends on their quality. Under this simple
 set up, individuals can use the badge both as a signal of quality (BS)

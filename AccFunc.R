@@ -2,10 +2,13 @@
 
 # Libraries
 source(here("aesth.R"))
+library("jsonlite")
 library('rmarkdown')
 source(here("..","R_files","posPlots.R"))
+source(here("..","R_files","Filled.contour3.R"))
 # library('plotrix')
 library(data.table)
+require(lattice)
 
 # Calculate response triggered by one RBF --------------------------------------
 
@@ -92,6 +95,24 @@ filesScenar<-function(filename,scenario,full.name=FALSE){
   return(tmp)
 }
 
+# Load all the files for different scenarios  varying one parameter ----------------------
+
+
+filesCompScenar<-function(filename,scenario,full.name=FALSE){
+  par<-gsub(".txt","",tail(strsplit(filename,"_")[[1]],1))
+  parVal<-as.numeric(gsub("[[:alpha:]]",par,replacement = ''))
+  parNam<-gsub("[^[:alpha:]]",par,replacement = '')
+  if(full.name){
+    tmp<-fread(filename)
+  }
+  else{
+    tmp<-fread(here("Simulations",paste0(scenario,"_"),filename)) 
+  }
+  tmp[,eval(parNam):=parVal]
+  return(tmp)
+}
+
+
 # Visualize difference in parameters between 2 JSON files ----------------------
 
 diffJsons<-function(json1,json2){
@@ -148,6 +169,60 @@ Critic<-function(weights,centers,sigSq=0.01,nx=1000){
                 centers,sigSq,as.double(weights))
 }
 
+# Functio to generate evolutionary dynamics in the form of frecuency distributions
+
+evolDist<-function(indData,variable,nbins,range=NULL,pal, nlevels =10, 
+                   numx=1,numy=1,idx=1,idy=1,NewP=FALSE,
+                   cexAxis=2,xlab="x",ylab=variable, keyTitle="", ...){
+  if(is.null(range)){
+    maxV<-indData[,max(get(variable))];minV<-indData[,min(get(variable))]
+  }
+  else {maxV<-range[1];minV<-range[2]}
+  Interv<-seq(minV,maxV,length.out = nbins+1)
+  ints<-(Interv[2]-Interv[1])/2
+  bins<-seq(minV+ints,maxV-ints,length.out = nbins)
+  timeseq<-indData[,unique(time)]
+  indData[,Int:=findInterval(get(variable),Interv)]
+  indData[,bin:=bins[Int]]
+  totalCounts<-indData[,length(bin),by=.(time)]
+  # contour2<-as.data.frame(matrix(0,ncol = 3,nrow = nbins*length(timeseq)))
+  contourData<-dcast(indData[,length(bin)/totalCounts$V1[match(unique(time),time)],
+                             by=.(time,Int)],Int~time,
+                     value.var="V1")
+  contour1<-matrix(0,nrow = nbins,ncol = length(timeseq))
+  # count<-0
+  for(i in 1:nbins){
+    for(j in 1:length(timeseq)){
+      # count<-count+1
+      contour1[i,j]<-as.numeric(contourData[Int==i,j+1,with=FALSE])
+      # contour2[count,]<-c(bins[i],
+      #                     timeseq[j],
+      #                     as.numeric(contourData[Int==i,j+1,with=FALSE]))
+    }
+  }
+  # contour2[is.na(contour2)] <- 0
+  contour1[is.na(contour1)] <- 0
+  # names(contour2)<-c(variable,"time","counts")
+  # levelplot(data = contour2,
+  #           log(0.01+t(counts))~time*get(variable),col.regions =  pal)
+  # # par(plt=posPlot(numplotx = numx,numploty = numy,idplotx = idx,idploty = idy),
+  #                 new=NewP)
+  filled.contour(x=as.numeric(timeseq),y = as.numeric(bins),z = log(0.01+t(contour1)),
+                 color.palette = pal, nlevels = nlevels,plot.axes={
+                   axis(1,cex.axis=cexAxis)
+                   axis(2,cex.axis=cexAxis)
+                 },
+                 plot.title={
+                   title(xlab=xlab,cex.lab=2)
+                   mtext(ylab,2,cex=2,line=3,las=1)},
+                 key.title = {par(cex.main=cexAxis);title(main=keyTitle)}
+                 )
+}
+
+
+
+
+
 # #SBATCH --job-name=TestJOB		#Nombre del job
 # #SBATCH -p short			#Cola a usar, Default=short (Ver colas y límites en /hpcfs/shared/README/partitions.txt)
 # #SBATCH -N 1				#Nodos requeridos, Default=1
@@ -164,5 +239,7 @@ Critic<-function(weights,centers,sigSq=0.01,nx=1000){
 # echo "Soy un JOB de prueba"
 # echo "Corri en la maquina: "$host
 # echo "Corri el: "$date
+
+
 
 

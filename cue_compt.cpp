@@ -69,6 +69,8 @@ public:
 	double featActMean[20];
 	// records the distribution of Actor features at the end of learning for evolutionary dyn
 	double featCritMean[20];
+	// records the mean fitness of the populations
+	double meanFit;
 	// records the distribution of Critic features at the end of learning for evolutionary dyn
 	//vector<vector<int> > countIntTypesGen;
 	// records the frequency of interaction types for learning dyn
@@ -85,6 +87,8 @@ public:
 	// Historical record of total # ints at the point of sample records
 	vector<vector<int>> nTotDDIntsHist;
 	// Historical record of total # ints at the point of sample records
+	vector<vector<double>> cumPayoffs;
+	// Historical record of the cumpayoff along life of inds
 	vector<vector<int>> rivals;
 	// Historical record of the rivals faced at the point of sample records
 	vector<vector<vector<double> > > actFeatHistory;
@@ -108,6 +112,7 @@ printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 		nTotHHIntsHist.emplace_back(0);
 		nTotDDIntsHist.emplace_back(0);
 		rivals.emplace_back(0);
+		cumPayoffs.emplace_back(0);
 		for (int countSamples = 0; countSamples < nSamples; ++countSamples) {
 			if (countRecords == 0) {
 				sampledInd.emplace_back(0), counterRecords.emplace_back(0);
@@ -118,6 +123,7 @@ printingObj::printingObj(int nSamples, int nInt, int printLearnInt,
 			nTotHHIntsHist[countRecords].emplace_back(0);
 			nTotDDIntsHist[countRecords].emplace_back(0);
 			rivals[countRecords].emplace_back(0);
+			cumPayoffs[countRecords].emplace_back(0);
 			for (int countCenters = 0; countCenters < nCenters; ++countCenters) {
 				actFeatHistory[countRecords][countSamples].emplace_back(0);
 				critFeatHistory[countRecords][countSamples].emplace_back(0);
@@ -288,21 +294,22 @@ void printingObj::recordInd(int idSamInd, individual focal, int totNint,
 		critFeatHistory[counterRecords[idSamInd]][idSamInd][countCenters] =
 			focal.get_feat(0, countCenters);
 	}
-	if (counterRecords[idSamInd] == 0) {
-		nTotIntHist[counterRecords[idSamInd]][idSamInd] = totNint;
-		nTotHHIntsHist[counterRecords[idSamInd]][idSamInd] = countIntTypes[0];
-		nTotDDIntsHist[counterRecords[idSamInd]][idSamInd] = countIntTypes[2];
-	}
-	else {
+//if (counterRecords[idSamInd] == 0) {
+	nTotIntHist[counterRecords[idSamInd]][idSamInd] = totNint;
+	nTotHHIntsHist[counterRecords[idSamInd]][idSamInd] = countIntTypes[0];
+	nTotDDIntsHist[counterRecords[idSamInd]][idSamInd] = countIntTypes[2];
+//	}
+	/*else {
 		nTotIntHist[counterRecords[idSamInd]][idSamInd] = 
 			totNint - nTotIntHist[counterRecords[idSamInd]-1][idSamInd];
 		nTotHHIntsHist[counterRecords[idSamInd]][idSamInd] = 
 			countIntTypes[0] - nTotHHIntsHist[counterRecords[idSamInd]-1][idSamInd];
 		nTotDDIntsHist[counterRecords[idSamInd]][idSamInd] = 
 			countIntTypes[2] - nTotDDIntsHist[counterRecords[idSamInd]-1][idSamInd];
-	}
+	}*/
 	rivals[counterRecords[idSamInd]][idSamInd] = rivalId;
 	++counterRecords[idSamInd];
+	cumPayoffs[counterRecords[idSamInd]][idSamInd] = focal.cum_payoff;
 }
 
 void individual::calcRespValPref(individual partner) {
@@ -460,6 +467,7 @@ void get_stats(vector<individual> &popT, int popsize, printingObj &localPrint,in
 	localPrint.alphaMeanSd[1] = 0;
 	localPrint.betaMeanSd[0] = 0;
 	localPrint.betaMeanSd[1] = 0;
+	localPrint.meanFit = 0;
 	for(int countFeat = 0; countFeat<nFeat;++countFeat){
 		localPrint.featActMean[countFeat] = 0, localPrint.featCritMean[countFeat] = 0;
 	}
@@ -476,6 +484,7 @@ void get_stats(vector<individual> &popT, int popsize, printingObj &localPrint,in
 		localPrint.initCritMeanSd[1] += pow(itpop->get_inits(1), 2);
 		localPrint.initActMeanSd[0] += itpop->get_inits(0);
 		localPrint.initActMeanSd[1] += pow(itpop->get_inits(0), 2);
+		localPrint.meanFit += itpop->cum_payoff / itpop->ninterac;
 		for(int countFeat = 0; countFeat<nFeat;++countFeat){
 			localPrint.featActMean[countFeat] += itpop->get_feat(1,countFeat);
 			localPrint.featCritMean[countFeat] += itpop->get_feat(0, countFeat);
@@ -494,7 +503,8 @@ void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 				<< localPrint.nTotIntHist[cIntRecords][cSampled] << '\t'
 				<< localPrint.nTotHHIntsHist[cIntRecords][cSampled] << '\t'
 				<< localPrint.nTotDDIntsHist[cIntRecords][cSampled] << '\t'
-				<< localPrint.rivals[cIntRecords][cSampled] << '\t';
+				<< localPrint.rivals[cIntRecords][cSampled] << '\t'
+				<< localPrint.cumPayoffs[cIntRecords][cSampled] << '\t';
 				/*genoutput << localPrint.countIntTypesGen[cIntRecords][0] << '\t' <<
 				localPrint.countIntTypesGen[cIntRecords][1] << '\t' <<
 				localPrint.countIntTypesGen[cIntRecords][2] << '\t';*/
@@ -629,6 +639,7 @@ void printStats(int popsize,ofstream &evolOutput,
 	evolOutput << initCritSD << '\t';
 	evolOutput << localPrint.initActMeanSd[0] * invertPopsize << '\t';
 	evolOutput << initActSD << '\t';
+	evolOutput << localPrint.meanFit * invertPopsize << '\t';
 	for (int countFeat = 0; countFeat < nFeat; ++countFeat) {
 		evolOutput << localPrint.featActMean[countFeat] * invertNlearners << '\t';
 		evolOutput << localPrint.featCritMean[countFeat] * invertNlearners << '\t';
@@ -697,7 +708,7 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	evolOutput << "freqDD" << '\t' << "meanCue" << '\t' << "sdCue" << '\t';
 	evolOutput << "meanAlpha" << '\t' << "sdAlpha" << '\t' << "meanBeta" << '\t';
 	evolOutput << "sdBeta" << '\t' << "meanInitCrit" <<'\t' << "sdInitCrit" << '\t';
-	evolOutput <<  "meanInitAct" << '\t' << "sdInitAct" << '\t';
+	evolOutput << "meanInitAct" << '\t' << "sdInitAct" << '\t' << "meanFit" << '\t';
 	for(int countFeat=0;countFeat<param["nCenters"];++countFeat){
 		evolOutput << "WeightAct_" + itos(countFeat) << '\t';
 		evolOutput << "WeightCrit_" + itos(countFeat) << '\t';
@@ -724,7 +735,7 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 	indOutput.open(IndFile.c_str());
 	indOutput << "seed" << '\t' << "time" << '\t' << "nInteract" << '\t'
 		<< "indId" << '\t' << "ntotInteract" << '\t' << "nint_HH" << '\t' 
-		<< "nint_DD" << '\t' << "rivalId" << '\t'
+		<< "nint_DD" << '\t' << "rivalId" << '\t'  << "cumPayoff" << '\t'
 		<< "Quality" << '\t' << "genotype" << '\t' << "alpha" << '\t'
 		<< "beta" << '\t' << "Badge" << '\t' << "initCrit" << '\t' << "initAct" 
 		<< '\t';
@@ -767,7 +778,7 @@ int main(int argc, char* argv[]) {
 	//param["betaBad"]			 = 0;
 	//param["alphaCrit"]     	 = 0.01;
 	//param["alphaAct"]     	 = 0.01;
-	//paramL["gamma"]          = 0;
+	//param["gamma"]          = 0;
 	//param["sigSq"]        	 = 0.01;
 	//param["nCenters"]     	 = 6;
 	//param["initCrit"]          = 0;

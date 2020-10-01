@@ -9,30 +9,31 @@ source(here("AccFunc.R"))
 fileName<-"parameters"
 here()
 
-param1<-fromJSON(here("Simulations","alphaAct_","parameters21.json"))
+param1<-fromJSON(paste0("E:/BadgeSims","/nIntGroupEvol1_","/parameters.json"))
+  #fromJSON(here("Simulations","nIntGroupEvol1","parameters.json"))
 
-param<-list(totGen   =5,   nRep    = 30,
-            printGen = 1,   printLearn = 1,
+param<-list(totGen   =15000,   nRep    = 8,
+            printGen = 1000,   printLearn = 1000,
             printLearnInt = 50,
             popSize  = 2000,  baselineFit = 2,   
-            MutSd    = 0.3,
-            nInt        = 1000,  init     = c(0,0,1),
+            MutSd    = 0.2,
+            nInt        = 300,  init     = c(0,0,1),
             mutRate  = 0.001,  mutType  = 0,
             sampleSize = 50,   strQual  = 10,
-            errorQual = 0,    alphaBad	 = 3,    betaBad	 = 6,
+            errorQual = 0,    alphaBad	 = 0,    betaBad	 = 0,
             alphaCrit  = 0.5,  alphaAct = 0.5,
-            sigSq   	 = 0.001, nCenters = 10,
+            sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,   gamma = 0,
             QualStDv   = 1.1, betCost = 0,
             alphCost	 = 3, mutLearn = FALSE,
             nIntGroup  = 2000,
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "nIntGroup",
-            rangParam = c(4,6,8,10,20,50,1000),
+            rangParam = c(2000,8),
             folderL=paste(here("Simulations"),"/",sep=""))
 
 
-apendScenar<-"LearnIR"
+apendScenar<-"Evol2"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
