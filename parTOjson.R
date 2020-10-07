@@ -12,14 +12,14 @@ here()
 param1<-fromJSON(paste0("E:/BadgeSims","/nIntGroupEvol1_","/parameters.json"))
   #fromJSON(here("Simulations","nIntGroupEvol1","parameters.json"))
 
-param<-list(totGen   =15000,   nRep    = 8,
+param<-list(totGen   =20000,   nRep    = 30,
             printGen = 1000,   printLearn = 1000,
             printLearnInt = 50,
             popSize  = 2000,  baselineFit = 2,   
-            MutSd    = 0.2,
-            nInt        = 300,  init     = c(0,0,1),
+            MutSd    = 0.3,
+            nInt        = 500,  init     = c(0,0,1,0),
             mutRate  = 0.001,  mutType  = 0,
-            sampleSize = 50,   strQual  = 10,
+            sampleSize = 100,   strQual  = 10,
             errorQual = 0,    alphaBad	 = 0,    betaBad	 = 0,
             alphaCrit  = 0.5,  alphaAct = 0.5,
             sigSq   	 = 0.01, nCenters = 6,
@@ -29,11 +29,13 @@ param<-list(totGen   =15000,   nRep    = 8,
             nIntGroup  = 2000,
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "nIntGroup",
-            rangParam = c(2000,8),
-            folderL=paste(here("Simulations"),"/",sep=""))
+            rangParam = c(2,3,5),
+            typeAgent = 3,
+            folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
+# folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for realease
 
 
-apendScenar<-"Evol2"
+apendScenar<-"Evol4"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
@@ -82,8 +84,8 @@ rangparam<-param$rangParam
 
 for (i in 1:1) {
   param$folderL<-paste0(here("Simulations",
-                            param$namParam),apendScenar,"_/")
-  # param$folder<-param$folderL
+                            param$namParam),apendScenar,"_/") # comment for debug
+  # param$folder<-param$folderL # for debug
   # param$rangParam<-c(rangparam[i])
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   # filenameL<-paste0(fileName,i,".json")

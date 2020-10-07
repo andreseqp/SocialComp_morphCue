@@ -31,6 +31,10 @@ logist<-function(x,alpha=0,beta=1){
   return(1/(1+exp(alpha-beta*x)))
 }
 
+logist3d<-function(qual,rivalBadge,alpha=0,beta=1, gamma=0){
+  return(1/(1+exp(alpha-beta*qual-gamma*rivalBadge)))
+}
+
 # inverted Logistic function ------------------------------------------------------------
 
 invertLogist<-function(x,alpha=0,beta=1){

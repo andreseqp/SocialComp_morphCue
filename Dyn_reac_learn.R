@@ -1,4 +1,4 @@
-# Evolutionary dynamics for individual runs, reaction norms of sampled 
+# Evolutionary dynamics for averages and individual runs, reaction norms of sampled 
 # individuals and their learning profiles
 
 # Required libraries -----------------------------------------------------------
@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvolLear"
+scenario<-"test"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
   paste0("e:/BadgeSims/",scenario,"_")
@@ -20,9 +20,9 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 
 # Load files -------------------------------------------------------------------
 # Project folder
-# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 # External sims folder
-(listTest<-list.files(extSimsDir,full.names = TRUE))
+# (listTest<-list.files(extSimsDir,full.names = TRUE))
 
 (evolList<-grep("evolLearn",listTest,value=TRUE))
 (indList<-grep("indLearn",listTest,value=TRUE))
@@ -34,7 +34,7 @@ param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
 numCores <- length(indList)
 registerDoParallel(numCores)
 
-val<-2
+val<-4
 
 # loop to produce pdfs for parameter values
 foreach(val = 1:length(indList),.packages = c("data.table","here")) %dopar% {
@@ -43,11 +43,12 @@ source(here("AccFunc.R"))
   fileId<-val
 
 # Project folder
-# evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
+evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 # pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 # External sims folder
-evol<-fread(evolList[fileId])
-pop<-fread(indList[fileId])
+
+# evol<-fread(evolList[fileId])
+# pop<-fread(indList[fileId])
 
 Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(indList[val],"_")[[1]],1)),
              replacement = "")
@@ -104,22 +105,22 @@ evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
                    lowIQR.freqHH = fivenum(freqHH)[2],
                    lowIQR.freqHD = fivenum(freqHD)[2],
                    lowIQR.freqDD = fivenum(freqDD)[2],
-                   m.weightAct_0=mean(WeightAct_0),
-                   m.weightAct_1=mean(WeightAct_1),
-                   m.weightAct_2=mean(WeightAct_2),
-                   m.weightAct_3=mean(WeightAct_3),
-                   m.weightAct_4=mean(WeightAct_4),
-                   m.weightAct_5=mean(WeightAct_5),
+                   # m.weightAct_0=mean(WeightAct_0),
+                   # m.weightAct_1=mean(WeightAct_1),
+                   # m.weightAct_2=mean(WeightAct_2),
+                   # m.weightAct_3=mean(WeightAct_3),
+                   # m.weightAct_4=mean(WeightAct_4),
+                   # m.weightAct_5=mean(WeightAct_5),
                    # m.weightAct_6=mean(WeightAct_6),
                    # m.weightAct_7=mean(WeightAct_7),
                    # m.weightAct_8=mean(WeightAct_8),
                    # m.weightAct_9=mean(WeightAct_9),
-                   m.weightCrit_0=mean(WeightCrit_0),
-                   m.weightCrit_1=mean(WeightCrit_1),
-                   m.weightCrit_2=mean(WeightCrit_2),
-                   m.weightCrit_3=mean(WeightCrit_3),
-                   m.weightCrit_4=mean(WeightCrit_4),
-                   m.weightCrit_5=mean(WeightCrit_5)
+                   # m.weightCrit_0=mean(WeightCrit_0),
+                   # m.weightCrit_1=mean(WeightCrit_1),
+                   # m.weightCrit_2=mean(WeightCrit_2),
+                   # m.weightCrit_3=mean(WeightCrit_3),
+                   # m.weightCrit_4=mean(WeightCrit_4),
+                   # m.weightCrit_5=mean(WeightCrit_5)
                    # ,
                    # m.weightCrit_6=mean(WeightCrit_6),
                    # m.weightCrit_7=mean(WeightCrit_7),
