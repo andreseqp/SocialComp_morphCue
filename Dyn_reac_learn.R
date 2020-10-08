@@ -34,7 +34,7 @@ param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
 numCores <- length(indList)
 registerDoParallel(numCores)
 
-val<-4
+val<-1
 
 # loop to produce pdfs for parameter values
 foreach(val = 1:length(indList),.packages = c("data.table","here")) %dopar% {
@@ -44,7 +44,7 @@ source(here("AccFunc.R"))
 
 # Project folder
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
-# pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
+pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 # External sims folder
 
 # evol<-fread(evolList[fileId])
@@ -65,68 +65,84 @@ sigSquar<-param$sigSq
 #     })))
 
 # Get stats from the evolutionary simulations ----------------------------------
+names(evol)
 
-evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
-                   upIQR.freqGenHawk=fivenum(freqGenHawks)[4],
-                   lowIQR.freqGenHawk=fivenum(freqGenHawks)[2],
-                   m.freqGenDove=mean(freqGenDove),
-                   upIQR.freqGenDove=fivenum(freqGenDove)[4],
-                   lowIQR.freqGenDove=fivenum(freqGenDove)[2],
-                   m.freqEval=mean(freqGenEval),
-                   upIQR.freqGenEval=fivenum(freqGenEval)[4],
-                   lowIQR.freqGenEval=fivenum(freqGenEval)[2], 
-                   m.freqFenHawk=mean(freqFenHawks),
-                   upIQR.freqFenHawk=fivenum(freqFenHawks)[4],
-                   lowIQR.freqFenHawk=fivenum(freqFenHawks)[2],
-                   m.freqFenDove=mean(freqFenDoves),
-                   upIQR.freqFenDove=fivenum(freqFenDoves)[4],
-                   lowIQR.freqFenDove=fivenum(freqFenDoves)[2],
-                   m.meanAlpha=mean(meanAlpha),
-                   upIQR.alpha=fivenum(meanAlpha)[4],
-                   lowIQR.alpha=fivenum(meanAlpha)[2],
-                   m.meanBeta=mean(meanBeta),
-                   upIQR.beta=fivenum(meanBeta)[4],
-                   lowIQR.beta=fivenum(meanBeta)[2],
-                   m.meanInCrit=mean(meanInitCrit),
-                   upIQR.InCrit=fivenum(meanInitCrit)[4],
-                   lowIQR.InCrit=fivenum(meanInitCrit)[2],
-                   m.meanInAct=mean(meanInitAct),
-                   upIQR.InAct=fivenum(meanInitAct)[4],
-                   lowIQR.InAct=fivenum(meanInitAct)[2],
-                   # m.meanFit=mean(meanFit),
-                   # upIQR.meanFit=fivenum(meanFit)[4],
-                   # lowIQR.meanFit=fivenum(meanFit)[2],
-                   m.freqHH = mean(freqHH),
-                   m.freqHD = mean(freqHD),
-                   m.freqDD = mean(freqDD),
-                   upIQR.freqHH = fivenum(freqHH)[4],
-                   upIQR.freqHD = fivenum(freqHD)[4],
-                   upIQR.freqDD = fivenum(freqDD)[4],
-                   lowIQR.freqHH = fivenum(freqHH)[2],
-                   lowIQR.freqHD = fivenum(freqHD)[2],
-                   lowIQR.freqDD = fivenum(freqDD)[2],
-                   # m.weightAct_0=mean(WeightAct_0),
-                   # m.weightAct_1=mean(WeightAct_1),
-                   # m.weightAct_2=mean(WeightAct_2),
-                   # m.weightAct_3=mean(WeightAct_3),
-                   # m.weightAct_4=mean(WeightAct_4),
-                   # m.weightAct_5=mean(WeightAct_5),
-                   # m.weightAct_6=mean(WeightAct_6),
-                   # m.weightAct_7=mean(WeightAct_7),
-                   # m.weightAct_8=mean(WeightAct_8),
-                   # m.weightAct_9=mean(WeightAct_9),
-                   # m.weightCrit_0=mean(WeightCrit_0),
-                   # m.weightCrit_1=mean(WeightCrit_1),
-                   # m.weightCrit_2=mean(WeightCrit_2),
-                   # m.weightCrit_3=mean(WeightCrit_3),
-                   # m.weightCrit_4=mean(WeightCrit_4),
-                   # m.weightCrit_5=mean(WeightCrit_5)
-                   # ,
-                   # m.weightCrit_6=mean(WeightCrit_6),
-                   # m.weightCrit_7=mean(WeightCrit_7),
-                   # m.weightCrit_8=mean(WeightCrit_8),
-                   # m.weightCrit_9=mean(WeightCrit_9)
-                   ),by=time]
+cols<-c("freqGenHawks","freqGenDove",  "freqGenEval",  "freqGenLearn",
+        "freqFenHawks", "freqFenDoves", "freqHH", "freqHD", "freqDD", "meanCue",
+        "meanAlpha", "meanBeta", "meanFit","meanInitCrit", "sdInitCrit",
+        "meanInitAct", "sdInitAct", "WeightAct_0","WeightCrit_0",
+        "WeightAct_1","WeightCrit_1","WeightAct_2",  "WeightCrit_2",
+        "WeightAct_3",  "WeightCrit_3", "WeightAct_4",  "WeightCrit_4",
+        "WeightAct_5","WeightCrit_5")
+
+my.summary<- function(x) list(mean = mean(x), lowIQR = fivenum(x)[2], 
+                              upIQR = fivenum(x)[4])
+
+evolStats<-evol[, as.list(unlist(lapply(.SD, my.summary))), .SDcols = cols,by=time]
+
+
+
+# evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
+#                    upIQR.freqGenHawk=fivenum(freqGenHawks)[4],
+#                    lowIQR.freqGenHawk=fivenum(freqGenHawks)[2],
+#                    m.freqGenDove=mean(freqGenDove),
+#                    upIQR.freqGenDove=fivenum(freqGenDove)[4],
+#                    lowIQR.freqGenDove=fivenum(freqGenDove)[2],
+#                    m.freqEval=mean(freqGenEval),
+#                    upIQR.freqGenEval=fivenum(freqGenEval)[4],
+#                    lowIQR.freqGenEval=fivenum(freqGenEval)[2], 
+#                    m.freqFenHawk=mean(freqFenHawks),
+#                    upIQR.freqFenHawk=fivenum(freqFenHawks)[4],
+#                    lowIQR.freqFenHawk=fivenum(freqFenHawks)[2],
+#                    m.freqFenDove=mean(freqFenDoves),
+#                    upIQR.freqFenDove=fivenum(freqFenDoves)[4],
+#                    lowIQR.freqFenDove=fivenum(freqFenDoves)[2],
+#                    m.meanAlpha=mean(meanAlpha),
+#                    upIQR.alpha=fivenum(meanAlpha)[4],
+#                    lowIQR.alpha=fivenum(meanAlpha)[2],
+#                    m.meanBeta=mean(meanBeta),
+#                    upIQR.beta=fivenum(meanBeta)[4],
+#                    lowIQR.beta=fivenum(meanBeta)[2],
+#                    m.meanInCrit=mean(meanInitCrit),
+#                    upIQR.InCrit=fivenum(meanInitCrit)[4],
+#                    lowIQR.InCrit=fivenum(meanInitCrit)[2],
+#                    m.meanInAct=mean(meanInitAct),
+#                    upIQR.InAct=fivenum(meanInitAct)[4],
+#                    lowIQR.InAct=fivenum(meanInitAct)[2],
+#                    # m.meanFit=mean(meanFit),
+#                    # upIQR.meanFit=fivenum(meanFit)[4],
+#                    # lowIQR.meanFit=fivenum(meanFit)[2],
+#                    m.freqHH = mean(freqHH),
+#                    m.freqHD = mean(freqHD),
+#                    m.freqDD = mean(freqDD),
+#                    upIQR.freqHH = fivenum(freqHH)[4],
+#                    upIQR.freqHD = fivenum(freqHD)[4],
+#                    upIQR.freqDD = fivenum(freqDD)[4],
+#                    lowIQR.freqHH = fivenum(freqHH)[2],
+#                    lowIQR.freqHD = fivenum(freqHD)[2],
+#                    lowIQR.freqDD = fivenum(freqDD)[2],
+#                    # m.weightAct_0=mean(WeightAct_0),
+#                    # m.weightAct_1=mean(WeightAct_1),
+#                    # m.weightAct_2=mean(WeightAct_2),
+#                    # m.weightAct_3=mean(WeightAct_3),
+#                    # m.weightAct_4=mean(WeightAct_4),
+#                    # m.weightAct_5=mean(WeightAct_5),
+#                    # m.weightAct_6=mean(WeightAct_6),
+#                    # m.weightAct_7=mean(WeightAct_7),
+#                    # m.weightAct_8=mean(WeightAct_8),
+#                    # m.weightAct_9=mean(WeightAct_9),
+#                    # m.weightCrit_0=mean(WeightCrit_0),
+#                    # m.weightCrit_1=mean(WeightCrit_1),
+#                    # m.weightCrit_2=mean(WeightCrit_2),
+#                    # m.weightCrit_3=mean(WeightCrit_3),
+#                    # m.weightCrit_4=mean(WeightCrit_4),
+#                    # m.weightCrit_5=mean(WeightCrit_5)
+#                    # ,
+#                    # m.weightCrit_6=mean(WeightCrit_6),
+#                    # m.weightCrit_7=mean(WeightCrit_7),
+#                    # m.weightCrit_8=mean(WeightCrit_8),
+#                    # m.weightCrit_9=mean(WeightCrit_9)
+#                    ),by=time]
 
 ## Calculate proxy of mean fitness for individuals
 
@@ -149,16 +165,16 @@ plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
      xlab="",ylab="Trait value",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
 # Variation among replicates
 polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.alpha,rev(evolStats$lowIQR.alpha)),
+        y=c(evolStats$meanAlpha.upIQR,rev(evolStats$meanAlpha.lowIQR)),
         col=colGenesPol[1],border = NA)
 polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.beta,rev(evolStats$lowIQR.beta)),
+        y=c(evolStats$meanBeta.upIQR,rev(evolStats$meanBeta.lowIQR)),
         col=colGenesPol[2],border = NA)
 
 
 with(evolStats,{
-  lines(time,m.meanAlpha,col=colGenesLin[1],lwd=3)
-  lines(time,m.meanBeta,col=colGenesLin[2],lwd=3)
+  lines(time,meanAlpha.mean,col=colGenesLin[1],lwd=3)
+  lines(time,meanBeta.mean,col=colGenesLin[2],lwd=3)
   # lines(time,m.meanInCrit,col=colGenesLin[1],lwd=3)
   # lines(time,m.meanInAct,col=colGenesLin[2],lwd=3)
 })
@@ -166,7 +182,7 @@ legend("topleft",legend = c(expression(alpha),expression(beta)),
        col=colGenesLin,lwd=2,bty = "n")
 axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 
-# Evolutionary Dynamics of learing parameters
+# Evolutionary Dynamics of learning parameters
 
 # par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 2,
 #                 lowboundx = 8,upboundx = 93),xaxt="s",las=1,new=TRUE)
@@ -174,14 +190,14 @@ axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 #      ylim=fivenum(as.matrix(evol[,meanInitCrit,meanInitAct]))[c(1,5)],yaxt="n",
 #      xlab="",ylab="",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
 # polygon(x=c(evolStats$time,rev(evolStats$time)),
-#         y=c(evolStats$upIQR.meanFit,rev(evolStats$lowIQR.meanFit)),
+#         y=c(evolStats$meanFit.upIQR,rev(evolStats$meanFit.lowIQR)),
 #         col=colGenesPol[1],border = NA)
 # # polygon(x=c(evolStats$time,rev(evolStats$time)),
-# #         y=c(evolStats$upIQR.InAct,rev(evolStats$lowIQR.InAct)),
+# #         y=c(evolStats$InAct.upIQR,rev(evolStats$InAct.lowIQR)),
 # #         col=colGenesPol[2],border = NA)
 # with(evolStats,{
-#   lines(time,m.meanFit,col=colGenesLin[1],lwd=3)
-#   # lines(time,m.meanInAct,col=colGenesLin[2],lwd=3)
+#   lines(time,meanFit.mean,col=colGenesLin[1],lwd=3)
+#   # lines(time,meanInAct.mean,col=colGenesLin[2],lwd=3)
 # })
 # legend("topleft",legend = c("mean Fit"),
 #        col=colGenesLin[1],lwd=2,bty = "n")
@@ -189,24 +205,24 @@ axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 
 # Evolutionary Dynamics of mean fitness
 
-# par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 2,
-#                 lowboundx = 8,upboundx = 93),xaxt="s",las=1,new=TRUE)
-# plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
-#      ylim=fivenum(as.matrix(evol[,meanFit]))[c(1,5)],yaxt="n",
-#      xlab="",ylab="",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 2,
+                lowboundx = 8,upboundx = 93),xaxt="s",las=1,new=TRUE)
+plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
+     ylim=fivenum(as.matrix(evol[,meanFit]))[c(1,5)],yaxt="n",
+     xlab="",ylab="",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
+polygon(x=c(evolStats$time,rev(evolStats$time)),
+        y=c(evolStats$meanFit.upIQR,rev(evolStats$meanFit.lowIQR)),
+        col=colGenesPol[1],border = NA)
 # polygon(x=c(evolStats$time,rev(evolStats$time)),
-#         y=c(evolStats$upIQR.meanFit,rev(evolStats$lowIQR.meanFit)),
-#         col=colGenesPol[1],border = NA)
-# # polygon(x=c(evolStats$time,rev(evolStats$time)),
-# #         y=c(evolStats$upIQR.InAct,rev(evolStats$lowIQR.InAct)),
-# #         col=colGenesPol[2],border = NA)
-# with(evolStats,{
-#   lines(time,m.meanFit,col=colGenesLin[1],lwd=3)
-#   # lines(time,m.meanInAct,col=colGenesLin[2],lwd=3)
-# })
-# legend("topleft",legend = c("mean Fit"),
-#        col=colGenesLin[1],lwd=2,bty = "n")
-# axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
+#         y=c(evolStats$InAct.upIQR,rev(evolStats$InAct.lowIQR)),
+#         col=colGenesPol[2],border = NA)
+with(evolStats,{
+  lines(time,meanFit.mean,col=colGenesLin[1],lwd=3)
+  # lines(time,meanInAct.mean,col=colGenesLin[2],lwd=3)
+})
+legend("topleft",legend = c("mean Fit"),
+       col=colGenesLin[1],lwd=2,bty = "n")
+axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 
 
 # Dynamics of behavioural interactions 
@@ -221,15 +237,15 @@ axis(4,cex=0.8,padj = -0.5)
 
 # Variation among replicates
 polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.freqHH,rev(evolStats$lowIQR.freqHH)),
+        y=c(evolStats$freqHH.upIQR,rev(evolStats$freqHH.lowIQR)),
         col=colIntTypesPol[1],border = NA)
 polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.freqDD,rev(evolStats$lowIQR.freqDD)),
+        y=c(evolStats$freqDD.upIQR,rev(evolStats$freqDD.lowIQR)),
         col=colIntTypesPol[2],border = NA)
 with(evolStats,{
-  lines(time,m.freqHH,col=colIntTypesLin[1],lwd=3)
-  lines(time,m.freqDD,col=colIntTypesLin[2],lwd=3)
-  lines(time,m.freqHD,col=colIntTypesLin[3],lwd=3)
+  lines(time,freqHH.mean,col=colIntTypesLin[1],lwd=3)
+  lines(time,freqDD.mean,col=colIntTypesLin[2],lwd=3)
+  lines(time,freqHD.mean,col=colIntTypesLin[3],lwd=3)
   lines(x=c(0,max(time)),y=c(0.6666,0.6666)^2,col=colIntTypesLin[1],lwd=2,lty=2)
   lines(x=c(0,max(time)),y=c(0.3333,0.3333)^2,col=colIntTypesLin[2],lwd=2,lty=2)
   lines(x=c(0,max(time)),y=c(0.6666*0.33333,0.6666*0.33333)*2+0.01,
@@ -298,8 +314,9 @@ for(genC in genstoPrint){
   
   lines(logist(totRBF(rangx,centers,sigSquar,
                       as.double(evolStats[(time==unique(time)[genC]),.SD,
-                                .SDcols=grep("m.weightAct",
-                                             names(evolStats),value = TRUE)])),
+                                .SDcols=grep('(?=.*WeightAct)(?=.*mean)',
+                                             names(evolStats),value = TRUE,
+                                             perl=TRUE)])),
                       alpha=0,beta=1)~rangx,
         col = "black",lwd=2)
   text(x=0.5,y=0.1,labels = paste0("time=",unique(evolStats$time)[genC]))
@@ -319,8 +336,8 @@ for(genC in genstoPrint){
        col=rgb(t(col2rgb(2:10)),maxColorValue = 255,alpha=80),lty=1)
   lines(x=rangx,y=sapply(rangx, function(y){
     do.call(logist,as.list(c(y,as.double(evolStats[(time==unique(time)[genC]),.SD,
-                                                   .SDcols=c("m.meanAlpha"
-                                                             ,"m.meanBeta")]))))  
+                                                   .SDcols=c("meanAlpha.mean"
+                                                             ,"meanBeta.mean")]))))  
   }),col = 1,lwd=3)
 }
 rm(list=grep("temp",ls(),value = T))
@@ -342,7 +359,7 @@ finReps<-evol[time==max(time),seed]
 
 
 for(runChoi in finReps){
-# runChoi<-0
+ runChoi<-0
 
 # Average trajectory
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
@@ -438,11 +455,11 @@ matlines(x=traitsTrajs[,time],
   lines(x=c(0,max(traitsTrajs[,time])),y=c(0.6666*0.33333,0.6666*0.33333)*2+0.01,
         col=colIntTypesLin[3],lwd=2,lty=2)
   with(evolStats,{
-    lines(time,m.freqHH,col="grey",lwd=2,lty=2)
+    lines(time,freqHH.mean,col="grey",lwd=2,lty=2)
   })
   
 
-legend("topleft",legend = c("HH","DD","HD"),ncol = 3,
+ legend("topleft",legend = c("HH","DD","HD"),ncol = 3,
        col=colIntTypesLin,lwd=2,bty = "n",cex=0.8)
 
 # Choose which interaction to visualize
@@ -557,15 +574,15 @@ matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
 # variation among replicates in reaction norms parameters
 
 polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.alpha,rev(evolStats$lowIQR.alpha)),
+        y=c(evolStats$meanAlpha.mean,rev(evolStats$meanAlpha.lowIQR)),
         col=colGenesPol[1],border = NA)
 polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.beta,rev(evolStats$lowIQR.beta)),
+        y=c(evolStats$meanBeta.upIQR,rev(evolStats$meanBeta.lowIQR)),
         col=colGenesPol[2],border = NA)
 # Mean value in reaction norm parameters
 with(evolStats,{
-  lines(time,m.meanAlpha,col=colGenesLin[1],lwd=3)
-  lines(time,m.meanBeta,col=colGenesLin[2],lwd=3)
+  lines(time,meanAlpha.mean,col=colGenesLin[1],lwd=3)
+  lines(time,meanBeta.mean,col=colGenesLin[2],lwd=3)
   # lines(time,m.meanInCrit,col=colGenesLin[1],lwd=3)
   # lines(time,m.meanInAct,col=colGenesLin[2],lwd=3)
 })
@@ -579,7 +596,7 @@ par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 2, idplotx = 2,
                 lowboundx = 8,upboundx = 93),
     xaxt="s",las=1,new=TRUE)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col=0,
-     ylim=c(min(evolStats$lowIQR.freqHH)-0.1,max(evolStats$upIQR.freqHH)+0.05),
+     ylim=c(min(evolStats$freqHH.lowIQR)-0.1,max(evolStats$freqHH.upIQR)+0.05),
      xlab="",ylab="",yaxt="n",
      cex.lab=1.5,cex.axis=cexAxis,xaxt='n',las=1)
 axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/1000,cex.axis=cexAxis)
@@ -588,15 +605,15 @@ axis(2,cex=0.8,col = colIntTypesLin[1],hadj = -1.2,tcl=0.3,
 
 # Variation among replicates
 polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.freqHH,rev(evolStats$lowIQR.freqHH)),
+        y=c(evolStats$freqHH.upIQR,rev(evolStats$freqHH.lowIQR)),
         col=colIntTypesPol[1],border = NA)
 with(evolStats,{
-  lines(time,m.freqHH,col=colIntTypesLin[1],lwd=3)
+  lines(time,freqHH.mean,col=colIntTypesLin[1],lwd=3)
 })
 
 par(new=T)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col=0,
-     ylim=c(min(evolStats$lowIQR.freqHD)-0.05,max(evolStats$upIQR.freqHD)+0.1),
+     ylim=c(min(evolStats$freqHD.lowIQR)-0.05,max(evolStats$freqHD.upIQR)+0.1),
      xlab="",ylab="",yaxt="n",cex.lab=1.5,cex.axis=cexAxis,xaxt='n',las=1)
 
 matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
@@ -605,12 +622,12 @@ matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
 axis(4,cex=0.8,col = colIntTypesLin[3],tcl=0.3,cex.axis=cexAxis,
      col.axis = colIntTypesLin[3],hadj = 0.4)
 polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$upIQR.freqHD,rev(evolStats$lowIQR.freqHD)),
+        y=c(evolStats$freqHD.upIQR,rev(evolStats$freqHD.lowIQR)),
         col=colIntTypesPol[3],border = NA)
 with(evolStats,{
   # lines(time,m.freqHH,col=colIntTypesLin[1],lwd=3)
   # lines(time,m.freqDD,col=colIntTypesLin[2],lwd=3)
-  lines(time,m.freqHD,col=colIntTypesLin[3],lwd=3)
+  lines(time,freqHD.mean,col=colIntTypesLin[3],lwd=3)
   # lines(x=c(0,max(time)),y=c(0.6666,0.6666)^2,col=colIntTypesLin[1],lwd=2,lty=2)
   # lines(x=c(0,max(time)),y=c(0.3333,0.3333)^2,col=colIntTypesLin[2],lwd=2,lty=2)
   # lines(x=c(0,max(time)),y=c(0.6666*0.33333,0.6666*0.33333)*2+0.01,
@@ -629,14 +646,14 @@ box()
 # 
 # # Variation among replicates
 # polygon(x=c(evolStats$time,rev(evolStats$time)),
-#         y=c(evolStats$upIQR.freqFenHawk,rev(evolStats$lowIQR.freqFenHawk)),
+#         y=c(evolStats$freqFenHawk.upIQR,rev(evolStats$freqFenHawk.lowIQR)),
 #         col=colIntTypesPol[1],border = NA)
 # polygon(x=c(evolStats$time,rev(evolStats$time)),
-#         y=c(evolStats$upIQR.freqFenDove,rev(evolStats$lowIQR.freqFenDove)),
+#         y=c(evolStats$freqFenDove.upIQR,rev(evolStats$freqFenDove.lowIQR)),
 #         col=colIntTypesPol[2],border = NA)
 # with(evolStats,{
-#   lines(time,m.freqFenHawk,col=colIntTypesLin[1],lwd=3)
-#   lines(time,m.freqFenDove,col=colIntTypesLin[2],lwd=3)
+#   lines(time,freqFenHawk.mean,col=colIntTypesLin[1],lwd=3)
+#   lines(time,freqFenDove.mean,col=colIntTypesLin[2],lwd=3)
 #   lines(x=c(0,max(time)),y=c(0.6666,0.6666),col=colIntTypesLin[1],lwd=2,lty=2)
 #   lines(x=c(0,max(time)),y=c(0.3333,0.3333),col=colIntTypesLin[2],lwd=2,lty=2)
 # })
@@ -678,8 +695,9 @@ for(genC in genstoPrint){
                                              maxColorValue = 255,alpha=80),lty=1)
   lines(logist(totRBF(rangx,centers,sigSquar,
                       as.double(evolStats[(time==unique(time)[genC]),.SD,
-                                          .SDcols=grep("m.weightAct",
-                                                       names(evolStats),value = TRUE)])),
+                                          .SDcols=grep('(?=.*WeightAct)(?=.*mean)',
+                                                       names(evolStats),value = TRUE,
+                                                       perl=TRUE)])),
                alpha=0,beta=1)~rangx,
         col = "black",lwd=2)
   text(x=0.5,y=-0.01,labels = paste0("time=",unique(evolStats$time)[genC]/1000),
@@ -700,8 +718,8 @@ for(genC in genstoPrint){
   col=rgb(t(col2rgb(2:10)),maxColorValue = 255,alpha=80),lty=1,cex.lab=2)
   lines(x=rangx,y=sapply(rangx, function(y){
     do.call(logist,as.list(c(y,as.double(evolStats[(time==unique(time)[genC]),.SD,
-                                                   .SDcols=c("m.meanAlpha"
-                                                             ,"m.meanBeta")]))))  
+                                                   .SDcols=c("meanAlpha.mean"
+                                                             ,"meanBeta.mean")]))))  
   }),col = 1,lwd=3)
 }
 rm(list=grep("temp",ls(),value = T))

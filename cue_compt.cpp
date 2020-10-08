@@ -578,7 +578,7 @@ void interactions(vector<individual>& population, int nint,
 	vector<int> sample;
 	vector<int>::iterator itSamp1 = sample.begin();
 	//cout << "track " << generat << endl;
-	if (trackPopLearn && population[ind1].get_strat() == learner) {
+	if ((population[0].get_strat() == learner) && (trackPopLearn)) {
 		localPrint.countPhenotypes[0] = 0, localPrint.countPhenotypes[1] = 0;
 		localPrint.countIntTypes[0] = 0, localPrint.countIntTypes[1] = 0;
 		localPrint.countIntTypes[2] = 0;
@@ -684,7 +684,7 @@ void printStats(int popsize,ofstream &evolOutput,json param,
 			evolOutput << localPrint.featCritMean[countFeat] * invertNlearners << '\t';
 		}
 	}
-	else if ((strategy)(param["typeAgent"])) {
+	else if ((strategy)(param["typeAgent"])== evaluator) {
 		double alphaAttSD = calcSd(localPrint.alphaAttMeanSd, invertPopsize);
 		double betaAttSD = calcSd(localPrint.betaAttMeanSd, invertPopsize);
 		double gammaAttSD = calcSd(localPrint.gammaAttMeanSd, invertPopsize);
@@ -767,7 +767,7 @@ void initializeFiles(ofstream &evolOutput, //ofstream &popOutput,
 			evolOutput << "WeightCrit_" + itos(countFeat) << '\t';
 		}
 	}
-	else if ((strategy)(param["typeAgent"])) {
+	else if ((strategy)(param["typeAgent"])==evaluator) {
 		evolOutput << "meanAlphaAtt" << '\t' << "sdAlphaAtt" << '\t' << "meanBetaAtt" << '\t'
 			<< "sdBetaAtt" << '\t' << "meanGammaAtt" << '\t' << "sdGammaAtt" << '\t';
 
@@ -819,7 +819,7 @@ int main(int argc, char* argv[]) {
 	//param["printGen"]          = 1;     // How often data is printed	
 	//param["printLearn"]        = 1;	  // how often learning dyn are printed
 	//param["printLearnInt"]	   = 1;   // How often are learning parameters printed
-	//param["init"]              = {0,0,0,1};        //Initial frequencies
+	//param["init"]              = {0,0,1,0};        //Initial frequencies
 	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
 	//param["popSize"]           = 50;
 	//param["MutSd"]             = 0.3;
@@ -850,7 +850,7 @@ int main(int argc, char* argv[]) {
 	//param["namParam"]          = "nIntGroup";  
 	//// which parameter to vary inside the program
 	//param["rangParam"]         = {  10, 20, 30}; 
-	//param["typeAgent"] = 4; // learner
+	//param["typeAgent"] = 2; //0. hawk 1.dove 2. learner 3. evaluator
 	//// range in which the paramenter varies
 	//param["folder"]            = "I:/Projects/SocialComp_morphCue/Simulations/test_/";
 

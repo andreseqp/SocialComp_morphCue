@@ -9,7 +9,7 @@ source(here("AccFunc.R"))
 fileName<-"parameters"
 here()
 
-param1<-fromJSON(paste0("E:/BadgeSims","/nIntGroupEvol1_","/parameters.json"))
+# param1<-fromJSON(paste0("E:/BadgeSims","/nIntGroupEvol1_","/parameters.json"))
   #fromJSON(here("Simulations","nIntGroupEvol1","parameters.json"))
 
 param<-list(totGen   =20000,   nRep    = 30,
@@ -29,8 +29,8 @@ param<-list(totGen   =20000,   nRep    = 30,
             nIntGroup  = 2000,
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "nIntGroup",
-            rangParam = c(2,3,5),
-            typeAgent = 3,
+            rangParam = c(8,2000),
+            typeAgent = 2,
             folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
 # folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for realease
 
