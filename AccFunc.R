@@ -173,6 +173,7 @@ Critic<-function(weights,centers,sigSq=0.01,nx=1000){
                 centers,sigSq,as.double(weights))
 }
 
+
 # Functio to generate evolutionary dynamics in the form of frecuency distributions
 
 evolDist<-function(indData,variable,nbins,range=NULL,pal, nlevels =10, 

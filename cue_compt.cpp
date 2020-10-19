@@ -819,7 +819,7 @@ int main(int argc, char* argv[]) {
 	//param["printGen"]          = 1;     // How often data is printed	
 	//param["printLearn"]        = 1;	  // how often learning dyn are printed
 	//param["printLearnInt"]	   = 1;   // How often are learning parameters printed
-	//param["init"]              = {0,0,1,0};        //Initial frequencies
+	//param["init"]              = {0,0,0,1};        //Initial frequencies
 	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
 	//param["popSize"]           = 50;
 	//param["MutSd"]             = 0.3;
@@ -832,6 +832,9 @@ int main(int argc, char* argv[]) {
 	//param["sampleSize"]        = 50; 
 	//param["alphaBad"]			 = 0;
 	//param["betaBad"]			 = 0;
+	// paramL["alphaRes"]        = 0;
+	//paramL["betaRes"]          = 0; 
+	//paramL["gammaRes"]         = 0 ;
 	//param["alphaCrit"]     	 = 0.01;
 	//param["alphaAct"]     	 = 0.01;
 	//param["gamma"]          = 0;
@@ -917,7 +920,8 @@ int main(int argc, char* argv[]) {
 				paramL["QualStDv"], paramL["alphaBad"],
 				paramL["alphaCrit"], paramL["alphaAct"],paramL["gamma"],
         paramL["sigSq"],	paramL["nCenters"], paramL["initCrit"], 
-        paramL["initAct"], paramL["errorQual"]));
+        paramL["initAct"], paramL["errorQual"], paramL["alphaRes"],
+				paramL["betaRes"], paramL["gammaRes"]));
 		}
 		for (int generation = 0; generation < (int(paramL["totGen"])+1);
 			++generation) {

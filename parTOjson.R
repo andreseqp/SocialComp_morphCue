@@ -9,33 +9,36 @@ source(here("AccFunc.R"))
 fileName<-"parameters"
 here()
 
-# param1<-fromJSON(paste0("E:/BadgeSims","/nIntGroupEvol1_","/parameters.json"))
-  #fromJSON(here("Simulations","nIntGroupEvol1","parameters.json"))
+param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
+   fromJSON(here("Simulations","betCostNoLearn_","parameters.json"))
 
-param<-list(totGen   =20000,   nRep    = 30,
+param<-list(totGen   =20000,   nRep    = 8,
             printGen = 1000,   printLearn = 1000,
             printLearnInt = 50,
             popSize  = 2000,  baselineFit = 2,   
-            MutSd    = 0.3,
-            nInt        = 500,  init     = c(0,0,1,0),
+            MutSd    = 0.2,  nInt        = 500,  init     = c(0,0,0,1),
             mutRate  = 0.001,  mutType  = 0,
             sampleSize = 100,   strQual  = 10,
             errorQual = 0,    alphaBad	 = 0,    betaBad	 = 0,
+            alphaRes =0,betaRes=0, gammaRes=0,
             alphaCrit  = 0.5,  alphaAct = 0.5,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,   gamma = 0,
             QualStDv   = 1.1, betCost = 0,
             alphCost	 = 3, mutLearn = FALSE,
-            nIntGroup  = 2000,
+            nIntGroup  = 2000, 
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "nIntGroup",
             rangParam = c(8,2000),
-            typeAgent = 2,
+            typeAgent = 3,
             folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
 # folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for realease
 
+param$folderL<-paste(here("Simulations"),"/",sep="")
 
-apendScenar<-"Evol4"
+param$rangParam<-c(0,2,5)
+
+apendScenar<-"NoLearn"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 

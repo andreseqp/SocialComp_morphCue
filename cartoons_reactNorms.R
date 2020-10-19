@@ -4,7 +4,7 @@
 library(here)
 # directory where source files are saved
 
-source('C:/Users/a.quinones/Dropbox/R_files/posPlots.R')
+source(here("..","R_files","posPlots.R"))
 
 
 ## Reaction norms ------------------------------------------------------------
@@ -29,6 +29,18 @@ mtext(side=2,text="Badge",line=2,cex=5)
 # text(0.01,1.17,"A", cex=2)
 dev.off()
 
+# Receiver 3d reaction norm ----------------------------------------------------
+
+rivalBadge<-qualRange
+
+
+
+perspTmp<-outer(X=qualRange,Y = rivalBadge,FUN = logist3d, 
+                alpha=10,beta=20,gamma=0)
+
+persp(x = qualRange,y=rivalBadge,z=perspTmp,phi = 35, theta=40 ,
+      xlab="Quality",ylab="Rival's badge",zlim=c(0,1),
+      zlab="p(Dove)",col="lightblue")
 
 ## Survival function -----------------------------------------------------------
 
