@@ -31,22 +31,22 @@ paramName<-grep(".json",paramName,value=TRUE)
 param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
 
 
-numCores <- length(indList)
-registerDoParallel(numCores)
 
 val<-1
 
 # loop to produce pdfs for parameter values
-foreach(val = 1:length(indList),.packages = c("data.table","here")) %dopar% {
-source(here("AccFunc.R"))
+# numCores <- length(indList)
+# registerDoParallel(numCores)
+# foreach(val = 1:length(indList),.packages = c("data.table","here")) %dopar% {
+# source(here("AccFunc.R"))
 
   fileId<-val
 
 # Project folder
 evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
-# External sims folder
 
+# External sims folder
 # evol<-fread(evolList[fileId])
 # pop<-fread(indList[fileId])
 
@@ -152,7 +152,7 @@ evolStats<-evol[, as.list(unlist(lapply(.SD, my.summary))), .SDcols = cols,by=ti
 # Plot mean and IQRs among replicates of the genotypes and phenotypes ----------------------------
 
 # pdf(paste0(extSimsDir,"/evolDyn_",nampar,Valpar,".pdf"))
-pdf(here("Simulations",paste0(scenario,"_"),paste0("evolDyn_",nampar,Valpar,".pdf")))
+# pdf(here("Simulations",paste0(scenario,"_"),paste0("evolDyn_",nampar,Valpar,".pdf")))
 
 cexAxis<-1.5
 
@@ -223,7 +223,7 @@ with(evolStats,{
 legend("topleft",legend = c("mean Fit"),
        col=colGenesLin[1],lwd=2,bty = "n")
 axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
-
+axis(4,cex=0.8,padj = -0.5)
 
 # Dynamics of behavioural interactions 
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3, idplotx = 3,
@@ -350,7 +350,7 @@ rm(list=grep("temp",ls(),value = T))
 
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,
-                   value.var = c("meanAlpha","meanBeta",
+                   value.var = c("meanAlpha","meanBeta","meanFit",
                                  # "meanInitCrit","meanFit",
                                  #  "meanInitAct","sdInitCrit","sdInitAct",
                                   "sdAlpha","sdBeta","freqHH",
@@ -359,7 +359,7 @@ finReps<-evol[time==max(time),seed]
 
 
 for(runChoi in finReps){
- # runChoi<-0
+ runChoi<-0
 
 # Average trajectory
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
@@ -434,6 +434,24 @@ matlines(x=traitsTrajs[,time],
 #          y=traitsTrajs[,.SD,
 #                        .SDcol=paste0("meanFit_",runChoi)],
 #          col=colGenesLin,lty = 2,type="l",lwd=3)
+
+# Evolutionary trajectory of mean fitness
+
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 2,
+                lowboundx = 8, upboundx = 93),new=TRUE,
+    xaxt="s",las=1)
+plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
+     ylim=fivenum(as.matrix(pop[seed==runChoi,cumPayoff/nInteract]))[c(1,5)],
+     xlab="",ylab="",cex.lab=1.2,cex.axis=1,xaxt='n',las=1,yaxt="n")
+axis(side=1,padj = -3)
+legend("topleft",legend = c("meanFit"),
+       col=colGenesLin[1],lwd=2,bty = "n")
+
+matlines(x=traitsTrajs[,time],
+         y=traitsTrajs[,.SD,
+                       .SDcol=paste0("meanFit_",runChoi)],
+         col=colGenesLin,lty = 2,type="l",lwd=3)
+axis(side=4)
 
 # Evolutionary trajectories of behavioral interactions
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3, idplotx = 3,
@@ -813,7 +831,7 @@ png(here("Simulations",paste0(scenario,"_"),
                          .SDcol=paste0("freqHH_",runChoi)]),
            col=colIntTypesLin,lty = 1,type="l",lwd=3)
   with(evolStats,{
-    lines(time,m.freqHH,col="grey",lwd=2,lty=2)
+    lines(time,freqHH.mean,col="grey",lwd=2,lty=2)
   })
   par(new=T)
   plot(x=c(0,max(evol$time)),y=c(0,0),type="l",lwd=2,col=0,
@@ -836,7 +854,7 @@ png(here("Simulations",paste0(scenario,"_"),
   box()
   
   # Choose which interaction to visualize
-  lastInt<-#tail(pop[seed==runChoi,unique(nInteract)],6)[1]
+  lastInt<-500#tail(pop[seed==runChoi,unique(nInteract)],6)[1]
   pop[seed==runChoi,max(nInteract),by=time][,min(V1)]
   # to get last interaction: tail(pop[,unique(nInteract)],1)
   # Choose time range
@@ -847,7 +865,7 @@ png(here("Simulations",paste0(scenario,"_"),
   seqYlabUp<-c("P(dove)",rep("",3))
   seqYlabDown<-c("Badge",rep("",3))
   seqXlabDown<-c("","Quality",paste0("seed: ",runChoi))
-  rangQual<-seq(0,1,length.out = 100)
+  rangQual<-seq(0,1,length.out = 50)
   interv<-1/(nCenters-1)
   centers<-interv*seq(0,nCenters-1)
   rangx<-seq(0,1,length=1000)
@@ -920,7 +938,7 @@ dev.off()
 
 ## Plot all the generations/samples of the reaction norms ----------------------
 
-runChoi<-5
+runChoi<-8
 
 # Choose which interaction to visualize
 lastInt<-300#tail(pop[seed==runChoi,unique(nInteract)],2)[1]
@@ -988,38 +1006,38 @@ dev.off()
 
 # frecuency distribution change along evol. time  ------------------------------
 
-runChoi<-6
+runChoi<-16
 
 tempop<-pop[(seed==runChoi&nInteract==500)]
  
 
-png(here("Simulations",paste0(scenario,"_"),
-         paste0("evolDistBeta",runChoi,"_",nampar,Valpar,".png")),
-    width = 1400,height = 700)
+# png(here("Simulations",paste0(scenario,"_"),
+#          paste0("evolDistBeta",runChoi,"_",nampar,Valpar,".png")),
+#     width = 1400,height = 700)
 
 evolDist(indData = tempop,variable = "beta",nbins = 20,pal = pal_dist,
          nlevels=10,cexAxis = 2.5,xlab="generations",ylab = expression(beta),
            keyTitle = "log(rel. \n freq.)")
-dev.off()
-
-png(here("Simulations",paste0(scenario,"_"),
-         paste0("evolDistAlpha",runChoi,"_",nampar,Valpar,".png")),
-    width = 1400,height = 700)
+# dev.off()
+# 
+# png(here("Simulations",paste0(scenario,"_"),
+#          paste0("evolDistAlpha",runChoi,"_",nampar,Valpar,".png")),
+#     width = 1400,height = 700)
 
 evolDist(indData = tempop,variable = "alpha",nbins = 20,pal = pal_dist,
          nlevels=10,cexAxis = 2.5,xlab="generations",ylab = expression(alpha),
          keyTitle = "log(rel. \n freq.)")
-dev.off()
-
-png(here("Simulations",paste0(scenario,"_"),
-         paste0("evolDistBadge",runChoi,"_",nampar,Valpar,".png")),
-    width = 1400,height = 700)
+# dev.off()
+# 
+# png(here("Simulations",paste0(scenario,"_"),
+#          paste0("evolDistBadge",runChoi,"_",nampar,Valpar,".png")),
+#     width = 1400,height = 700)
 
 evolDist(indData = tempop,variable = "Badge",nbins = 20,pal = pal_dist,
          nlevels=10,cexAxis = 2.5,xlab="generations",ylab = "Badge",
          keyTitle = "log(rel. \n freq.)")
 
-dev.off()
+# dev.off()
 
 
 evolDist(indData = tempop,variable = "Quality",nbins = 20,pal = pal_dist,
@@ -1043,10 +1061,12 @@ png(here("Simulations",paste0(scenario,"_"),
          paste0("corrAlphBet_",nampar,Valpar,".png")),
     width = 1400,height = 1000)
 
-nY<-4;nX<-4
+nY<-6;nX<-5
 
+
+propTime2plot<-0.75
 par(mfrow=c(1,1))
-seqYax<-c("s",rep("n",4))
+seqYax<-c("s",rep("n",nY))
 # seqXax<-c(rep("n",4),"s")
 # seqYlabUp<-c("Badge",rep("",3))
 seqYlabDown<-c("",expression(alpha),rep("",3))
@@ -1058,18 +1078,18 @@ for(cSeed in pop[,unique(seed)]){
   cX<-cX+1
   par(plt=posPlot(numplotx = nX,numploty = nY,idplotx = cX,idploty = cY),
       xaxt="s",las=1,new=TRUE)
-  plot(data=pop[seed==cSeed][time>max(time)/2],alpha~beta,ylab="",
-       xlab="", pch=20,cex.lab=3,cex.axis=3,las=1,cex=2,
-       ylim=range(pop[time>max(time)/2,alpha])+c(0,0.9),
-       xlim=range(pop[time>max(time)/2,beta]),
+  plot(data=pop[seed==cSeed][time>max(time)*propTime2plot],alpha~beta,ylab="",
+       xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=0.75,
+       ylim=range(pop[time>max(time)*propTime2plot,alpha])+c(0,0.9),
+       xlim=range(pop[time>max(time)*propTime2plot,beta]),
        yaxt=seqYax[cX],xaxt=seqYax[cY])
-  lines(x=c(0,0),y=range(pop[time>max(time)/2,alpha]),col="grey",
+  lines(x=c(0,0),y=range(pop[time>max(time)*propTime2plot,alpha]),col="grey",
         lwd=2)
-  lines(y=c(0,0),x=range(pop[time>max(time)/2,beta]),col="grey",
+  lines(y=c(0,0),x=range(pop[time>max(time)*propTime2plot,beta]),col="grey",
         lwd=2)
-  text(x = mean(range(pop[time>max(time)/2,beta])),
-       y = range(pop[time>max(time)/2,alpha])[2]+0.45,
-       labels = paste0("seed=",cSeed),cex=1.5)
+  text(x = mean(range(pop[time>max(time)*propTime2plot,beta])),
+       y = range(pop[time>max(time)*propTime2plot,alpha])[2]+0.45,
+       labels = paste0("seed=",cSeed),cex=1)
   if(cY==1) mtext(seqXlabDown[cX],1,line = 3.5,cex=3)
   if(cX==1) mtext(seqYlabDown[cY],2,line = 3,cex=3,las=1)
   # mtext(text = expression(alpha),side = 2,line = 3,las=1,cex=3)
