@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvol2"
+scenario<-"alphaAct2"
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 
@@ -28,7 +28,7 @@ paramName<-grep(".json",paramName,value=TRUE)
 param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName))
 
 
-fileId<-1
+fileId<-3
 
 
 # indLearn<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
@@ -63,14 +63,14 @@ colorbreaksQual<-seq(0,1,length=100)
 # Actor 
 
 finReps<-indLearn[time==max(time),unique(seed)]
-seedCh<-3
+seedCh<-0
   finReps[round(runif(1,0,length(finReps)))+1]
 
 
 # Select run and generation to plot
 tempPop<-indLearn[time==gener&seed==seedCh]
 
-timePoints<-round(seq(1,length(unique(tempPop[,nInteract]))-1,
+timePoints<-round(seq(1,length(unique(tempPop[,nInteract]))-40,
                       length.out = 10))
 
 # png(here("Simulations",paste0(scenario,"_"),paste0(nampar,Valpar,"learnDyn.png")),
@@ -96,8 +96,10 @@ plot.new()
                          logist(totRBF(rangx,
                                 centers,sigSquar,
                                 as.double(
-                                  tempPop[(nInteract==behavTime&
-                                             Quality<0.5)&indId==x,.SD,
+                                  tempPop[(nInteract==behavTime
+                                           &indId==x)
+                                          # &(Quality>0.4&Quality<0.6)
+                                          ,.SD,
                                            .SDcol=grep("WeightAct",
                                                        names(tempPop),
                                                        value = TRUE)
