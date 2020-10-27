@@ -12,15 +12,15 @@ here()
 param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
      fromJSON(here("Simulations","betCostNoLearn_","parameters.json"))
 
-param<-list(totGen   = 100,   nRep    = 5,
-            printGen = 10,   printLearn = 10,
+param<-list(totGen   = 15000,   nRep    = 8,
+            printGen = 1000,   printLearn = 1000,
             printLearnInt = 50,
             popSize  = 2000,  baselineFit = 2,   
-            MutSd    = 0.3,  nInt        = 500,  init     = c(0,0,0,1),
+            MutSd    = 0.3,  nInt        = 100,  init     = c(0,0,0,1),
             mutRate  = 0.001,  mutType  = 0,
             sampleSize = 50,   strQual  = 10,
             errorQual = 0,    alphaBad	 = 0,    betaBad	 = 0,
-            alphaRes =10,betaRes=20, gammaRes=0,
+            alphaRes =-10,betaRes=-20, gammaRes=0,
             alphaCrit  = 0.5,  alphaAct = 0.5,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,   gamma = 0,
@@ -29,13 +29,13 @@ param<-list(totGen   = 100,   nRep    = 5,
             nIntGroup  = 2000, 
             payoff_matrix = c(1.5,1,0,0.5),
             namParam = "betCost",
-            rangParam = c(2,3,5),
+            rangParam = c(0,5),
             typeAgent = 3, #//0. hawk 1.dove 2. learner 3. evaluator
-            # folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
-folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for realease
+            folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
+# folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for realease
 
 
-apendScenar<-"Evol4"
+apendScenar<-"NoLearn"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 

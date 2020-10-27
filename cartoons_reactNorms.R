@@ -36,7 +36,7 @@ rivalBadge<-qualRange
 
 
 perspTmp<-outer(X=qualRange,Y = rivalBadge,FUN = logist3d, 
-                alpha=10,beta=20,gamma=0)
+                alpha=-10,beta=-20,gamma=0)
 
 persp(x = qualRange,y=rivalBadge,z=perspTmp,phi = 35, theta=40 ,
       xlab="Quality",ylab="Rival's badge",zlim=c(0,1),

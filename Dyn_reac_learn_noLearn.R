@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"test"
+scenario<-"betCostnoLearn"
 SimDir<-"Simulations"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
@@ -21,9 +21,9 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 
 # Load files -------------------------------------------------------------------
 # Project folder
-(listTest<-list.files(here(SimDir,paste0(scenario,"_"))))
+# (listTest<-list.files(here(SimDir,paste0(scenario,"_"))))
 # External sims folder
-# (listTest<-list.files(extSimsDir,full.names = TRUE))
+(listTest<-list.files(extSimsDir,full.names = TRUE))
 
 (evolList<-grep("evolLearn",listTest,value=TRUE))
 
@@ -35,7 +35,7 @@ param<-fromJSON(here(SimDir,paste0(scenario,"_"),paramName[1]))
 numCores <- length(evolList)
 registerDoParallel(numCores)
 
-val<-1
+val<-4
 
 
 # loop to produce pdfs for parameter values
@@ -48,11 +48,11 @@ fileId<-val
 
 
 # Project folder
-evol<-fread(here(SimDir,paste0(scenario,"_"),evolList[fileId]))
+# evol<-fread(here(SimDir,paste0(scenario,"_"),evolList[fileId]))
 # pop<-fread(here(SimDir,paste0(scenario,"_"),indList[fileId]))
 # External sims folder
 
-# evol<-fread(evolList[fileId])
+evol<-fread(evolList[fileId])
 # pop<-fread(indList[fileId])
 
 Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(evolList[val],"_")[[1]],1)),
@@ -243,12 +243,13 @@ traitsTrajs<-dcast(evol,time~seed,
                                  "sdAlphaAtt","sdBetaAtt","sdGammaAtt",
                                  "sdAlpha","sdBeta","freqHH",
                                  "freqHD","freqDD"))
-finReps<-evol[time==max(time),seed]
+
+(finReps<-evol[time==max(time),seed])
 
 
 
 for(runChoi in finReps){
-   # runChoi<-3
+   runChoi<-0
   
 # Dynamics of genotypic traits (reaction norm) -  signaller
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
