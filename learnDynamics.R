@@ -11,7 +11,8 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"alphaAct2"
+scenario<-"nIntGroupEvol4"
+
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 
@@ -20,15 +21,18 @@ extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
 # (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 (listTest<-list.files(extSimsDir,full.names = TRUE))
+
 (indList<-grep("ind",listTest,value=TRUE))
 
 # parameter values from project folder
-paramName<-list.files(here("Simulations",paste0(scenario,"_")))
+# paramName<-list.files(here("Simulations",paste0(scenario,"_")))
+paramName<-list.files(extSimsDir,full.names = TRUE)
+
 paramName<-grep(".json",paramName,value=TRUE)
-param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName))
+param<-#fromJSON(here("Simulations",paste0(scenario,"_"),paramName[2]))
+fromJSON(paramName)
 
-
-fileId<-3
+fileId<-1
 
 
 # indLearn<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
@@ -49,7 +53,7 @@ nampar<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[fileId],"_")[[1
 
 # Changes in learning parameters for several individuals -----------------------
 
-gener<-tail(indLearn[,unique(time)],2)[2]
+gener<-0#tail(indLearn[,unique(time)],2)[2]
 nCenters<-param$nCenters
 sigSquar<-param$sigSq
 interv<-1/(nCenters-1)
@@ -63,14 +67,14 @@ colorbreaksQual<-seq(0,1,length=100)
 # Actor 
 
 finReps<-indLearn[time==max(time),unique(seed)]
-seedCh<-0
+seedCh<-
   finReps[round(runif(1,0,length(finReps)))+1]
 
 
 # Select run and generation to plot
 tempPop<-indLearn[time==gener&seed==seedCh]
 
-timePoints<-round(seq(1,length(unique(tempPop[,nInteract]))-40,
+timePoints<-round(seq(1,length(unique(tempPop[,nInteract]))-1,
                       length.out = 10))
 
 # png(here("Simulations",paste0(scenario,"_"),paste0(nampar,Valpar,"learnDyn.png")),
@@ -98,7 +102,7 @@ plot.new()
                                 as.double(
                                   tempPop[(nInteract==behavTime
                                            &indId==x)
-                                          # &(Quality>0.4&Quality<0.6)
+                                          # &(Quality>0.8&Quality<1)
                                           ,.SD,
                                            .SDcol=grep("WeightAct",
                                                        names(tempPop),
@@ -124,6 +128,7 @@ plot.new()
   if(county==1) mtext(xAxLabs[countx],1,line = 3,cex=2)
   if(countx==1) mtext(yAxLabs[county],2,line = 3,cex=2)
 }
+
 
 # Include if the color scheme relates to quality
 par(new=FALSE)

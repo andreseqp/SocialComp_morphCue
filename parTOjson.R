@@ -10,17 +10,17 @@ fileName<-"parameters"
 here()
 
 param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
-     fromJSON(here("Simulations","alphaAct_","parameters1.json"))
+     fromJSON(here("Simulations","betCostNoLearn_","parameters.json"))
 
-param<-list(totGen   =10,   nRep    = 8,
-            printGen = 1,   printLearn = 1,
+param<-list(totGen   = 100,   nRep    = 5,
+            printGen = 10,   printLearn = 10,
             printLearnInt = 50,
             popSize  = 2000,  baselineFit = 2,   
-            MutSd    = 0.4,  nInt        = 1500,  init     = c(0,0,1,0),
-            mutRate  = 0.1,  mutType  = 0,
-            sampleSize = 100,   strQual  = 10,
-            errorQual = 0,    alphaBad	 = 3,    betaBad	 = 6,
-            alphaRes =0,betaRes=0, gammaRes=0,
+            MutSd    = 0.3,  nInt        = 500,  init     = c(0,0,0,1),
+            mutRate  = 0.001,  mutType  = 0,
+            sampleSize = 50,   strQual  = 10,
+            errorQual = 0,    alphaBad	 = 0,    betaBad	 = 0,
+            alphaRes =10,betaRes=20, gammaRes=0,
             alphaCrit  = 0.5,  alphaAct = 0.5,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,   gamma = 0,
@@ -28,14 +28,14 @@ param<-list(totGen   =10,   nRep    = 8,
             alphCost	 = 3, mutLearn = FALSE,
             nIntGroup  = 2000, 
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "alphaAct",
-            rangParam = c(0.1,0.3,0.5,0.6,0.7),
-            typeAgent = 2, #//0. hawk 1.dove 2. learner 3. evaluator
-            folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
-# folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for realease
+            namParam = "betCost",
+            rangParam = c(2,3,5),
+            typeAgent = 3, #//0. hawk 1.dove 2. learner 3. evaluator
+            # folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
+folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for realease
 
 
-apendScenar<-"2"
+apendScenar<-"Evol4"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
@@ -83,9 +83,9 @@ check_create.dir("e:/BadgeSims",param = paste0(param$namParam,apendScenar),
 rangparam<-param$rangParam
 
 for (i in 1:1) {
-  param$folderL<-paste0(here("Simulations",
-                            param$namParam),apendScenar,"_/") # comment for debug
-  # param$folder<-param$folderL # for debug
+  # param$folderL<-paste0(here("Simulations",
+                            # param$namParam),apendScenar,"_/") # comment for debug
+  param$folder<-param$folderL # for debug
   # param$rangParam<-c(rangparam[i])
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   # filenameL<-paste0(fileName,i,".json")

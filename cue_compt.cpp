@@ -578,10 +578,10 @@ void interactions(vector<individual>& population, int nint,
 	vector<int> sample;
 	vector<int>::iterator itSamp1 = sample.begin();
 	//cout << "track " << generat << endl;
+	localPrint.countIntTypes[0] = 0, localPrint.countIntTypes[1] = 0;
+	localPrint.countIntTypes[2] = 0;
 	if ((population[0].get_strat() == learner) && (trackPopLearn)) {
 		localPrint.countPhenotypes[0] = 0, localPrint.countPhenotypes[1] = 0;
-		localPrint.countIntTypes[0] = 0, localPrint.countIntTypes[1] = 0;
-		localPrint.countIntTypes[2] = 0;
 		/*localPrint.countIntTypesGen[0];
 		localPrint.countIntTypesGen[1], localPrint.countIntTypesGen[2] = 0;*/
 		for (int countSam = 0; countSam < sampleSize; ++countSam) {

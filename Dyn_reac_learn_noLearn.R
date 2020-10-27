@@ -15,8 +15,8 @@ require("jsonlite")
 scenario<-"test"
 SimDir<-"Simulations"
 
-# extSimsDir<-#here("Simulations",paste0(scenario,"_"))
-#   paste0("e:/BadgeSims/",scenario,"_")
+extSimsDir<-#here("Simulations",paste0(scenario,"_"))
+  paste0("e:/BadgeSims/",scenario,"_")
 
 
 # Load files -------------------------------------------------------------------
@@ -61,7 +61,7 @@ nampar<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(evolList[val],"_")[[1]]
              replacement = "")
 
 # pdf(paste0(extSimsDir,"/evolDyn_",nampar,Valpar,".pdf"))
-# pdf(here(SimDir,paste0(scenario,"_"),paste0("evolDyn_",nampar,Valpar,".pdf")))
+pdf(here(SimDir,paste0(scenario,"_"),paste0("evolDyn_",nampar,Valpar,".pdf")))
 
 # names(pop)[29:35]<-c("Quality", "genotype","alpha","beta","Badge","initCrit","initAct")
 # names(pop)[9:28]<-do.call(rbind,as.list(sapply(0:9,FUN = function(x){
@@ -425,6 +425,8 @@ for(genC in genstoPrint){
 }
 rm(list=grep("temp",ls(),value = T))
 }
+
 dev.off()
+
 }
 

@@ -45,11 +45,6 @@ knitr::include_graphics("../Images/dominance.jpg")
 
 ## The effect of communication 
 
-```{r,echo=FALSE,fig.align="center",out.width='80%'}
-knitr::include_graphics("../Images/harm.jpg")
-```
-
-## What about signals?
 
 ### Badge of status
 
@@ -61,35 +56,41 @@ knitr::include_graphics("../Images//hosp_alexandra_mackenzie.jpg")
 
 ## What about signals?
 
-### When are signals honest?
+### The handicap principle
 
-* Impossible to fake
-* Individuals have common interests
-* Handicap principle (signal´s cost is proportional to quality)
+```{r,echo=FALSE,fig.align='center',out.height='35%',fig.show='hold'}
+knitr::include_graphics("../Images/Amotz_Zahavi_profile.jpg")
+knitr::include_graphics("../Images/sexualSelection.jpg")
+knitr::include_graphics("../Images/Grafen.jpg")
+```
 
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
 
-## What about signals?
-
-### Individual recognition
-
-```{r,echo=FALSE,fig.align='center',out.height='70%'}
-knitr::include_graphics("../Images//indRecog.png")
+badQualRang<-seq(0,1,length=1000)
+alpha<-0
+beta<-6
+costFunc<-function(beta,alpha,x) {d<-1/(1+exp(-alpha-beta*x))}
+par(plt=posPlot())
+betRang<-c(5)
+matplot(y=sapply(betRang,FUN = costFunc,alpha=alpha,x=badQualRang),x=badQualRang,
+        type="l",cex.lab=1.5, cex.axis=2,lwd=3,lty=1,las=1,
+     col=c(2,3),ylim=c(0.5,1.1),xaxt="s",yaxt="s",ylab="",xlab="") #,col=i
+# lines(badgeFunc(qualRange,3,-60,1.05)~qualRange,cex.lab=1.5,cex.axis=2,lwd=3,
+#       col="blue")
+# legend("bottomright",legend = betRang,title = expression(beta),col=1:3,
+       # lty=1)
+mtext(side=1,text="Quality",line=3.5,cex=3)
+mtext(side=2,text="Survival",line=3.5,cex=3)
 
 ```
-[@tibbetts_Individual_2007]
-
-## What about signals?
-
-### BS or IR?
-
-```{r,echo=FALSE,fig.align='center',out.height='75%'}
-knitr::include_graphics("../Images//IRvsBS.png")
-
-```
-[@sheehan_There_2016]
+[@zahavi_Mate_1975;@grafen_Biological_1990]
 
 
-## What about signals?
+
+## The handicap principle
+
+### Badges of status
+
 
 ```{r,echo=FALSE,fig.align='center',out.width='90%'}
 knitr::include_graphics("../Images//comSystemBot.png")
@@ -98,7 +99,7 @@ knitr::include_graphics("../Images//comSystemBot.png")
 
 ## What about learning?
 
-```{r,echo=FALSE,fig.align='center',out.width='90%'}
+```{r,echo=FALSE,fig.align='center',out.width='70%'}
 knitr::include_graphics("../Images//pavlov.jpg")
 ```
 

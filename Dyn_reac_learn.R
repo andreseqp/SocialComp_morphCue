@@ -20,35 +20,36 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 
 # Load files -------------------------------------------------------------------
 # Project folder
-(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 # External sims folder
-# (listTest<-list.files(extSimsDir,full.names = TRUE))
+(listTest<-list.files(extSimsDir,full.names = TRUE))
 
 (evolList<-grep("evolLearn",listTest,value=TRUE))
 (indList<-grep("indLearn",listTest,value=TRUE))
 paramName<-list.files(here("Simulations",paste0(scenario,"_")))
+paramName<-list.files(extSimsDir,full.names = TRUE)
 paramName<-grep(".json",paramName,value=TRUE)
-param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
-
+param<-#fromJSON(here("Simulations",paste0(scenario,"_"),paramName))
+fromJSON(paramName)
 
 
 val<-1
 
 # loop to produce pdfs for parameter values
-# numCores <- length(indList)
-# registerDoParallel(numCores)
-# foreach(val = 1:length(indList),.packages = c("data.table","here")) %dopar% {
-# source(here("AccFunc.R"))
+numCores <- length(indList)
+registerDoParallel(numCores)
+foreach(val = 1:length(indList),.packages = c("data.table","here")) %dopar% {
+source(here("AccFunc.R"))
 
   fileId<-val
 
 # Project folder
-evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
-pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
+# evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
+# pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
 # External sims folder
-# evol<-fread(evolList[fileId])
-# pop<-fread(indList[fileId])
+evol<-fread(evolList[fileId])
+pop<-fread(indList[fileId])
 
 Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(indList[val],"_")[[1]],1)),
              replacement = "")
@@ -69,8 +70,9 @@ names(evol)
 
 cols<-c("freqGenHawks","freqGenDove",  "freqGenEval",  "freqGenLearn",
         "freqFenHawks", "freqFenDoves", "freqHH", "freqHD", "freqDD", "meanCue",
-        "meanAlpha", "meanBeta", "meanFit","meanInitCrit", "sdInitCrit",
-        "meanInitAct", "sdInitAct", "WeightAct_0","WeightCrit_0",
+        "meanAlpha", "meanBeta",
+        "meanFit", #"meanInitCrit", "sdInitCrit", "meanInitAct", "sdInitAct",
+        "WeightAct_0","WeightCrit_0",
         "WeightAct_1","WeightCrit_1","WeightAct_2",  "WeightCrit_2",
         "WeightAct_3",  "WeightCrit_3", "WeightAct_4",  "WeightCrit_4",
         "WeightAct_5","WeightCrit_5")
@@ -78,7 +80,8 @@ cols<-c("freqGenHawks","freqGenDove",  "freqGenEval",  "freqGenLearn",
 my.summary<- function(x) list(mean = mean(x), lowIQR = fivenum(x)[2], 
                               upIQR = fivenum(x)[4])
 
-evolStats<-evol[, as.list(unlist(lapply(.SD, my.summary))), .SDcols = cols,by=time]
+evolStats<-evol[, as.list(unlist(lapply(.SD, my.summary))), 
+                .SDcols = cols,by=time]
 
 
 
@@ -152,7 +155,7 @@ evolStats<-evol[, as.list(unlist(lapply(.SD, my.summary))), .SDcols = cols,by=ti
 # Plot mean and IQRs among replicates of the genotypes and phenotypes ----------------------------
 
 # pdf(paste0(extSimsDir,"/evolDyn_",nampar,Valpar,".pdf"))
-# pdf(here("Simulations",paste0(scenario,"_"),paste0("evolDyn_",nampar,Valpar,".pdf")))
+pdf(here("Simulations",paste0(scenario,"_"),paste0("evolDyn_",nampar,Valpar,".pdf")))
 
 cexAxis<-1.5
 
@@ -351,15 +354,15 @@ rm(list=grep("temp",ls(),value = T))
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,
                    value.var = c("meanAlpha","meanBeta","meanFit",
-                                 # "meanInitCrit","meanFit",
-                                 #  "meanInitAct","sdInitCrit","sdInitAct",
+                                 "meanInitCrit","meanFit",
+                                  "meanInitAct","sdInitCrit","sdInitAct",
                                   "sdAlpha","sdBeta","freqHH",
                                   "freqHD","freqDD"))
-finReps<-evol[time==max(time),seed]
+(finReps<-evol[time==max(time),seed])
 
 
 for(runChoi in finReps){
- runChoi<-0
+ # runChoi<-0
 
 # Average trajectory
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
@@ -481,7 +484,8 @@ matlines(x=traitsTrajs[,time],
        col=colIntTypesLin,lwd=2,bty = "n",cex=0.8)
 
 # Choose which interaction to visualize
-lastInt<-pop[ seed==runChoi,max(nInteract),by=.(indId,time)][,min(V1)]
+lastInt<-
+pop[ seed==runChoi,max(nInteract),by=.(indId,time)][,min(V1)]
   # tail(pop[seed==runChoi,unique(nInteract)],2)[1]
 # to get last interaction: tail(pop[,unique(nInteract)],1)
 # Choose time range
