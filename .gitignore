@@ -1,4 +1,4 @@
-.Rproj.user
+\.Rproj.user
 .Rhistory
 .RData
 *.pdf
@@ -17,5 +17,10 @@ QD_report.html
 QD_report.pdf
 cartoonRBF.png
 QD_presentation_files/
+*.out
+*.snm
+*.nav
+*.aux
 *.sln
+*.toc
 Debug/

@@ -9,7 +9,7 @@ library("plotrix")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvolLear"
+scenario<-"betCostEvol1"
 variable<-gsub("[^[:alpha:]]",scenario,replacement = '')
 variable<-gsub("Evol",variable,replacement = '')
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")

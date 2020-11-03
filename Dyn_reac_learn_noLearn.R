@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCostnoLearn"
+scenario<-"betCostNoLearn"
 SimDir<-"Simulations"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
@@ -35,7 +35,7 @@ param<-fromJSON(here(SimDir,paste0(scenario,"_"),paramName[1]))
 numCores <- length(evolList)
 registerDoParallel(numCores)
 
-val<-4
+val<-2
 
 
 # loop to produce pdfs for parameter values
@@ -249,7 +249,7 @@ traitsTrajs<-dcast(evol,time~seed,
 
 
 for(runChoi in finReps){
-   runChoi<-0
+   # runChoi<-6
   
 # Dynamics of genotypic traits (reaction norm) -  signaller
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
@@ -323,7 +323,6 @@ polygon(x=c(traitsTrajs[,time],rev(traitsTrajs[,time])),
                                       paste0("sdGammaAtt_",runChoi))])),
         col=colGenesPol[3],border = NA)
 
-traitsTrajs[,.SD,.SDcol=grep("_1",names(traitsTrajs))]
 
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
@@ -339,35 +338,30 @@ axis(4,cex=0.8)
 # dynamics of behavioural interactions 
 
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3, idplotx = 3,
-                lowboundx = 8,upboundx = 93),
+                lowboundx = 8, upboundx = 93),
     xaxt="s",las=1,new=TRUE)
-plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col=0,
-     ylim=c(0,1),xlab="",ylab="",yaxt="n",
+plot(x=c(0,max(evol$time)),y=c(0,0),type="l",lwd=2,col=0,
+     ylim=c(0,0.6),xlab="",ylab="",yaxt="n",
      cex.lab=1.5,cex.axis=1,xaxt='n',las=1)
 axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 axis(4,cex=0.8,padj = -0.5)
 
-# Variation among replicates
+matlines(x=traitsTrajs[,time],
+         y=traitsTrajs[,.SD,
+                       .SDcol=paste0(c("freqHH_","freqDD_","freqHD_"),runChoi)],
+         col=colIntTypesLin,lty = 1,type="l",lwd=3)
 
-polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$freqHH.upIQR,rev(evolStats$freqHH.lowIQR)),
-        col=colIntTypesPol[1],border = NA)
-polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$freqDD.upIQR,rev(evolStats$freqDD.lowIQR)),
-        col=colIntTypesPol[2],border = NA)
+lines(x=c(0,max(traitsTrajs[,time])),y=c(0.6666,0.6666)^2,col=colIntTypesLin[1],lwd=2,lty=2)
+lines(x=c(0,max(traitsTrajs[,time])),y=c(0.3333,0.3333)^2,col=colIntTypesLin[2],lwd=2,lty=2)
+lines(x=c(0,max(traitsTrajs[,time])),y=c(0.6666*0.33333,0.6666*0.33333)*2+0.01,
+      col=colIntTypesLin[3],lwd=2,lty=2)
 with(evolStats,{
-  lines(time,freqHH.mean,col=colIntTypesLin[1],lwd=3)
-  lines(time,freqDD.mean,col=colIntTypesLin[2],lwd=3)
-  lines(time,freqHD.mean,col=colIntTypesLin[3],lwd=3)
-  lines(x=c(0,max(time)),y=c(0.6666,0.6666)^2,col=colIntTypesLin[1],lwd=2,lty=2)
-  lines(x=c(0,max(time)),y=c(0.3333,0.3333)^2,col=colIntTypesLin[2],lwd=2,lty=2)
-  lines(x=c(0,max(time)),y=c(0.6666*0.33333,0.6666*0.33333)*2+0.01,
-        col=colIntTypesLin[3],lwd=2,lty=2)
+  lines(time,freqHH.mean,col="grey",lwd=2,lty=2)
 })
+
 
 legend("topleft",legend = c("HH","DD","HD"),ncol = 3,
        col=colIntTypesLin,lwd=2,bty = "n",cex=0.8)
-
 ## Plot reaction norms 
 
 
@@ -431,3 +425,4 @@ dev.off()
 
 }
 
+evol[seed==2]

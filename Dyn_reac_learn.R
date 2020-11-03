@@ -18,7 +18,10 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
   paste0("e:/BadgeSims/",scenario,"_")
 
 
+
 # Load files -------------------------------------------------------------------
+# when program was run with internal paralellization
+
 # Project folder
 # (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 # External sims folder
@@ -27,13 +30,24 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 (evolList<-grep("evolLearn",listTest,value=TRUE))
 (indList<-grep("indLearn",listTest,value=TRUE))
 paramName<-list.files(here("Simulations",paste0(scenario,"_")))
-paramName<-list.files(extSimsDir,full.names = TRUE)
+# paramName<-list.files(extSimsDir,full.names = TRUE)
 paramName<-grep(".json",paramName,value=TRUE)
-param<-#fromJSON(here("Simulations",paste0(scenario,"_"),paramName))
-fromJSON(paramName)
+param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
+# fromJSON(paramName)
 
+# Choose which parameter to plot
 
 val<-1
+
+
+# Load files -------------------------------------------------------------------
+# when program was run with external paralellization
+
+# evolList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+#                     evolList,value =TRUE)
+# indList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+#                     indList,value =TRUE)
+
 
 # loop to produce pdfs for parameter values
 numCores <- length(indList)
@@ -47,9 +61,21 @@ source(here("AccFunc.R"))
 # evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 # pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
+# evol<-do.call(rbind,lapply(evolList_runs,function(x){
+#   fread(here("Simulations",paste0(scenario,"_"),x))
+# }))
+# pop<-do.call(rbind,lapply(indList_runs,function(x){
+#   fread(here("Simulations",paste0(scenario,"_"),x))
+# }))
+  
+  
+  
 # External sims folder
 evol<-fread(evolList[fileId])
 pop<-fread(indList[fileId])
+
+
+
 
 Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(indList[val],"_")[[1]],1)),
              replacement = "")
@@ -83,69 +109,6 @@ my.summary<- function(x) list(mean = mean(x), lowIQR = fivenum(x)[2],
 evolStats<-evol[, as.list(unlist(lapply(.SD, my.summary))), 
                 .SDcols = cols,by=time]
 
-
-
-# evolStats<-evol[,.(m.freqGenHawk=mean(freqGenHawks),
-#                    upIQR.freqGenHawk=fivenum(freqGenHawks)[4],
-#                    lowIQR.freqGenHawk=fivenum(freqGenHawks)[2],
-#                    m.freqGenDove=mean(freqGenDove),
-#                    upIQR.freqGenDove=fivenum(freqGenDove)[4],
-#                    lowIQR.freqGenDove=fivenum(freqGenDove)[2],
-#                    m.freqEval=mean(freqGenEval),
-#                    upIQR.freqGenEval=fivenum(freqGenEval)[4],
-#                    lowIQR.freqGenEval=fivenum(freqGenEval)[2], 
-#                    m.freqFenHawk=mean(freqFenHawks),
-#                    upIQR.freqFenHawk=fivenum(freqFenHawks)[4],
-#                    lowIQR.freqFenHawk=fivenum(freqFenHawks)[2],
-#                    m.freqFenDove=mean(freqFenDoves),
-#                    upIQR.freqFenDove=fivenum(freqFenDoves)[4],
-#                    lowIQR.freqFenDove=fivenum(freqFenDoves)[2],
-#                    m.meanAlpha=mean(meanAlpha),
-#                    upIQR.alpha=fivenum(meanAlpha)[4],
-#                    lowIQR.alpha=fivenum(meanAlpha)[2],
-#                    m.meanBeta=mean(meanBeta),
-#                    upIQR.beta=fivenum(meanBeta)[4],
-#                    lowIQR.beta=fivenum(meanBeta)[2],
-#                    m.meanInCrit=mean(meanInitCrit),
-#                    upIQR.InCrit=fivenum(meanInitCrit)[4],
-#                    lowIQR.InCrit=fivenum(meanInitCrit)[2],
-#                    m.meanInAct=mean(meanInitAct),
-#                    upIQR.InAct=fivenum(meanInitAct)[4],
-#                    lowIQR.InAct=fivenum(meanInitAct)[2],
-#                    # m.meanFit=mean(meanFit),
-#                    # upIQR.meanFit=fivenum(meanFit)[4],
-#                    # lowIQR.meanFit=fivenum(meanFit)[2],
-#                    m.freqHH = mean(freqHH),
-#                    m.freqHD = mean(freqHD),
-#                    m.freqDD = mean(freqDD),
-#                    upIQR.freqHH = fivenum(freqHH)[4],
-#                    upIQR.freqHD = fivenum(freqHD)[4],
-#                    upIQR.freqDD = fivenum(freqDD)[4],
-#                    lowIQR.freqHH = fivenum(freqHH)[2],
-#                    lowIQR.freqHD = fivenum(freqHD)[2],
-#                    lowIQR.freqDD = fivenum(freqDD)[2],
-#                    # m.weightAct_0=mean(WeightAct_0),
-#                    # m.weightAct_1=mean(WeightAct_1),
-#                    # m.weightAct_2=mean(WeightAct_2),
-#                    # m.weightAct_3=mean(WeightAct_3),
-#                    # m.weightAct_4=mean(WeightAct_4),
-#                    # m.weightAct_5=mean(WeightAct_5),
-#                    # m.weightAct_6=mean(WeightAct_6),
-#                    # m.weightAct_7=mean(WeightAct_7),
-#                    # m.weightAct_8=mean(WeightAct_8),
-#                    # m.weightAct_9=mean(WeightAct_9),
-#                    # m.weightCrit_0=mean(WeightCrit_0),
-#                    # m.weightCrit_1=mean(WeightCrit_1),
-#                    # m.weightCrit_2=mean(WeightCrit_2),
-#                    # m.weightCrit_3=mean(WeightCrit_3),
-#                    # m.weightCrit_4=mean(WeightCrit_4),
-#                    # m.weightCrit_5=mean(WeightCrit_5)
-#                    # ,
-#                    # m.weightCrit_6=mean(WeightCrit_6),
-#                    # m.weightCrit_7=mean(WeightCrit_7),
-#                    # m.weightCrit_8=mean(WeightCrit_8),
-#                    # m.weightCrit_9=mean(WeightCrit_9)
-#                    ),by=time]
 
 ## Calculate proxy of mean fitness for individuals
 
@@ -292,7 +255,7 @@ seqXlabDown<-c("","Quality","")
 rangQual<-seq(0,1,length.out = 100)
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
-rangx<-seq(0,1,length=100)
+rangx<-seq(0,1,length=50)
 count<-0
 genstoPrint<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
 # genstoPrint<-round(seq(1,length(unique(evolStats$time))/2,length.out = 5))[2:5]
@@ -362,7 +325,7 @@ traitsTrajs<-dcast(evol,time~seed,
 
 
 for(runChoi in finReps){
- # runChoi<-0
+ runChoi<-2
 
 # Average trajectory
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
@@ -461,27 +424,42 @@ par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3, idplotx = 3,
                 lowboundx = 8, upboundx = 93),
     xaxt="s",las=1,new=TRUE)
 plot(x=c(0,max(evol$time)),y=c(0,0),type="l",lwd=2,col=0,
-     ylim=c(0,0.6),xlab="",ylab="",yaxt="n",
-     cex.lab=1.5,cex.axis=1,xaxt='n',las=1)
-axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
-axis(4,cex=0.8,padj = -0.5)
+     ylim=fivenum(evol$freqHH)[c(1,5)]+c(-0.1,0.05),xlab="",ylab="",yaxt="n",
+     cex.lab=1.5,cex.axis=cexAxis,xaxt='n',las=1)
 
-matlines(x=traitsTrajs[,time],
-         y=traitsTrajs[,.SD,
-                       .SDcol=paste0(c("freqHH_","freqDD_","freqHD_"),runChoi)],
-         col=colIntTypesLin,lty = 1,type="l",lwd=3)
+matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
+         y=matrix(rep(c(0,1),4),nrow = 2),lty=1,col = "grey",lwd=2)
 
-  lines(x=c(0,max(traitsTrajs[,time])),y=c(0.6666,0.6666)^2,col=colIntTypesLin[1],lwd=2,lty=2)
-  lines(x=c(0,max(traitsTrajs[,time])),y=c(0.3333,0.3333)^2,col=colIntTypesLin[2],lwd=2,lty=2)
-  lines(x=c(0,max(traitsTrajs[,time])),y=c(0.6666*0.33333,0.6666*0.33333)*2+0.01,
-        col=colIntTypesLin[3],lwd=2,lty=2)
-  with(evolStats,{
-    lines(time,freqHH.mean,col="grey",lwd=2,lty=2)
-  })
-  
+axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100,cex.axis=cexAxis)
+axis(2,cex=0.8,col = colIntTypesLin[1],hadj = -1.2,tcl=0.3,cex.axis=cexAxis,
+     col.axis = colIntTypesLin[1])
+lines(x=traitsTrajs[,time],
+      y=t(traitsTrajs[,.SD,
+                      .SDcol=paste0("freqHH_",runChoi)]),
+      col=colIntTypesLin,lty = 1,type="l",lwd=3)
+with(evolStats,{
+  lines(time,freqHH.mean,col="grey",lwd=2,lty=2)
+})
+par(new=T)
+plot(x=c(0,max(evol$time)),y=c(0,0),type="l",lwd=2,col=0,
+     ylim=fivenum(evol$freqHD)[c(1,5)]+c(-0.05,0.1),xlab="",ylab="",yaxt="n",
+     cex.lab=1.5,cex.axis=cexAxis,xaxt='n',las=1)
+axis(4,cex=0.8,padj = -0.5,col.axis = colIntTypesLin[3],col = colIntTypesLin[3],
+     cex.axis=cexAxis)
 
- legend("topleft",legend = c("HH","DD","HD"),ncol = 3,
-       col=colIntTypesLin,lwd=2,bty = "n",cex=0.8)
+lines(x=traitsTrajs[,time],
+      y=t(traitsTrajs[,.SD,
+                      .SDcol=paste0(c("freqHD_"),runChoi)]),
+      col=colIntTypesLin[3],lty = 1,type="l",lwd=3)
+
+# lines(x=c(0,max(traitsTrajs[,time])),y=c(0.6666,0.6666)^2,col=colIntTypesLin[1],lwd=2,lty=2)
+# lines(x=c(0,max(traitsTrajs[,time])),y=c(0.3333,0.3333)^2,col=colIntTypesLin[2],lwd=2,lty=2)
+# lines(x=c(0,max(traitsTrajs[,time])),y=c(0.6666*0.33333,0.6666*0.33333)*2+0.01,
+# col=colIntTypesLin[3],lwd=2,lty=2)
+legend("top",legend = c("HH","DD","HD"),ncol = 3,bg="white",box.lty="blank",
+       col=colIntTypesLin,lwd=2,bty = "o",cex=0.5)
+box()
+
 
 # Choose which interaction to visualize
 lastInt<-
@@ -499,7 +477,7 @@ seqXlabDown<-c("","Quality",paste0("seed: ",runChoi))
 rangQual<-seq(0,1,length.out = 100)
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
-rangx<-seq(0,1,length=100)
+rangx<-seq(0,1,length=50)
 count<-0
 for(genC in genstoPrint){
   count<-count+1
@@ -571,6 +549,7 @@ dev.off()
 # no Inits - mean and IQRs among replicates of the genotypes and phenotypes  --------------------------
 
 cexAxis<-1.5
+
 
 pdf(paste0(extSimsDir,"/evolDyn_",nampar,Valpar,".pdf"))
 
@@ -768,7 +747,7 @@ finReps<-evol[time==max(time),seed]
 
 genstoPrint<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
 
-runChoi<-11
+runChoi<-0
 
 png(here("Simulations",paste0(scenario,"_"),
          paste0("evolDyn",runChoi,"_",nampar,Valpar,".png")),
@@ -1010,97 +989,60 @@ dev.off()
 
 # frecuency distribution change along evol. time  ------------------------------
 
-runChoi<-16
+for(runChoi in finReps){
 
 tempop<-pop[(seed==runChoi&nInteract==500)]
  
 
-# png(here("Simulations",paste0(scenario,"_"),
-#          paste0("evolDistBeta",runChoi,"_",nampar,Valpar,".png")),
-#     width = 1400,height = 700)
+png(here("Simulations",paste0(scenario,"_"),
+         paste0("evolDistBeta",runChoi,"_",nampar,Valpar,".png")),
+    width = 1400,height = 700)
 
 evolDist(indData = tempop,variable = "beta",nbins = 20,pal = pal_dist,
          nlevels=10,cexAxis = 2.5,xlab="generations",ylab = expression(beta),
            keyTitle = "log(rel. \n freq.)")
-# dev.off()
-# 
-# png(here("Simulations",paste0(scenario,"_"),
-#          paste0("evolDistAlpha",runChoi,"_",nampar,Valpar,".png")),
-#     width = 1400,height = 700)
+dev.off()
+
+png(here("Simulations",paste0(scenario,"_"),
+         paste0("evolDistAlpha",runChoi,"_",nampar,Valpar,".png")),
+    width = 1400,height = 700)
 
 evolDist(indData = tempop,variable = "alpha",nbins = 20,pal = pal_dist,
          nlevels=10,cexAxis = 2.5,xlab="generations",ylab = expression(alpha),
          keyTitle = "log(rel. \n freq.)")
-# dev.off()
-# 
-# png(here("Simulations",paste0(scenario,"_"),
-#          paste0("evolDistBadge",runChoi,"_",nampar,Valpar,".png")),
-#     width = 1400,height = 700)
+dev.off()
+
+png(here("Simulations",paste0(scenario,"_"),
+         paste0("evolDistBadge",runChoi,"_",nampar,Valpar,".png")),
+    width = 1400,height = 700)
 
 evolDist(indData = tempop,variable = "Badge",nbins = 20,pal = pal_dist,
          nlevels=10,cexAxis = 2.5,xlab="generations",ylab = "Badge",
          keyTitle = "log(rel. \n freq.)")
 
-# dev.off()
+dev.off()
 
 
-evolDist(indData = tempop,variable = "Quality",nbins = 20,pal = pal_dist,
-         nlevels=5)
+# evolDist(indData = tempop,variable = "Quality",nbins = 20,pal = pal_dist,
+#          nlevels=5)
 
 png(here("Simulations",paste0(scenario,"_"),
          paste0("corrAlpBet",runChoi,"_",nampar,Valpar,".png")),
     width = 1400,height = 700)
 par(plt=posPlot())
-plot(data=pop[seed==7&time>15000],alpha~beta,ylab="",
+plot(data=pop[seed==runChoi&time>15000],alpha~beta,ylab="",
      xlab="", pch=20,cex.lab=3,cex.axis=3,las=1,cex=4)
 mtext(text = expression(alpha),side = 2,line = 3,las=1,cex=3)
 mtext(text = expression(beta),side = 1,line = 3,cex = 3)
 dev.off()
 
+}
+
 # Overall variation ------------------------------------------------------------ 
 
 
 
-png(here("Simulations",paste0(scenario,"_"),
-         paste0("corrAlphBet_",nampar,Valpar,".png")),
-    width = 1400,height = 1000)
 
-nY<-6;nX<-5
-
-
-propTime2plot<-0.75
-par(mfrow=c(1,1))
-seqYax<-c("s",rep("n",nY))
-# seqXax<-c(rep("n",4),"s")
-# seqYlabUp<-c("Badge",rep("",3))
-seqYlabDown<-c("",expression(alpha),rep("",3))
-seqXlabDown<-c("",expression(beta),"","")
-cX<-0;cY<-nY
-plot.new()
-for(cSeed in pop[,unique(seed)]){
-  if(cX==nX)  {cX<-0;cY<-cY-1}
-  cX<-cX+1
-  par(plt=posPlot(numplotx = nX,numploty = nY,idplotx = cX,idploty = cY),
-      xaxt="s",las=1,new=TRUE)
-  plot(data=pop[seed==cSeed][time>max(time)*propTime2plot],alpha~beta,ylab="",
-       xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=0.75,
-       ylim=range(pop[time>max(time)*propTime2plot,alpha])+c(0,0.9),
-       xlim=range(pop[time>max(time)*propTime2plot,beta]),
-       yaxt=seqYax[cX],xaxt=seqYax[cY])
-  lines(x=c(0,0),y=range(pop[time>max(time)*propTime2plot,alpha]),col="grey",
-        lwd=2)
-  lines(y=c(0,0),x=range(pop[time>max(time)*propTime2plot,beta]),col="grey",
-        lwd=2)
-  text(x = mean(range(pop[time>max(time)*propTime2plot,beta])),
-       y = range(pop[time>max(time)*propTime2plot,alpha])[2]+0.45,
-       labels = paste0("seed=",cSeed),cex=1)
-  if(cY==1) mtext(seqXlabDown[cX],1,line = 3.5,cex=3)
-  if(cX==1) mtext(seqYlabDown[cY],2,line = 3,cex=3,las=1)
-  # mtext(text = expression(alpha),side = 2,line = 3,las=1,cex=3)
-  # mtext(text = expression(beta),side = 1,line = 2,5,cex = 3)
-}
-
-dev.off()
 
 
 par(mfrow=c(1,1))
@@ -1141,69 +1083,6 @@ seedClass<-data.table(seeds=pop[,unique(seed)],nClusters=c(1,2,3,4,2,2,2,2,2,3))
 seedClass<-data.table(seeds=pop[,unique(seed)],nClusters=c(3,2,3,1,2,1,2,3))
 
 
-evol[,nClusters:=seedClass[match(seed,seedClass$seeds),nClusters]]
-
-
-png(here("Simulations",paste0(scenario,"_"),
-         paste0("BehavIntAllClusters_",nampar,Valpar,".png")),
-    width = 1400,height = 1000)
-
-
-# Effect of clustering on the interactions types 
-
-evol[,posX:=match(nClusters,sort(unique(nClusters)))+
-       runif(length(nClusters),
-             min = -0.2,max = 0.2)]
-
-cexAxis<-1.5;cexPoints<-3
-
-par(mfrow=c(1,3),xaxt="s",las=1,plt=posPlot())
-
-# frequency of interactions types
-
-bbHH<-boxplot(freqHH~nClusters,data=evol[time>max(time)/2],
-              pch=16,cex.lab=2,
-              xlab="# clusters",
-              ylab='',ylim=fivenum(evol$freqHH)[c(1,5)]+c(0,0.005),
-              cex.axis=cexAxis,yaxt='s')
-with(evol[time>max(time)/2],{
-  points(x=posX,y=freqHH,
-         col = colSeeds[match(seed,unique(seed))],pch = 20,cex=cexPoints)
-  lines(y=rep(0.666^2,2),x=c(0.5,3.5))
-  text(x=posX+0.2,y=freqHH,labels = seed,cex=0.8)
-})
-mtext("HH",3,line = -2.5,cex=2)
-
-par(xaxt="s",las=1)
-bbHH<-boxplot(freqHD~nClusters,data=evol[time>max(time)/2],
-              pch=16,ylim=fivenum(evol$freqHD)[c(1,5)]+c(0,0.005),
-              xlab="# clusters",
-              ylab='',cex.lab=2,
-              cex.axis=cexAxis)
-# axis(2,line = -2)
-with(evol[time>max(time)/2],{
-  points(x=posX,y=freqHD,col = colSeeds[match(seed,unique(seed))],pch = 20,
-         cex=cexPoints)
-  lines(y=rep(2*0.666*0.333,2),x=c(0.5,3.5))
-  #text(x=posX+0.1,y=freqHD,labels = seed)
-})
-mtext("HD",3,line = -2.5,cex=2)
-
-bbHH<-boxplot(freqDD~nClusters,data=evol[time>max(time)/2],
-              pch=16,ylim=fivenum(evol$freqDD)[c(1,5)],#+c(0,0.0001),
-              ylab='',cex.lab=2,
-              xlab="# clusters",
-              cex.axis=cexAxis)
-# axis(2,line = -2)
-with(evol[time>max(time)/2],{
-  points(x=posX,y=freqDD,col = colSeeds[match(seed,unique(seed))],pch = 20,
-         cex=cexPoints)
-  lines(y=rep(0.333^2,2),x=c(0.5,3.5))
-  #text(x=posX+0.1,y=freqDD,labels = seed)
-})
-mtext("DD",3,line = -2.5,cex=2)
-
-dev.off()
 
 
 ## Selection -------------------------------------------------------------------

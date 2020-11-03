@@ -19,6 +19,7 @@ header-includes:
     \usepackage{amsmath} 
     \usepackage{graphicx}
     \usepackage{array}
+    \usepackage{xcolor}
 ---
 
 ## Social interactions
@@ -28,11 +29,12 @@ knitr::opts_chunk$set(echo = FALSE)
 source("../../R_files/posPlots.R")
 require("here")
 source("../AccFunc.R")
+source("../aesth.R")
 
 ```
 
 
-### The need partners with actions
+### The need to match partners with actions
 
 ```{r,echo=FALSE,fig.align="center",out.width='40%',fig.show='hold'}
 
@@ -91,59 +93,118 @@ mtext(side=2,text="Survival",line=3.5,cex=3)
 
 ### Badges of status
 
-
 ```{r,echo=FALSE,fig.align='center',out.width='90%'}
 knitr::include_graphics("../Images//comSystemBot.png")
+```
+
+[@botero_Evolution_2010]
+
+## Are bibs really badges?
+
+```{r,echo=FALSE,fig.align='left',out.width='30%'}
+knitr::include_graphics("../Images/Sanchez-Tojar_2018.png")
 ```
 
 
 ## What about learning?
 
-```{r,echo=FALSE,fig.align='center',out.width='70%'}
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
 knitr::include_graphics("../Images//pavlov.jpg")
 ```
 
-# Associative learning
-
-## Reinforcement learning theory
-
-\begin{columns}[T]
- \column{0.5\linewidth}
- \begin{equation*}
-  \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error}
-  \end{equation*}
-  \pause
-  \includegraphics[width=1\textwidth]{../Images//learn_curve.png}
- \column{0.5\linewidth}
-  \pause
-  \includegraphics[height=.9\textheight]{../Images//predErrorNeur.png}
-\end{columns}
-
-## Reinforcement learning theory
-
-```{r,echo=FALSE,fig.align='center',out.width='90%'}
-knitr::include_graphics("../Images//learnUpdate.png")
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_0.png")
 ```
 
-## The Hawk-Dove game
 
-Individuals have one of two genetically determined phenotypic strategies. _Hawks_ are willing to start a conflict over resources, while _doves_ prefer to stand down in the hope to share the resource without an aggressive contest.
+## What about learning?
 
-```{r,echo=FALSE,fig.align="center",out.width='50%'}
-knitr::include_graphics("../Images//HDgame.png")
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
 ```
 
-## The hawk-dove game
-
-\begin{align*}
-w_H &= p_H \frac{V-C}{2}+(1-p_h) V\\
-w_D &= p_H 0 + (1-p_H)\frac{V}{2}
-\end{align*}
-\vspace{-0.8cm}
-```{r, echo=FALSE,fig.align="center", out.width = '55%'}
-knitr::include_graphics("../Images//Hawk_dove_plot.png")
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_1.png")
 ```
 
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
+```
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_2.png")
+```
+
+
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
+```
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_3.png")
+```
+
+
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
+```
+
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_5.png")
+```
+
+
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
+```
+
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_6.png")
+```
+
+<!-- ## How to implement learning -->
+
+<!-- ### Reinforcement learning theory -->
+
+<!-- \begin{columns}[T] -->
+<!--  \column{0.5\linewidth} -->
+<!--  \begin{equation*} -->
+<!--   \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error} -->
+<!--   \end{equation*} -->
+<!--   \pause -->
+<!--   \includegraphics[width=1\textwidth]{../Images//learn_curve.png} -->
+<!--  \column{0.5\linewidth} -->
+<!--   \pause -->
+<!--   \includegraphics[height=.9\textheight]{../Images//predErrorNeur.png} -->
+<!-- \end{columns} -->
+
+<!-- ## Reinforcement learning theory -->
+
+<!-- ```{r,echo=FALSE,fig.align='center',out.width='90%'} -->
+<!-- knitr::include_graphics("../Images//learnUpdate.png") -->
+<!-- ``` -->
+
+<!-- ## The Hawk-Dove game -->
+
+<!-- Individuals have one of two genetically determined phenotypic strategies. _Hawks_ are willing to start a conflict over resources, while _doves_ prefer to stand down in the hope to share the resource without an aggressive contest. -->
+
+<!-- ```{r,echo=FALSE,fig.align="center",out.width='50%'} -->
+<!-- knitr::include_graphics("../Images//HDgame.png") -->
+<!-- ``` -->
 
 <!-- ## The hawk-dove game -->
 
@@ -153,32 +214,76 @@ knitr::include_graphics("../Images//Hawk_dove_plot.png")
 
 
 
+## A model of communication in animal conflict
 
-## Environmental states
+\vspace{-0.5cm}
 
-### Discrete states
-\includegraphics[width=0.8\textwidth]{../Images//discreteStates.png}
+### Comunication
 
-\pause
+\begin{columns}[T]
 
-### Continuos states
-\includegraphics[width=0.8\textwidth]{../Images//contStates.png}
+\column{0.45\linewidth}
 
-## Continuos environmental states
+The sender code
+
+\tiny
 \begin{equation*}
-  \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error}
+B_i = \frac{1}{1+e^{-(\textcolor{red}{\alpha_s} +\textcolor{red}{\beta_s} Q_i)}}
 \end{equation*}
 
-```{r fig2, echo=FALSE, fig.cap="\\label{fig:learning_cartoonRBF}Function approximation for the actor and the critic. Using random values for the responses of each center. Circles show the location of the centers and the maximum response they trigger, while the lines show the total response along the badge size continium.", out.width = '60%'}
-knitr::include_graphics("../Images/cartoonRBF.png")
+
+```{r,echo=FALSE,fig.align='center',out.width='50%'}
+ par(plt=posPlot(),las=1)
+ rangeBeta<-c(4,10,-4,-10)
+ rangQual<-seq(0,1,by = 0.01)
+ linesSender<-sapply(rangeBeta,function(x)logist(rangQual,alpha = x/2,beta = x))
+ plot(logist(rangQual,alpha = 0,beta = 0)~rangQual,type="l",xlab="Quality",
+      ylab = expression(p[w]),cex.lab=2,lwd=2,col="grey",cex.axis=2,ylim=c(0,1))
+ matlines(x=rangQual,y=linesSender,lwd=4,col=colRuns,lty=1)
+ legend("left",legend=rangeBeta,col=colRuns,lwd=3,title = expression(beta),cex=2,bty="n")
+
 ```
 
-# Our model
 
-## The hawk-dove game 2.0
+\column{0.45\linewidth}
 
+The receiver code (learning)
+
+\tiny
+\begin{equation*}
+  \Delta V_{t(s)}=\alpha (R_t-V_t)
+\end{equation*}
+
+
+```{r, echo=FALSE,fig.align='center', out.width = '60%'}
+
+nCenters<-6
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+sigSq<-0.01
+weights<-rep(0,nCenters)
+#  Random weights
+weights<-runif(nCenters,min=-1,max=1)#RBF(centers,0.5,0.05)
+rangx<-seq(0,1,length=1000)
+
+par(plt=posPlot(),las=1)
+plot(logist(totRBF(rangx,centers,sigSq,weights),alpha = 0,beta=1)~rangx,type='l',col=1,
+     xlab="",ylab="p(retreat)",ylim=c(0,1),lwd=3,xaxt="n",cex.lab=2,cex.axis=2)
+points(y=logist(weights,alpha = 0,beta=1),x=centers,cex=3,pch=20)
+
+```
+
+\end{columns}
+
+### Conflict
+
+\vspace{0.3cm}
+\begin{columns}
+\column{0.5\linewidth}
+hawk-dove game
+\tiny
 \begin{center}
-\begin{tabular}{ >{\centering\arraybackslash}p{1cm} | >{\centering\arraybackslash}p{4.5cm} | >{\centering\arraybackslash}p{4.5cm} }
+\begin{tabular}{ >{\centering\arraybackslash}p{0.2cm} | >{\centering\arraybackslash}p{2.5cm} | >{\centering\arraybackslash}p{0.8cm} }
 & H & D \\ \hline
 H & $p_w V\frac{-C}{2} + (1-p_w) \frac{-C}{2}$ & $V$ \\ \hline
 V & $0$ & $\frac{V}{2}$\\
@@ -189,7 +294,10 @@ V & $0$ & $\frac{V}{2}$\\
 p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
 \end{equation*}
 
-```{r,echo=FALSE,fig.align='center',out.width='50%'}
+\column{0.5\linewidth}
+
+
+```{r,echo=FALSE,fig.align='center',out.width='60%'}
 par(plt=posPlot(),las=1)
 plot(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 2)~
        seq(-1,1,length.out = 1000),type="l",xlab="Difference in quality",
@@ -197,149 +305,127 @@ plot(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 2)~
 lines(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 10)~
        seq(-1,1,length.out = 1000),lwd=3,col="green")
 legend("topleft",legend=c(2,10),col=c("red","green"),lwd=3,title = expression(beta),cex=2,bty="n")
-
 ```
 
-## Sender Code
+\end{columns}
 
-\begin{equation*}
-s_i = \frac{1}{1+e^{-(\epsilon_i+\gamma_iQ_i)}}
-\label{eq:react_norm}
-\end{equation*}
-
-```{r,echo=FALSE,fig.align='center',out.width='50%'}
-par(plt=posPlot(),las=1)
-plot(logist(seq(0,1,length.out = 1000),alpha = 2,beta = 4)~
-       seq(0,1,length.out = 1000),type="l",xlab="Quality",
-     ylab = expression(p[w]),cex.lab=2,lwd=3,col="red",cex.axis=2,ylim=c(0,1))
-lines(logist(seq(0,1,length.out = 1000),alpha = 5,beta = 10)~
-       seq(0,1,length.out = 1000),lwd=3,col="green")
-legend("topleft",legend=c(4,10),col=c("red","green"),lwd=3,title = expression(gamma),cex=2,bty="n")
-
-```
-
-## Receiver code
-
-\begin{equation*}
-  \Delta V_{t(s)}=\alpha (R_t-V_t)
-\end{equation*}
-
-
-```{r, echo=FALSE,fig.align='center', out.width = '60%'}
-knitr::include_graphics("../Images/cartoonRBF.png")
-```
 
 # Results
 
 ## Learning under honest signalling
 
-Learning simulations (without evolution yet), the sender code is set as an honest signal.
-Receivers develop a threshold like response according to their quality
+<!-- Learning simulations (without evolution yet), the sender code is set as an honest signal. -->
+<!-- Receivers develop a threshold like response according to their quality -->
 
+
+\pause
 ```{r, echo=FALSE,fig.align='center', out.width = '100%'}
 knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.6learnDyn.png")
 ```
 
-## Learning can mediate the evolution of Badges of Status
-### Variation among replicates
-\small
-set of simulations with the badge working as a handicap (cost inversely proportional to quality)
+<!-- ## Learning can mediate the evolution of Badges of Status -->
+<!-- ### Variation among replicates -->
+<!-- \small -->
+<!-- set of simulations with the badge working as a handicap (cost inversely proportional to quality) -->
 
-```{r, echo=FALSE,fig.align='center', out.width='100%'}
-knitr::include_graphics("../Simulations/betCostEvol1_/evolDynAll_betCost5.png")
-```
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='100%'} -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/evolDynAll_betCost5.png") -->
+<!-- ``` -->
 
 
-## Learning can mediate the evolution of Badges of Status
-### Individual replicates: Badges
-\small
-One of the replicates of the previous slide, the badge as a handicap
+## Learning mediates the evolution of badges of status (handicaps)
+
+
+<!-- \small -->
+<!-- One of the replicates of the previous slide, the badge as a handicap -->
 ```{r, echo=FALSE,fig.align='center', out.width='100%'}
 knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn0_betCost5.png")
 ```
 
-## Learning can mediate the evolution of Badges of Status
-### Individual replicates: Badges
-\small
-Panels show the changes in frequency distribution along evolution ($\alpha$, $\beta$, and resulting badge respectively) for the replicate shown in the previous slide
+<!-- ## Learning can mediate the evolution of Badges of Status -->
+<!-- ### Individual replicates: Badges -->
+<!-- \small -->
+<!-- Panels show the changes in frequency distribution along evolution ($\alpha$, $\beta$, and resulting badge respectively) for the replicate shown in the previous slide -->
 
-```{r, echo=FALSE,fig.align='left', out.height='28%',fig.show='hold', fig.cap="alpha - beta -Badge"}
-knitr::include_graphics("../Simulations/betCostEvol1_/evolDistAlpha0_betCost5.png")
-knitr::include_graphics("../Simulations/betCostEvol1_/evolDistBeta0_betCost5.png")
-knitr::include_graphics("../Simulations/betCostEvol1_/evolDistBadge0_betCost5.png")
-```
+<!-- ```{r, echo=FALSE,fig.align='left', out.height='28%',fig.show='hold', fig.cap="alpha - beta -Badge"} -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/evolDistAlpha0_betCost5.png") -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/evolDistBeta0_betCost5.png") -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/evolDistBadge0_betCost5.png") -->
+<!-- ``` -->
 
 
 ## Learning can mediate the evolution of Badges of Status
 ### Individual replicates: no badges
-\small
-One of the replicates where the badge did not evolve
+<!-- \small -->
+<!-- One of the replicates where the badge did not evolve -->
 
 ```{r, echo=FALSE,fig.align='center', out.width='100%'}
 knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn5_betCost5.png")
 ```
 
-## The effect of costs on Badges of Status
+## Badges of Status: do they matter?
 ### Behavioural interactions
-\small
-Colours correspond to replicates, each point is one snapshot on the second half of the simulations.
-Higher costs seem to favour the signalling equilibrium
 
-```{r, echo=FALSE,fig.align='center', out.width='80%'}
-knitr::include_graphics("../Simulations/betCostEvol1_/BehavIntALL.png")
+<!-- \small -->
+<!-- Colours correspond to replicates, each point is one snapshot on the second half of the simulations. -->
+<!-- Higher costs seem to favour the signalling equilibrium -->
+
+```{r, echo=FALSE,fig.align='center', out.width='90%'}
+knitr::include_graphics("../Simulations/betCostEvol1_/compClustRep_betCost5.png")
 ```
-## The effect of costs on Badges of Status
-### Badge size
-\small
-Same as previous slide but for the resulting signal. Higher costs yield smaller averga sizes and smaller ranges. 
 
-```{r, echo=FALSE,fig.align='center', out.width='80%'}
-knitr::include_graphics("../Simulations/betCostEvol1_/CueALL.png")
+<!-- ## The effect of costs on Badges of Status -->
+<!-- ### Badge size -->
+<!-- \small -->
+<!-- Same as previous slide but for the resulting signal. Higher costs yield smaller averga sizes and smaller ranges.  -->
+
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='80%'} -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/CueALL.png") -->
+<!-- ``` -->
+
+<!-- ## The evolution of cheap Badges of Status -->
+
+<!-- <!-- ### Variation among replicates --> -->
+<!-- <!-- \small --> -->
+<!-- <!-- Here simulations where the signal has no cost --> -->
+
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='80%'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupEvol1_/evolDynALL_nIntGroup2000.png") -->
+<!-- ``` -->
+
+## The evolution of cheap Badges of Status
+
+<!-- \small -->
+<!-- Here simulations where the signal has no cost. -->
+
+<!-- There seems to be some consistency in the three type of sender codes -->
+
+```{r, echo=FALSE,fig.align='center', out.width='90%'}
+knitr::include_graphics("../Simulations/nIntGroupEvol4_/evolDyn13_nIntGroup2000.png")
 ```
 
 ## The evolution of cheap Badges of Status
-### Variation among replicates
-\small
-Here simulations where the signal has no cost
 
-```{r, echo=FALSE,fig.align='center', out.width='80%'}
-knitr::include_graphics("../Simulations/nIntGroupEvol1_/evolDynALL_nIntGroup2000.png")
-```
+<!-- \tiny -->
+<!-- Panels show the changes in frequency distribution along evolution ($\alpha$, $\beta$, and resulting badge respectively) for the replicate shown in the previous slide -->
 
-## The evolution of cheap Badges of Status
-### Variation within a replicate
-\small
-Here simulations where the signal has no cost.
-
-There seems to be some consistency in the three type of sender codes
-
-```{r, echo=FALSE,fig.align='center', out.width='80%'}
-knitr::include_graphics("../Simulations/nIntGroupEvol1_/evolDyn8_nIntGroup2000.png")
-```
-
-## The evolution of cheap Badges of Status
-### Variation within a replicate
-
-\tiny
-Panels show the changes in frequency distribution along evolution ($\alpha$, $\beta$, and resulting badge respectively) for the replicate shown in the previous slide
-
-Branching events in the reaction norm parameters yield three types of sender codes. One (more or less)
-honest, two dishonest (one with a big badge and one with a small badge)
+<!-- Branching events in the reaction norm parameters yield three types of sender codes. One (more or less) -->
+<!-- honest, two dishonest (one with a big badge and one with a small badge) -->
 
 ```{r, echo=FALSE,fig.align='left', out.height='28%',fig.show='hold', fig.cap="alpha - beta -Badge"}
-knitr::include_graphics("../Simulations/nIntGroupEvol1_/evolDistAlpha8_nIntGroup2000.png")
-knitr::include_graphics("../Simulations/nIntGroupEvol1_/evolDistBeta8_nIntGroup2000.png")
-knitr::include_graphics("../Simulations/nIntGroupEvol1_/evolDistBadge8_nIntGroup2000.png")
+knitr::include_graphics("../Simulations/nIntGroupEvol4_/evolDistAlpha13_nIntGroup2000.png")
+knitr::include_graphics("../Simulations/nIntGroupEvol4_/evolDistBeta13_nIntGroup2000.png")
+knitr::include_graphics("../Simulations/nIntGroupEvol4_/evolDistBadge13_nIntGroup2000.png")
 ```
 
 ## The evolution of cheap Badges of Status
 ### How often does it happen?
-\tiny
-Values of $\alpha$ and $\beta$ for each individual in the different replicates. Each dot an individual,
-each panel a replicate. Individuals are sampled from populations from the second half of the simulations.
+<!-- \tiny -->
+<!-- Values of $\alpha$ and $\beta$ for each individual in the different replicates. Each dot an individual, -->
+<!-- each panel a replicate. Individuals are sampled from populations from the second half of the simulations. -->
 
-Individuals in some simulations split up in three groups, others in two groups; 
-in one simulation the population does not split up
+<!-- Individuals in some simulations split up in three groups, others in two groups;  -->
+<!-- in one simulation the population does not split up -->
 
 
 ```{r, echo=FALSE,fig.align='left', out.width='90%',fig.show='hold'}
@@ -356,91 +442,91 @@ evolve
 knitr::include_graphics("../Simulations/nIntGroupEvol1_/BehavIntAllClusters_nIntGroup2000.png")
 ```
 
-## Interaction structures - do they matter?
+<!-- ## Interaction structures - do they matter? -->
 
-```{r, echo=FALSE,fig.align='center', out.width='100%',}
-knitr::include_graphics("../Images/networks.png")
-```
-[@chaine_Manipulating_2018]
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='100%',} -->
+<!-- knitr::include_graphics("../Images/networks.png") -->
+<!-- ``` -->
+<!-- [@chaine_Manipulating_2018] -->
 
-## Localized interaction structures
+<!-- ## Localized interaction structures -->
 
-### Costly signals 
-\tiny
-Behavioural interactions and badge size for simulations with costs where individuals interact in small groups. On the $x$ axes number of different individuals each focal interacts with.
+<!-- ### Costly signals  -->
+<!-- \tiny -->
+<!-- Behavioural interactions and badge size for simulations with costs where individuals interact in small groups. On the $x$ axes number of different individuals each focal interacts with. -->
 
-```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/nIntGroupCost_/BehavIntALL.png")
-knitr::include_graphics("../Simulations/nIntGroupCost_/CueALL.png")
-```
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupCost_/BehavIntALL.png") -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupCost_/CueALL.png") -->
+<!-- ``` -->
 
-## Localized interaction structures
+<!-- ## Localized interaction structures -->
 
-### Cheap signals (free)
-\small
-Variation among individuals in different replicates (just like before) in replicates where individuals interact with 10 other individuals.
+<!-- ### Cheap signals (free) -->
+<!-- \small -->
+<!-- Variation among individuals in different replicates (just like before) in replicates where individuals interact with 10 other individuals. -->
 
-A part from replicates with two clusters, the clustering seems less straightforward as before
+<!-- A part from replicates with two clusters, the clustering seems less straightforward as before -->
 
-```{r, echo=FALSE,fig.align='center', out.width='85%',fig.show='hold'}
-knitr::include_graphics("../Simulations/nIntGroupEvol1_/corrAlphBet_nIntGroup10.png")
-```
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='85%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupEvol1_/corrAlphBet_nIntGroup10.png") -->
+<!-- ``` -->
 
-## Localized interaction structures
+<!-- ## Localized interaction structures -->
 
-### Cheap signals (free) 
+<!-- ### Cheap signals (free)  -->
 
-\small
-Behavioural interactions for the replicates form previous slide. I split up the replicates according to clusters (despite clusters not being clear cut).
+<!-- \small -->
+<!-- Behavioural interactions for the replicates form previous slide. I split up the replicates according to clusters (despite clusters not being clear cut). -->
 
-Only replicates with only one cluster seems to have less aggressive interactions
+<!-- Only replicates with only one cluster seems to have less aggressive interactions -->
 
 
-```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/nIntGroupEvol1_/BehavIntAllClusters_nIntGroup10.png")
-```
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupEvol1_/BehavIntAllClusters_nIntGroup10.png") -->
+<!-- ``` -->
 
-## Localized interaction structures
+<!-- ## Localized interaction structures -->
 
-### Cheap signals or Individual recognition?
-\tiny
-In these set, I changed the learning set up, I increased the number of centers (10 now, 6 before)
-along the signal axis; and I reduced the level or generalization. 
+<!-- ### Cheap signals or Individual recognition? -->
+<!-- \tiny -->
+<!-- In these set, I changed the learning set up, I increased the number of centers (10 now, 6 before) -->
+<!-- along the signal axis; and I reduced the level or generalization.  -->
 
-There seems to be an effect on the slope of the reaction norm. It stays very close to zero. 
+<!-- There seems to be an effect on the slope of the reaction norm. It stays very close to zero.  -->
 
-```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDynALL_nIntGroup10.png")
-```
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDynALL_nIntGroup10.png") -->
+<!-- ``` -->
 
-## Localized interaction structures
+<!-- ## Localized interaction structures -->
 
-### Cheap signals or Individual recognition
-\small
-Same replicates as the previous slide. Variation in $\beta$ and $\alpha$ among individuals for different replicates. 
+<!-- ### Cheap signals or Individual recognition -->
+<!-- \small -->
+<!-- Same replicates as the previous slide. Variation in $\beta$ and $\alpha$ among individuals for different replicates.  -->
 
-No clear clustering. Variation mostly along the $\alpha$ axis
+<!-- No clear clustering. Variation mostly along the $\alpha$ axis -->
 
-```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/nIntGroupCenters1_/corrAlphBet_nIntGroup10.png")
-```
-## Localized interaction structures
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupCenters1_/corrAlphBet_nIntGroup10.png") -->
+<!-- ``` -->
+<!-- ## Localized interaction structures -->
 
-### Cheap signals or Individual recognition?
-\small
-Panels show the changes in frequency distribution along evolution ($\alpha$, $\beta$, and resulting badge respectively) for the replicate shown in the previous slide. 
+<!-- ### Cheap signals or Individual recognition? -->
+<!-- \small -->
+<!-- Panels show the changes in frequency distribution along evolution ($\alpha$, $\beta$, and resulting badge respectively) for the replicate shown in the previous slide.  -->
 
-$\beta$ around zero, $\alpha$ all over the place. 
+<!-- $\beta$ around zero, $\alpha$ all over the place.  -->
 
-```{r, echo=FALSE,fig.align='left', out.height='28%',fig.show='hold'}
-knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDistAlpha5_nIntGroup10.png")
-knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDistBeta5_nIntGroup10.png")
-knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDistBadge5_nIntGroup10.png")
-```
+<!-- ```{r, echo=FALSE,fig.align='left', out.height='28%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDistAlpha5_nIntGroup10.png") -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDistBeta5_nIntGroup10.png") -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDistBadge5_nIntGroup10.png") -->
+<!-- ``` -->
 
-<!-- ## Aqui vamos! mirar correlaciones de 20 y 2000 luego interacciones -->
+<!-- <!-- ## Aqui vamos! mirar correlaciones de 20 y 2000 luego interacciones --> -->
 
-<!-- ## Comparar scenarios -->
+<!-- <!-- ## Comparar scenarios --> -->
 
 ## Why would you want to be recognized?
 

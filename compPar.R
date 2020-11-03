@@ -8,15 +8,21 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCost"
+scenario<-"betCostEvol1"
+
+extSimsDir<-#here("Simulations",paste0(scenario,"_"))
+  paste0("e:/BadgeSims/",scenario,"_")
 
 # Load files -------------------------------------------------------------------
 
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+
+(listTest<-list.files(extSimsDir,full.names = TRUE))
+
 (sdList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-inds<-do.call(rbind,lapply(indList,filesScenar,scenario))
+inds<-do.call(rbind,lapply(indList,filesScenar,scenario,full.name=TRUE))
 
 inds[,diffActWeight:=abs(WeightAct_0-WeightAct_4)]
 

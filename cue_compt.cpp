@@ -27,7 +27,7 @@ Start date :
 #include <math.h>	
 #include <vector>
 #include <string.h>
-#include <omp.h>
+//#include <omp.h>
 //#include "tchar.h"   //Eliminate for g++
 #include "../Cpp/Routines/C++/RandomNumbers/random.h"
 #include "../Cpp/json.hpp"       
@@ -580,8 +580,8 @@ void interactions(vector<individual>& population, int nint,
 	//cout << "track " << generat << endl;
 	localPrint.countIntTypes[0] = 0, localPrint.countIntTypes[1] = 0;
 	localPrint.countIntTypes[2] = 0;
+	localPrint.countPhenotypes[0] = 0, localPrint.countPhenotypes[1] = 0;
 	if ((population[0].get_strat() == learner) && (trackPopLearn)) {
-		localPrint.countPhenotypes[0] = 0, localPrint.countPhenotypes[1] = 0;
 		/*localPrint.countIntTypesGen[0];
 		localPrint.countIntTypesGen[1], localPrint.countIntTypesGen[2] = 0;*/
 		for (int countSam = 0; countSam < sampleSize; ++countSam) {
@@ -740,6 +740,11 @@ string create_filename(std::string filename, json param, int idRangPar) {
 	std::string namParam = param["namParam"];
 	filename.append(namParam);
 	filename.append(douts(param["rangParam"][idRangPar]));
+	if ((int)(param["nRep"]) == 1) {
+		filename.append("_");
+		filename.append("seed");
+		filename.append(douts(param["seed"]));
+	}
 	filename.append(".txt");
 	return(filename);
 }
@@ -816,6 +821,7 @@ int main(int argc, char* argv[]) {
 	//json param;
 	//param["totGen"]            = 10;   // Total number of generations
 	//param["nRep"]			   = 5;     // Number of replicates
+	//param["seed"]				=0;
 	//param["printGen"]          = 1;     // How often data is printed	
 	//param["printLearn"]        = 1;	  // how often learning dyn are printed
 	//param["printLearnInt"]	   = 1;   // How often are learning parameters printed
@@ -871,40 +877,46 @@ int main(int argc, char* argv[]) {
 	else{ omp_get_max_threads(); }*/
 	
 	//pointParam = &param;
-
 	string namParam = param["namParam"];
 	vector<ofstream>  evolOutput(param["rangParam"].size());
 	vector<ofstream>  indOutput(param["rangParam"].size());//popOutput,
-	for (json::iterator itParVal = param["rangParam"].begin();
-		itParVal != param["rangParam"].end(); ++itParVal) {
-		initializeFiles(evolOutput[itParVal- param["rangParam"].begin()],
-			indOutput[itParVal - param["rangParam"].begin()], param,
-			itParVal - param["rangParam"].begin());//popOutput,
+	if ((int)(param["nRep"]) > 1) {
+		for (json::iterator itParVal = param["rangParam"].begin();
+			itParVal != param["rangParam"].end(); ++itParVal) {
+			initializeFiles(evolOutput[itParVal - param["rangParam"].begin()],
+				indOutput[itParVal - param["rangParam"].begin()], param,
+				itParVal - param["rangParam"].begin());//popOutput,
+		}
 	}
 
 	
 
-	int nThreads = omp_get_max_threads();
-	omp_set_num_threads(nThreads);
+	//int nThreads = omp_get_max_threads();
+	//omp_set_num_threads(nThreads);
 	nlohmann::json paramL = param;
-	#pragma omp parallel for firstprivate(paramL) 
+	//#pragma omp parallel for firstprivate(paramL) 
 	for (int itGenLoop = 0;
 		itGenLoop < paramL["rangParam"].size()*int(paramL["nRep"]);
 		++itGenLoop) {
 		//nlohmann::json paramL = *pointParam;
 		int idParRange = itGenLoop / int(paramL["nRep"]);
-		int seed = itGenLoop - idParRange*int(paramL["nRep"]);
+		int seed;
+		ofstream evolOutput_s, indOutput_s;
+		if ((int)(paramL["nRep"] == 1)) {
+			seed = paramL["seed"];
+			initializeFiles(evolOutput_s,	indOutput_s, param, idParRange);//popOutput,
+		}
+		else seed = itGenLoop - idParRange*int(paramL["nRep"]);
 		std::mt19937 rngT;
 		rngT.seed(seed);
-		paramL[namParam] =
-			paramL["rangParam"][idParRange];
+		paramL[namParam] = paramL["rangParam"][idParRange];
 		paramL["alphaCrit"] = paramL["alphaAct"];
-		#pragma omp critical
-		{
-			cout << paramL["namParam"] << "=" << paramL[namParam] << "	" <<
-				"seed=" << seed << endl;
-			//rnd::set_seed(seed);
-		}
+		/*#pragma omp critical
+		{*/
+		cout << paramL["namParam"] << "=" << paramL[namParam] << "	" <<
+			"seed=" << seed << endl;
+		rnd::set_seed(seed);
+		//}
 		vector<individual> population;
 		population.reserve(paramL["popSize"]);
 		// intial conditions
@@ -931,34 +943,51 @@ int main(int argc, char* argv[]) {
 				generation % int(paramL["printLearn"]) == 0,
 				paramL["printLearnInt"], paramL["sampleSize"], generation,
 				paramL["nIntGroup"], localPrint, rngT);
-#pragma omp critical
-			{
-				if (generation % int(paramL["printGen"]) == 0) {
+//#pragma omp critical
+//			{
+			if (generation % int(paramL["printGen"]) == 0) {
 					get_stats(population, paramL["popSize"], localPrint,
 						paramL["nCenters"]);
-					printStats(paramL["popSize"],evolOutput[idParRange],paramL, 
-						generation, seed,localPrint);
-					if ((strategy)(paramL["typeAgent"]) == learner) {
-						printLearnDynamics(indOutput[idParRange],
-							population, generation, seed, localPrint);
+					if ((int)(paramL["nRep"]) > 1) {
+						printStats(paramL["popSize"], evolOutput[idParRange], paramL,
+							generation, seed, localPrint);
+						if ((strategy)(paramL["typeAgent"]) == learner) {
+							printLearnDynamics(indOutput[idParRange],
+								population, generation, seed, localPrint);
+						}
 					}
-				}
-				/*printPopSample(population, popOutput, generation, seed,
-				paramL["sampleSize"],paramL["nCenters"]);*/
+					else {
+						printStats(paramL["popSize"], evolOutput_s, paramL,
+							generation, seed, localPrint);
+						if ((strategy)(paramL["typeAgent"]) == learner) {
+							printLearnDynamics(indOutput_s,
+								population, generation, seed, localPrint);
+						}
+					}
+					
+	//		}
+					/*printPopSample(population, popOutput, generation, seed,
+					paramL["sampleSize"],paramL["nCenters"]);*/
 			}
-			Reprod(population, paramL["popSize"], paramL["mutRate"],
-				paramL["MutSd"], paramL["baselineFit"], paramL["mutType"],
-				paramL["QualStDv"],paramL["mutLearn"],paramL["alphCost"],
-				paramL["betCost"], paramL["errorQual"]);
+				Reprod(population, paramL["popSize"], paramL["mutRate"],
+					paramL["MutSd"], paramL["baselineFit"], paramL["mutType"],
+					paramL["QualStDv"],paramL["mutLearn"],paramL["alphCost"],
+					paramL["betCost"], paramL["errorQual"]);
+		}
+		if ((int)(paramL["nRep"]) == 1) {
+			evolOutput_s.close();
+			indOutput_s.close();
 		}
 	}
+
+	if ((int)(paramL["nRep"]) > 1) {
 		//popOutput.close();
-	for (json::iterator itParVal = param["rangParam"].begin();
-		itParVal != param["rangParam"].end(); ++itParVal) {
-		evolOutput[itParVal - param["rangParam"].begin()].close();
-		indOutput[itParVal - param["rangParam"].begin()].close();
-	}
-	
+		for (json::iterator itParVal = param["rangParam"].begin();
+			itParVal != param["rangParam"].end(); ++itParVal) {
+			evolOutput[itParVal - param["rangParam"].begin()].close();
+			indOutput[itParVal - param["rangParam"].begin()].close();
+		}
+	}	
 	
 	mark_time(0);
 	//wait_for_return();

@@ -4,6 +4,7 @@
 source(here("aesth.R"))
 library("jsonlite")
 library('rmarkdown')
+require("NbClust")
 source(here("..","R_files","posPlots.R"))
 source(here("..","R_files","Filled.contour3.R"))
 # library('plotrix')
@@ -225,7 +226,80 @@ evolDist<-function(indData,variable,nbins,range=NULL,pal, nlevels =10,
 }
 
 
+# Function to generate the clustering for different runs -----------------------
 
+get_clusters<-function(DT,vars,k.max=5,Bsamples=500,iterMax=100){
+  listTimeSeed<-DT[,length(indId),by=.(seed,time)][,.(seed,time)]
+  # Method to decide the optimal number of clusters
+  listTimeSeed<-split(t(as.matrix(listTimeSeed)), 
+        rep(1:ncol(t(as.matrix(listTimeSeed))), 
+            each = nrow(t(as.matrix(listTimeSeed)))))
+  totClusters<-do.call(rbind,sapply(listTimeSeed, function(x){
+      print(x)
+      error<-FALSE
+      error<-tryCatch(expr = 
+        { clus_gap<-cluster::clusGap(as.matrix(
+          DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),kmeans,
+          K.max = k.max,B = Bsamples,iter.max=iterMax)
+          nclustersGap<-cluster::maxSE(f = clus_gap$Tab[, "gap"], 
+                                      SE.f = clus_gap$Tab[, "SE.sim"])
+          FALSE
+        },error = function(e) {TRUE}
+      )
+      print(error)
+      if(error) {
+        clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
+                             rep(1,dim(DT[seed==x[1]&time==x[2],.SD,.SDcols=vars])[1]))
+        print("wait")
+      }
+      else if (nclustersGap==1){
+        clusters<-kmeans(as.matrix(
+        DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),
+        centers = nclustersGap,iter.max = 100)
+        clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
+                           clusters$cluster)
+        print("wait")
+      }
+      else{
+        print(x)
+        # if(x[1]==7&x[2]==8000){
+        #   print("STOPPP!!!")
+        # }
+        tryCatch(expr = invisible(capture.output(clus_Nb<-NbClust::NbClust(as.matrix(
+          DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),
+          min.nc = 2,max.nc = k.max,
+          method = "kmeans"))),
+          error = function(e) invisible(capture.output(clus_Nb<-NbClust::NbClust(as.matrix(
+            DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),
+            min.nc = 2,max.nc = k.max-1,
+            method = "kmeans")))
+        )
+        clusters<-clus_Nb$Best.partition
+        clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
+                               clusters)
+        print("wait")
+        }
+        return(clustersMatch)
+      }
+    )
+  )
+  # else {errorCondition("invalid method")}
+  totClusters<-as.data.frame(totClusters)
+  totClusters<-totClusters[order(totClusters$V1),]
+  return(totClusters[,2])
+}
+
+
+# clus_silou<-c(0,clus_silou)
+# nclustersSil<-which.max(clus_silou)
+
+
+# DT[,idClust:=as.numeric(idClust)]
+
+# for(i in which(DT[,seed] %in% runChoi)){
+#   set(popFinal,i,match( "idClust",names(DT)),
+#       clustersMatch[clustersMatch[,2]==i,1])
+# }
 
 
 # #SBATCH --job-name=TestJOB		#Nombre del job
