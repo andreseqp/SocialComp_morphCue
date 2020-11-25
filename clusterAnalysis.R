@@ -1,6 +1,7 @@
 require(here)
 here()
 source(here("AccFunc.R"))
+source(here("..","R_files","NbClust.R"))
 require("foreach")
 require("doParallel")
 require("jsonlite")
@@ -9,7 +10,7 @@ require("cluster")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvol4"
+scenario<-"nIntGroupNormQual2"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
   paste0("e:/BadgeSims/",scenario,"_")
@@ -27,7 +28,7 @@ paramName<-list.files(here("Simulations",paste0(scenario,"_")))
 paramName<-list.files(extSimsDir,full.names = TRUE)
 paramName<-grep(".json",paramName,value=TRUE)
 param<-#fromJSON(here("Simulations",paste0(scenario,"_"),paramName))
-  fromJSON(paramName)
+  fromJSON(paramName[1])
 
 
 val<-1
@@ -45,36 +46,100 @@ val<-1
   # pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
   
   # External sims folder
-  evol<-fread(evolList[fileId])
-  pop<-fread(indList[fileId])
+  # evol<-fread(evolList[fileId])
+  # pop<-fread(indList[fileId])
+
+  evolList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+                      evolList,value =TRUE)
+  indList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+                     indList,value =TRUE)
   
-  Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(indList[val],"_")[[1]],1)),
-               replacement = "")
-  nampar<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[val],"_")[[1]],1)),
-               replacement = "")
+  
+  evol<-do.call(rbind,lapply(evolList_runs,fread))
+  pop<-do.call(rbind,lapply(indList_runs, fread))
+  
+    
+  Valpar<-param$rangParam[val]
+  
+  nampar<-param$namParam
   
   nCenters<-param$nCenters
   sigSquar<-param$sigSq
   
   
+  
   # Get the optimal number of clusters and assing inds to clusters -------------
   propTime2plot<-0.8
-  popFinal<-pop[nInteract==500&time>propTime2plot*(max(time))]
+  popFinal<-pop[nInteract==500&time==7000]
   
-  popOneInd<-pop[nInteract==500&time!=0]
+  popOneInd<-pop[nInteract==500]
   
-  vars<-c("alpha","beta","Badge")
+  vars<-c("alpha","beta")
   # ,"Badge",grep("WeightAct",names(popFinal),value = TRUE))
   names(popFinal)
-  popOneInd$idClust<-get_clusters(popOneInd,vars,k.max = 5,
+  popOneInd$idClust<-get_clusters(popOneInd,vars,k.max = 4,
                                  Bsamples =200,iterMax = 500)
+  
+  clusSummary<-popOneInd[,.(meanAlph=mean(alpha),meanBet=mean(beta)),
+                         by=.(idClust,time,seed)]
+  clusSummary[,orderClus:=0]
+  for(i in 1:dim(clusSummary)[1]){
+    set(clusSummary,i,6L,match(clusSummary[i,meanAlph],
+                               sort(clusSummary[time==clusSummary[i,time]&
+                                                  seed==clusSummary[i,seed]]$meanAlph)))
+  }
+  
+  
+  popOneInd<-merge(popOneInd,clusSummary,all.x = TRUE)
+  
+  
+  
+  
+  NbClust::NbClust(popOneInd[seed==9&time==3000,.SD,.SDcols=vars],
+                   method = "kmeans",max.nc = 4)
+  
+  NbClust.AEQP(popOneInd[seed==9&time==3000,.SD,.SDcols=vars],
+                   method = "kmeans",max.nc = 4)
+  
+  focal_rep_time<-popOneInd[seed==15,.(alphaMean=mean(alpha),meanBeta=mean(beta),n=length(indId)),
+                            by=orderClus]
+  
+  popOneInd[orderClus==1&seed==15,.(alpha,beta)]
+  
+  plot(alpha~beta,col=colRuns[orderClus],data=popOneInd[seed==15])
+  
+  rangQual<-seq(0,1,by = 0.01)
+  reactNorms<-sapply(focal_rep_time$orderClus, function(x){
+    logist(rangQual,alpha = focal_rep_time[orderClus==x,alphaMean],
+           beta = focal_rep_time[orderClus==x,meanBeta])
+  })
+  
+  par(mfrow=c(1,2))
+  matplot(x=rangQual,reactNorms,type="l",lty=1,lwd=3)
+  
+  dataIndReact<-sapply(as.list(popOneInd[seed==15,indId]),
+                       function(x){x=
+                         sapply(rangQual, 
+                                function(y)
+                                  do.call(logist,
+                                          as.list(
+                                            c(y,as.double(
+                                              popOneInd[seed==15&indId==x,.SD,
+                                                      .SDcol=c("alpha","beta")])))))})
+  matplot(x=rangQual,y=dataIndReact,col = paletteMeans(100)[
+    findInterval(popOneInd[seed==15,Quality],colorbreaksQual)],type='l',
+    ylim=c(0,1),
+    lwd=2)
+  
+  
+  focal_rep_time
   
   dim(popOneInd)
   
   
   
   
-  plot(as.matrix(popOneInd[seed==4&time==1000,.SD,.SDcols=vars]))
+  plot(as.matrix(popOneInd[seed==0&time==6000,.SD,.SDcols=vars]))
   
   clusGap(as.matrix(popOneInd[seed==3&time==1000,.SD,.SDcols=vars]),kmeans,
           K.max = 5,B = 200,iter.max=500)
@@ -86,9 +151,9 @@ val<-1
   
   
   
-  # png(here("Simulations",paste0(scenario,"_"),
-           # paste0("corrAlphBet_",nampar,Valpar,".png")),
-      # width = 1400,height = 1000)
+  png(here("Simulations",paste0(scenario,"_"),
+  paste0("corrAlphBet_",nampar,Valpar,".png")),
+  width = 1400,height = 1000)
   
   nY<-4;nX<-4
   
@@ -106,28 +171,41 @@ val<-1
     cX<-cX+1
     par(plt=posPlot(numplotx = nX,numploty = nY,idplotx = cX,idploty = cY),
         xaxt="s",las=1,new=TRUE)
-    plot(data=popFinal[seed==cSeed],alpha~beta,ylab="",
-         xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=0.75,
-         ylim=range(popFinal[,alpha])+c(0,0.9),
-         xlim=range(popFinal[,beta]),col=colRuns[idClust],
+    plot(data=popOneInd[seed==cSeed&time==max(time)*0.8],alpha~beta,ylab="",
+         xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=2,
+         ylim=range(popOneInd[,alpha])+c(0,0.9),
+         xlim=range(popOneInd[,beta]),col=colRuns[orderClus],
          yaxt=seqYax[cX],xaxt=seqYax[cY])
-    lines(x=c(0,0),y=range(popFinal[,alpha]),col="grey",
+    lines(x=c(0,0),y=range(popOneInd[,alpha]),col="grey",
           lwd=2)
-    lines(y=c(0,0),x=range(popFinal[,beta]),col="grey",
+    lines(y=c(0,0),x=range(popOneInd[,beta]),col="grey",
           lwd=2)
-    text(x = mean(range(popFinal[,beta])),
-         y = range(popFinal[,alpha])[2]+0.45,
+    text(x = mean(range(popOneInd[,beta])),
+         y = range(popOneInd[,alpha])[2]+0.45,
          labels = paste0("seed=",cSeed),cex=1)
     if(cY==1) mtext(seqXlabDown[cX],1,line = 3.5,cex=3)
     if(cX==1) mtext(seqYlabDown[cY],2,line = 3,cex=3,las=1)
-    # mtext(text = expression(alpha),side = 2,line = 3,las=1,cex=3)
-    # mtext(text = expression(beta),side = 1,line = 2,5,cex = 3)
+    
   }
   
-  # dev.off()
+  
+  dev.off()
   
   
-  popFinal[,length(unique(idClust)),by=seed]
+  plot(data=popOneInd[time==max(time)*0.8],alpha~beta,ylab="",
+       xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=2,
+       ylim=range(popOneInd[,alpha])+c(0,0.9),
+       xlim=range(popOneInd[,beta]),col=colReps[seed],
+       yaxt="s",xaxt="s")
+  lines(x=c(0,0),y=range(popOneInd[,alpha]),col="grey",
+        lwd=2)
+  lines(y=c(0,0),x=range(popOneInd[,beta]),col="grey",
+        lwd=2)
+  mtext(text = expression(alpha),side = 2,line = 3,las=1,cex=3)
+  mtext(text = expression(beta),side = 1,line = 2,5,cex = 3)
+  
+  
+  popOneInd[,length(unique(orderClus)),by=.(seed,time)]
   
   evol[,nClusters:=popFinal[,length(unique(idClust)),by=seed][
     match(evol$seed,popFinal[,length(unique(idClust)),by=seed][,seed]),V1]]

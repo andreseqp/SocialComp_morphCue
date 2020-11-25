@@ -9,8 +9,8 @@ source(here("AccFunc.R"))
 fileName<-"parameters"
 here()
 
-param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
-     fromJSON(here("Simulations","nIntGroupEvol4_","parameters.json"))
+# param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
+#      fromJSON(here("Simulations","alphaAct_","parameters1.json"))
 
 param<-list(totGen   = 15000,   nRep    = 1, seed = 1,
             printGen = 1000,   printLearn = 1000,
@@ -19,23 +19,26 @@ param<-list(totGen   = 15000,   nRep    = 1, seed = 1,
             MutSd    = 0.3,  nInt        = 500,  init     = c(0,0,1,0),
             mutRate  = 0.001,  mutType  = 0,
             sampleSize = 50,   strQual  = 10,
-            errorQual = 0,    alphaBad	 = 0,    betaBad	 = 0,
+            errorQual = 0,    alphaBad	 = I(c(0)),    
+            betaBad	 = I(c(0)),
             alphaRes =-10,betaRes=-20, gammaRes=0,
-            alphaCrit  = 0.5,  alphaAct = 0.5,
+            alphaCrit  = 0.4,  alphaAct = 0.4,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,   gamma = 0,
-            QualStDv   = 1.1, betCost = 0,
+            QualStDv   = 0.15, betCost = 0,
             alphCost	 = 3, mutLearn = FALSE,
-            nIntGroup  = 2000, 
+            nIntGroup  = 8, 
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "nIntGroup",
-            rangParam = c(2000,8),
+            namParam = "nCenters",
+            rangParam = I(c(4,8,10)),
             typeAgent = 2, #//0. hawk 1.dove 2. learner 3. evaluator
             folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
-# folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for realease
+# folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for release
 
 
-apendScenar<-"Evol5"
+
+
+apendScenar<-"nInt8"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
@@ -53,7 +56,7 @@ param$folderL<-paste0(param$folderL,
 param$folder<-paste0("/home/ubuntu/BadgeStatus/",
                      param$namParam,apendScenar,"_/")
 ## For the local pc
-# param$folder<-paste0("e:/BadgeSims/",param$namParam,apendScenar,"_/")
+param$folder<-paste0("e:/BadgeSims/",param$namParam,apendScenar,"_/")
 # read and edit json 
 # oldJson<-fromJSON(here("Simulations","strQualEvol_",fileName))
 # diffJsons(oldJson,param)
@@ -84,7 +87,7 @@ rangparam<-param$rangParam
 
 nReps<-15
 
-for (i in 0:nReps) {
+for (i in 0:(nReps-1)) {
   param$folderL<-paste0(here("Simulations",param$namParam),apendScenar,"_/") # comment for debug
   # param$folder<-param$folderL # for debug
   # param$rangParam<-c(rangparam[i])
@@ -102,7 +105,8 @@ for (i in 0:nReps) {
       print(unlist(param)[unlist(currFile)!=unlist(param)])
       ans<-readline("Want to continue?")
       if(substr(ans, 1, 1) == "y"){
-        write(outParam,paste(param$folderL,filenameL,sep = ""))
+        write_json(x = param,path = paste(param$folderL,filenameL,sep = ""),
+                   auto_unbox = TRUE,pretty = TRUE)
         # jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
         #         partition,nodes = nodes,mem = memor)
       }
@@ -113,7 +117,8 @@ for (i in 0:nReps) {
     }
   }
   else{
-    write(outParam,paste(param$folderL,filenameL,sep = ""))
+    write_json(param,paste(param$folderL,filenameL,sep = ""),
+               auto_unbox = TRUE,pretty = TRUE)
     # jobfile(param$folderL,paste0(param$namParam,apendScenar),timelim = runTime,
     #         partition,nodes = nodes,mem = memor)
   }
@@ -126,6 +131,7 @@ gsub(pattern = "\\",replacement = "/",simsdir,fixed=TRUE)
 # system(paste(exedir,
 #              gsub("\\","/",paste(simsdir,listfolders[1],fileName,sep="\\"),fixed=TRUE)
 #              ,sep = " "))
+
 
 
 

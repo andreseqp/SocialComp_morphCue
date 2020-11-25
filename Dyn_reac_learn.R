@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvol4"
+scenario<-"nCentersnInt8"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
   paste0("e:/BadgeSims/",scenario,"_")
@@ -23,7 +23,7 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 # when program was run with internal paralellization
 
 # Project folder
-# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 # External sims folder
 (listTest<-list.files(extSimsDir,full.names = TRUE))
 
@@ -37,22 +37,20 @@ param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
 
 # Choose which parameter to plot
 
-val<-1
+val<-2
 
 
 # Load files -------------------------------------------------------------------
 # when program was run with external paralellization
 
-# evolList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
-#                     evolList,value =TRUE)
-# indList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
-#                     indList,value =TRUE)
 
 
 # loop to produce pdfs for parameter values
-numCores <- length(indList)
+numCores <- length(param$rangParam)
 registerDoParallel(numCores)
-foreach(val = 1:length(indList),.packages = c("data.table","here")) %dopar% {
+
+foreach(val = 1:2,#length(param$rangParam),
+        .packages = c("data.table","here")) %dopar% {
 source(here("AccFunc.R"))
 
   fileId<-val
@@ -61,28 +59,47 @@ source(here("AccFunc.R"))
 # evol<-fread(here("Simulations",paste0(scenario,"_"),evolList[fileId]))
 # pop<-fread(here("Simulations",paste0(scenario,"_"),indList[fileId]))
 
-# evol<-do.call(rbind,lapply(evolList_runs,function(x){
-#   fread(here("Simulations",paste0(scenario,"_"),x))
-# }))
-# pop<-do.call(rbind,lapply(indList_runs,function(x){
-#   fread(here("Simulations",paste0(scenario,"_"),x))
-# }))
-  
-  
+
+
+
   
 # External sims folder
-evol<-fread(evolList[fileId])
-pop<-fread(indList[fileId])
+# evol<-fread(evolList[fileId])
+# pop<-fread(indList[fileId])
 
+  evolList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+                      evolList,value =TRUE)
+  indList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+                     indList,value =TRUE)
+  
+  # evol<-do.call(rbind,lapply(evolList_runs,function(x){
+  #   fread(here("Simulations",paste0(scenario,"_"),x))
+  # }))
+  # pop<-do.call(rbind,lapply(indList_runs,function(x){
+  #   fread(here("Simulations",paste0(scenario,"_"),x))
+  # }))
+  
+  
+  
+evol<-do.call(rbind,lapply(evolList_runs,fread))
+pop<-do.call(rbind,lapply(indList_runs, fread))
 
+# temp fix to lack of name to the weights
 
+if(nCenters==8){
+names(evol)[35:38]<-c("WeightAct_6","WeightCrit_6","WeightAct_7",
+                      "WeightCrit_7")
 
-Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(indList[val],"_")[[1]],1)),
-             replacement = "")
-nampar<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[val],"_")[[1]],1)),
-             replacement = "")
+names(pop)[29:32]<-c("WeightAct_6","WeightCrit_6","WeightAct_7",
+                      "WeightCrit_7")
+}
 
-nCenters<-param$nCenters
+Valpar<-param$rangParam[val]
+
+nampar<-param$namParam
+
+if(nampar=="nCenters") {nCenters<-Valpar} else nCenters<-param$nCenters
+
 sigSquar<-param$sigSq
 
 
@@ -98,10 +115,15 @@ cols<-c("freqGenHawks","freqGenDove",  "freqGenEval",  "freqGenLearn",
         "freqFenHawks", "freqFenDoves", "freqHH", "freqHD", "freqDD", "meanCue",
         "meanAlpha", "meanBeta",
         "meanFit", #"meanInitCrit", "sdInitCrit", "meanInitAct", "sdInitAct",
-        "WeightAct_0","WeightCrit_0",
-        "WeightAct_1","WeightCrit_1","WeightAct_2",  "WeightCrit_2",
-        "WeightAct_3",  "WeightCrit_3", "WeightAct_4",  "WeightCrit_4",
-        "WeightAct_5","WeightCrit_5")
+        do.call(cbind,lapply(0:(nCenters-1), function(x){
+          cbind(paste0("WeightAct_",x),paste0("WeightCrit_",x))
+        }))
+        # "WeightAct_0","WeightCrit_0",
+        # "WeightAct_1","WeightCrit_1","WeightAct_2",  "WeightCrit_2",
+        # "WeightAct_3",  "WeightCrit_3", "WeightAct_4",  "WeightCrit_4",
+        # "WeightAct_5","WeightCrit_5")
+)
+
 
 my.summary<- function(x) list(mean = mean(x), lowIQR = fivenum(x)[2], 
                               upIQR = fivenum(x)[4])
@@ -122,8 +144,10 @@ pdf(here("Simulations",paste0(scenario,"_"),paste0("evolDyn_",nampar,Valpar,".pd
 
 cexAxis<-1.5
 
+numPlotsDyn<-3
+
 # Dynamics of genetypic traits (reaction norm)
-par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = numPlotsDyn,idplotx = 1,
                 lowboundx = 8,upboundx = 93),xaxt="s",las=1)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
      ylim=fivenum(as.matrix(evol[,.(meanAlpha,meanBeta#,meanInitCrit, meanInitAct
@@ -171,6 +195,8 @@ axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 
 # Evolutionary Dynamics of mean fitness
 
+if(numPlotsDyn==3){
+
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 2,
                 lowboundx = 8,upboundx = 93),xaxt="s",las=1,new=TRUE)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
@@ -191,12 +217,15 @@ legend("topleft",legend = c("mean Fit"),
 axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 axis(4,cex=0.8,padj = -0.5)
 
+}
+
 # Dynamics of behavioural interactions 
-par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3, idplotx = 3,
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = numPlotsDyn, 
+                idplotx = numPlotsDyn,
                 lowboundx = 8,upboundx = 93),
     xaxt="s",las=1,new=TRUE)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col=0,
-     ylim=c(0,0.6),xlab="",ylab="",yaxt="n",
+     ylim=range(evol$freqHH)+c(-0.1,0.05),xlab="",ylab="",yaxt="n",
      cex.lab=1.5,cex.axis=1,xaxt='n',las=1)
 axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 axis(4,cex=0.8,padj = -0.5)
@@ -265,7 +294,7 @@ for(genC in genstoPrint){
                   lowboundx = 8, upboundx = 93), xaxt="s",las=1,new=TRUE)
   tmpActweights<-evol[(time==unique(time)[genC]),.SD,
                       .SDcols=grep("WeightAct",
-                                   names(evol),value = TRUE)]
+                                   names(evol),value = TRUE)[1:nCenters]]
   weightsAct<-sapply(seq(1,dim(tmpActweights)[1]),function(x){
       logist(totRBF(rangx,
                     centers,sigSquar,
@@ -282,7 +311,7 @@ for(genC in genstoPrint){
                       as.double(evolStats[(time==unique(time)[genC]),.SD,
                                 .SDcols=grep('(?=.*WeightAct)(?=.*mean)',
                                              names(evolStats),value = TRUE,
-                                             perl=TRUE)])),
+                                             perl=TRUE)[1:nCenters]])),
                       alpha=0,beta=1)~rangx,
         col = "black",lwd=2)
   text(x=0.5,y=0.1,labels = paste0("time=",unique(evolStats$time)[genC]))
@@ -317,18 +346,18 @@ rm(list=grep("temp",ls(),value = T))
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,
                    value.var = c("meanAlpha","meanBeta","meanFit",
-                                 "meanInitCrit","meanFit",
-                                  "meanInitAct","sdInitCrit","sdInitAct",
+                                 "meanInitCrit",
+                                 "meanInitAct","sdInitCrit","sdInitAct",
                                   "sdAlpha","sdBeta","freqHH",
                                   "freqHD","freqDD"))
 (finReps<-evol[time==max(time),seed])
 
 
 for(runChoi in finReps){
- runChoi<-2
-
+ # runChoi<-1
+ 
 # Average trajectory
-par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = numPlotsDyn,idplotx = 1,
                 lowboundx = 8, upboundx = 93),
     xaxt="s",las=1)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
@@ -403,6 +432,8 @@ matlines(x=traitsTrajs[,time],
 
 # Evolutionary trajectory of mean fitness
 
+if(numPlotsDyn==3){
+
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 2,
                 lowboundx = 8, upboundx = 93),new=TRUE,
     xaxt="s",las=1)
@@ -419,9 +450,10 @@ matlines(x=traitsTrajs[,time],
          col=colGenesLin,lty = 2,type="l",lwd=3)
 axis(side=4)
 
+}
 # Evolutionary trajectories of behavioral interactions
-par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3, idplotx = 3,
-                lowboundx = 8, upboundx = 93),
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = numPlotsDyn, 
+                idplotx = numPlotsDyn,lowboundx = 8, upboundx = 93),
     xaxt="s",las=1,new=TRUE)
 plot(x=c(0,max(evol$time)),y=c(0,0),type="l",lwd=2,col=0,
      ylim=fivenum(evol$freqHH)[c(1,5)]+c(-0.1,0.05),xlab="",ylab="",yaxt="n",
@@ -486,11 +518,12 @@ for(genC in genstoPrint){
       xaxt="s",las=1,new=TRUE)
   weightsAct<-as.double(evol[(time==unique(time)[genC])&seed==runChoi,.SD,
                              .SDcols=grep("WeightAct",
-                                          names(evol),value = TRUE)])
+                                          names(evol),value = TRUE)[1:nCenters]])
     tempPop<-pop[(time==unique(time)[genC]&seed==runChoi)&
                    nInteract==lastInt,.SD[.N],
                .SDcol=c(grep("WeightAct",
-                             names(evol),value = TRUE),"Quality","alpha","beta"),
+                             names(evol),value = TRUE)[1:nCenters],
+                        "Quality","alpha","beta"),
                by=indId]
   dataIndAct<-sapply(as.list(tempPop[,indId]),
                      function(x){x=
@@ -921,7 +954,7 @@ dev.off()
 
 ## Plot all the generations/samples of the reaction norms ----------------------
 
-runChoi<-8
+runChoi<-6
 
 # Choose which interaction to visualize
 lastInt<-300#tail(pop[seed==runChoi,unique(nInteract)],2)[1]
@@ -990,35 +1023,30 @@ dev.off()
 # frecuency distribution change along evol. time  ------------------------------
 
 for(runChoi in finReps){
-
+runChoi<-10
+  
 tempop<-pop[(seed==runChoi&nInteract==500)]
  
 
 png(here("Simulations",paste0(scenario,"_"),
-         paste0("evolDistBeta",runChoi,"_",nampar,Valpar,".png")),
-    width = 1400,height = 700)
+         paste0("evolDist",runChoi,"_",nampar,Valpar,".png")),
+    width = 1400,height = 1000)
 
-evolDist(indData = tempop,variable = "beta",nbins = 20,pal = pal_dist,
-         nlevels=10,cexAxis = 2.5,xlab="generations",ylab = expression(beta),
-           keyTitle = "log(rel. \n freq.)")
-dev.off()
 
-png(here("Simulations",paste0(scenario,"_"),
-         paste0("evolDistAlpha",runChoi,"_",nampar,Valpar,".png")),
-    width = 1400,height = 700)
 
+par(plt=posPlot(1,3,1,3),mfrow=c(1,1),xaxt="n",las=1)
+betaDist<-evolDist(indData = tempop,variable = "beta",nbins = 20,pal = pal_dist,
+         nlevels=10,cexAxis = 1.5,xlab="",ylab ="")
+mtext( expression(beta),2,4.5,cex=2.5)
+par(plt=posPlot(1,3,1,2),mfrow=c(1,1),xaxt="n",las=1,new=TRUE)
 evolDist(indData = tempop,variable = "alpha",nbins = 20,pal = pal_dist,
-         nlevels=10,cexAxis = 2.5,xlab="generations",ylab = expression(alpha),
+         nlevels=10,cexAxis = 1.5,xlab="",ylab = "",
          keyTitle = "log(rel. \n freq.)")
-dev.off()
-
-png(here("Simulations",paste0(scenario,"_"),
-         paste0("evolDistBadge",runChoi,"_",nampar,Valpar,".png")),
-    width = 1400,height = 700)
-
+mtext( expression(alpha),2,4.5,cex=2.5)
+par(plt=posPlot(1,3,1,1),mfrow=c(1,1),xaxt="s",las=1,new=TRUE)
 evolDist(indData = tempop,variable = "Badge",nbins = 20,pal = pal_dist,
-         nlevels=10,cexAxis = 2.5,xlab="generations",ylab = "Badge",
-         keyTitle = "log(rel. \n freq.)")
+         nlevels=10,cexAxis = 1.5,xlab="generations",ylab = "")
+mtext( "Badge",2,3.5,cex=1.5)
 
 dev.off()
 

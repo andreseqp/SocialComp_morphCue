@@ -80,6 +80,25 @@
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
 \newif\ifbibliography
+\usepackage{longtable,booktabs}
+\usepackage{caption}
+% Make caption package work with longtable
+\makeatletter
+\def\fnum@table{\tablename~\thetable}
+\makeatother
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
@@ -90,17 +109,40 @@
 (cheap and costly) signals of quality}
 \author{Andrés Quiñones PhD.}
 \date{Genes as environment - AGA2020 virtual symposium\\
-November 02, 2020}
+November 17 - 2020}
 
 \begin{document}
 \frame{\titlepage}
+
+\begin{frame}{Acknowledgements}
+\protect\hypertarget{acknowledgements}{}
+
+\begin{longtable}[]{@{}ccc@{}}
+\toprule
+\includegraphics[width=0.33\textwidth,height=\textheight]{../Images/redouan.jpg}
+&
+\includegraphics[width=0.23\textwidth,height=\textheight]{../Images/olof-leimar.png}
+&
+\includegraphics[width=0.32\textwidth,height=\textheight]{../Images/danielcadena.jpg}\tabularnewline
+\midrule
+\endhead
+\emph{R. Bshary} & \emph{O. Leimar} & \emph{D. Cadena}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\includegraphics[width=0.35\textwidth,height=\textheight]{../Images/UNINE_cmjn.jpg}
+\includegraphics[width=0.45\textwidth,height=\textheight]{../Images/logo_largo.png}
+
+\end{frame}
 
 \begin{frame}{Social interactions}
 \protect\hypertarget{social-interactions}{}
 
 \begin{block}{The need to match partners with actions}
 
-\begin{center}\includegraphics[width=0.4\linewidth]{../Images/sexSelec} \includegraphics[width=0.4\linewidth]{../Images/begging} \includegraphics[width=0.4\linewidth]{../Images/broodparasite} \includegraphics[width=0.4\linewidth]{../Images/dominance} \end{center}
+\begin{center}\includegraphics[width=0.4\linewidth]{../Images/sexSelec} \end{center}
+
+\begin{center}\includegraphics[width=0.4\linewidth]{../Images/dominance} \end{center}
 
 \end{block}
 
@@ -111,7 +153,7 @@ November 02, 2020}
 
 \begin{block}{Badge of status}
 
-\begin{center}\includegraphics[height=0.8\textheight]{../Images//hosp_alexandra_mackenzie} \end{center}
+\begin{center}\includegraphics[width=0.45\linewidth]{../Images/HouseSparrow_strong} \includegraphics[width=0.45\linewidth]{../Images/HouseSparrow_weak} \end{center}
 
 \end{block}
 
@@ -129,26 +171,6 @@ November 02, 2020}
 (Zahavi 1975; Grafen 1990)
 
 \end{block}
-
-\end{frame}
-
-\begin{frame}{The handicap principle}
-\protect\hypertarget{the-handicap-principle-1}{}
-
-\begin{block}{Badges of status}
-
-\begin{center}\includegraphics[width=0.9\linewidth]{../Images//comSystemBot} \end{center}
-
-(Botero et al. 2010)
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{Are bibs really badges?}
-\protect\hypertarget{are-bibs-really-badges}{}
-
-\begin{flushleft}\includegraphics[width=0.3\linewidth]{../Images/Sanchez-Tojar_2018} \end{flushleft}
 
 \end{frame}
 
@@ -209,42 +231,7 @@ November 02, 2020}
 \begin{frame}{A model of communication in animal conflict}
 \protect\hypertarget{a-model-of-communication-in-animal-conflict}{}
 
-\vspace{-0.5cm}
-
-\begin{block}{Comunication}
-
-\begin{columns}[T]
-
-\column{0.45\linewidth}
-
-The sender code
-
-\tiny
-\begin{equation*}
-B_i = \frac{1}{1+e^{-(\textcolor{red}{\alpha_s} +\textcolor{red}{\beta_s} Q_i)}}
-\end{equation*}
-
-
-
-\begin{center}\includegraphics[width=0.5\linewidth]{GenesAsEnviron_files/figure-beamer/unnamed-chunk-19-1} \end{center}
-
-
-\column{0.45\linewidth}
-
-The receiver code (learning)
-
-\tiny
-\begin{equation*}
-  \Delta V_{t(s)}=\alpha (R_t-V_t)
-\end{equation*}
-
-
-
-\begin{center}\includegraphics[width=0.6\linewidth]{GenesAsEnviron_files/figure-beamer/unnamed-chunk-20-1} \end{center}
-
-\end{columns}
-
-\end{block}
+\vspace{-0.3cm}
 
 \begin{block}{Conflict}
 
@@ -269,7 +256,45 @@ p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
 
 
 
-\begin{center}\includegraphics[width=0.6\linewidth]{GenesAsEnviron_files/figure-beamer/unnamed-chunk-21-1} \end{center}
+\begin{center}\includegraphics[width=0.6\linewidth]{GenesAsEnviron_files/figure-beamer/unnamed-chunk-17-1} \end{center}
+
+\end{columns}
+
+\pause
+
+\end{block}
+
+\begin{block}{Communication}
+
+\begin{columns}[T]
+
+
+\column{0.45\linewidth}
+
+The sender code
+
+\tiny
+\begin{equation*}
+B_i = \frac{1}{1+e^{-(\textcolor{red}{\alpha_s} +\textcolor{red}{\beta_s} Q_i)}}
+\end{equation*}
+
+
+
+\begin{center}\includegraphics[width=0.5\linewidth]{GenesAsEnviron_files/figure-beamer/unnamed-chunk-18-1} \end{center}
+
+
+\column{0.45\linewidth}
+
+The receiver code (learning)
+
+\tiny
+\begin{equation*}
+  \Delta V_{t(s)}=\alpha (R_t-V_t)
+\end{equation*}
+
+
+
+\begin{center}\includegraphics[width=0.6\linewidth]{GenesAsEnviron_files/figure-beamer/unnamed-chunk-19-1} \end{center}
 
 \end{columns}
 
@@ -277,23 +302,21 @@ p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
 
 \end{frame}
 
-\hypertarget{results}{%
-\section{Results}\label{results}}
-
 \begin{frame}{Learning under honest signalling}
 \protect\hypertarget{learning-under-honest-signalling}{}
 
-\pause
-
-\begin{center}\includegraphics[width=1\linewidth]{../Simulations/alphaAct_/alphaAct0.6learnDyn} \end{center}
+\begin{center}\includegraphics[width=1\linewidth]{../Simulations/alphaAct_/alphaAct0.4learnDyn} \end{center}
 
 \end{frame}
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
 
 \begin{frame}{Learning mediates the evolution of badges of status
 (handicaps)}
 \protect\hypertarget{learning-mediates-the-evolution-of-badges-of-status-handicaps}{}
 
-\begin{center}\includegraphics[width=1\linewidth]{../Simulations/betCostEvol1_/evolDyn0_betCost5} \end{center}
+\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/betCostEvol1_/evolDyn0_betCost5} \end{center}
 
 \end{frame}
 
@@ -302,79 +325,23 @@ p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
 
 \begin{block}{Individual replicates: no badges}
 
-\begin{center}\includegraphics[width=1\linewidth]{../Simulations/betCostEvol1_/evolDyn5_betCost5} \end{center}
+\begin{center}\includegraphics[height=0.9\textheight]{../Simulations/betCostEvol1_/evolDyn5_betCost5} \end{center}
 
 \end{block}
 
 \end{frame}
 
-\begin{frame}{Badges of Status: do they matter?}
-\protect\hypertarget{badges-of-status-do-they-matter}{}
-
-\begin{block}{Behavioural interactions}
-
-\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/betCostEvol1_/compClustRep_betCost5} \end{center}
-
---\textgreater{} --\textgreater{} --\textgreater{}
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{The evolution of cheap Badges of Status}
+\begin{frame}{The evolution of cheap badges of Status}
 \protect\hypertarget{the-evolution-of-cheap-badges-of-status}{}
 
-\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/nIntGroupEvol4_/evolDyn13_nIntGroup2000} \end{center}
-
-\end{frame}
-
-\begin{frame}{The evolution of cheap Badges of Status}
-\protect\hypertarget{the-evolution-of-cheap-badges-of-status-1}{}
-
-\begin{figure}
-
-\includegraphics[height=0.28\textheight]{../Simulations/nIntGroupEvol4_/evolDistAlpha13_nIntGroup2000} \includegraphics[height=0.28\textheight]{../Simulations/nIntGroupEvol4_/evolDistBeta13_nIntGroup2000} \includegraphics[height=0.28\textheight]{../Simulations/nIntGroupEvol4_/evolDistBadge13_nIntGroup2000} \hfill{}
-
-\caption{alpha - beta -Badge}\label{fig:unnamed-chunk-27}
-\end{figure}
-
-\end{frame}
-
-\begin{frame}{The evolution of cheap Badges of Status}
-\protect\hypertarget{the-evolution-of-cheap-badges-of-status-2}{}
-
-\begin{block}{How often does it happen?}
-
-\begin{flushleft}\includegraphics[width=0.9\linewidth]{../Simulations/nIntGroupEvol1_/corrAlphBet_nIntGroup2000} \end{flushleft}
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{The evolution of cheap Badges of Status}
-\protect\hypertarget{the-evolution-of-cheap-badges-of-status-3}{}
-
-\begin{block}{Does it matter?}
-
-\small
-
-Behavioural interactions splitting up the replicates according to the
-number of ``types'' that evolve
-
-\begin{flushleft}\includegraphics[width=0.9\linewidth]{../Simulations/nIntGroupEvol1_/BehavIntAllClusters_nIntGroup2000} \end{flushleft}
-
---\textgreater{}
-
---\textgreater{}
-
-\end{block}
+\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/nIntGroupNormQual_/evolDyn7_nIntGroup2000} \end{center}
 
 \end{frame}
 
 \begin{frame}{Why would you want to be recognized?}
 \protect\hypertarget{why-would-you-want-to-be-recognized}{}
 
-\pause
+\vspace{-1cm}
 
 \begin{block}{The peaceful, the aggressive and the clever}
 
@@ -384,15 +351,8 @@ number of ``types'' that evolve
   Learning initial conditions
 \end{itemize}
 
-\tiny
-
-Here, I vary the aggressive tendency for unlearned individuals in these
-three set ups.
-
-Agressive, peaceful, clever (starts at the ESS of the classic hawk-dove
-game)
-
-\begin{flushleft}\includegraphics[width=0.9\linewidth]{../Images/cartoonRBF_InitAct} \end{flushleft}
+\includegraphics[width=0.45\linewidth]{../Simulations/alphaAct_/alphaAct0.4learnDyn}
+\includegraphics[width=0.45\linewidth]{GenesAsEnviron_files/figure-beamer/unnamed-chunk-24-2}
 
 \end{block}
 
@@ -401,11 +361,9 @@ game)
 \begin{frame}{Why would you want to be recognized?}
 \protect\hypertarget{why-would-you-want-to-be-recognized-1}{}
 
-\begin{block}{The peaceful}
+\begin{block}{The peaceful, the aggressive and the clever}
 
-Variation among replicates
-
-\begin{flushleft}\includegraphics[width=1\linewidth]{../Simulations/initAct_/evolDynALL_initAct2} \end{flushleft}
+\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter_1}
 
 \end{block}
 
@@ -414,116 +372,9 @@ Variation among replicates
 \begin{frame}{Why would you want to be recognized?}
 \protect\hypertarget{why-would-you-want-to-be-recognized-2}{}
 
-\begin{block}{The peaceful}
+\begin{block}{The peaceful, the aggressive and the clever}
 
-Variation within one replicate
-
-\begin{flushleft}\includegraphics[width=1\linewidth]{../Simulations/initAct_/evolDyn2_initAct2} \end{flushleft}
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{Why would you want to be recognized?}
-\protect\hypertarget{why-would-you-want-to-be-recognized-3}{}
-
-\begin{block}{The peaceful}
-
-Changes in the frequency distributions
-
-\begin{flushleft}\includegraphics[height=0.28\textheight]{../Simulations/initAct_/evolDistAlpha2_initAct2} \includegraphics[height=0.28\textheight]{../Simulations/initAct_/evolDistBeta2_initAct2} \includegraphics[height=0.28\textheight]{../Simulations/initAct_/evolDistBadge2_initAct2} \end{flushleft}
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{Why would you want to be recognized?}
-\protect\hypertarget{why-would-you-want-to-be-recognized-4}{}
-
-\begin{block}{The peaceful}
-
-Favours variation and cheap signals
-
-\begin{flushleft}\includegraphics[width=1\linewidth]{../Simulations/initAct_/corrAlphBet_initAct2} \end{flushleft}
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{Why would you want to be recognized?}
-\protect\hypertarget{why-would-you-want-to-be-recognized-5}{}
-
-\begin{block}{The aggressive}
-
-Variation among replicates
-
-\begin{flushleft}\includegraphics[width=1\linewidth]{../Simulations/initAct_/evolDynALL_initAct-2} \end{flushleft}
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{Why would you want to be recognized?}
-\protect\hypertarget{why-would-you-want-to-be-recognized-6}{}
-
-\begin{block}{The aggressive}
-
-Variation within one replicate
-
-\begin{flushleft}\includegraphics[width=1\linewidth]{../Simulations/initAct_/evolDyn0_initAct-2} \end{flushleft}
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{Why would you want to be recognized?}
-\protect\hypertarget{why-would-you-want-to-be-recognized-7}{}
-
-\begin{block}{The aggressive}
-
-Disfavours variation and signal evolution - no signalling
-
-\begin{flushleft}\includegraphics[width=1\linewidth]{../Simulations/initAct_/corrAlphBet_initAct-2} \end{flushleft}
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{Why would you want to be recognized?}
-\protect\hypertarget{why-would-you-want-to-be-recognized-8}{}
-
-\begin{block}{The clever (ESS)}
-
-Variation among replicates
-
-\begin{flushleft}\includegraphics[width=1\linewidth]{../Simulations/initAct_/evolDynALL_initAct-0.69} \end{flushleft}
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{Why would you want to be recognized?}
-\protect\hypertarget{why-would-you-want-to-be-recognized-9}{}
-
-\begin{block}{The clever (ESS)}
-
-Variation within one replicate
-
-\begin{flushleft}\includegraphics[width=1\linewidth]{../Simulations/initAct_/evolDyn0_initAct-0.69} \end{flushleft}
-
-\end{block}
-
-\end{frame}
-
-\begin{frame}{Why would you want to be recognized?}
-\protect\hypertarget{why-would-you-want-to-be-recognized-10}{}
-
-\begin{block}{The clever (ESS)}
-
-Signal evolution seems to be driven by drift. Most replicates end up in
-one of the two extremes
-
-\begin{flushleft}\includegraphics[width=1\linewidth]{../Simulations/initAct_/corrAlphBet_initAct-0.69} \end{flushleft}
+\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter_}
 
 \end{block}
 
@@ -538,13 +389,6 @@ one of the two extremes
 \tightlist
 \item
   Learning can mediate costly signals
-\item
-  More expensive signals seem be more likely to evolve
-\item
-  Less expensive signals provide more information
-\item
-  Local interactions do not impede the evolution of costly signals (as
-  has been suggested)
 \end{itemize}
 
 \end{block}
@@ -557,12 +401,8 @@ one of the two extremes
   Learning mediates the evolution of polymorphisms with ``honest'' and
   ``dishonest'' individuals
 \item
-  Under local interactions learning seems to allow the evolution of IR
-\item
   Cheap signals depend on the innate level of aggression (before
   learning) of individuals
-\item
-  Peace begets heterogeneity, aggression begets homogeneity
 \end{itemize}
 
 \end{block}
@@ -580,11 +420,6 @@ one of the two extremes
 \protect\hypertarget{references}{}
 
 \hypertarget{refs}{}
-\leavevmode\hypertarget{ref-botero_Evolution_2010}{}%
-Botero, C. A, I. Pen, J. Komdeur, and F. J Weissing. 2010. ``The
-Evolution of Individual Variation in Communication Strategies.''
-\emph{Evolution} 64 (11): 3123--33.
-
 \leavevmode\hypertarget{ref-grafen_Biological_1990}{}%
 Grafen, Alan. 1990. ``Biological Signals as Handicaps.'' \emph{Journal
 of Theoretical Biology} 144 (4): 517--46.

@@ -8,7 +8,7 @@ date: |
     | 
     | 
     | Genes as environment - AGA2020 virtual symposium
-    | `r format(Sys.time(), '%B %d, %Y')`
+    | November 17 - 2020
 output: 
     beamer_presentation: 
       fig_caption: yes
@@ -21,6 +21,17 @@ header-includes:
     \usepackage{array}
     \usepackage{xcolor}
 ---
+
+## Acknowledgements
+
+| ![Red1](../Images/redouan.jpg){width=33%} | ![Olle](../Images/olof-leimar.png){width=23%} | ![Daniel](../Images/danielcadena.jpg){width=32%}  |
+| :---:        |    :----:   |    :---: |
+| *R. Bshary* |*O. Leimar*|*D. Cadena*|
+
+
+![unine](../Images/UNINE_cmjn.jpg){width=35%}
+![uniandes](../Images/logo_largo.png){width=45%}
+
 
 ## Social interactions
 
@@ -36,11 +47,9 @@ source("../aesth.R")
 
 ### The need to match partners with actions
 
-```{r,echo=FALSE,fig.align="center",out.width='40%',fig.show='hold'}
+```{r,echo=FALSE,fig.align="center",out.width='40%'}
 
 knitr::include_graphics("../Images/sexSelec.jpg")
-knitr::include_graphics("../Images/begging.jpg")
-knitr::include_graphics("../Images/broodparasite.jpg")
 knitr::include_graphics("../Images/dominance.jpg")
 ```
 
@@ -50,9 +59,9 @@ knitr::include_graphics("../Images/dominance.jpg")
 
 ### Badge of status
 
-```{r,echo=FALSE,fig.align='center',out.height='80%'}
-knitr::include_graphics("../Images//hosp_alexandra_mackenzie.jpg")
-
+```{r,echo=FALSE,fig.align='center',out.width='45%',fig.show='hold'}
+knitr::include_graphics("../Images/HouseSparrow_strong.jpg")
+knitr::include_graphics("../Images/HouseSparrow_weak.jpg")
 ```
 
 
@@ -89,22 +98,23 @@ mtext(side=2,text="Survival",line=3.5,cex=3)
 
 
 
-## The handicap principle
+<!-- ## The handicap principle -->
 
-### Badges of status
+<!-- ### Badges of status -->
 
-```{r,echo=FALSE,fig.align='center',out.width='90%'}
-knitr::include_graphics("../Images//comSystemBot.png")
-```
+<!-- ```{r,echo=FALSE,fig.align='center',out.width='90%'} -->
+<!-- knitr::include_graphics("../Images//comSystemBot.png") -->
+<!-- ``` -->
 
-[@botero_Evolution_2010]
+<!-- [@botero_Evolution_2010] -->
 
-## Are bibs really badges?
+<!-- ## Are bibs really badges? -->
 
-```{r,echo=FALSE,fig.align='left',out.width='30%'}
-knitr::include_graphics("../Images/Sanchez-Tojar_2018.png")
-```
+<!-- ```{r,echo=FALSE,fig.align='left',out.width='30%'} -->
+<!-- knitr::include_graphics("../Images/Sanchez-Tojar_2018.png") -->
+<!-- ``` -->
 
+<!-- [@sanchez-tojar_Metaanalysis_2018a] -->
 
 ## What about learning?
 
@@ -216,11 +226,51 @@ knitr::include_graphics("../Images/learn_cartoon_6.png")
 
 ## A model of communication in animal conflict
 
-\vspace{-0.5cm}
+\vspace{-0.3cm}
 
-### Comunication
+### Conflict
+
+
+\vspace{0.3cm}
+\begin{columns}
+\column{0.5\linewidth}
+hawk-dove game
+\tiny
+\begin{center}
+\begin{tabular}{ >{\centering\arraybackslash}p{0.2cm} | >{\centering\arraybackslash}p{2.5cm} | >{\centering\arraybackslash}p{0.8cm} }
+& H & D \\ \hline
+H & $p_w V\frac{-C}{2} + (1-p_w) \frac{-C}{2}$ & $V$ \\ \hline
+V & $0$ & $\frac{V}{2}$\\
+\end{tabular}
+\end{center}
+
+\begin{equation*}
+p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
+\end{equation*}
+
+\column{0.5\linewidth}
+
+
+```{r,echo=FALSE,fig.align='center',out.width='60%'}
+par(plt=posPlot(),las=1)
+plot(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 2)~
+       seq(-1,1,length.out = 1000),type="l",xlab="",
+     ylab = expression(p[w]),cex.lab=3,lwd=3,col="red",cex.axis=2,ylim=c(0,1))
+ mtext("Difference in quality",1,line = 4,cex = 3,las = 0)
+lines(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 10)~
+       seq(-1,1,length.out = 1000),lwd=3,col="springgreen4")
+legend("topleft",legend=c(2,10),col=c("red","springgreen4"),lwd=3,title = expression(beta),cex=2,bty="n")
+```
+
+\end{columns}
+
+\pause
+
+### Communication
+
 
 \begin{columns}[T]
+
 
 \column{0.45\linewidth}
 
@@ -237,9 +287,11 @@ B_i = \frac{1}{1+e^{-(\textcolor{red}{\alpha_s} +\textcolor{red}{\beta_s} Q_i)}}
  rangeBeta<-c(4,10,-4,-10)
  rangQual<-seq(0,1,by = 0.01)
  linesSender<-sapply(rangeBeta,function(x)logist(rangQual,alpha = x/2,beta = x))
- plot(logist(rangQual,alpha = 0,beta = 0)~rangQual,type="l",xlab="Quality",
-      ylab = expression(p[w]),cex.lab=2,lwd=2,col="grey",cex.axis=2,ylim=c(0,1))
+ plot(logist(rangQual,alpha = 0,beta = 0)~rangQual,type="l",xlab="",
+      ylab ="",cex.lab=2,lwd=2,col="grey",cex.axis=2,ylim=c(0,1))
+ mtext("Quality",1,line = 4,cex = 3,las = 0)
  matlines(x=rangQual,y=linesSender,lwd=4,col=colRuns,lty=1)
+ mtext("Badge size",2,line = 4,cex = 3,las = 0)
  legend("left",legend=rangeBeta,col=colRuns,lwd=3,title = expression(beta),cex=2,bty="n")
 
 ```
@@ -268,77 +320,42 @@ rangx<-seq(0,1,length=1000)
 
 par(plt=posPlot(),las=1)
 plot(logist(totRBF(rangx,centers,sigSq,weights),alpha = 0,beta=1)~rangx,type='l',col=1,
-     xlab="",ylab="p(retreat)",ylim=c(0,1),lwd=3,xaxt="n",cex.lab=2,cex.axis=2)
+     xlab="",ylab="",ylim=c(0,1),lwd=3,xaxt="s",cex.lab=2,cex.axis=2)
+# test<-sapply(1:6, function(x){RBF()})
 points(y=logist(weights,alpha = 0,beta=1),x=centers,cex=3,pch=20)
+# xRBFs<-sapply(centers, function(x){seq(x-0.2,x+0.2,by=0.001)})
+# RBFS<-sapply(1:6, function(x){
+#   logist(weights[x]*RBF(seq(centers[x]-0.2,centers[x]+0.2,by=0.001),xCenter = centers[x],
+#                         sigSq = 0.01))
+# })
+# matlines(x=xRBFs,y=RBFS,col="grey",lty=2,lwd=2)
+
+mtext("p(dove)",2,line = 4,cex = 3,las = 0)
+mtext("Badge size",1,line = 4,cex = 3,las = 0)
 
 ```
 
 \end{columns}
 
-### Conflict
 
-\vspace{0.3cm}
-\begin{columns}
-\column{0.5\linewidth}
-hawk-dove game
-\tiny
-\begin{center}
-\begin{tabular}{ >{\centering\arraybackslash}p{0.2cm} | >{\centering\arraybackslash}p{2.5cm} | >{\centering\arraybackslash}p{0.8cm} }
-& H & D \\ \hline
-H & $p_w V\frac{-C}{2} + (1-p_w) \frac{-C}{2}$ & $V$ \\ \hline
-V & $0$ & $\frac{V}{2}$\\
-\end{tabular}
-\end{center}
-
-\begin{equation*}
-p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
-\end{equation*}
-
-\column{0.5\linewidth}
-
-
-```{r,echo=FALSE,fig.align='center',out.width='60%'}
-par(plt=posPlot(),las=1)
-plot(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 2)~
-       seq(-1,1,length.out = 1000),type="l",xlab="Difference in quality",
-     ylab = expression(p[w]),cex.lab=2,lwd=3,col="red",cex.axis=2,ylim=c(0,1))
-lines(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 10)~
-       seq(-1,1,length.out = 1000),lwd=3,col="green")
-legend("topleft",legend=c(2,10),col=c("red","green"),lwd=3,title = expression(beta),cex=2,bty="n")
-```
-
-\end{columns}
-
-
-# Results
 
 ## Learning under honest signalling
 
 <!-- Learning simulations (without evolution yet), the sender code is set as an honest signal. -->
 <!-- Receivers develop a threshold like response according to their quality -->
 
-
-\pause
 ```{r, echo=FALSE,fig.align='center', out.width = '100%'}
-knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.6learnDyn.png")
+knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.4learnDyn.png")
 ```
 
-<!-- ## Learning can mediate the evolution of Badges of Status -->
-<!-- ### Variation among replicates -->
-<!-- \small -->
-<!-- set of simulations with the badge working as a handicap (cost inversely proportional to quality) -->
-
-<!-- ```{r, echo=FALSE,fig.align='center', out.width='100%'} -->
-<!-- knitr::include_graphics("../Simulations/betCostEvol1_/evolDynAll_betCost5.png") -->
-<!-- ``` -->
-
+# Results
 
 ## Learning mediates the evolution of badges of status (handicaps)
 
 
 <!-- \small -->
 <!-- One of the replicates of the previous slide, the badge as a handicap -->
-```{r, echo=FALSE,fig.align='center', out.width='100%'}
+```{r, echo=FALSE,fig.align='center', out.width='90%'}
 knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn0_betCost5.png")
 ```
 
@@ -359,20 +376,20 @@ knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn0_betCost5.png")
 <!-- \small -->
 <!-- One of the replicates where the badge did not evolve -->
 
-```{r, echo=FALSE,fig.align='center', out.width='100%'}
+```{r, echo=FALSE,fig.align='center', out.height='90%'}
 knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn5_betCost5.png")
 ```
 
-## Badges of Status: do they matter?
-### Behavioural interactions
+<!-- ## Badges of Status: do they matter? -->
+<!-- ### Behavioural interactions -->
 
 <!-- \small -->
 <!-- Colours correspond to replicates, each point is one snapshot on the second half of the simulations. -->
 <!-- Higher costs seem to favour the signalling equilibrium -->
 
-```{r, echo=FALSE,fig.align='center', out.width='90%'}
-knitr::include_graphics("../Simulations/betCostEvol1_/compClustRep_betCost5.png")
-```
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='90%'} -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/compClustRep_betCost5.png") -->
+<!-- ``` -->
 
 <!-- ## The effect of costs on Badges of Status -->
 <!-- ### Badge size -->
@@ -385,15 +402,15 @@ knitr::include_graphics("../Simulations/betCostEvol1_/compClustRep_betCost5.png"
 
 <!-- ## The evolution of cheap Badges of Status -->
 
-<!-- <!-- ### Variation among replicates --> -->
-<!-- <!-- \small --> -->
-<!-- <!-- Here simulations where the signal has no cost --> -->
+<!-- <!-- ### Variation among replicates --> 
+<!-- <!-- \small --> 
+<!-- <!-- Here simulations where the signal has no cost --> 
 
 <!-- ```{r, echo=FALSE,fig.align='center', out.width='80%'} -->
 <!-- knitr::include_graphics("../Simulations/nIntGroupEvol1_/evolDynALL_nIntGroup2000.png") -->
 <!-- ``` -->
 
-## The evolution of cheap Badges of Status
+## The evolution of cheap badges of Status
 
 <!-- \small -->
 <!-- Here simulations where the signal has no cost. -->
@@ -401,25 +418,12 @@ knitr::include_graphics("../Simulations/betCostEvol1_/compClustRep_betCost5.png"
 <!-- There seems to be some consistency in the three type of sender codes -->
 
 ```{r, echo=FALSE,fig.align='center', out.width='90%'}
-knitr::include_graphics("../Simulations/nIntGroupEvol4_/evolDyn13_nIntGroup2000.png")
+knitr::include_graphics("../Simulations/nIntGroupNormQual_/evolDyn7_nIntGroup2000.png")
 ```
 
-## The evolution of cheap Badges of Status
 
-<!-- \tiny -->
-<!-- Panels show the changes in frequency distribution along evolution ($\alpha$, $\beta$, and resulting badge respectively) for the replicate shown in the previous slide -->
-
-<!-- Branching events in the reaction norm parameters yield three types of sender codes. One (more or less) -->
-<!-- honest, two dishonest (one with a big badge and one with a small badge) -->
-
-```{r, echo=FALSE,fig.align='left', out.height='28%',fig.show='hold', fig.cap="alpha - beta -Badge"}
-knitr::include_graphics("../Simulations/nIntGroupEvol4_/evolDistAlpha13_nIntGroup2000.png")
-knitr::include_graphics("../Simulations/nIntGroupEvol4_/evolDistBeta13_nIntGroup2000.png")
-knitr::include_graphics("../Simulations/nIntGroupEvol4_/evolDistBadge13_nIntGroup2000.png")
-```
-
-## The evolution of cheap Badges of Status
-### How often does it happen?
+<!-- ## The evolution of cheap Badges of Status -->
+<!-- ### How often does it happen? -->
 <!-- \tiny -->
 <!-- Values of $\alpha$ and $\beta$ for each individual in the different replicates. Each dot an individual, -->
 <!-- each panel a replicate. Individuals are sampled from populations from the second half of the simulations. -->
@@ -428,243 +432,86 @@ knitr::include_graphics("../Simulations/nIntGroupEvol4_/evolDistBadge13_nIntGrou
 <!-- in one simulation the population does not split up -->
 
 
-```{r, echo=FALSE,fig.align='left', out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/nIntGroupEvol1_/corrAlphBet_nIntGroup2000.png")
-```
-
-## The evolution of cheap Badges of Status
-### Does it matter?
-\small
-Behavioural interactions splitting up the replicates according to the number of "types" that 
-evolve
-
-```{r, echo=FALSE,fig.align='left', out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/nIntGroupEvol1_/BehavIntAllClusters_nIntGroup2000.png")
-```
-
-<!-- ## Interaction structures - do they matter? -->
-
-<!-- ```{r, echo=FALSE,fig.align='center', out.width='100%',} -->
-<!-- knitr::include_graphics("../Images/networks.png") -->
-<!-- ``` -->
-<!-- [@chaine_Manipulating_2018] -->
-
-<!-- ## Localized interaction structures -->
-
-<!-- ### Costly signals  -->
-<!-- \tiny -->
-<!-- Behavioural interactions and badge size for simulations with costs where individuals interact in small groups. On the $x$ axes number of different individuals each focal interacts with. -->
-
-<!-- ```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'} -->
-<!-- knitr::include_graphics("../Simulations/nIntGroupCost_/BehavIntALL.png") -->
-<!-- knitr::include_graphics("../Simulations/nIntGroupCost_/CueALL.png") -->
+<!-- ```{r, echo=FALSE,fig.align='left', out.width='90%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupNormQual_/corrAlphBet_nIntGroup2000.png") -->
 <!-- ``` -->
 
-<!-- ## Localized interaction structures -->
-
-<!-- ### Cheap signals (free) -->
+<!-- ## The evolution of cheap Badges of Status -->
+<!-- ### Does it matter? -->
 <!-- \small -->
-<!-- Variation among individuals in different replicates (just like before) in replicates where individuals interact with 10 other individuals. -->
+<!-- Behavioural interactions splitting up the replicates according to the number of "types" that  -->
+<!-- evolve -->
 
-<!-- A part from replicates with two clusters, the clustering seems less straightforward as before -->
-
-<!-- ```{r, echo=FALSE,fig.align='center', out.width='85%',fig.show='hold'} -->
-<!-- knitr::include_graphics("../Simulations/nIntGroupEvol1_/corrAlphBet_nIntGroup10.png") -->
+<!-- ```{r, echo=FALSE,fig.align='left', out.width='90%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupEvol1_/BehavIntAllClusters_nIntGroup2000.png") -->
 <!-- ``` -->
 
-<!-- ## Localized interaction structures -->
-
-<!-- ### Cheap signals (free)  -->
-
-<!-- \small -->
-<!-- Behavioural interactions for the replicates form previous slide. I split up the replicates according to clusters (despite clusters not being clear cut). -->
-
-<!-- Only replicates with only one cluster seems to have less aggressive interactions -->
-
-
-<!-- ```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'} -->
-<!-- knitr::include_graphics("../Simulations/nIntGroupEvol1_/BehavIntAllClusters_nIntGroup10.png") -->
-<!-- ``` -->
-
-<!-- ## Localized interaction structures -->
-
-<!-- ### Cheap signals or Individual recognition? -->
-<!-- \tiny -->
-<!-- In these set, I changed the learning set up, I increased the number of centers (10 now, 6 before) -->
-<!-- along the signal axis; and I reduced the level or generalization.  -->
-
-<!-- There seems to be an effect on the slope of the reaction norm. It stays very close to zero.  -->
-
-<!-- ```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'} -->
-<!-- knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDynALL_nIntGroup10.png") -->
-<!-- ``` -->
-
-<!-- ## Localized interaction structures -->
-
-<!-- ### Cheap signals or Individual recognition -->
-<!-- \small -->
-<!-- Same replicates as the previous slide. Variation in $\beta$ and $\alpha$ among individuals for different replicates.  -->
-
-<!-- No clear clustering. Variation mostly along the $\alpha$ axis -->
-
-<!-- ```{r, echo=FALSE,fig.align='center', out.width='90%',fig.show='hold'} -->
-<!-- knitr::include_graphics("../Simulations/nIntGroupCenters1_/corrAlphBet_nIntGroup10.png") -->
-<!-- ``` -->
-<!-- ## Localized interaction structures -->
-
-<!-- ### Cheap signals or Individual recognition? -->
-<!-- \small -->
-<!-- Panels show the changes in frequency distribution along evolution ($\alpha$, $\beta$, and resulting badge respectively) for the replicate shown in the previous slide.  -->
-
-<!-- $\beta$ around zero, $\alpha$ all over the place.  -->
-
-<!-- ```{r, echo=FALSE,fig.align='left', out.height='28%',fig.show='hold'} -->
-<!-- knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDistAlpha5_nIntGroup10.png") -->
-<!-- knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDistBeta5_nIntGroup10.png") -->
-<!-- knitr::include_graphics("../Simulations/nIntGroupCenters1_/evolDistBadge5_nIntGroup10.png") -->
-<!-- ``` -->
-
-<!-- <!-- ## Aqui vamos! mirar correlaciones de 20 y 2000 luego interacciones --> -->
-
-<!-- <!-- ## Comparar scenarios --> -->
 
 ## Why would you want to be recognized?
 
-\pause
+\vspace{-1cm}
 
 ### The peaceful, the aggressive and the clever
 
 - Learning initial conditions
 
-\tiny
-Here, I vary the aggressive tendency for unlearned individuals in these three set ups.
+<!-- \tiny -->
+<!-- Here, I vary the aggressive tendency for unlearned individuals in these three set ups. -->
 
-Agressive, peaceful, clever (starts at the ESS of the classic hawk-dove game)
+<!-- Agressive, peaceful, clever (starts at the ESS of the classic hawk-dove game) -->
 
-```{r, echo=FALSE,fig.align='left', out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Images/cartoonRBF_InitAct.png")
+```{r,out.width='45%',fig.show='hold'}
+knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.4learnDyn.png")
+# knitr::include_graphics("../Images/cartoonRBF_InitAct.png")
+nCenters<-6
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+sigSq<-0.01
+weights<-data.table(neutral=rep(0,nCenters),agressive=rep(-2,nCenters),
+        peaceful=rep(2,nCenters),clever=rep(-0.69,nCenters))
+rangx<-seq(0,1,length=1000)
+
+par(plt=posPlot(numploty = 2,idploty = 2),las=1)
+actor<-sapply(weights, Actor,centers=centers)
+
+par(plt=posPlot()*0.95)
+matplot(x=rangx,y=as.matrix(actor),type='l',col=c("black","red","blue","springgreen4"),lty=1,
+     xlab="",ylab="",ylim=c(0,1.1),lwd=5,xaxt="s",cex.lab=1.5,cex.axis=2)
+mtext(text = "p(dove)",2,line = 4,cex = 2.5,las=0)
+mtext(text = "Badge size",1,line = 3.5,cex = 2.5)
+points(y=logist(weights$neutral,alpha = 0,beta=1),x=centers,cex=3)
+text(y = actor[1,]+0.1,x=rep(0.5,4),col=c("black","red","blue","springgreen4"),
+     labels = names(weights),cex=2)
 ```
 
 ## Why would you want to be recognized?
 
-### The peaceful 
+### The peaceful, the aggressive and the clever
 
-Variation among replicates
+```{r,echo=FALSE,out.width='90%',fig.show='hold'}
+knitr::include_graphics("../Simulations/initAct_/indVarScatter_1.png")
 
-
-```{r, echo=FALSE,fig.align='left', out.width='100%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/evolDynALL_initAct2.png")
 ```
 
 ## Why would you want to be recognized?
 
-### The peaceful
+### The peaceful, the aggressive and the clever
 
-Variation within one replicate
+```{r,out.width='90%',fig.show='hold'}
+knitr::include_graphics("../Simulations/initAct_/indVarScatter_.png")
 
-```{r, echo=FALSE,fig.align='left', out.width='100%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/evolDyn2_initAct2.png")
-```
-
-## Why would you want to be recognized?
-
-### The peaceful
-
-Changes in the frequency distributions
-
-```{r, echo=FALSE,fig.align='left', out.height='28%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/evolDistAlpha2_initAct2.png")
-knitr::include_graphics("../Simulations/initAct_/evolDistBeta2_initAct2.png")
-knitr::include_graphics("../Simulations/initAct_/evolDistBadge2_initAct2.png")
-```
-
-
-## Why would you want to be recognized?
-
-### The peaceful
-
-Favours variation and cheap signals
-
-```{r, echo=FALSE,fig.align='left', out.width='100%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/corrAlphBet_initAct2.png")
-```
-
-
-## Why would you want to be recognized?
-
-### The aggressive
-
-Variation among replicates
-
-```{r, echo=FALSE,fig.align='left', out.width='100%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/evolDynALL_initAct-2.png")
-```
-
-## Why would you want to be recognized?
-
-### The aggressive
-
-Variation within one replicate
-
-```{r, echo=FALSE,fig.align='left', out.width='100%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/evolDyn0_initAct-2.png")
-```
-
-
-## Why would you want to be recognized?
-
-### The aggressive
-
-Disfavours variation and signal evolution - no signalling
-
-```{r, echo=FALSE,fig.align='left', out.width='100%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/corrAlphBet_initAct-2.png")
-```
-
-## Why would you want to be recognized?
-
-### The clever (ESS)
-
-Variation among replicates
-
-```{r, echo=FALSE,fig.align='left', out.width='100%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/evolDynALL_initAct-0.69.png")
-```
-
-## Why would you want to be recognized?
-
-### The clever (ESS)
-
-Variation within one replicate
-
-```{r, echo=FALSE,fig.align='left', out.width='100%',fig.show='hold'}
-  knitr::include_graphics("../Simulations/initAct_/evolDyn0_initAct-0.69.png")
-```
-
-## Why would you want to be recognized?
-
-### The clever (ESS)
-
-Signal evolution seems to be driven by drift. Most replicates end up in one of the two extremes
-
-```{r, echo=FALSE,fig.align='left', out.width='100%',fig.show='hold'}
-  knitr::include_graphics("../Simulations/initAct_/corrAlphBet_initAct-0.69.png")
 ```
 
 ## Take-home messages
 
 ### Costly signals
 - Learning can mediate costly signals
-- More expensive signals seem be more likely to evolve
-- Less expensive signals provide more information
-- Local interactions do not impede the evolution of costly signals (as has been suggested)
+
 
 ### Cheap signals
 - Learning mediates the evolution of polymorphisms with "honest" and "dishonest"
 individuals
-- Under local interactions learning seems to allow the evolution of IR
 - Cheap signals depend on the innate level of aggression (before learning) of individuals
-- Peace begets heterogeneity, aggression begets homogeneity
 
 ## Questions?
 

@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCostNoLearn"
+scenario<-"nIntGroupEvol6"
 SimDir<-"Simulations"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
@@ -35,7 +35,7 @@ param<-fromJSON(here(SimDir,paste0(scenario,"_"),paramName[1]))
 numCores <- length(evolList)
 registerDoParallel(numCores)
 
-val<-2
+val<-1
 
 
 # loop to produce pdfs for parameter values
@@ -52,7 +52,7 @@ fileId<-val
 # pop<-fread(here(SimDir,paste0(scenario,"_"),indList[fileId]))
 # External sims folder
 
-evol<-fread(evolList[fileId])
+# evol<-fread(evolList[fileId])
 # pop<-fread(indList[fileId])
 
 Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(evolList[val],"_")[[1]],1)),

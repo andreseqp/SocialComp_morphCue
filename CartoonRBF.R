@@ -9,7 +9,7 @@ png(here("Images","cartoonRBF.png"),width=800,height = 800)
 nCenters<-6
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
-sigSq<-0.01
+sigSq<-0.001
 weights<-rep(0,nCenters)
 #  Random weights
 weights<-runif(nCenters,min=-1,max=1)#RBF(centers,0.5,0.05)
@@ -25,7 +25,8 @@ weights<-runif(nCenters)#RBF(centers,0.5,0.05)
 
 par(plt=posPlot(numploty = 2,idploty = 1),new=T)
 plot(totRBF(rangx,centers,0.01,weights)~rangx,type='l',col=1,
-     xlab="Badge",ylab="Estimated value",lwd=3,cex.lab=1.5,cex.axis=1.3)
+     xlab="Badge",ylab="Estimated value",lwd=3,cex.lab=1.5,cex.axis=1.3,
+     ylim=range(c(weights,totRBF(rangx,centers,0.01,weights))))
 points(y=weights,x=centers,cex=3)
 # dev.off()
 

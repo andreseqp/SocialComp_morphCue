@@ -5,6 +5,7 @@ source(here("aesth.R"))
 library("jsonlite")
 library('rmarkdown')
 require("NbClust")
+source(here("..","R_files","NbClust.R"))
 source(here("..","R_files","posPlots.R"))
 source(here("..","R_files","Filled.contour3.R"))
 # library('plotrix')
@@ -179,7 +180,9 @@ Critic<-function(weights,centers,sigSq=0.01,nx=1000){
 
 evolDist<-function(indData,variable,nbins,range=NULL,pal, nlevels =10, 
                    numx=1,numy=1,idx=1,idy=1,NewP=FALSE,
-                   cexAxis=2,xlab="x",ylab=variable, keyTitle="", ...){
+                   ylim=range(indData[,get(variable)]),
+                   cexAxis=2,xlab="x",ylab=variable, keyTitle="", xaxt="s",
+                   yaxt="s",...){
   if(is.null(range)){
     maxV<-indData[,max(get(variable))];minV<-indData[,min(get(variable))]
   }
@@ -213,16 +216,20 @@ evolDist<-function(indData,variable,nbins,range=NULL,pal, nlevels =10,
   #           log(0.01+t(counts))~time*get(variable),col.regions =  pal)
   # # par(plt=posPlot(numplotx = numx,numploty = numy,idplotx = idx,idploty = idy),
   #                 new=NewP)
-  filled.contour(x=as.numeric(timeseq),y = as.numeric(bins),z = log(0.01+t(contour1)),
-                 color.palette = pal, nlevels = nlevels,plot.axes={
-                   axis(1,cex.axis=cexAxis)
-                   axis(2,cex.axis=cexAxis)
+  
+ 
+  filled.contour3(x=as.numeric(timeseq),y = as.numeric(bins),z = log(0.01+t(contour1)),
+                 color.palette = pal, nlevels = nlevels,ylim=ylim,
+                 plot.axes={
+                   axis(1,cex.axis=cexAxis,xaxt=xaxt)
+                   axis(2,cex.axis=cexAxis,yaxt=yaxt)
                  },
                  plot.title={
                    title(xlab=xlab,cex.lab=2)
                    mtext(ylab,2,cex=2,line=3,las=1)},
                  key.title = {par(cex.main=cexAxis);title(main=keyTitle)}
                  )
+  # return(list(x=timeseq,y=bins,z=contour1))
 }
 
 
@@ -246,11 +253,9 @@ get_clusters<-function(DT,vars,k.max=5,Bsamples=500,iterMax=100){
           FALSE
         },error = function(e) {TRUE}
       )
-      print(error)
       if(error) {
         clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
                              rep(1,dim(DT[seed==x[1]&time==x[2],.SD,.SDcols=vars])[1]))
-        print("wait")
       }
       else if (nclustersGap==1){
         clusters<-kmeans(as.matrix(
@@ -258,18 +263,17 @@ get_clusters<-function(DT,vars,k.max=5,Bsamples=500,iterMax=100){
         centers = nclustersGap,iter.max = 100)
         clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
                            clusters$cluster)
-        print("wait")
       }
       else{
         print(x)
-        # if(x[1]==7&x[2]==8000){
-        #   print("STOPPP!!!")
-        # }
-        tryCatch(expr = invisible(capture.output(clus_Nb<-NbClust::NbClust(as.matrix(
+        if(x[1]==0&x[2]==6000){
+          print("STOPPP!!!")
+        }
+        tryCatch(expr = invisible(capture.output(clus_Nb<-NbClust.AEQP(as.matrix(
           DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),
           min.nc = 2,max.nc = k.max,
           method = "kmeans"))),
-          error = function(e) invisible(capture.output(clus_Nb<-NbClust::NbClust(as.matrix(
+          error = function(e) invisible(capture.output(clus_Nb<-NbClust.AEQP(as.matrix(
             DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),
             min.nc = 2,max.nc = k.max-1,
             method = "kmeans")))

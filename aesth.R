@@ -34,4 +34,6 @@ colSeeds<-brewer.pal(10,name = "Paired")
 
 pal_dist<-colorRampPalette(brewer.pal(9,"Blues"))
 
+colReps<-c(brewer.pal(12,"Paired"),1:3)
+
 colorbreaksQual<-seq(0,1,length=100)

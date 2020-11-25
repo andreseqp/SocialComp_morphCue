@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvol4"
+scenario<-"alphaAct"
 
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
@@ -25,12 +25,12 @@ extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 (indList<-grep("ind",listTest,value=TRUE))
 
 # parameter values from project folder
-# paramName<-list.files(here("Simulations",paste0(scenario,"_")))
-paramName<-list.files(extSimsDir,full.names = TRUE)
+paramName<-list.files(here("Simulations",paste0(scenario,"_")))
+# paramName<-list.files(extSimsDir,full.names = TRUE)
 
 paramName<-grep(".json",paramName,value=TRUE)
-param<-#fromJSON(here("Simulations",paste0(scenario,"_"),paramName[2]))
-fromJSON(paramName)
+param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[2]))
+# fromJSON(paramName[1])
 
 fileId<-1
 
@@ -67,14 +67,14 @@ colorbreaksQual<-seq(0,1,length=100)
 # Actor 
 
 finReps<-indLearn[time==max(time),unique(seed)]
-seedCh<-
+seedCh<-0
   finReps[round(runif(1,0,length(finReps)))+1]
 
 
 # Select run and generation to plot
 tempPop<-indLearn[time==gener&seed==seedCh]
 
-timePoints<-round(seq(1,length(unique(tempPop[,nInteract]))-1,
+timePoints<-round(seq(1,length(unique(tempPop[,nInteract]))-90,
                       length.out = 10))
 
 # png(here("Simulations",paste0(scenario,"_"),paste0(nampar,Valpar,"learnDyn.png")),

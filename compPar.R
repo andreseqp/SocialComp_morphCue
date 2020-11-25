@@ -8,7 +8,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCostEvol1"
+scenario<-"initAct"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
   paste0("e:/BadgeSims/",scenario,"_")
@@ -22,7 +22,9 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 (sdList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
 
-inds<-do.call(rbind,lapply(indList,filesScenar,scenario,full.name=TRUE))
+fread(indList[2])
+
+inds<-rbindlist(lapply(indList,filesScenar,scenario,full.name=TRUE),fill = TRUE)
 
 inds[,diffActWeight:=abs(WeightAct_0-WeightAct_4)]
 
@@ -202,4 +204,59 @@ dev.off()
 par(plt=posPlot())
 hist(inds[time==gener&get(shortSce)==unique(get(shortSce))[1],Badge],xaxt="s")
 hist(inds[time==gener&get(shortSce)==unique(get(shortSce))[3],Badge],xaxt="s")
+
+## Individual variation for different parameters ------------------------------
+
+lastInt<-tail(inds[,unique(nInteract)],2)[1]
+
+popOneInd<-inds[nInteract==lastInt]
+
+png(here("Simulations",paste0(scenario,"_"),
+         paste0("indVarScatter","_1",".png")),
+    width = 1400,height = 1200)
+
+yaxtAll<-c("s","n","n")
+xlabAll<-c("",expression(beta[s]),"")
+ylabAll<-c(expression(alpha[s]),"","")
+titleAll<-c("Peaceful","Clever","Aggressive")
+plot.new()
+for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
+  count<-match(PAr,popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)])
+  par(plt=posPlot(numploty = 2,idploty = 2,
+                  numplotx = length(popOneInd[,unique(get(shortSce))]),
+                  idplotx = count)+c(0,0,-0.05,-0.05),
+      las=1,new=TRUE,
+      yaxt=yaxtAll[match(PAr,popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)])],
+      cex.axis=1.5,new=TRUE)
+  plot(data=popOneInd[(get(shortSce)==PAr&time>max(time)*0.8)&seed %in% 12:15],alpha~beta,ylab="",
+       xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=1,xaxt="s",
+       ylim=range(popOneInd[,alpha])*c(1.1,1.1),
+       xlim=range(popOneInd[,beta]),col=colReps[seed+1])
+  lines(x=c(0,0),y=range(popOneInd[,alpha]),col="grey",
+        lwd=2)
+  lines(y=c(0,0),x=range(popOneInd[,beta]),col="grey",
+        lwd=2)
+  mtext(text = ylabAll[count],side = 2,line = 3.5,las=1,cex=3.5)
+  mtext(text = titleAll[count],side = 3,cex = 3,line = 2)
+  # par(plt=posPlot(numploty = 2,idploty = 1,
+  #                 numplotx = length(popOneInd[,unique(get(shortSce))]),
+  #                 idplotx = count)+c(0,0,-0.05,-0.05),
+  #     las=1,new=TRUE,yaxt=yaxtAll[count],
+  #     cex.axis=1.5,new=TRUE)
+  # plot(data=popOneInd[get(shortSce)==PAr&time>max(time)*0.8],alpha~beta,ylab="",
+  #      xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=1,
+  #      ylim=range(popOneInd[,alpha])*c(1.1,1.1),
+  #      xlim=range(popOneInd[,beta]),col=colReps[seed+1])
+  # lines(x=c(0,0),y=range(popOneInd[,alpha]),col="grey",
+  #       lwd=2)
+  # lines(y=c(0,0),x=range(popOneInd[,beta]),col="grey",
+  #       lwd=2)
+  mtext(text = xlabAll[count],side = 1,line = 3.7,cex = 3.5)
+}
+dev.off()
+
+
+
+
+
 
