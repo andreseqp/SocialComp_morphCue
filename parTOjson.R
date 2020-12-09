@@ -9,10 +9,10 @@ source(here("AccFunc.R"))
 fileName<-"parameters"
 here()
 
-# param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
-#      fromJSON(here("Simulations","alphaAct_","parameters1.json"))
+param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
+     fromJSON(here("Simulations","initAct_","parameters2.json"))
 
-param<-list(totGen   = 15000,   nRep    = 1, seed = 1,
+param<-list(totGen   = 20000,   nRep    = 1, seed = 1,
             printGen = 1000,   printLearn = 1000,
             printLearnInt = 50,
             popSize  = 2000,  baselineFit = 2,   
@@ -23,14 +23,14 @@ param<-list(totGen   = 15000,   nRep    = 1, seed = 1,
             betaBad	 = I(c(0)),
             alphaRes =-10,betaRes=-20, gammaRes=0,
             alphaCrit  = 0.4,  alphaAct = 0.4,
-            sigSq   	 = 0.01, nCenters = 6,
+            sigSq   	 = 0.005, nCenters = 10,
             initCrit = 0,      initAct=0,   gamma = 0,
             QualStDv   = 0.15, betCost = 0,
             alphCost	 = 3, mutLearn = FALSE,
             nIntGroup  = 8, 
             payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "nCenters",
-            rangParam = I(c(4,8,10)),
+            namParam = "initAct",
+            rangParam = I(c(-0.69,2,-2)),
             typeAgent = 2, #//0. hawk 1.dove 2. learner 3. evaluator
             folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
 # folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for release
@@ -38,7 +38,7 @@ param<-list(totGen   = 15000,   nRep    = 1, seed = 1,
 
 
 
-apendScenar<-"nInt8"
+apendScenar<-"nGroup8"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 

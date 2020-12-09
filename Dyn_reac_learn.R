@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nCentersnInt8"
+scenario<-"initAct"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
   paste0("e:/BadgeSims/",scenario,"_")
@@ -23,7 +23,7 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 # when program was run with internal paralellization
 
 # Project folder
-(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 # External sims folder
 (listTest<-list.files(extSimsDir,full.names = TRUE))
 
@@ -32,7 +32,7 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 paramName<-list.files(here("Simulations",paste0(scenario,"_")))
 # paramName<-list.files(extSimsDir,full.names = TRUE)
 paramName<-grep(".json",paramName,value=TRUE)
-param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
+param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName))
 # fromJSON(paramName)
 
 # Choose which parameter to plot
@@ -49,7 +49,7 @@ val<-2
 numCores <- length(param$rangParam)
 registerDoParallel(numCores)
 
-foreach(val = 1:2,#length(param$rangParam),
+foreach(val = 1:3,#length(param$rangParam),
         .packages = c("data.table","here")) %dopar% {
 source(here("AccFunc.R"))
 
@@ -64,13 +64,13 @@ source(here("AccFunc.R"))
 
   
 # External sims folder
-# evol<-fread(evolList[fileId])
-# pop<-fread(indList[fileId])
+evol<-fread(evolList[fileId])
+pop<-fread(indList[fileId])
 
-  evolList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
-                      evolList,value =TRUE)
-  indList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
-                     indList,value =TRUE)
+  # evolList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+  #                     evolList,value =TRUE)
+  # indList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+  #                    indList,value =TRUE)
   
   # evol<-do.call(rbind,lapply(evolList_runs,function(x){
   #   fread(here("Simulations",paste0(scenario,"_"),x))
@@ -81,20 +81,22 @@ source(here("AccFunc.R"))
   
   
   
-evol<-do.call(rbind,lapply(evolList_runs,fread))
-pop<-do.call(rbind,lapply(indList_runs, fread))
+# evol<-do.call(rbind,lapply(evolList_runs,fread))
+# pop<-do.call(rbind,lapply(indList_runs, fread))
 
 # temp fix to lack of name to the weights
 
-if(nCenters==8){
-names(evol)[35:38]<-c("WeightAct_6","WeightCrit_6","WeightAct_7",
-                      "WeightCrit_7")
+# if(nCenters==8){
+# names(evol)[35:38]<-c("WeightAct_6","WeightCrit_6","WeightAct_7",
+#                       "WeightCrit_7")
+# 
+# names(pop)[29:32]<-c("WeightAct_6","WeightCrit_6","WeightAct_7",
+#                       "WeightCrit_7")
+# }
 
-names(pop)[29:32]<-c("WeightAct_6","WeightCrit_6","WeightAct_7",
-                      "WeightCrit_7")
-}
+param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[val]))
 
-Valpar<-param$rangParam[val]
+Valpar<-param$rangParam
 
 nampar<-param$namParam
 
@@ -111,10 +113,10 @@ sigSquar<-param$sigSq
 # Get stats from the evolutionary simulations ----------------------------------
 names(evol)
 
-cols<-c("freqGenHawks","freqGenDove",  "freqGenEval",  "freqGenLearn",
+cols<-c("freqGenHawks","freqGenDove",  "freqGenEval",  #"freqGenLearn",
         "freqFenHawks", "freqFenDoves", "freqHH", "freqHD", "freqDD", "meanCue",
         "meanAlpha", "meanBeta",
-        "meanFit", #"meanInitCrit", "sdInitCrit", "meanInitAct", "sdInitAct",
+        #"meanFit", #"meanInitCrit", "sdInitCrit", "meanInitAct", "sdInitAct",
         do.call(cbind,lapply(0:(nCenters-1), function(x){
           cbind(paste0("WeightAct_",x),paste0("WeightCrit_",x))
         }))
@@ -144,7 +146,7 @@ pdf(here("Simulations",paste0(scenario,"_"),paste0("evolDyn_",nampar,Valpar,".pd
 
 cexAxis<-1.5
 
-numPlotsDyn<-3
+numPlotsDyn<-2
 
 # Dynamics of genetypic traits (reaction norm)
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = numPlotsDyn,idplotx = 1,
@@ -345,9 +347,9 @@ rm(list=grep("temp",ls(),value = T))
 
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,
-                   value.var = c("meanAlpha","meanBeta","meanFit",
-                                 "meanInitCrit",
-                                 "meanInitAct","sdInitCrit","sdInitAct",
+                   value.var = c("meanAlpha","meanBeta",#"meanFit",
+                                 # "meanInitCrit",
+                                 # "meanInitAct","sdInitCrit","sdInitAct",
                                   "sdAlpha","sdBeta","freqHH",
                                   "freqHD","freqDD"))
 (finReps<-evol[time==max(time),seed])

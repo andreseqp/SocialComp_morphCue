@@ -47,11 +47,11 @@ persp(x = qualRange,y=rivalBadge,z=perspTmp,phi = 35, theta=40 ,
 # png(here("reacNorm.png"),width = 800,height = 800)
 
 badQualRang<-seq(0,1,length=1000)
-alpha<-1
-beta<-6
+alpha<-2
+beta<-0
 costFunc<-function(beta,alpha,x) {d<-1/(1+exp(-alpha-beta*x))}
 par(plt=posPlot())
-betRang<-c(20)
+betRang<-c(0)
 matplot(y=sapply(betRang,FUN = costFunc,alpha=alpha,x=badQualRang),x=badQualRang,
         type="l",cex.lab=1.5, cex.axis=2,lwd=3,lty=1,las=1,
      col=c(2,3),ylim=c(0.5,1.1),xaxt="s",yaxt="s",ylab="",xlab="") #,col=i

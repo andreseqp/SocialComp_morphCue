@@ -6,10 +6,10 @@ source("../R_files/posPlots.R")
 source(here("AccFunc.R"))
 
 png(here("Images","cartoonRBF.png"),width=800,height = 800)
-nCenters<-6
+nCenters<-10
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
-sigSq<-0.001
+sigSq<-0.005
 weights<-rep(0,nCenters)
 #  Random weights
 weights<-runif(nCenters,min=-1,max=1)#RBF(centers,0.5,0.05)
