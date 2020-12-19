@@ -30,6 +30,10 @@ abstract: Adaptive behavioural responses often depend on qualities of the intera
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+require(png)
+require(here)
+source(here("../R_files/posPlots.r"))
+source(here("AccFunc.r"))
 ```
 
 ## Introduction 
@@ -125,12 +129,12 @@ modelling a population of haploid individuals with non-overlaping generations.
 Individuals are born every generation with a level of quality ($Q_i$, where $i$ is subscript 
 of the population vector of size $N$) given by a number between zero and one, which is drawn 
 from a truncated normal distribution $N(\mu = 0.5,\sigma)$. 
-An Individual with quality $0$ has the lowest RHP, 
+An individual with quality $0$ has the lowest RHP, 
 while an individual with quality $1$ has the highest. As part of development processes
 individuals produce a morphological signal (badge), the size of such depends on their level 
 of quality according to a reaction norm given by $B_i=1/(1+e^{\alpha_i-\beta_i Q_i})$;
 where are $\alpha_i$ and $\beta_i$ are individual specific traits that determine 
-the shape of the reaction norm. Variation in $\alpha_i$ and $beta_i$ means individuals
+the shape of the reaction norm. Variation in $\alpha_i$ and $\beta_i$ means individuals
 can have either uninformative (flat) or informative (logistic) norms; but the size of 
 the signal is constrained between zero and one. We assume different values of these traits 
 are given by different alleles, and are inherited from mother to offspring. 
@@ -170,9 +174,94 @@ an individual with small badge, and that leads to an increase in the reward esti
 the focal individual will increase the probability of escalating fights with 
 individuals of small badges in the future. Given that badge size is a real number between 0 and 1,
 the reward estimation, as well as the probability of retreating (escalating), must be
-generalized across different values. To implement generalization we use the function
-approximation method based on radial basis functions [@sutton_Reinforcement_2018]. Specifically, we pick $c$ evenly spaced 
-values along the badge size interval, 
+generalized across different values. To implement generalization we use the linear function
+approximation method based on radial basis functions [@sutton_Reinforcement_2018]. Specifically, we pick $f$ feature centers, which are evenly spaced values along the badge size interval ([0,1]). Each one of these features centers is associated with a weight for reward estimation and 
+tendency to play retreat in a given interaction. The reward estimation and the tendency 
+to retreat are calculated (in every interaction) as the sum of the weights associated 
+with each feature, weighted by the response triggered by the feature. 
+The response of each feature center dimishes as a gaussian function  with the distance between the feature center and the badge size of the partner. Formally the reward estimation 
+$\hat{R}$ when the focal individual ($i$) faces individual $j$ is given by,
+
+\begin{equation}
+\hat{R}_{ij} =  \sum_{z=1}^{c} x_z e^{(-\frac{|B_i-c_z|}{2\theta^2})} 
+\end{equation}
+
+where $x_z$ is the weight of feature center $z$ on the reward estimation; and $\theta$ is
+the width of the generalization function. Similarly, the tendency to retreat is given by sum 
+of feature weigths, and the probability of associated with the tendency is obtained
+by applying a logistic transformation. So formally, the log-odds to retreat
+when facing individual $j$ is 
+
+\begin{equation}
+logit(q_{ij}) =  \sum_{z=1}^{c} y_z e^{(-\frac{|B_i-c_z|}{2\theta^2})} 
+\end{equation}
+
+where $y_z$ is the weight of feature center $z$ on the tendency to retreat.
+
+After all their interactions, individuals in the population reproduce proportionally to 
+their fitness $w_i$, which is a sum of the baseline fitness ($w_0$) and all the payoffs
+obtained throughout their life. Thus, the combination of natural selection and genetic drift
+changes the distribution of values in $\alpha$ and $\beta$ that segregates in the population, effectively the badges expressed and changing the communication system. 
+
+```{r Figure 1,echo=FALSE,fig.width=8,fig.align='center',fig.height=4,fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A the sender code: a reaction norm determines how the badge size is determined by the quality of the individual. Red shows an honest reaction norm, while the blue shows a dishonest reaction norm. B the receiver code: individuals have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Generalization is represented by the grey line and its axis, which shows the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether that leads to an increase in the estimated reward."}
+honestBig<-readPNG(here("Images/cart_honestBig.png"))
+honestSmall<-readPNG(here("Images/cart_honestSmall.png"))
+dishonest<-readPNG(here("Images/cart_dishonest.png"))
+par(plt=posPlot(numplotx = 2,idplotx = 1,upboundx = 91),las=1)
+  rangPars<-data.frame(honest=c(4,2),dishonest=c(0,-1.8))
+ rangQual<-seq(0,1,by = 0.01)
+ linesSender<-sapply(rangPars,function(x)logist(rangQual,alpha = x[2],beta = x[1]))
+ plot(0,0,type="l",xlab="",xlim=c(0,1),
+      ylab ="",cex.lab=1,lwd=2,col="grey",cex.axis=1,ylim=c(0,1.1))
+ text(x = 0.08,y=1.05,"A",cex = 1.5)
+ mtext("Quality",1,line = 2,cex = 1,las = 0)
+ matlines(x=rangQual,y=linesSender,lwd=4,col=colRuns,lty=1)
+ mtext("Badge size",2,line = 2.3,cex = 1,las = 0)
+ rasterImage(honestBig,0.75,0.6,0.95,0.8)
+ rasterImage(honestSmall,0.05,0.01,0.25,0.21)
+ rasterImage(dishonest,0.75,0.87,0.95,1.07)
+ rasterImage(dishonest,0.05,0.87,0.25,1.07)
+ # legend("left",legend=rangeBeta,col=colRuns,lwd=3,title = expression(beta),cex=2,bty="n")
+ 
+ par(plt=posPlot(numplotx = 2,idplotx = 2,upboundx = 91),las=1,new=TRUE)
+ 
+ nCenters<-6
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+sigSq<-0.01
+weights<-rep(0,nCenters)
+weights<-c(-5,-2,-1,1,2,5)#runif(nCenters,min=-1,max=1)
+rangx<-seq(0,1,length=1000)
+
+plot(logist(totRBF(rangx,centers,sigSq,weights),alpha = 0,beta=1)~rangx,type='l',col=1,
+     xlab="",ylab="",ylim=c(0,1.1),lwd=3,xaxt="s",cex.lab=2,cex.axis=1,yaxt='n')
+axis(4,cex=1)
+text(x = 0.08,y=1.05,"B",cex = 1.5)
+# test<-sapply(1:6, function(x){RBF()})
+points(y=logist(weights,alpha = 0,beta=1),x=centers,cex=1.5,pch=20)
+respon<-logist(weights[4]*RBF(rangx,centers[4],0.01))
+lines(x=rangx,y=respon,col="grey",lwd=2)
+axis(side = 4,at = seq(range(respon)[1],range(respon)[2],length.out = 4),
+     labels = round(seq(0,1,length.out = 4),2),line = -4,col="grey")
+
+# xRBFs<-sapply(centers, function(x){seq(x-0.2,x+0.2,by=0.001)})
+# RBFS<-sapply(1:6, function(x){
+#   logist(weights[x]*RBF(seq(centers[x]-0.2,centers[x]+0.2,by=0.001),xCenter = centers[x],
+#                         sigSq = 0.01))
+# })
+# matlines(x=xRBFs,y=RBFS,col="grey",lty=2,lwd=2)
+
+mtext("prob. retreat",4,line = 2.3,cex = 1,las = 0)
+mtext("Badge size",1,line = 2,cex = 1,las = 0)
+
+ 
+ 
+
+```
+
+
+## Results
+
 
 
 

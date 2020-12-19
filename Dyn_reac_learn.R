@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"initAct"
+scenario<-"test"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
   paste0("e:/BadgeSims/",scenario,"_")
@@ -23,7 +23,7 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 # when program was run with internal paralellization
 
 # Project folder
-# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
 # External sims folder
 (listTest<-list.files(extSimsDir,full.names = TRUE))
 
@@ -32,12 +32,12 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 paramName<-list.files(here("Simulations",paste0(scenario,"_")))
 # paramName<-list.files(extSimsDir,full.names = TRUE)
 paramName<-grep(".json",paramName,value=TRUE)
-param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName))
+param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
 # fromJSON(paramName)
 
 # Choose which parameter to plot
 
-val<-2
+val<-1
 
 
 # Load files -------------------------------------------------------------------
@@ -64,20 +64,20 @@ source(here("AccFunc.R"))
 
   
 # External sims folder
-evol<-fread(evolList[fileId])
-pop<-fread(indList[fileId])
+# evol<-fread(evolList[fileId])
+# pop<-fread(indList[fileId])
 
-  # evolList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
-  #                     evolList,value =TRUE)
-  # indList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
-  #                    indList,value =TRUE)
+  evolList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+                      evolList,value =TRUE)
+  indList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+                     indList,value =TRUE)
   
-  # evol<-do.call(rbind,lapply(evolList_runs,function(x){
-  #   fread(here("Simulations",paste0(scenario,"_"),x))
-  # }))
-  # pop<-do.call(rbind,lapply(indList_runs,function(x){
-  #   fread(here("Simulations",paste0(scenario,"_"),x))
-  # }))
+  evol<-do.call(rbind,lapply(evolList_runs,function(x){
+    fread(here("Simulations",paste0(scenario,"_"),x))
+  }))
+  pop<-do.call(rbind,lapply(indList_runs,function(x){
+    fread(here("Simulations",paste0(scenario,"_"),x))
+  }))
   
   
   

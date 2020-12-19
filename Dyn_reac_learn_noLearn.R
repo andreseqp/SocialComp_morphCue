@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupEvol6"
+scenario<-"betCostNoLearnShare0"
 SimDir<-"Simulations"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
@@ -29,7 +29,7 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 
 paramName<-list.files(here(SimDir,paste0(scenario,"_")))
 paramName<-grep(".json",paramName,value=TRUE)
-param<-fromJSON(here(SimDir,paste0(scenario,"_"),paramName[1]))
+param<-fromJSON(here(SimDir,paste0(scenario,"_"),paramName[9]))
 
 
 numCores <- length(evolList)
@@ -39,7 +39,7 @@ val<-1
 
 
 # loop to produce pdfs for parameter values
-foreach(val = 1:length(evolList),.packages = c("data.table","here")) %dopar% {
+foreach(val = 1:2,.packages = c("data.table","here")) %dopar% {
   source(here("AccFunc.R"))
   
   
@@ -55,10 +55,20 @@ fileId<-val
 # evol<-fread(evolList[fileId])
 # pop<-fread(indList[fileId])
 
-Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(evolList[val],"_")[[1]],1)),
-             replacement = "")
-nampar<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(evolList[val],"_")[[1]],1)),
-             replacement = "")
+
+(Valpar<-param$rangParam[val])
+
+(nampar<-param$namParam)
+
+evolList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
+                    evolList,value =TRUE)
+
+evol<-do.call(rbind,lapply(evolList_runs,fread))
+
+# evol<-do.call(rbind,lapply(evolList_runs,function(x){
+#   fread(here("Simulations",paste0(scenario,"_"),x))
+# }))
+
 
 # pdf(paste0(extSimsDir,"/evolDyn_",nampar,Valpar,".pdf"))
 pdf(here(SimDir,paste0(scenario,"_"),paste0("evolDyn_",nampar,Valpar,".pdf")))
@@ -249,7 +259,7 @@ traitsTrajs<-dcast(evol,time~seed,
 
 
 for(runChoi in finReps){
-   # runChoi<-6
+   # runChoi<-0
   
 # Dynamics of genotypic traits (reaction norm) -  signaller
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,

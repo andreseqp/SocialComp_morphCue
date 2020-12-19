@@ -9,14 +9,14 @@ source(here("AccFunc.R"))
 fileName<-"parameters"
 here()
 
-param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
-     fromJSON(here("Simulations","initAct_","parameters2.json"))
+(param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
+     fromJSON(here("Simulations","betCostNoLearnShare0_","parameters0.json")))
 
-param<-list(totGen   = 20000,   nRep    = 1, seed = 1,
-            printGen = 1000,   printLearn = 1000,
+param<-list(totGen   = 2000,   nRep    = 1, seed = 1,
+            printGen = 100,   printLearn = 100,
             printLearnInt = 50,
             popSize  = 2000,  baselineFit = 2,   
-            MutSd    = 0.3,  nInt        = 500,  init     = c(0,0,1,0),
+            MutSd    = 2,  nInt        = 50,  init     = c(0,0,0,1),
             mutRate  = 0.001,  mutType  = 0,
             sampleSize = 50,   strQual  = 10,
             errorQual = 0,    alphaBad	 = I(c(0)),    
@@ -25,20 +25,21 @@ param<-list(totGen   = 20000,   nRep    = 1, seed = 1,
             alphaCrit  = 0.4,  alphaAct = 0.4,
             sigSq   	 = 0.005, nCenters = 10,
             initCrit = 0,      initAct=0,   gamma = 0,
-            QualStDv   = 0.15, betCost = 0,
+            QualStDv   = 0.15, betCost = 6,
             alphCost	 = 3, mutLearn = FALSE,
-            nIntGroup  = 8, 
-            payoff_matrix = c(1.5,1,0,0.5),
-            namParam = "initAct",
-            rangParam = I(c(-0.69,2,-2)),
-            typeAgent = 2, #//0. hawk 1.dove 2. learner 3. evaluator
+            nIntGroup  = 2000, 
+            payoff_matrix = c(3,1,0,0.5),
+            shareCost = 0,
+            namParam = "betCost",
+            rangParam = I(c(0,6)),
+            typeAgent = 3, #//0. hawk 1.dove 2. learner 3. evaluator
             folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
 # folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for release
 
 
 
 
-apendScenar<-"nGroup8"
+apendScenar<-"NoLearnShare0"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
@@ -85,7 +86,7 @@ check_create.dir("e:/BadgeSims",param = paste0(param$namParam,apendScenar),
 
 rangparam<-param$rangParam
 
-nReps<-15
+nReps<-10
 
 for (i in 0:(nReps-1)) {
   param$folderL<-paste0(here("Simulations",param$namParam),apendScenar,"_/") # comment for debug
@@ -126,7 +127,7 @@ for (i in 0:(nReps-1)) {
   #   gsub("\\","/",paste(simsdir,listfolders[i],fileName,sep="\\"),fixed=TRUE)
   #   ,sep = " "))
 }
-gsub(pattern = "\\",replacement = "/",simsdir,fixed=TRUE)
+  gsub(pattern = "\\",replacement = "/",simsdir,fixed=TRUE)
 
 # system(paste(exedir,
 #              gsub("\\","/",paste(simsdir,listfolders[1],fileName,sep="\\"),fixed=TRUE)

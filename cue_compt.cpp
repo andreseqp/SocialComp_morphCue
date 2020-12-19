@@ -185,7 +185,8 @@ class individual {
 			return(nCenters);
 		}
 		int set_phenotype(individual partner, printingObj &localPrint);
-		void get_payoff(individual partner, vector<double> param, bool win);
+		void get_payoff(individual partner, vector<double> param, bool win,
+			float shareCost);
 		void set_Badge(double stdDev, double errorQual);
 		bool Winfight(double otherQuality, double strQual);
 		strategy mutateStr(strategy genotype,double mutRate,int mutType);
@@ -411,7 +412,7 @@ double  individual::mutateDoub(double value, double mutRate, double mutSD) {
 
 
 void individual::get_payoff(individual partner,vector<double> payoff_matrix, 
-	bool win) {      
+	bool win, float shareCost) {      
 	/*  (This are IDs to the entries of the matrix, NOT payoffs)    
 	        Hawk      Dove     
 	   Hawk   0         1
@@ -419,12 +420,12 @@ void individual::get_payoff(individual partner,vector<double> payoff_matrix,
 	*/
 	int scenario = 2 * phenotype + partner.phenotype;
 	if (scenario == 0 && win) {
-		curr_payoff = payoff_matrix[1] - payoff_matrix[0] * 0.5;
-		cum_payoff += payoff_matrix[1] - payoff_matrix[0] * 0.5;
+		curr_payoff = payoff_matrix[1] - payoff_matrix[0] * shareCost;
+		cum_payoff += payoff_matrix[1] - payoff_matrix[0] * shareCost;
 	}
 	else if (scenario == 0) {
-		curr_payoff = - payoff_matrix[0] * 0.5;
-		cum_payoff += - payoff_matrix[0] * 0.5;
+		curr_payoff = - payoff_matrix[0] * (1-shareCost);
+		cum_payoff += - payoff_matrix[0] * (1 - shareCost);
 	}
 	else {
 		curr_payoff = payoff_matrix[scenario];
@@ -448,7 +449,12 @@ bool individual::viability(double alphaCost,double betaCost) {
 int individual::set_phenotype(individual partner, printingObj& localPrint) {
 	if (get_strat() == evaluator || get_strat() == learner) {
 		calcRespValPref(partner);
-		phenotype = static_cast<strategy>(rnd::bernoulli(logist(preferenceT, 0)));
+		if (get_strat() == evaluator)
+			phenotype = static_cast<strategy>(rnd::bernoulli(
+			logist(preferenceT, 0,-1)));
+		else
+			phenotype = static_cast<strategy>(rnd::bernoulli(
+				logist(preferenceT, 0)));
 	}
 	else {
 		phenotype = get_strat();
@@ -568,7 +574,7 @@ void printLearnDynamics(ofstream &genoutput, vector<individual> &pop,
 void interactions(vector<individual>& population, int nint,
 	vector<double> payoff_matrix, double strQual, bool trackPopLearn,
 	int printLearnInt, int sampleSize, int generat, int nIntGroup,   
-	printingObj &localPrint, std::mt19937 rngT) {
+	printingObj &localPrint, std::mt19937 rngT,float shareCost) {
 	int ind1 = population.size();
 	int ind2 = population.size();
 	int intType = 0;
@@ -624,8 +630,8 @@ void interactions(vector<individual>& population, int nint,
 		}
 		ind1win = population[ind1].Winfight(population[ind2].get_quality(),
 			strQual);
-		population[ind1].get_payoff(population[ind2], payoff_matrix,ind1win);
-		population[ind2].get_payoff(population[ind1], payoff_matrix,!ind1win);
+		population[ind1].get_payoff(population[ind2], payoff_matrix,ind1win, shareCost);
+		population[ind2].get_payoff(population[ind1], payoff_matrix,!ind1win, shareCost);
 		if (population[ind1].get_strat() == learner) {
 			population[ind1].update();
 			population[ind2].update();
@@ -826,7 +832,8 @@ int main(int argc, char* argv[]) {
 	//param["printLearn"]        = 1;	  // how often learning dyn are printed
 	//param["printLearnInt"]	   = 1;   // How often are learning parameters printed
 	//param["init"]              = {0,0,1,0};        //Initial frequencies
-	//param["payoff_matrix"]     = {1.5,1,0,0.5};  
+	//param["payoff_matrix"]     = {1.5,1,0,0.5};  // C, V, 0, V/2
+	//param["shareCost"]		 = 0.5; // how much of the cost is paid by the winner
 	//param["popSize"]           = 50;
 	//param["MutSd"]             = 0.3;
 	//param["nInt"]              = 10;    // Number of interactions per individual
@@ -950,7 +957,7 @@ int main(int argc, char* argv[]) {
 				paramL["payoff_matrix"], paramL["strQual"],
 				generation % int(paramL["printLearn"]) == 0,
 				paramL["printLearnInt"], paramL["sampleSize"], generation,
-				paramL["nIntGroup"], localPrint, rngT);
+				paramL["nIntGroup"], localPrint, rngT,paramL["shareCost"]);
 //#pragma omp critical
 //			{
 				if (generation % int(paramL["printGen"]) == 0) {
