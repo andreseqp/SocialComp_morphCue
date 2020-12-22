@@ -424,7 +424,7 @@ void individual::get_payoff(individual partner,vector<double> payoff_matrix,
 		cum_payoff += payoff_matrix[1] - payoff_matrix[0] * shareCost;
 	}
 	else if (scenario == 0) {
-		curr_payoff = - payoff_matrix[0] * (1-shareCost);
+		curr_payoff = - payoff_matrix[0] * (1 - shareCost);
 		cum_payoff += - payoff_matrix[0] * (1 - shareCost);
 	}
 	else {

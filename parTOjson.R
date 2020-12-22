@@ -12,11 +12,11 @@ here()
 (param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
      fromJSON(here("Simulations","betCostNoLearnShare0_","parameters0.json")))
 
-param<-list(totGen   = 2000,   nRep    = 1, seed = 1,
+param<-list(totGen   = 20000,   nRep    = 1, seed = 1,
             printGen = 100,   printLearn = 100,
             printLearnInt = 50,
             popSize  = 2000,  baselineFit = 2,   
-            MutSd    = 2,  nInt        = 50,  init     = c(0,0,0,1),
+            MutSd    = 2,  nInt        = 5,  init     = c(0,0,0,1),
             mutRate  = 0.001,  mutType  = 0,
             sampleSize = 50,   strQual  = 10,
             errorQual = 0,    alphaBad	 = I(c(0)),    

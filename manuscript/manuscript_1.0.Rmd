@@ -40,7 +40,7 @@ source(here("AccFunc.r"))
 
 The outcome of interactions with con-specifics is an important 
 determinant of fitness in social animals. Irrespective of whether such interactions are cooperative 
-or competitive, the actions of interacting individual partly determine 
+or competitive, the actions of interacting individuals partly determine 
 their reproductive success. However, the best action for an individual 
 might vary depending on its condition, and that of individuals with whom it interacts. 
 Thus, acting based on information about interacting 
@@ -49,7 +49,7 @@ Acquiring this information, however, is far from trivial.
 In some cases, interacting partners (signalers) might be 'willing' to provide accurate
 information, but in others it might be in their own interest to conceal information
 [@johnstone_Recognition_1997], or to provide erroneous information [@johnstone_Badges_1993]. 
-Typically, in a given context, some proportion of individuals will beenefit 
+Typically, in a given context, some proportion of individuals will benefit 
 from broadcasting accurate information, whereas others will benefit from hiding it. 
 Take, for instance, an interaction between two individuals where one can help the other. 
 Given some costs and benefits, a potential donor will be interested in helping 
@@ -134,13 +134,12 @@ while an individual with quality $1$ has the highest. As part of development pro
 individuals produce a morphological signal (badge), the size of such depends on their level 
 of quality according to a reaction norm given by $B_i=1/(1+e^{\alpha_i-\beta_i Q_i})$;
 where are $\alpha_i$ and $\beta_i$ are individual specific traits that determine 
-the shape of the reaction norm. Variation in $\alpha_i$ and $\beta_i$ means individuals
-can have either uninformative (flat) or informative (logistic) norms; but the size of 
-the signal is constrained between zero and one. We assume different values of these traits 
+the shape of the reaction norm (Fig. \ref{fig:model-struc} A). Variation in $\alpha_i$ and $\beta_i$ means individuals can have either uninformative (flat) or informative (logistic) norms. 
+The size of the signal is constrained between zero and one. We assume different values of these traits 
 are given by different alleles, and are inherited from mother to offspring. 
 Unless, with a small probability, mutation changes the allelic value of the offspring.
 After birth individuals go through a round of viavility selection. 
-Individual specific survival probability is given by $s_i=1/(1+e^{-k_1-k_2(Q_i-B_i)}$. 
+Individual specific survival probability is given by $s_i=1/(1+e^{-k_1-k_2(Q_i-B_i)})$. 
 Where $k_1$ and $k_2$ are parameter values determining the shape of the survival function. 
 Importantly, if $k_2=0$ survival probability is independent of quality, while if $k_2>0$
 lower quality individuals pay a higher price for s similar-sized badge, fulfilling the core assumption 
@@ -151,7 +150,7 @@ where they compete for resources. Individuals in real populations typically do n
 interact at random nor with all individuals in the population [@kurvers_Evolutionary_2014]. 
 In order to allow for non-random interactions, we use the population vector to define 
 an interaction neighborhood for the focal individual, the size of the neighborhood (g) 
-is the number of positions around the focal´s from which the interactant is drawn. 
+is the number of positions around the focal's from which the interactant is drawn. 
 So, if $g=N$ interactions are global; as $g$ gets smaller interactions are more local. 
 In an interaction each individual must decide whether to escalate a fight or not. 
 Following the classic hawk-dove game [@maynard-smith_Evolution_1982], if the focal individual fights and its partner does not, the focal gets as payoff the resource of value $V$ while its partner gets nothing; if both individuals restrain  from fighting they split up the resource in half; if both decide to fight they splitup the cost of fighting and the winner takes over the resource. 
@@ -161,25 +160,25 @@ and $i$ and $j$ denote the the position in the population
 vector of the focal and its interacting partner respectively.
 
 The decision of whether to escalate a fight against an interacting partner can be dependent 
-on the size of the partner´s badge, the actual dependency is determined by 
+on the size of the partner's badge, the actual dependency is determined by 
 the focal´s experiences through a learning process. We implement learning using 
 the actor-critic aproach from reinforcement learning theory [RL; @sutton_Reinforcement_2018;@quinones_Reinforcement_2019; @leimar_Learning_2019].
 Individuals estimate the reward (payoff) expected from  interacting with partners 
 of different badge sizes (the critic in RL terminology). 
-After every interaction they update the estimate of reward proportionally to the difference between their current estimate and the observed reward (prediction error $\delta$). Furthermore, they express different probabilities of escalatining (retreating) depending on
+After every interaction they update the estimate of reward proportionally to the difference between their current estimate and the observed reward (prediction error $\delta$). Furthermore, they express different probabilities of retreating (attacking) depending on
 the badge size of their opponent (the actor in RL). They update the probability of 
-retreating (escalating)  up or down depending on whether retreating (escalating) leads to an increase 
+retreating (attacking)  up or down depending on whether retreating (attacking) leads to an increase 
 in the reward estimation. So, if a focal individual decides to escalate a fight against 
 an individual with small badge, and that leads to an increase in the reward estimation,
 the focal individual will increase the probability of escalating fights with 
-individuals of small badges in the future. Given that badge size is a real number between 0 and 1,
-the reward estimation, as well as the probability of retreating (escalating), must be
-generalized across different values. To implement generalization we use the linear function
-approximation method based on radial basis functions [@sutton_Reinforcement_2018]. Specifically, we pick $f$ feature centers, which are evenly spaced values along the badge size interval ([0,1]). Each one of these features centers is associated with a weight for reward estimation and 
+individuals of small badges in the future. Given that badge size is a real number between 0 and 1, there are infinitely many badge sizes. Thus, the reward estimation, as well as the probability of retreating (escalating), must be generalized across different values. 
+To implement generalization we use the linear function
+approximation method based on radial basis functions [@sutton_Reinforcement_2018]. Specifically, we pick $c$ feature centers, which are evenly spaced values along the badge size interval ([0,1]). Each one of these features centers is associated with a weight for reward estimation and 
 tendency to play retreat in a given interaction. The reward estimation and the tendency 
 to retreat are calculated (in every interaction) as the sum of the weights associated 
-with each feature, weighted by the response triggered by the feature. 
-The response of each feature center dimishes as a gaussian function  with the distance between the feature center and the badge size of the partner. Formally the reward estimation 
+with each feature, weighted by the response triggered by the feature 
+(Fig. \ref{fig:model-struc} B, dots represent the feature weights) 
+The response of each feature center dimishes as a gaussian function  with the distance between the feature center and the badge size of the partner (Fig. \ref{fig:model-struc} B, grey line). Formally the reward estimation 
 $\hat{R}$ when the focal individual ($i$) faces individual $j$ is given by,
 
 \begin{equation}
@@ -187,10 +186,10 @@ $\hat{R}$ when the focal individual ($i$) faces individual $j$ is given by,
 \end{equation}
 
 where $x_z$ is the weight of feature center $z$ on the reward estimation; and $\theta$ is
-the width of the generalization function. Similarly, the tendency to retreat is given by sum 
-of feature weigths, and the probability of associated with the tendency is obtained
-by applying a logistic transformation. So formally, the log-odds to retreat
-when facing individual $j$ is 
+the width of the generalization function. Similarly, the tendency to retreat is given by the sum 
+of feature weigths associated with the actor, and the probability is obtained
+by applying a logistic transformation (Fig. \ref{fig:model-struc} B, black line). 
+So formally, the log-odds to retreat when facing individual $j$ is 
 
 \begin{equation}
 logit(q_{ij}) =  \sum_{z=1}^{c} y_z e^{(-\frac{|B_i-c_z|}{2\theta^2})} 
@@ -201,9 +200,9 @@ where $y_z$ is the weight of feature center $z$ on the tendency to retreat.
 After all their interactions, individuals in the population reproduce proportionally to 
 their fitness $w_i$, which is a sum of the baseline fitness ($w_0$) and all the payoffs
 obtained throughout their life. Thus, the combination of natural selection and genetic drift
-changes the distribution of values in $\alpha$ and $\beta$ that segregates in the population, effectively the badges expressed and changing the communication system. 
+changes the distribution of values in $\alpha$ and $\beta$ that segregates in the population, effectively changing  the badges expressed and the communication system. 
 
-```{r Figure 1,echo=FALSE,fig.width=8,fig.align='center',fig.height=4,fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A the sender code: a reaction norm determines how the badge size is determined by the quality of the individual. Red shows an honest reaction norm, while the blue shows a dishonest reaction norm. B the receiver code: individuals have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Generalization is represented by the grey line and its axis, which shows the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether that leads to an increase in the estimated reward."}
+```{r model-struc,echo=FALSE,fig.width=8,fig.align='center',fig.height=4,fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A the sender code: a reaction norm determines how the badge size is determined by the quality of the individual. Red shows an honest reaction norm, while the blue shows a dishonest reaction norm. B the receiver code: individuals have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Generalization is represented by the grey line and its axis, which shows the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether that leads to an increase in the estimated reward."}
 honestBig<-readPNG(here("Images/cart_honestBig.png"))
 honestSmall<-readPNG(here("Images/cart_honestSmall.png"))
 dishonest<-readPNG(here("Images/cart_dishonest.png"))
