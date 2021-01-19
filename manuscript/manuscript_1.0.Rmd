@@ -98,7 +98,7 @@ rewards with environmental stimuli and thus behave adaptively [@staddon_Adaptive
 Associative learning exists in all major vertebrate taxa, and in many invertebrates [@heyes_Simple_2012;@macphail_Brain_1982; @staddon_Adaptive_2016; @behrens_Associative_2008].
 Theory has shown that natural selection favors these associations in complex environments
 where conditions are hard to predict [@dridi_Environmental_2016]. Besides its wide taxonomic and
-ecological relevance, associative learning is a flexible cognitive mechanism whose underpinings
+ecological relevance, associative learning is a flexible cognitive mechanism whose underpinnings
 show interspecific variation [@enquist_Power_2016; @quinones_Reinforcement_2019], so 
 presumably, it has been modified by natural selection. Despite all this, associative 
 learning is not often included in the narrative of evolutionary explanations of 
@@ -138,7 +138,7 @@ the shape of the reaction norm (Fig. \ref{fig:model-struc} A). Variation in $\al
 The size of the signal is constrained between zero and one. We assume different values of these traits 
 are given by different alleles, and are inherited from mother to offspring. 
 Unless, with a small probability, mutation changes the allelic value of the offspring.
-After birth individuals go through a round of viavility selection. 
+After birth individuals go through a round of viability selection. 
 Individual specific survival probability is given by $s_i=1/(1+e^{-k_1-k_2(Q_i-B_i)})$. 
 Where $k_1$ and $k_2$ are parameter values determining the shape of the survival function. 
 Importantly, if $k_2=0$ survival probability is independent of quality, while if $k_2>0$
@@ -149,11 +149,11 @@ Individuals who survive engage in a series of pairwise interactions
 where they compete for resources. Individuals in real populations typically do not 
 interact at random nor with all individuals in the population [@kurvers_Evolutionary_2014]. 
 In order to allow for non-random interactions, we use the population vector to define 
-an interaction neighborhood for the focal individual, the size of the neighborhood (g) 
+an interaction neighbourhood for the focal individual, the size of the neighbourhood (g) 
 is the number of positions around the focal's from which the interactant is drawn. 
 So, if $g=N$ interactions are global; as $g$ gets smaller interactions are more local. 
 In an interaction each individual must decide whether to escalate a fight or not. 
-Following the classic hawk-dove game [@maynard-smith_Evolution_1982], if the focal individual fights and its partner does not, the focal gets as payoff the resource of value $V$ while its partner gets nothing; if both individuals restrain  from fighting they split up the resource in half; if both decide to fight they splitup the cost of fighting and the winner takes over the resource. 
+Following the classic hawk-dove game [@maynard-smith_Evolution_1982], if the focal individual fights and its partner does not, the focal gets as pay-off the resource of value $V$ while its partner gets nothing; if both individuals restrain  from fighting they split up the resource in half; if both decide to fight they split up the cost of fighting and the winner takes over the resource. 
 We further assume that the probability of wining a fight for the focal individual depends on the difference in quality between her and her interacting partner; specifically it is given by $p_{ij}=1/(1+e^{-k_3(Q_i-Q_j)})$, where $k_3$ is a parameter defining
 how strong the quality difference determines the winning probability; 
 and $i$ and $j$ denote the the position in the population 
@@ -162,10 +162,12 @@ vector of the focal and its interacting partner respectively.
 The decision of whether to escalate a fight against an interacting partner can be dependent 
 on the size of the partner's badge, the actual dependency is determined by 
 the focal´s experiences through a learning process. We implement learning using 
-the actor-critic aproach from reinforcement learning theory [RL; @sutton_Reinforcement_2018;@quinones_Reinforcement_2019; @leimar_Learning_2019].
-Individuals estimate the reward (payoff) expected from  interacting with partners 
+the actor-critic approach from reinforcement learning theory [RL; @sutton_Reinforcement_2018;@quinones_Reinforcement_2019; @leimar_Learning_2019].
+Individuals estimate the reward (pay-off) expected from  interacting with partners 
 of different badge sizes (the critic in RL terminology). 
-After every interaction they update the estimate of reward proportionally to the difference between their current estimate and the observed reward (prediction error $\delta$). Furthermore, they express different probabilities of retreating (attacking) depending on
+After every interaction they update the estimate of reward proportionally to the difference between their current estimate and the observed reward (prediction error $\delta$) and to 
+the speed of learning ($\mathrm{A}$).
+Furthermore, they express different probabilities of retreating (attacking) depending on
 the badge size of their opponent (the actor in RL). They update the probability of 
 retreating (attacking)  up or down depending on whether retreating (attacking) leads to an increase 
 in the reward estimation. So, if a focal individual decides to escalate a fight against 
@@ -173,21 +175,21 @@ an individual with small badge, and that leads to an increase in the reward esti
 the focal individual will increase the probability of escalating fights with 
 individuals of small badges in the future. Given that badge size is a real number between 0 and 1, there are infinitely many badge sizes. Thus, the reward estimation, as well as the probability of retreating (escalating), must be generalized across different values. 
 To implement generalization we use the linear function
-approximation method based on radial basis functions [@sutton_Reinforcement_2018]. Specifically, we pick $c$ feature centers, which are evenly spaced values along the badge size interval ([0,1]). Each one of these features centers is associated with a weight for reward estimation and 
+approximation method based on radial basis functions [@sutton_Reinforcement_2018]. Specifically, we pick $c$ feature centres, which are evenly spaced values along the badge size interval ([0,1]). Each one of these features centres is associated with a weight for reward estimation and 
 tendency to play retreat in a given interaction. The reward estimation and the tendency 
 to retreat are calculated (in every interaction) as the sum of the weights associated 
 with each feature, weighted by the response triggered by the feature 
 (Fig. \ref{fig:model-struc} B, dots represent the feature weights) 
-The response of each feature center dimishes as a gaussian function  with the distance between the feature center and the badge size of the partner (Fig. \ref{fig:model-struc} B, grey line). Formally the reward estimation 
+The response of each feature centre diminishes as a Gaussian function  with the distance between the feature centre and the badge size of the partner (Fig. \ref{fig:model-struc} B, grey line). Formally the reward estimation 
 $\hat{R}$ when the focal individual ($i$) faces individual $j$ is given by,
 
 \begin{equation}
 \hat{R}_{ij} =  \sum_{z=1}^{c} x_z e^{(-\frac{|B_i-c_z|}{2\theta^2})} 
 \end{equation}
 
-where $x_z$ is the weight of feature center $z$ on the reward estimation; and $\theta$ is
+where $x_z$ is the weight of feature centre $z$ on the reward estimation; and $\theta$ is
 the width of the generalization function. Similarly, the tendency to retreat is given by the sum 
-of feature weigths associated with the actor, and the probability is obtained
+of feature weights associated with the actor, and the probability is obtained
 by applying a logistic transformation (Fig. \ref{fig:model-struc} B, black line). 
 So formally, the log-odds to retreat when facing individual $j$ is 
 
@@ -195,36 +197,42 @@ So formally, the log-odds to retreat when facing individual $j$ is
 logit(q_{ij}) =  \sum_{z=1}^{c} y_z e^{(-\frac{|B_i-c_z|}{2\theta^2})} 
 \end{equation}
 
-where $y_z$ is the weight of feature center $z$ on the tendency to retreat.
+where $y_z$ is the weight of feature centre $z$ on the tendency to retreat.
 
 After all their interactions, individuals in the population reproduce proportionally to 
-their fitness $w_i$, which is a sum of the baseline fitness ($w_0$) and all the payoffs
+their fitness $w_i$, which is a sum of the baseline fitness ($w_0$) and all the pay-offs
 obtained throughout their life. Thus, the combination of natural selection and genetic drift
 changes the distribution of values in $\alpha$ and $\beta$ that segregates in the population, effectively changing  the badges expressed and the communication system. 
 
-```{r model-struc,echo=FALSE,fig.width=8,fig.align='center',fig.height=4,fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A the sender code: a reaction norm determines how the badge size is determined by the quality of the individual. Red shows an honest reaction norm, while the blue shows a dishonest reaction norm. B the receiver code: individuals have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Generalization is represented by the grey line and its axis, which shows the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether that leads to an increase in the estimated reward."}
+```{r model-struc,echo=FALSE,fig.width=8,fig.align='center',fig.height=8,fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A the sender code: a reaction norm determines how the badge size is determined by the quality of the individual. Red shows an informative reaction norm, while the blue shows a uninformative reaction norm. B the receiver code: individuals have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Generalization is represented by the grey line and its axis, which shows the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether that leads to an increase in the estimated reward. In C and D, effect of learning on the receiver strategy. Receivers in C face signallers with uninformative reaction norms (blue line in A), while in D they face signallers with informative reaction norms (red line in A). Colour scale in C (applies also for D) indicates the quality of the individual"}
+
+# Top panels -  A the sender code and  B learning for the receiver code
+
 honestBig<-readPNG(here("Images/cart_honestBig.png"))
 honestSmall<-readPNG(here("Images/cart_honestSmall.png"))
 dishonest<-readPNG(here("Images/cart_dishonest.png"))
-par(plt=posPlot(numplotx = 2,idplotx = 1,upboundx = 91),las=1)
-  rangPars<-data.frame(honest=c(4,2),dishonest=c(0,-1.8))
+par(plt=posPlot(numplotx = 2,idplotx = 1,numploty = 1,idploty = 1,upboundx = 91),
+    las=1,mfrow=c(2,1))
+  rangPars<-data.frame(honest=c(4,2),dishonest=c(0,0))
  rangQual<-seq(0,1,by = 0.01)
  linesSender<-sapply(rangPars,function(x)logist(rangQual,alpha = x[2],beta = x[1]))
  plot(0,0,type="l",xlab="",xlim=c(0,1),
-      ylab ="",cex.lab=1,lwd=2,col="grey",cex.axis=1,ylim=c(0,1.1))
+      ylab ="",cex.lab=1,lwd=2,col="grey",cex.axis=1,ylim=c(0,1.1),xaxt="n")
+ axis(1)
  text(x = 0.08,y=1.05,"A",cex = 1.5)
  mtext("Quality",1,line = 2,cex = 1,las = 0)
  matlines(x=rangQual,y=linesSender,lwd=4,col=colRuns,lty=1)
  mtext("Badge size",2,line = 2.3,cex = 1,las = 0)
- rasterImage(honestBig,0.75,0.6,0.95,0.8)
+ # include bird cartoons
+ rasterImage(honestBig,0.75,0.87,0.95,1.07)
  rasterImage(honestSmall,0.05,0.01,0.25,0.21)
- rasterImage(dishonest,0.75,0.87,0.95,1.07)
- rasterImage(dishonest,0.05,0.87,0.25,1.07)
+ rasterImage(dishonest,0.75,0.5,0.95,0.7)
+ rasterImage(dishonest,0.05,0.5,0.25,0.7)
  # legend("left",legend=rangeBeta,col=colRuns,lwd=3,title = expression(beta),cex=2,bty="n")
  
- par(plt=posPlot(numplotx = 2,idplotx = 2,upboundx = 91),las=1,new=TRUE)
- 
- nCenters<-6
+ par(plt=posPlot(numplotx = 2,idplotx = 2,numploty = 1,idploty = 1,
+                 upboundx = 91),las=1,new=TRUE)
+  nCenters<-6
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
 sigSq<-0.01
@@ -243,27 +251,163 @@ lines(x=rangx,y=respon,col="grey",lwd=2)
 axis(side = 4,at = seq(range(respon)[1],range(respon)[2],length.out = 4),
      labels = round(seq(0,1,length.out = 4),2),line = -4,col="grey")
 
-# xRBFs<-sapply(centers, function(x){seq(x-0.2,x+0.2,by=0.001)})
-# RBFS<-sapply(1:6, function(x){
-#   logist(weights[x]*RBF(seq(centers[x]-0.2,centers[x]+0.2,by=0.001),xCenter = centers[x],
-#                         sigSq = 0.01))
-# })
-# matlines(x=xRBFs,y=RBFS,col="grey",lty=2,lwd=2)
 
 mtext("prob. retreat",4,line = 2.3,cex = 1,las = 0)
 mtext("Badge size",1,line = 2,cex = 1,las = 0)
 
+## Lower panels - the effect of learning
+
+scenario1<-"alphaActDishonest"
+scenario2<-"alphaActHonest"
+
+extSimsDir<-paste0("e:/BadgeSims/",scenario1,"_")
+listTest<-list.files(extSimsDir,full.names = TRUE)
+indList<-grep("ind",listTest,value=TRUE)
+# parameter values from project folder
+paramName<-list.files(here("Simulations",paste0(scenario1,"_")))
+# paramName<-list.files(extSimsDir,full.names = TRUE)
+paramName<-grep(".json",paramName,value=TRUE)
+param<-fromJSON(here("Simulations",paste0(scenario1,"_"),paramName[2]))
+# fromJSON(paramName[1])
+fileId<-1 # choose the replicate
+
+indLearn<-fread(indList[fileId]) # load file
+Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(indList[fileId],"_")[[1]],1)),
+             replacement = "")
+nampar<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[fileId],"_")[[1]],1)),
+             replacement = "")
  
+gener<-0#tail(indLearn[,unique(time)],2)[2]
+nCenters<-param$nCenters
+sigSquar<-param$sigSq
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+# nCenters<-5
+# interv<-1/nCenters
+# centers<-interv*0.5+interv*seq(0,nCenters-1)
+rangx<-seq(0,1,length=100)
+cexAxis<-2
+colorbreaksQual<-seq(0,1,length=100)
+tempPop<-indLearn[time==gener]
+behavTime<- tempPop[,tail(unique(nInteract),2)[1],by=indId][,min(V1)]
+  
+rangx<-seq(0,1,by=0.01)
+  dataIndsAct<-sapply(as.list(tempPop[nInteract==behavTime,indId]),
+                      function(x){x=
+                        logist(totRBF(rangx,
+                                      centers,sigSquar,
+                                      as.double(
+                                        tempPop[(nInteract==behavTime
+                                                 &indId==x)
+                                                # &(Quality>0.8&Quality<1)
+                                                ,.SD,
+                                                .SDcol=grep("WeightAct",
+                                                            names(tempPop),
+                                                            value = TRUE)
+                                                ])),alpha = 0,beta = 1)})
+  # par(plt=posPlot(numploty = 4,numplotx = 4,idploty = 2,idplotx = 1))
+  par(plt=posPlot(numploty = 1,numplotx = 2,idploty = 1,idplotx = 1,upboundx = 91))
+matplot(x=rangx,y=dataIndsAct,type='l',xlab="",ylab="prob. retreat",
+          xaxt="s",yaxt="s",lty = 1,
+          col=paletteMeans(100)[
+            findInterval(tempPop[nInteract==1700,Quality],colorbreaksQual)],
+          lwd=0.5,ylim=c(0,1.1))
+text(x = 0.08,y=1.05,"C",cex = 1.5)
+par(new=FALSE)
+color.bar.aeqp(paletteMeans1(100),min =min(colorbreaksQual),
+               max = max(colorbreaksQual),nticks = 3,
+               cex.tit = 0.9,title = "quality",
+               numplotx = 20,numploty = 13,idplotx =9,idploty = 2)
+
+extSimsDir<-paste0("e:/BadgeSims/",scenario2,"_")
+listTest<-list.files(extSimsDir,full.names = TRUE)
+indList<-grep("ind",listTest,value=TRUE)
+# parameter values from project folder
+paramName<-list.files(here("Simulations",paste0(scenario1,"_")))
+# paramName<-list.files(extSimsDir,full.names = TRUE)
+paramName<-grep(".json",paramName,value=TRUE)
+param<-fromJSON(here("Simulations",paste0(scenario1,"_"),paramName[2]))
+# fromJSON(paramName[1])
+fileId<-1 # choose the replicate
+
+indLearn<-fread(indList[fileId]) # load file
+Valpar<-gsub("[[:alpha:]]",gsub(".txt","",tail(strsplit(indList[fileId],"_")[[1]],1)),
+             replacement = "")
+nampar<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[fileId],"_")[[1]],1)),
+             replacement = "")
  
+gener<-0#tail(indLearn[,unique(time)],2)[2]
+nCenters<-param$nCenters
+sigSquar<-param$sigSq
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+# nCenters<-5
+# interv<-1/nCenters
+# centers<-interv*0.5+interv*seq(0,nCenters-1)
+rangx<-seq(0,1,length=100)
+cexAxis<-2
+colorbreaksQual<-seq(0,1,length=100)
+tempPop<-indLearn[time==gener]
+behavTime<- tempPop[,tail(unique(nInteract),2)[1],by=indId][,min(V1)]
+  
+rangx<-seq(0,1,by=0.01)
+  dataIndsAct<-sapply(as.list(tempPop[nInteract==behavTime,indId]),
+                      function(x){x=
+                        logist(totRBF(rangx,
+                                      centers,sigSquar,
+                                      as.double(
+                                        tempPop[(nInteract==behavTime
+                                                 &indId==x)
+                                                # &(Quality>0.8&Quality<1)
+                                                ,.SD,
+                                                .SDcol=grep("WeightAct",
+                                                            names(tempPop),
+                                                            value = TRUE)
+                                                ])),alpha = 0,beta = 1)})
+  # par(plt=posPlot(numploty = 4,numplotx = 4,idploty = 2,idplotx = 1))
+  par(plt=posPlot(numploty = 1,numplotx = 2,idploty = 1,idplotx = 2,upboundx = 91)
+      ,new=TRUE,xpd=TRUE)
+matplot(x=rangx,y=dataIndsAct,type='l',xlab="",ylab="",
+          xaxt="s",yaxt="n",lty = 1,
+          col=paletteMeans(100)[
+            findInterval(tempPop[nInteract==1700,Quality],colorbreaksQual)],
+          lwd=0.5,ylim=c(0,1.1))
+text(x = 0.08,y=1.05,"D",cex = 1.5)
+text(x = -0.1,y = -0.23,labels = "Badge size")
+
+
 
 ```
 
 
 ## Results
 
+We first present the outcome of simulations where we prevent the evolution of the 
+sender code (by setting the mutation rate to $0$), and assume that all individuals 
+in the population display either an uninformative or informative badge size with respect to their quality. These simulations show what type of receiver strategy develops through a learning process. 
+Figure \ref{fig:model-struc} (C and D) shows the receiver strategy developed 
+through learning; panel C is for receivers that faced uninformative signals, 
+and D informative ones. When learners face uninformative signals, they change their 
+probability of retreating depending on their own quality. Individuals with higher 
+quality (red tones), after the learning process, have a high probability of attacking; while 
+individuals of lower quality (blue tones) mostly retreat from confrontations. Thus, learning splits
+the population of receivers into the two classic pure strategies of hawks and doves. 
+Given that we have a assumed a monomorphic population with unresponsive reaction norms 
+on the signalling side, the changes triggered by learning only affect a small range 
+of badge sizes. In contrast, when receivers face informative reaction norms 
+on the side of the signaller (panel B in fig. \ref{fig:model-struc}), receivers use the 
+badge size of their interacting partners to determine whether to retreat or attack. 
+The relationship is given by a threashold-like reaction norm, where the change from 
+retreating to attacking depends on the quality of the receiver. As expected, 
+the higher the quality of the receiver the larger the badge size that triggers a retreat.
 
-
+When we allow the evolution of the sender code ($\alpha$ and $\beta$ change subject to natural selection and genetic drift), and the badge size works as a handicap 
+(i.e. the cost of the badge is inversely proportional to the quality of the individual), the sender code evolves to produce an honest signalFig \ref{fig:handicap}). 
 
 
 
 ## References
+
+
+
+

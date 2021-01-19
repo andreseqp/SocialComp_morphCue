@@ -11,7 +11,7 @@ source(here("AccFunc.R"))
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"alphaAct"
+scenario<-"alphaActHonest"
 
 extSimsDir<-paste0("e:/BadgeSims/",scenario,"_")
 
@@ -74,7 +74,7 @@ seedCh<-0
 # Select run and generation to plot
 tempPop<-indLearn[time==gener&seed==seedCh]
 
-timePoints<-round(seq(1,length(unique(tempPop[,nInteract]))-90,
+timePoints<-round(seq(1,length(unique(tempPop[,nInteract])),
                       length.out = 10))
 
 # png(here("Simulations",paste0(scenario,"_"),paste0(nampar,Valpar,"learnDyn.png")),
@@ -222,7 +222,7 @@ colorbreaksQual<-seq(0,1,length=100)
 # Actor 
 
 finReps<-indLearn[time==max(time),unique(seed)]
-seedCh<-5
+seedCh<-0
 finReps[round(runif(1,0,length(finReps)))+1]
 
 
@@ -245,7 +245,7 @@ xAxLabs[3]<-"Badge size"
 yAxLabs<-c("p(dove)","")
 
 
-par(mfrow=c(1,nIntPlot))
+par(mfrow=c(1,nIntPlot),plt=posPlot())
 
 
 for(countInts in 1:nIntPlot){

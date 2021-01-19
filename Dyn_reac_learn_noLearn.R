@@ -259,7 +259,7 @@ traitsTrajs<-dcast(evol,time~seed,
 
 
 for(runChoi in finReps){
-   runChoi<-0
+   # runChoi<-0
   
 # Dynamics of genotypic traits (reaction norm) -  signaller
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 1,
@@ -300,10 +300,10 @@ axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 2,
                 lowboundx = 8,upboundx = 93),xaxt="s",las=1,new=TRUE)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
-     # ylim=fivenum(as.matrix(evol[,.(meanAlphaAtt+sdAlphaAtt,meanAlphaAtt-sdAlphaAtt,
-     #                                meanBetaAtt+sdBetaAtt,meanBetaAtt-sdBetaAtt,
-     #                                meanGammaAtt+sdGammaAtt,meanGammaAtt-sdGammaAtt)
-     ylim=fivenum(as.matrix(evol[,.(meanAlphaAtt+sdAlphaAtt,meanAlphaAtt-sdAlphaAtt)
+     ylim=fivenum(as.matrix(evol[,.(meanAlphaAtt+sdAlphaAtt,meanAlphaAtt-sdAlphaAtt,
+                                    meanBetaAtt+sdBetaAtt,meanBetaAtt-sdBetaAtt,
+                                    meanGammaAtt+sdGammaAtt,meanGammaAtt-sdGammaAtt)
+     # ylim=fivenum(as.matrix(evol[,.(meanAlphaAtt+sdAlphaAtt,meanAlphaAtt-sdAlphaAtt)
                                  ]))[c(1,5)],yaxt="n",
      xlab="",ylab="",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
 # polygon(x=c(evolStats$time,rev(evolStats$time)),
