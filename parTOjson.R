@@ -10,19 +10,19 @@ fileName<-"parameters"
 here()
 
 (param1<-#fromJSON(paste0("E:/BadgeSims","/betCostNoLearn_","/parameters.json"))
-     fromJSON(here("Simulations","alphaAct_","parameters1.json")))
+     fromJSON(here("Simulations","betCostEvol1_","parameters.json")))
 
-param<-list(totGen   = 1,   nRep    = 1, seed = 1,
-            printGen = 1,   printLearn = 1,
-            printLearnInt = 50,
+param<-list(totGen   = 20000,   nRep    = 1, seed = 1,
+            printGen = 1000,   printLearn = 1000,
+            printLearnInt = 200,
             popSize  = 2000,  baselineFit = 2,   
-            MutSd    = 2,  nInt        = 10000,  init     = c(0,0,1,0),
-            mutRate  = 0.00,  mutType  = 0,
+            MutSd    = 1,  nInt        = 2000,  init     = c(0,0,1,0),
+            mutRate  = 0.001,  mutType  = 0,
             sampleSize = 50,   strQual  = 10,
-            errorQual = 0,    alphaBad	 = I(c(3)),    
-            betaBad	 = I(c(6)),
+            errorQual = 0,    alphaBad	 = I(c(0)),    
+            betaBad	 = I(c(0)),
             alphaRes =-10,betaRes=-20, gammaRes=0,
-            alphaCrit  = 0.05,  alphaAct = 0.05,
+            alphaCrit  = 0.4,  alphaAct = 0.4,
             sigSq   	 = 0.005, nCenters = 10,
             initCrit = 0,      initAct=0,   gamma = 0,
             QualStDv   = 0.15, betCost = 0,
@@ -30,8 +30,8 @@ param<-list(totGen   = 1,   nRep    = 1, seed = 1,
             nIntGroup  = 2000, 
             payoff_matrix = c(3,1,0,0.5),
             shareCost = 0,
-            namParam = "alphaAct",
-            rangParam = I(c(0.01)),
+            namParam = "betCost",
+            rangParam = I(c(0,2,5)),
             typeAgent = 2, #//0. hawk 1.dove 2. learner 3. evaluator
             folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
 # folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for release
@@ -39,7 +39,7 @@ param<-list(totGen   = 1,   nRep    = 1, seed = 1,
 
 
 
-apendScenar<-"Honest"
+apendScenar<-"EvolNorm"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 

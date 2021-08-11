@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"test"
+scenario<-"betCostEvolNorm"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
   paste0("e:/BadgeSims/",scenario,"_")
@@ -37,7 +37,7 @@ param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
 
 # Choose which parameter to plot
 
-val<-1
+val<-2
 
 
 # Load files -------------------------------------------------------------------
@@ -49,7 +49,7 @@ val<-1
 numCores <- length(param$rangParam)
 registerDoParallel(numCores)
 
-foreach(val = 1:3,#length(param$rangParam),
+foreach(val = 2:3,#length(param$rangParam),
         .packages = c("data.table","here")) %dopar% {
 source(here("AccFunc.R"))
 
@@ -72,17 +72,16 @@ source(here("AccFunc.R"))
   indList_runs<-grep(paste0(param$namParam,param$rangParam[val]),
                      indList,value =TRUE)
   
-  evol<-do.call(rbind,lapply(evolList_runs,function(x){
-    fread(here("Simulations",paste0(scenario,"_"),x))
-  }))
-  pop<-do.call(rbind,lapply(indList_runs,function(x){
-    fread(here("Simulations",paste0(scenario,"_"),x))
-  }))
+  # evol<-do.call(rbind,lapply(evolList_runs,function(x){
+  #   fread(here("Simulations",paste0(scenario,"_"),x))
+  # }))
+  # pop<-do.call(rbind,lapply(indList_runs,function(x){
+  #   fread(here("Simulations",paste0(scenario,"_"),x))
+  # }))
   
   
-  
-# evol<-do.call(rbind,lapply(evolList_runs,fread))
-# pop<-do.call(rbind,lapply(indList_runs, fread))
+evol<-do.call(rbind,lapply(evolList_runs,fread))
+pop<-do.call(rbind,lapply(indList_runs, fread))
 
 # temp fix to lack of name to the weights
 
@@ -96,7 +95,7 @@ source(here("AccFunc.R"))
 
 param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[val]))
 
-Valpar<-param$rangParam
+Valpar<-param$rangParam[val]
 
 nampar<-param$namParam
 

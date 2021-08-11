@@ -293,6 +293,22 @@ get_clusters<-function(DT,vars,k.max=5,Bsamples=500,iterMax=100){
   return(totClusters[,2])
 }
 
+## Function to calculate ESS in the classic gam from the pay-off matrix --------
+
+ESS<-function(pay_offsM){
+  # /*  (This are IDs to the entries of the matrix, NOT payoffs)    
+  # Hawk      Dove     
+  # Hawk   0         1      
+  # Dove   2         3
+  # */
+  V<-pay_offsM[2]; C<-pay_offsM[2]
+  hawk<-V/C; dove<-1-hawk
+  HH<-hawk**2 ; HD<-hawk*dove; DD<-dove**2
+  if(HH+HD+DD!=1)  warning("proportions do not add up to 1")
+  return(list(hawk=hawk,dove=dove,HH=HH,HD=HD,DD=DD))
+}
+
+
 
 # clus_silou<-c(0,clus_silou)
 # nclustersSil<-which.max(clus_silou)
