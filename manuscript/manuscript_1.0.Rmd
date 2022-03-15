@@ -26,11 +26,12 @@ linespread: 2
 bibliography: ../SocialMorphCue.bib
 spacing: double
 style: C:\Users\andre\Zotero\styles\elife.csl
-abstract: Adaptive behavioural responses often depend on qualities of the interacting partner of an individual. For example, when competing for resources, an individual might be better off escalating fights with individuals of lower quality, while restraining from fighting individuals of higher quality. Communication systems involving signals of quality allow individuals to reduce uncertainty regarding the fighting ability of their partners and make more adaptive behavioral decisions. However, dishonest individuals can destabilize such communications systems. One open question is whether cognitive mechanisms, such as learning, can maintain the honesty of signals, thus, favoring their evolutionary stability. Here we present evolutionary simulations, where individuals can produce a signal proportional to their quality; and learn along their lifetime the best response to the signal emitted by their peers. In these simulations, learning on the receiver side can mediate the evolution of signals of quality on the sender side. When the cost of the signal is proportional to the quality of the sender populations are only composed of honest signalers. When the cost is not proportional to the quality of the signaler, the population is composed of both honest and dishonest signalers. We argue that learning can be a general cognitive mechanism playing a role in a wide range of communication systems.  
+abstract: | 
+  Adaptive behavioural responses often depend on qualities of the interacting partner of an individual. For example, when competing for resources, an individual might be better off escalating fights with individuals of lower quality, while restraining from fighting individuals of higher quality. Communication systems involving signals of quality allow individuals to reduce uncertainty regarding the fighting ability of their partners and make more adaptive behavioral decisions. However, dishonest individuals can destabilize such communications systems. One open question is whether cognitive mechanisms, such as learning, can maintain the honesty of signals, thus, favoring their evolutionary stability. Here we present evolutionary simulations, where individuals can produce a signal proportional to their quality; and learn along their lifetime the best response to the signal emitted by their peers. In these simulations, learning on the receiver side can mediate the evolution of signals of quality on the sender side. When the cost of the signal is proportional to the quality of the sender populations are only composed of honest signalers. When the cost is not proportional to the quality of the signaler, the population is composed of both honest and dishonest signalers. We argue that learning can be a general cognitive mechanism playing a role in a wide range of communication systems.  
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,cache=TRUE)
 require(png)
 require(here)
 source(here("../R_files/posPlots.r"))
@@ -40,158 +41,230 @@ source(here("AccFunc.r"))
 ## Introduction 
 
 The outcome of interactions with con-specifics is an important 
-determinant of fitness in social animals. Irrespective of whether such interactions are cooperative 
-or competitive, the actions of interacting individuals partly determine 
+determinant of fitness in social animals. Irrespective of whether 
+such interactions are cooperative or competitive, the actions of 
+interacting individuals partly determine 
 their reproductive success. However, the best action for an individual 
-might vary depending on its condition, and that of individuals with whom it interacts. 
-Thus, acting based on information about interacting 
+might vary depending on its condition, and that of individuals with 
+whom it interacts. Thus, acting based on information about interacting 
 partners is typically adaptive [@quinones_Negotiation_2016].
 Acquiring this information, however, is far from trivial. 
-In some cases, interacting partners (signallers) might be 'willing' to provide accurate
-information, but in others it might be in their own interest to conceal information
-[@johnstone_Recognition_1997], or to provide erroneous information [@johnstone_Badges_1993]. 
+In some cases, interacting partners (signallers) might be 'willing' to 
+provide accurate information, but in others it might be in their 
+own interest to conceal information [@johnstone_Recognition_1997], 
+or to provide erroneous information [@johnstone_Badges_1993]. 
 Typically, in a given context, some proportion of individuals will benefit 
-from broadcasting accurate information, whereas others will benefit from hiding it. 
-Take, for instance, an interaction between two individuals where one can help the other. 
-Given some costs and benefits, a potential donor will be interested in helping 
+from broadcasting accurate information, whereas others will benefit 
+from hiding it. Take, for instance, an interaction between two individuals 
+where one can help the other. Given some costs and benefits, 
+a potential donor will be interested in helping 
 related individuals. Therefore, for a relative of the donor, 
 broadcasting kinship is advantageous, whereas for an unrelated individual, 
 concealing the lack of kinship is better. Similar scenarios may apply to 
-many aspects of social life such as finding mates, feeding offspring, dominance relationships 
-and aggressive interactions [@bradbury_Principles_2011; @moller_Female_1988; @tibbetts_Socially_2004].
+many aspects of social life such as finding mates, 
+feeding offspring, dominance relationships and aggressive interactions 
+[@bradbury_Principles_2011; @moller_Female_1988; @tibbetts_Socially_2004].
 In dominance and aggressive interactions, an important piece of
-information to guide individual actions is interacting partners fighting ability, 
-which is sometimes referred to as Resource Holding Potential (RHP) [@parker_Assessment_1974], 
-or simply as quality. Responsiveness to the quality of the 
-partner is central to communication systems such as badges of status, 
-where an arbitrary signal conveys quality [@johnstone_Badges_1993; @rohwer_Social_1975a]. 
-Here, arbitrary refers to a signal which is not ontogenetically correlated with quality. 
-Badges of status can be evolutionarily stable whenever the signal imposes a fitness cost which 
-decreases with the quality of an individual  [@botero_Evolution_2010; @johnstone_Badges_1993], 
-such that it's no longer in the interest of low quality individuals to fake quality by producing a
-large badge. The cost of honest signals is a more general principle of communications systems, 
-usually referred to as the handicap principle [@grafen_Biological_1990; @zahavi_Mate_1975]. 
-An alternative system of communication is one where individuals gather and store information
-about each individual they interact with. This information should reliably allow 
-each individual to react adaptively to the quality difference with their opponent. 
-This type of assessment strategy is often referred to as individual recognition [@whitfield_Plumage_1986]. Evidently, individual recognition is restricted to 
-certain interaction structures, because individuals are limited by cognitive 
-abilities in how many individuals they can recognize and track. Thus, individual 
-recognition and badges of status have been assumed to be alternative communication 
-systems fulfilling the same function, reducing the costs of aggression in contests over resources. 
-Furthermore, badges of status and individual recognition are expected to evolve under different interaction structures, badges of status under global interactions and individual recognition
-under local interactions [@dale_Signaling_2001; @sheehan_There_2016].  There is no clear cut reason, however, why both systems could not work together, in fact there is some evidence
+information to guide individual actions is interacting 
+partners fighting ability, which is sometimes referred to as 
+Resource Holding Potential (RHP) 
+[@parker_Assessment_1974], or simply as quality. 
+Responsiveness to the quality of the partner is central 
+to communication systems such as badges of status, 
+where an arbitrary signal conveys quality 
+[@johnstone_Badges_1993; @rohwer_Social_1975a]. 
+Here, arbitrary refers to a signal which is not 
+ontogenetically correlated with quality. 
+Badges of status can be evolutionarily stable whenever the 
+signal imposes a fitness cost which decreases with the 
+quality of an individual  [@botero_Evolution_2010; @johnstone_Badges_1993], 
+such that it's no longer in the interest of low quality individuals 
+to fake quality by producing a large badge. The cost of honest signals 
+is a more general principle of communications systems, 
+usually referred to as the handicap principle 
+[@grafen_Biological_1990; @zahavi_Mate_1975]. 
+<!-- should this last part of the paragraph stay ?-->
+An alternative system of communication is one where individuals 
+gather and store information about each individual they interact with. 
+This information should reliably allow each individual to react adaptively 
+to the quality difference with their opponent. This type of 
+assessment strategy is often referred to as individual 
+recognition [@whitfield_Plumage_1986]. Evidently, individual recognition 
+is restricted to  certain interaction structures, because individuals 
+are limited by cognitive abilities in how many individuals 
+they can recognize and track. Thus, individual recognition and 
+badges of status have been assumed to be alternative communication 
+systems fulfilling the same function, reducing the costs of 
+aggression in contests over resources. 
+
+Furthermore, badges of status and individual recognition are expected 
+to evolve under different interaction structures, badges of status under 
+global interactions and individual recognition
+under local interactions [@dale_Signaling_2001; @sheehan_There_2016].  
+There is no clear cut reason, however, why both systems could not 
+work together, in fact there is some evidence
 that they can [@chaine_Manipulating_2018].
 
-A somewhat ignored component of communication systems, in the context of aggressive 
-interactions, is the cognitive aspects of the receiver module. Communication systems
-relying on badges of status are often assumed to be cognitively less demanding 
-than those involving individual recognition [@sheehan_There_2016] because in the latter, 
-individuals need to store identity and associated information about each individual 
-they interact with. In contrast, the response towards badges of status is often 
+A somewhat ignored component of communication systems, in the context 
+of aggressive interactions, is the cognitive aspects of the receiver module. 
+Communication systems relying on badges of status are often assumed 
+to be cognitively less demanding than those involving individual 
+recognition [@sheehan_There_2016] because in the latter, 
+individuals need to store identity and associated information 
+about each individual they interact with. In contrast, the response 
+towards badges of status is often 
 thought to be innate [@botero_Evolution_2010; @johnstone_Badges_1993], with 
-individuals using their own quality and the opponent's badge to determine whether to aggressively
-engage in contest. An alternative view of badges of status is that individuals learn 
-to react to them based on their experiences [@guilford_Receiver_1991], which would imply that receivers must learn to associate signals with the fighting ability of bearers just as in systems based on individual recognition. In cases where badges of status vary quantitatively (e.g. in size or intensity), fighting ability may increase monotonically with attributes of the badge and would be reinforced by every interaction, so in principle learning would be faster than in systems involving individual recognition in which the association between signals and their meaning would vary depending on the interacting partners. In any case, learning could be a central cognitive mechanism in both types of communication systems, but the role of learning in these contexts has not been thoroughly explored in the empirical nor theoretical literature. 
+individuals using their own quality and the opponent's badge to determine 
+whether to aggressively engage in contest. An alternative view of 
+badges of status is that individuals learn 
+to react to them based on their experiences [@guilford_Receiver_1991], 
+which would imply that receivers must learn to associate signals with 
+the fighting ability of bearers just as in systems based on individual 
+recognition. In cases where badges of status vary quantitatively 
+(e.g. in size or intensity), fighting ability may increase monotonically 
+with attributes of the badge and would be reinforced by every interaction, 
+so in principle learning would be faster than in systems involving individual 
+recognition in which the association between signals and their meaning would 
+vary depending on the interacting partners. In any case, learning could be 
+a central cognitive mechanism in both types of communication systems, 
+but the role of learning in these contexts has not been thoroughly 
+explored in the empirical nor theoretical literature. 
 
-Associative learning is a key cognitive mechanism that allows individuals to associate
-rewards with environmental stimuli and thus behave adaptively [@staddon_Adaptive_2016]. 
-Associative learning exists in all major vertebrate taxa, and in many invertebrates [@heyes_Simple_2012;@macphail_Brain_1982; @staddon_Adaptive_2016; @behrens_Associative_2008].
-Theory has shown that natural selection favours these associations in complex environments
-where conditions are hard to predict [@dridi_Environmental_2016]. Besides its wide taxonomic and
-ecological relevance, associative learning is a flexible cognitive mechanism whose underpinnings
-show interspecific variation [@enquist_Power_2016; @quinones_Reinforcement_2019], so 
-presumably, it has been modified by natural selection. Despite all this, associative 
-learning is not often included in the narrative of evolutionary explanations of 
-behavioural patterns [@fawcett_Exposing_2013; @kamil_Optimal_1983; @mcauliffe_Psychology_2015]. 
-Computational models of evolution can play an important role to overcome the 
-lack of integration between learning and evolution. Reinforcement learning theory 
-encompasses a series of computational methods inspired on the psychological and 
-neurological mechanisms of associative learning [@sutton_Reinforcement_2018].
-These set of algorithms allow the implementation of biologically realistic problems, 
+Associative learning is a key cognitive mechanism that allows 
+individuals to associate rewards with environmental stimuli 
+and thus behave adaptively [@staddon_Adaptive_2016]. Associative 
+learning exists in all major vertebrate taxa, and in many invertebrates [@heyes_Simple_2012;@macphail_Brain_1982; @staddon_Adaptive_2016; 
+@behrens_Associative_2008].
+Theory has shown that natural selection favours these associations 
+in complex environments where conditions are hard to predict 
+[@dridi_Environmental_2016]. Besides its wide taxonomic and
+ecological relevance, associative learning is a flexible cognitive 
+mechanism whose underpinnings show interspecific variation [@enquist_Power_2016; @quinones_Reinforcement_2019], so presumably, it has been modified 
+by natural selection. Despite all this, associative learning is 
+not often included in the narrative of evolutionary explanations of 
+behavioural patterns [@fawcett_Exposing_2013; @kamil_Optimal_1983; 
+@mcauliffe_Psychology_2015]. Computational models of evolution 
+can play an important role to overcome the lack of integration 
+between learning and evolution. Reinforcement learning theory 
+encompasses a series of computational methods inspired 
+on the psychological and neurological mechanisms of associative learning [@sutton_Reinforcement_2018]. These set of algorithms allow the 
+implementation of biologically realistic problems, 
 capturing the essence of learning processes [@frankenhuis_Enriching_2018; @quinones_Reinforcement_2019]. 
 Furthermore, these algorithms can be embedded in evolutionary simulations to 
-generate theoretical predictions of the effect that learning can have in behavioural
-evolution [@leimar_Learning_2019].
+generate theoretical predictions of the effect that learning can 
+have in behavioural evolution [@leimar_Learning_2019].
 
-In here we present an evolutionary model where individuals use associative learning 
-to develop a tendency to behave aggressively (or  peacefully), in the context of
-competition over resources, depending on the quantitative morphological trait 
-they perceive in their opponent (badge). Over evolutionary time individuals evolve
-the size of their badge, and whether it depends on their quality. Under this simple
+In here we present an evolutionary model where individuals use 
+associative learning to develop a tendency to behave aggressively 
+(or  peacefully), in the context of competition over resources, 
+depending on the quantitative morphological trait they 
+perceive in their opponent (badge). Over evolutionary time 
+individuals evolve the size of their badge, and whether it depends 
+on their quality. Under this simple
 set up, individuals can use the badge both as a signal of quality (BS)
-or as a trait for IR. We use the model to assess under what conditions of interaction
-structure we expect different communication signals to evolve. 
+or as a trait for IR. We use the model to assess under what conditions 
+of interaction structure we expect different communication signals to evolve. 
 
 ## The model
 
-We model the evolution of signals of quality in the context of agonistic interactions by 
-modelling a population of haploid individuals with non-overlapping generations. 
-Individuals are born every generation with a level of quality ($Q_i$, where $i$ is subscript 
-of the population vector of size $N$) given by a number between zero and one, which is drawn 
-from a truncated normal distribution $N(\mu = 0.5,\sigma)$. 
-An individual with quality $0$ has the lowest RHP, 
-while an individual with quality $1$ has the highest. As part of development processes
-individuals produce a morphological signal (badge), the size of such depends on their level 
-of quality according to a reaction norm given by $B_i=1/(1+e^{\alpha_i-\beta_i Q_i})$;
-where are $\alpha_i$ and $\beta_i$ are individual specific traits that determine 
-the shape of the reaction norm (Fig. \ref{fig:model-struc} A). Variation in $\alpha_i$ and $\beta_i$ means individuals can have either uninformative (flat) or informative (logistic) norms. 
-The size of the signal is constrained between zero and one. We assume different values of these traits 
+We model the evolution of signals of quality in the context of agonistic 
+interactions. For simplicity we consider a population of haploid 
+individuals with non-overlapping generations. Individuals are born 
+every generation with a level of quality ($Q_i$, where $i$ is subscript 
+of the population vector of size $N$) given by a number between zero and one, 
+which is drawnfrom a truncated normal distribution 
+$N(\mu = 0.5,\sigma)$. An individual with quality $0$ has the lowest RHP, 
+while an individual with quality $1$ has the highest. As part of 
+development processes individuals produce a morphological signal (badge), 
+the size of such depends on their level 
+of quality according to a reaction norm given by 
+$B_i=1/(1+e^{\alpha_i-\beta_i Q_i})$; where are $\alpha_i$ and 
+$\beta_i$ are individual specific traits that determine the shape of 
+the reaction norm (Fig. \ref{fig:model-struc} A). Variation in $\alpha_i$ 
+and $\beta_i$ means individuals can have either uninformative (flat) or 
+informative (logistic) norms. The size of the signal is constrained 
+between zero and one. We assume different values of these traits 
 are given by different alleles, and are inherited from mother to offspring. 
-Unless, with a small probability, mutation changes the allelic value of the offspring.
-After birth individuals go through a round of viability selection. 
-Individual specific survival probability is given by $s_i=1/(1+e^{-k_1-k_2(Q_i-B_i)})$. 
-Where $k_1$ and $k_2$ are parameter values determining the shape of the survival function. 
-Importantly, if $k_2=0$ survival probability is independent of quality, while if $k_2>0$
-lower quality individuals pay a higher price for s similar-sized badge, fulfilling the core assumption 
-of the handicap principle [@botero_Evolution_2010; @grafen_Biological_1990; @johnstone_Badges_1993].
+Unless, with a small probability, mutation changes the allelic value 
+of the offspring. After birth individuals go through a round of 
+viability selection. Individual specific survival probability is given by $s_i=1/(1+e^{-k_1-k_2(Q_i-B_i)})$. Where $k_1$ and $k_2$ are parameter 
+values determining the shape of the survival function. 
+Importantly, if $k_2=0$ survival probability is independent of quality, 
+while if $k_2>0$ lower quality individuals pay a higher price for similar-sized 
+badge, fulfilling the core assumption of the handicap principle 
+[@botero_Evolution_2010; @grafen_Biological_1990; @johnstone_Badges_1993].
 
 Individuals who survive engage in a series of pairwise interactions 
-where they compete for resources. Individuals in real populations typically do not 
-interact at random nor with all individuals in the population [@kurvers_Evolutionary_2014]. 
-In order to allow for non-random interactions, we use the population vector to define 
-an interaction neighbourhood for the focal individual, the size of the neighbourhood (g) 
-is the number of positions around the focal's from which the interactant is drawn. 
-So, if $g=N$ interactions are global; as $g$ gets smaller interactions are more local. 
-In an interaction each individual must decide whether to escalate a fight or not. 
-Following the classic hawk-dove game [@maynard-smith_Evolution_1982], if the focal individual fights and its partner does not, the focal gets as pay-off the resource of value $V$ while its partner gets nothing; if both individuals restrain  from fighting they split up the resource in half; if both decide to fight they split up the cost of fighting and the winner takes over the resource. 
-We further assume that the probability of wining a fight for the focal individual depends on the difference in quality between her and her interacting partner; specifically it is given by $p_{ij}=1/(1+e^{-k_3(Q_i-Q_j)})$, where $k_3$ is a parameter defining
-how strong the quality difference determines the winning probability; 
-and $i$ and $j$ denote the the position in the population 
-vector of the focal and its interacting partner respectively.
+where they compete for resources. Individuals in real populations typically 
+do not interact at random nor with all individuals in the population 
+[@kurvers_Evolutionary_2014]. In order to allow for non-random interactions, 
+we use the population vector to define an interaction neighbourhood 
+for the focal individual, the size of the neighbourhood ($g$)
+is the number of positions around the focal's from which the partner is drawn. 
+So, if $g=N$ interactions are global; as $g$ gets smaller 
+interactions are more local. In an interaction each individual must 
+decide whether to escalate a fight or not. 
+Following the classic *hawk-dove* game [@maynard-smith_Evolution_1982], 
+if the focal individual fights and its partner does not, the focal gets 
+as pay-off the resource of value $V$ while its partner gets nothing; 
+if both individuals restrain  from fighting they split up the resource 
+in half; if both decide to fight they split up the cost of fighting and 
+the winner takes over the resource. We further assume that the 
+probability of wining a fight for the focal individual depends on the 
+difference in quality between her and her interacting partner; specifically 
+it is given by $p_{ij}=1/(1+e^{-k_3(Q_i-Q_j)})$, where $k_3$ is a 
+parameter defining how strong the quality difference determines the 
+winning probability; and $i$ and $j$ denote the the position 
+in the population vector of the focal and its interacting 
+partner respectively.
 
-The decision of whether to escalate a fight against an interacting partner can be dependent 
-on the size of the partner's badge, the actual dependency is determined by 
-the focal´s experiences through a learning process. We implement learning using 
+The decision of whether to escalate a fight against an interacting 
+partner can be dependent on the size of the partner's badge, 
+the actual dependency is determined by the focal´s experiences 
+through a learning process. We implement learning using 
 the actor-critic approach from reinforcement learning theory [RL; @sutton_Reinforcement_2018;@quinones_Reinforcement_2019; @leimar_Learning_2019].
-Individuals estimate the reward (pay-off) expected from  interacting with partners 
-of different badge sizes (the critic in RL terminology). 
-After every interaction they update the estimate of reward proportionally to the difference between their current estimate and the observed reward (prediction error $\delta$) and to 
-the speed of learning ($\mathrm{A}$).
-Furthermore, they express different probabilities of retreating (attacking) depending on
-the badge size of their opponent (the actor in RL). They update the probability of 
-retreating (attacking)  up or down depending on whether retreating (attacking) leads to an increase 
-in the reward estimation. So, if a focal individual decides to escalate a fight against 
-an individual with small badge, and that leads to an increase in the reward estimation,
-the focal individual will increase the probability of escalating fights with 
-individuals of small badges in the future. Given that badge size is a real number between 0 and 1, there are infinitely many badge sizes. Thus, the reward estimation, as well as the probability of retreating (escalating), must be generalized across different values. 
-To implement generalization we use the linear function
-approximation method based on radial basis functions [@sutton_Reinforcement_2018]. Specifically, we pick $c$ feature centres, which are evenly spaced values along the badge size interval ([0,1]). Each one of these features centres is associated with a weight for reward estimation and 
-tendency to play retreat in a given interaction. The reward estimation and the tendency 
-to retreat are calculated (in every interaction) as the sum of the weights associated 
-with each feature, weighted by the response triggered by the feature 
-(Fig. \ref{fig:model-struc} B, dots represent the feature weights) 
-The response of each feature centre diminishes as a Gaussian function  with the distance between the feature centre and the badge size of the partner (Fig. \ref{fig:model-struc} B, grey line). Formally the reward estimation 
-$\hat{R}$ when the focal individual ($i$) faces individual $j$ is given by,
-
+Individuals estimate the reward (pay-off) expected from  interacting 
+with partners of different badge sizes (the critic in RL terminology). 
+After every interaction they update the estimate of reward proportionally 
+to the difference between their current estimate and the observed 
+reward (prediction error $\delta$) and to the speed of learning 
+($\mathrm{A}$). Furthermore, they express different probabilities of 
+retreating (attacking) depending on the badge size of their opponent 
+(the actor in RL). They update the probability of 
+retreating (attacking)  up or down depending on whether retreating 
+(attacking) leads to an increase in the reward estimation. 
+So, if a focal individual decides to escalate a fight against 
+an individual with small badge, and that leads to an increase in 
+the reward estimation, the focal individual will increase the probability 
+of escalating fights with individuals of small badges in the future. 
+Given that badge size is a real number between 0 and 1, there are infinitely 
+many badge sizes. Thus, the reward estimation, as well as the probability 
+of retreating (escalating), must be generalized across different values. 
+To implement generalization we use the linear function approximation 
+method based on radial basis functions [@sutton_Reinforcement_2018]. 
+Specifically, we pick $c$ feature centres, which are evenly spaced values 
+along the badge size interval ([0,1]). Each one of these features centres 
+is associated with a weight for reward estimation and tendency to play 
+retreat in a given interaction. The reward estimation and the tendency 
+to retreat are calculated (in every interaction) as the sum of the weights 
+associated with each feature, weighted by the response 
+triggered by the feature (Fig. \ref{fig:model-struc} B, dots 
+represent the feature weights) The response of each feature centre 
+diminishes as a Gaussian function  with the distance between the 
+feature centre and the badge size of 
+the partner (Fig. \ref{fig:model-struc} B, grey line). Formally the 
+reward estimation $\hat{R}$ when the focal individual ($i$) faces 
+individual $j$ is given by,
+\
 \begin{equation}
 \hat{R}_{ij} =  \sum_{z=1}^{c} x_z e^{(-\frac{|B_i-c_z|}{2\theta^2})} 
 \end{equation}
 
-where $x_z$ is the weight of feature centre $z$ on the reward estimation; and $\theta$ is
-the width of the generalization function. Similarly, the tendency to retreat is given by the sum 
-of feature weights associated with the actor, and the probability is obtained
-by applying a logistic transformation (Fig. \ref{fig:model-struc} B, black line). 
+where $x_z$ is the weight of feature centre $z$ on the reward estimation; 
+and $\theta$ is the width of the generalization function. Similarly, 
+the tendency to retreat is given by the sum of feature weights associated 
+with the actor, and the probability is obtained by applying a logistic 
+transformation (Fig. \ref{fig:model-struc} B, black line). 
 So formally, the log-odds to retreat when facing individual $j$ is 
 
 \begin{equation}
@@ -200,10 +273,13 @@ logit(q_{ij}) =  \sum_{z=1}^{c} y_z e^{(-\frac{|B_i-c_z|}{2\theta^2})}
 
 where $y_z$ is the weight of feature centre $z$ on the tendency to retreat.
 
-After all their interactions, individuals in the population reproduce proportionally to 
-their fitness $w_i$, which is a sum of the baseline fitness ($w_0$) and all the pay-offs
-obtained throughout their life. Thus, the combination of natural selection and genetic drift
-changes the distribution of values in $\alpha$ and $\beta$ that segregates in the population, effectively changing  the badges expressed and the communication system. 
+After all their interactions, individuals in the population 
+reproduce proportionally to their fitness $w_i$, which is a sum of the 
+baseline fitness ($w_0$) and all the pay-offs obtained throughout their 
+life. Thus, the combination of natural selection and genetic drift 
+changes the distribution of values in $\alpha$ and $\beta$ that segregates 
+in the population, effectively changing  the badges expressed and the 
+communication system. 
 
 ```{r model-struc,echo=FALSE,fig.width=8,fig.align='center',fig.height=8,fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A the sender code: a reaction norm determines how the badge size is determined by the quality of the individual. Red shows an informative reaction norm, while the blue shows a uninformative reaction norm. B the receiver code: individuals have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Generalization is represented by the grey line and its axis, which shows the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether that leads to an increase in the estimated reward. In C and D, effect of learning on the receiver strategy. Receivers in C face signallers with uninformative reaction norms (blue line in A), while in D they face signallers with informative reaction norms (red line in A). Colour scale in C (applies also for D) indicates the quality of the individual"}
 
@@ -261,7 +337,7 @@ mtext("Badge size",1,line = 2,cex = 1,las = 0)
 scenario1<-"alphaActDishonest"
 scenario2<-"alphaActHonest"
 
-extSimsDir<-paste0("e:/BadgeSims/",scenario1,"_")
+extSimsDir<-paste0("M:/BadgeSims/",scenario1,"_")
 listTest<-list.files(extSimsDir,full.names = TRUE)
 indList<-grep("ind",listTest,value=TRUE)
 # parameter values from project folder
@@ -320,7 +396,7 @@ color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
                cex.tit = 0.9,title = "quality",
                numplotx = 20,numploty = 10,idplotx =9,idploty = 2)
 
-extSimsDir<-paste0("e:/BadgeSims/",scenario2,"_")
+extSimsDir<-paste0("M:/BadgeSims/",scenario2,"_")
 listTest<-list.files(extSimsDir,full.names = TRUE)
 indList<-grep("ind",listTest,value=TRUE)
 # parameter values from project folder
@@ -383,24 +459,31 @@ text(x = -0.1,y = -0.23,labels = "Badge size")
 
 ## Results
 
-We first present the outcome of simulations where we prevent the evolution of the 
-sender code (by setting the mutation rate to $0$), and assume that all individuals 
-in the population display either an uninformative or informative badge size with respect to their quality. These simulations show what type of receiver strategy develops through a learning process. 
-Figure \ref{fig:model-struc} (C and D) shows the receiver strategy developed 
-through learning; panel C is for receivers that faced uninformative signals, 
-and D informative ones. When learners face uninformative signals, they change their 
-probability of retreating depending on their own quality. Individuals with higher 
-quality (red tones), after the learning process, have a high probability of attacking; while 
-individuals of lower quality (blue tones) mostly retreat from confrontations. Thus, learning splits
-the population of receivers into the two classic pure strategies of hawks and doves. 
-Given that we have a assumed a monomorphic population with unresponsive reaction norms 
-on the signalling side, the changes triggered by learning only affect a small range 
-of badge sizes. In contrast, when receivers face informative reaction norms 
-on the side of the signaller (panel B in fig. \ref{fig:model-struc}), receivers use the 
-badge size of their interacting partners to determine whether to retreat or attack. 
-The relationship is given by a threshold-like reaction norm, where the change from 
-retreating to attacking depends on the quality of the receiver. As expected, 
-the higher the quality of the receiver the larger the badge size that triggers a retreat.
+We first present the outcome of simulations where we prevent the 
+evolution of the sender code (by setting the mutation rate to $0$), 
+and assume that all individuals in the population display either 
+an uninformative or informative badge size with respect to their quality. 
+These simulations show what type of receiver strategy develops through 
+a learning process. Figure \ref{fig:model-struc} (C and D) shows 
+the receiver strategy developed through learning; panel C is for 
+receivers that faced uninformative signals, and D informative ones. 
+When learners face uninformative signals, they change their 
+probability of retreating depending on their own quality. Individuals 
+with higher quality (red tones), after the learning process, have a 
+high probability of attacking; while individuals of lower quality 
+(blue tones) mostly retreat from confrontations. Thus, learning splits
+the population of receivers into the two classic pure strategies of 
+hawks and doves. Given that we have a assumed a monomorphic population 
+with unresponsive reaction norms on the signalling side, the changes 
+triggered by learning only affect a small range of badge sizes. 
+In contrast, when receivers face informative reaction norms 
+on the side of the signaller (panel B in fig. \ref{fig:model-struc}), 
+receivers use the badge size of their interacting partners to determine 
+whether to retreat or attack. The relationship is given by a 
+threshold-like reaction norm, where the change from retreating to 
+attacking depends on the quality of the receiver. As expected, 
+the higher the quality of the receiver the larger the badge size 
+that triggers a retreat.
 
 ```{r handicap,echo=FALSE,out.width='90%',fig.align='center',fig.show='hold',fig.cap="Evolution of the badge size as a handicap mediated by learning. Middle panels show the evolutionary dynamics of the sender code. On the left, changes in the distribution of values for the intercept of the reaction norm ($\\alpha$); on the right changes in the distribution of the slope ($\\beta$). Dashed lines in both panels show the mean of the distribution. Grey lines show the generation time corresponding to the panels above and below showing the sender and receiver code. In the panels above, the reaction norms correspond to individuals in the population after the interaction round. Color scale indicates quality just as in Fig. \\ref{fig:model-struc}. In the panels below, colors represent a cluster clasification performed by the k-means algorithm" }
 
@@ -409,21 +492,58 @@ knitr::include_graphics(here("Simulations","betCostEvol1_","evolDyn0_betCost5.pn
 ```
 
 
-When we allow the evolution of the sender code ($\alpha$ and $\beta$ change subject to natural selection and genetic drift), and the badge size work as a handicap 
-(i.e. the cost of the badge is inversely proportional to the quality of the individual), the sender code evolves to produce an honest signal Fig \ref{fig:handicap}). The evolution of 
-the sender code does not happen immediately after the start of the evolutionary process. Instead, the evolutionary dynamics of the  reaction norm parameters (Fig. \ref{fig:handicap}, X) show a set of 
-steps. First, the intercept of the reaction norm ($\alpha$) evolves to higher values, reducing the 
-average badge size in the populations. That makes sense because reaction norms segregating in the population are flat at this point, and consequently the receiver code does not respond to the badge size, bigger badges are costlier and do not trigger lower attack probabilities. During those first generations, the slope of the sender reaction norm ($\beta$)  remains around the initial value of zero. At around generation 4000, the slope evolves toward positive values. Which implies that larger badges correlate with higher quality. Receivers learn to react to such correlation, reducing 
-the probability of attack towards individual of larger badges. Hence, natural selection 
-favours larger values of $\beta$, eventually leading to an evolutionary equilibrium where 
-badge size is an honest signal of quality mediated by the learned responses of receivers. The
-evolutionary trajectory portrayed in figure \ref{fig:handicap} is not the only possible trajectory. 
-If the slope of the sender reaction norms ($\beta$) evolves toward negative values before badges become handicaps, receivers never learn to react to the size of badges. Thus, badges are only costly and do not provide information about the quality of an individual. Eventually, the badge disappears from the population. 
+When we allow the evolution of the sender code ($\alpha$ and $\beta$ 
+change subject to natural selection and genetic drift), and the badge 
+size work as a handicap (i.e. the cost of the badge is inversely 
+proportional to the quality of the individual), the sender code evolves 
+to produce an honest signal Fig \ref{fig:handicap}). The evolution of 
+the sender code does not happen immediately after the start of the 
+evolutionary process. Instead, the evolutionary dynamics of the reaction 
+norm parameters (Fig. \ref{fig:handicap}, X) show a set of 
+steps. First, the intercept of the reaction norm ($\alpha$) evolves to 
+higher values, reducing the average badge size in the populations. 
+That makes sense because reaction norms segregating in the population are 
+flat at this point, and consequently the receiver code does not respond to 
+the badge size, bigger badges are costlier and do not trigger lower attack 
+probabilities. During those first generations, the slope of the sender 
+reaction norm ($\beta$)  remains around the initial value of zero. 
+At around generation 4000, the slope evolves toward positive values. 
+Which implies that larger badges correlate with higher quality. Receivers 
+learn to react to such correlation, reducing the probability of attack towards 
+individual of larger badges. Hence, natural selection favours larger 
+values of $\beta$, eventually leading to an evolutionary equilibrium where 
+badge size is an honest signal of quality mediated by the learned responses 
+of receivers. The evolutionary trajectory portrayed in figure 
+\ref{fig:handicap} is not the only possible trajectory. If the slope of the 
+sender reaction norms ($\beta$) evolves toward negative values before badges 
+become handicaps, receivers never learn to react to the size of badges. 
+Thus, badges are only costly and do not provide information about the 
+quality of an individual. Eventually, the badge disappears from the population. 
 
-When production of the badge is not costly (i.e. does not work as a handicap), the parameters of the sender code go through evolutionary branching event, triggereing the evolution of different types of
-signals in the population. Fig. \ref{fig:branching}A and B shows changes in the distribution of the 
-sender reaction norm ($\alpha$ and $\beta$) along evolutionary time. Darker areas show trait values 
-with high frequency in the population. Populations start monomorphic with a value of zero on both traits, and mutations quickly buid up a normal distribution around the starting value. Within the first 2000 generations the unimodal distribution splits into a bimodal one. In the case of $\alpha$, one of the peaks splits further, so at the end of the evolutionary simulation the distribution of $\alpha$ value in the population shows three peaks. In the case of $\beta$, the two initial peaks coexist for around 4000 generations. Later on one of the types goes extinct and the distribution goes back to being unimodal. These changes in the distrubtuion of the sender reaction norm parameters imply that during the second half of the simualation individuals can by classify into three distinct types. Two types express a flat reaction norm, meaning that their badge size is not informative of their quality, while the third type shows intermediate badge sizes which are determined by the quality of the individual (Fig. \ref{fig:branching}). Furthermore, the receiver reaction norms develop through learning, particularly those of individuals of intermediate quality, respond to the signal of their sender type by increasing the probability of retreating from a fight with individuals with larger badges (Fig. \ref{fig:branching}). 
+When production of the badge is not costly (i.e. does not work as a handicap), 
+the parameters of the sender code go through evolutionary branching event, 
+triggering the evolution of different types of signals in the population. 
+Fig. \ref{fig:branching}A and B shows changes in the distribution of the 
+sender reaction norm ($\alpha$ and $\beta$) along evolutionary time. 
+Darker areas show trait values with high frequency in the population. 
+Populations start monomorphic with a value of zero on both traits, 
+and mutations quickly build up a normal distribution around the starting 
+value. Within the first 2000 generations the unimodal distribution splits 
+into a bimodal one. In the case of $\alpha$, one of the peaks splits further, 
+so at the end of the evolutionary simulation the distribution of $\alpha$ 
+value in the population shows three peaks. In the case of $\beta$, the two 
+initial peaks coexist for around 4000 generations. Later on one of the 
+types goes extinct and the distribution goes back to being unimodal. 
+These changes in the distribution of the sender reaction norm parameters 
+imply that during the second half of the simulation individuals can be 
+classified into three distinct types. Two types express a flat reaction 
+norm, meaning that their badge size is not informative of their quality, 
+while the third type shows intermediate badge sizes which are determined 
+by the quality of the individual (Fig. \ref{fig:branching}). Furthermore, 
+the receiver reaction norms develop through learning, particularly those 
+of individuals of intermediate quality, respond to the signal of their 
+sender type by increasing the probability of retreating from a fight with 
+individuals with larger badges (Fig. \ref{fig:branching}). 
 
 ```{r branching,echo=FALSE,out.width='90%',fig.align='center',fig.show='hold',fig.cap= "The evolution of cheap signals. Portrait of the evolutionary dynamics of the sender code with snapsots of both sender and receiver codes just as in fig. \\ref{fig:handicap}. The middle panels show changes in the distribution of values fir $\\alpha$ and $\\beta$ along evolutionary time. Panels above and bellow correspond to snapshots of the sender and receiver codes, respectively, generation time of the snapshots are indicated by the grey lines in the middle panels."}
 
@@ -436,7 +556,5 @@ knitr::include_graphics(here("Simulations","nIntGroupNormQual_","evolDyn7_nIntGr
 knitr::include_graphics("../Simulations/initAct_/indVarScatter_.png")
 
 ```
-
-
 
 ## References

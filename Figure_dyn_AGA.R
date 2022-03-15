@@ -15,7 +15,7 @@ require("jsonlite")
 scenario<-"betCostEvol1"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
-  paste0("e:/BadgeSims/",scenario,"_")
+  paste0("M:/BadgeSims/",scenario,"_")
 
 
 # Load files -------------------------------------------------------------------
@@ -70,7 +70,7 @@ pop<-do.call(rbind,lapply(indList_runs, fread))
   
   ## Calculate clustering for all generations  -------------------
   
-  runChoi<-5
+  runChoi<-0
   
   # Choose which interaction to visualize
   lastInt<-tail(pop[,unique(nInteract)],2)[1]
@@ -124,7 +124,7 @@ pop<-do.call(rbind,lapply(indList_runs, fread))
   ## Plot mean and IQRs among individuals for each replicate --------------------
   
   
-  cexAxis<-2.5
+  cexAxis<-1.5
   
   # get the trajectories for individual runs
   traitsTrajs<-dcast(evol,time~seed,
@@ -139,15 +139,15 @@ pop<-do.call(rbind,lapply(indList_runs, fread))
   genstoPrint<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
   
   
-  png(here("Simulations",paste0(scenario,"_"),
-           paste0("evolDyn",runChoi,"_",nampar,Valpar,".png")),
-      width = 1400,height = 1200)
+  # png(here("Simulations",paste0(scenario,"_"),
+  #          paste0("evolDyn",runChoi,"_",nampar,Valpar,".png")),
+  #     width = 1400,height = 1200)
   
   
   # Evolutionary dynamics for alpha - intercept of the sender --------------------------------------------
   
   par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 2,idplotx = 1,
-                  lowboundx = 8, upboundx = 93),mfrow=c(1,1),
+                  lowboundx = 8, upboundx=93,title = TRUE),mfrow=c(1,1),
       xaxt="s",las=1)
   
   evolDist(indData = pop[seed==runChoi],variable = "alpha",nbins = 20,pal = pal_dist,
@@ -158,9 +158,10 @@ pop<-do.call(rbind,lapply(indList_runs, fread))
   #      ylim=fivenum(as.matrix(pop[,.(alpha,beta)]))[c(1,5)]+c(-0.5,0),
   #      xlab="",ylab="",cex.lab=cexAxis,cex.axis=cexAxis,xaxt='n',las=1)
   mtext(text = "Trait value",cex = cexAxis,line = 3,side = 2,las=0)
-  axis(side=1,padj = -2,at = axTicks(1),labels = axTicks(1)/1000,cex.axis=cexAxis)
+  axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1))-1)],
+       labels = axTicks(1)[2:(length(axTicks(1))-1)]/1000,cex.axis=cexAxis)
   legend("topleft",legend = c(expression(alpha[s])),col=colGenesLin[1],lwd=2,
-         bty = "n",cex=3)
+         bty = "n",cex=1)
   
   # grey lines to show the generations shown in the upper and lower panels
   
@@ -188,18 +189,19 @@ pop<-do.call(rbind,lapply(indList_runs, fread))
   #        col=colRuns[popOneInd[seed==runChoi,orderClus]])
   
   par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 2, idplotx = 2,
-                  lowboundx = 8, upboundx = 93),
+                  lowboundx = 8, upboundx=93, title = TRUE),
       xaxt="s",las=1,new=TRUE)
   
   evolDist(indData = pop[seed==runChoi],variable = "beta",nbins = 20,pal = pal_dist,
            nlevels=10,cexAxis = 1.5,xlab="",ylab = "",xaxt="n",yaxt = "n",
-           ylim = range(pop[seed==runChoi,beta])*c(1,2.5))
+           ylim = range(pop[seed==runChoi,beta])*c(0.9,1.2))
   # plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
   #      ylim=fivenum(as.matrix(pop[,.(alpha,beta)]))[c(1,5)]+c(-0.5,0),
   #      xlab="",ylab="",cex.lab=cexAxis,cex.axis=cexAxis,xaxt='n',yaxt="n",las=1)
-  axis(side=1,padj = -2,at = axTicks(1),labels = axTicks(1)/1000,cex.axis=cexAxis)
+  axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1))-1)],
+       labels = axTicks(1)[2:(length(axTicks(1))-1)]/1000,cex.axis=cexAxis)
   axis(4,cex.axis=cexAxis)
-  legend("topleft",legend = c(expression(beta[s])),cex=3,
+  legend("topleft",legend = c(expression(beta[s])),cex=1,
          col=colGenesLin[2],lwd=2,bty = "n")
   # grey lines to show the generations shown in the upper and lower panels
   
@@ -240,7 +242,7 @@ pop<-do.call(rbind,lapply(indList_runs, fread))
   for(genC in genstoPrint){
     count<-count+1
     par(plt=posPlot(numplotx = 4,numploty = 3,idplotx = count,idploty = 3,
-                    lowboundx = 8, upboundx = 93),
+                    lowboundx = 8, upboundx=93, title = TRUE),
         xaxt="s",las=1,new=TRUE)
     weightsAct<-as.double(evol[(time==unique(time)[genC])&seed==runChoi,.SD,
                                .SDcols=grep("WeightAct",
@@ -267,13 +269,14 @@ pop<-do.call(rbind,lapply(indList_runs, fread))
             yaxt=seqYax[count],ylab="",xlab="",type="l",cex.lab=cexAxis,
             lwd=2,xaxt="n",ylim=c(-0.05,1),col = paletteMeans(100)[
               findInterval(tempPop[,Quality],colorbreaksQual)],lty = 1,cex.axis=cexAxis)
+    axis(side = 3,cex.axis=cexAxis,padj = 0.5)
     mtext(text = seqYlabUp[count],cex = cexAxis,line = 4,side = 2,las=0)
     lines(logist(totRBF(rangx,centers,sigSquar,weightsAct),alpha=0,beta=1)~rangx,
           col=1,lwd=3,lty=2)
     text(x=0.5,y=-0.01,labels = paste0("time=",unique(evolStats$time)[genC]/1000),
-         cex=2)
+         cex=1)
     par(plt=posPlot(numplotx = 4,numploty = 3,idplotx = count,idploty = 1,
-                    lowboundx = 8, upboundx = 93), las=1,new=TRUE)
+                    lowboundx = 8, upboundx = 93,title = TRUE), las=1,new=TRUE)
     dataIndReact<-sapply(as.list(tempPop[,indId]),
                          function(x){x=
                            sapply(rangx, 
