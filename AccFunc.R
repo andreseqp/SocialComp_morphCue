@@ -242,6 +242,9 @@ get_clusters<-function(DT,vars,k.max=5,Bsamples=500,iterMax=100){
         rep(1:ncol(t(as.matrix(listTimeSeed))), 
             each = nrow(t(as.matrix(listTimeSeed)))))
   totClusters<-do.call(rbind,sapply(listTimeSeed, function(x){
+    if(x[1]==1&x[2]==20000){
+      print("STOPPP!!!")
+    }
       print(x)
       error<-FALSE
       error<-tryCatch(expr = 
@@ -266,7 +269,7 @@ get_clusters<-function(DT,vars,k.max=5,Bsamples=500,iterMax=100){
       }
       else{
         print(x)
-        if(x[1]==0&x[2]==6000){
+        if(x[1]==1&x[2]==20000){
           print("STOPPP!!!")
         }
         tryCatch(expr = invisible(capture.output(clus_Nb<-NbClust.AEQP(as.matrix(

@@ -5,7 +5,6 @@ author:
 - Andrés E. Quiñones^[Laboratorio de Biología Evolutiva de Vertebrados, Departamento
   de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia]
 - C. Daniel Cadena*
-- Olof Leimar^[Department of Zoology, Stockholm University, Stockholm, Sweden]
 - Redouan Bshary^[Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland]
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
@@ -13,13 +12,17 @@ output:
   word_document: default
 fig_caption: yes
 fontsize: 12pt
-header-includes:
-- \usepackage{float}
-- \usepackage{setspace}\doublespacing
-- \linespread{2}
-- \usepackage{lineno}
-- \linenumbers
-- \floatplacement{figure}{H}
+header-includes: |
+  ```{=latex}
+    \usepackage{float}
+    \usepackage{setspace}\doublespacing
+    \usepackage[backref=page]{hyperref}
+    \linespread{2}
+    \usepackage{lineno}
+    \linenumbers
+    \floatplacement{figure}{H}
+   \newcommand{\beginsupplement}{ \setcounter{table}{0}     \renewcommand{\thetable}{S\arabic{table}}\setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+  ```
 keep_tex: yes
 keywords: My keywords
 linespread: 2
@@ -31,7 +34,7 @@ abstract: |
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,cache=TRUE)
+knitr::opts_chunk$set(echo = TRUE,cache=TRUE,warnings=FALSE)
 require(png)
 require(here)
 source(here("../R_files/posPlots.r"))
@@ -84,39 +87,41 @@ is a more general principle of communications systems,
 usually referred to as the handicap principle 
 [@grafen_Biological_1990; @zahavi_Mate_1975]. 
 <!-- should this last part of the paragraph stay ?-->
-An alternative system of communication is one where individuals 
-gather and store information about each individual they interact with. 
-This information should reliably allow each individual to react adaptively 
-to the quality difference with their opponent. This type of 
-assessment strategy is often referred to as individual 
-recognition [@whitfield_Plumage_1986]. Evidently, individual recognition 
-is restricted to  certain interaction structures, because individuals 
-are limited by cognitive abilities in how many individuals 
-they can recognize and track. Thus, individual recognition and 
-badges of status have been assumed to be alternative communication 
-systems fulfilling the same function, reducing the costs of 
-aggression in contests over resources. 
+<!-- An alternative system of communication is one where individuals  -->
+<!-- gather and store information about each individual they interact with.  -->
+<!-- This information should reliably allow each individual to react adaptively  -->
+<!-- to the quality difference with their opponent. This type of  -->
+<!-- assessment strategy is often referred to as individual  -->
+<!-- recognition [@whitfield_Plumage_1986]. Evidently, individual recognition  -->
+<!-- is restricted to  certain interaction structures, because individuals  -->
+<!-- are limited by cognitive abilities in how many individuals  -->
+<!-- they can recognize and track. Thus, individual recognition and  -->
+<!-- badges of status have been assumed to be alternative communication  -->
+<!-- systems fulfilling the same function, reducing the costs of  -->
+<!-- aggression in contests over resources.  -->
 
-Furthermore, badges of status and individual recognition are expected 
-to evolve under different interaction structures, badges of status under 
-global interactions and individual recognition
-under local interactions [@dale_Signaling_2001; @sheehan_There_2016].  
-There is no clear cut reason, however, why both systems could not 
-work together, in fact there is some evidence
-that they can [@chaine_Manipulating_2018].
+<!-- Furthermore, badges of status and individual recognition are expected  -->
+<!-- to evolve under different interaction structures, badges of status under  -->
+<!-- global interactions and individual recognition -->
+<!-- under local interactions [@dale_Signaling_2001; @sheehan_There_2016].   -->
+<!-- There is no clear cut reason, however, why both systems could not  -->
+<!-- work together, in fact there is some evidence -->
+<!-- that they can [@chaine_Manipulating_2018]. -->
 
 A somewhat ignored component of communication systems, in the context 
 of aggressive interactions, is the cognitive aspects of the receiver module. 
-Communication systems relying on badges of status are often assumed 
-to be cognitively less demanding than those involving individual 
-recognition [@sheehan_There_2016] because in the latter, 
-individuals need to store identity and associated information 
-about each individual they interact with. In contrast, the response 
-towards badges of status is often 
-thought to be innate [@botero_Evolution_2010; @johnstone_Badges_1993], with 
+Theoretical models often assume that Communication systems relying on badges of 
+status to have reaction norms as their 
+mechanistic underpinning [@Botero_Evolution_2010], with 
 individuals using their own quality and the opponent's badge to determine 
-whether to aggressively engage in contest. An alternative view of 
-badges of status is that individuals learn 
+whether to aggressively engage in contest. Reaction norms 
+allow individuals to respond to the available information without a big
+cognitive burden. That is at least in contrast to other information processing 
+mechanisms like individual recognition. With individual recognition 
+individuals associate cue of their peers to their quality. These association 
+must be learn thoughout individuals lifes, thus it has the usual 
+cognitive requirements of an associative learning process. An alternative view 
+of badges of status is that individuals learn 
 to react to them based on their experiences [@guilford_Receiver_1991], 
 which would imply that receivers must learn to associate signals with 
 the fighting ability of bearers just as in systems based on individual 
@@ -133,13 +138,15 @@ explored in the empirical nor theoretical literature.
 Associative learning is a key cognitive mechanism that allows 
 individuals to associate rewards with environmental stimuli 
 and thus behave adaptively [@staddon_Adaptive_2016]. Associative 
-learning exists in all major vertebrate taxa, and in many invertebrates [@heyes_Simple_2012;@macphail_Brain_1982; @staddon_Adaptive_2016; 
+learning exists in all major vertebrate taxa, and in many invertebrates
+as well [@heyes_Simple_2012;@macphail_Brain_1982; @staddon_Adaptive_2016; 
 @behrens_Associative_2008].
 Theory has shown that natural selection favours these associations 
 in complex environments where conditions are hard to predict 
 [@dridi_Environmental_2016]. Besides its wide taxonomic and
 ecological relevance, associative learning is a flexible cognitive 
-mechanism whose underpinnings show interspecific variation [@enquist_Power_2016; @quinones_Reinforcement_2019], so presumably, it has been modified 
+mechanism whose underpinnings show interspecific variation 
+[@enquist_Power_2016; @quinones_Reinforcement_2019], so presumably, it has been modified 
 by natural selection. Despite all this, associative learning is 
 not often included in the narrative of evolutionary explanations of 
 behavioural patterns [@fawcett_Exposing_2013; @kamil_Optimal_1983; 
@@ -147,9 +154,11 @@ behavioural patterns [@fawcett_Exposing_2013; @kamil_Optimal_1983;
 can play an important role to overcome the lack of integration 
 between learning and evolution. Reinforcement learning theory 
 encompasses a series of computational methods inspired 
-on the psychological and neurological mechanisms of associative learning [@sutton_Reinforcement_2018]. These set of algorithms allow the 
+on the psychological and neurological mechanisms of associative 
+learning [@sutton_Reinforcement_2018]. These set of algorithms allow the 
 implementation of biologically realistic problems, 
-capturing the essence of learning processes [@frankenhuis_Enriching_2018; @quinones_Reinforcement_2019]. 
+capturing the essence of learning processes 
+[@frankenhuis_Enriching_2018; @quinones_Reinforcement_2019]. 
 Furthermore, these algorithms can be embedded in evolutionary simulations to 
 generate theoretical predictions of the effect that learning can 
 have in behavioural evolution [@leimar_Learning_2019].
@@ -161,8 +170,8 @@ depending on the quantitative morphological trait they
 perceive in their opponent (badge). Over evolutionary time 
 individuals evolve the size of their badge, and whether it depends 
 on their quality. Under this simple
-set up, individuals can use the badge both as a signal of quality (BS)
-or as a trait for IR. We use the model to assess under what conditions 
+set up, individuals can use the badge as a signal of quality. 
+We use the model to assess under what conditions 
 of interaction structure we expect different communication signals to evolve. 
 
 ## The model
@@ -172,7 +181,7 @@ interactions. For simplicity we consider a population of haploid
 individuals with non-overlapping generations. Individuals are born 
 every generation with a level of quality ($Q_i$, where $i$ is subscript 
 of the population vector of size $N$) given by a number between zero and one, 
-which is drawnfrom a truncated normal distribution 
+which is drawn from a truncated normal distribution 
 $N(\mu = 0.5,\sigma)$. An individual with quality $0$ has the lowest RHP, 
 while an individual with quality $1$ has the highest. As part of 
 development processes individuals produce a morphological signal (badge), 
@@ -187,7 +196,8 @@ between zero and one. We assume different values of these traits
 are given by different alleles, and are inherited from mother to offspring. 
 Unless, with a small probability, mutation changes the allelic value 
 of the offspring. After birth individuals go through a round of 
-viability selection. Individual specific survival probability is given by $s_i=1/(1+e^{-k_1-k_2(Q_i-B_i)})$. Where $k_1$ and $k_2$ are parameter 
+viability selection. Individual specific survival probability is 
+given by $s_i=1/(1+e^{-k_1-k_2(Q_i-B_i)})$. Where $k_1$ and $k_2$ are parameter 
 values determining the shape of the survival function. 
 Importantly, if $k_2=0$ survival probability is independent of quality, 
 while if $k_2>0$ lower quality individuals pay a higher price for similar-sized 
@@ -337,8 +347,8 @@ mtext("Badge size",1,line = 2,cex = 1,las = 0)
 scenario1<-"alphaActDishonest"
 scenario2<-"alphaActHonest"
 
-extSimsDir<-paste0("M:/BadgeSims/",scenario1,"_")
-listTest<-list.files(extSimsDir,full.names = TRUE)
+SimsDir<-here("Simulations",paste0(scenario1,"_"))
+listTest<-list.files(SimsDir,full.names = TRUE)
 indList<-grep("ind",listTest,value=TRUE)
 # parameter values from project folder
 paramName<-list.files(here("Simulations",paste0(scenario1,"_")))
@@ -396,8 +406,8 @@ color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
                cex.tit = 0.9,title = "quality",
                numplotx = 20,numploty = 10,idplotx =9,idploty = 2)
 
-extSimsDir<-paste0("M:/BadgeSims/",scenario2,"_")
-listTest<-list.files(extSimsDir,full.names = TRUE)
+SimsDir<-SimsDir<-here("Simulations",paste0(scenario2,"_"))
+listTest<-list.files(SimsDir,full.names = TRUE)
 indList<-grep("ind",listTest,value=TRUE)
 # parameter values from project folder
 paramName<-list.files(here("Simulations",paste0(scenario1,"_")))
@@ -518,7 +528,7 @@ of receivers. The evolutionary trajectory portrayed in figure
 sender reaction norms ($\beta$) evolves toward negative values before badges 
 become handicaps, receivers never learn to react to the size of badges. 
 Thus, badges are only costly and do not provide information about the 
-quality of an individual. Eventually, the badge disappears from the population. 
+quality of an individual(Fig. \ref{fig:noBadge} . Eventually, the badge disappears from the population. 
 
 When production of the badge is not costly (i.e. does not work as a handicap), 
 the parameters of the sender code go through evolutionary branching event, 
@@ -554,6 +564,19 @@ knitr::include_graphics(here("Simulations","nIntGroupNormQual_","evolDyn7_nIntGr
 ```{r startCond, echo=FALSE, out.width='90%',fig.align='center',fig.show='hold',fig.cap="WHy would you want to be recognized"}
 
 knitr::include_graphics("../Simulations/initAct_/indVarScatter_.png")
+
+```
+
+
+# Supplementary material
+
+```{=tex}
+\beginsupplement
+```
+
+```{r noBadge,echo=FALSE,warning=FALSE,out.width='90%',fig.align='center',fig.show='hold',fig.cap= "The evolution of cheap signals. Portrait of the evolutionary dynamics of the sender code with snapsots of both sender and receiver codes just as in fig. \\ref{fig:handicap}. The middle panels show changes in the distribution of values fir $\\alpha$ and $\\beta$ along evolutionary time. Panels above and bellow correspond to snapshots of the sender and receiver codes, respectively, generation time of the snapshots are indicated by the grey lines in the middle panels."}
+
+knitr::include_graphics(here("Simulations","betCostEvol1_","evolDyn5_betCost5.png"))
 
 ```
 

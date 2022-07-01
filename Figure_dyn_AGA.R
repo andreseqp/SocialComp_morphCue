@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCostEvol1"
+scenario<-"betCostEvol2"
 
 extSimsDir<-#here("Simulations",paste0(scenario,"_"))
   paste0("M:/BadgeSims/",scenario,"_")
@@ -20,9 +20,9 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 
 # Load files -------------------------------------------------------------------
 # Project folder
-# (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(listTest<-list.files(here("Simulations",paste0(scenario,"_")),full.names = TRUE))
 # External sims folder
-(listTest<-list.files(extSimsDir,full.names = TRUE))
+# (listTest<-list.files(extSimsDir,full.names = TRUE))
 
 (evolList<-grep("evolLearn",listTest,value=TRUE))
 (indList<-grep("indLearn",listTest,value=TRUE))
@@ -33,7 +33,7 @@ param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
   # fromJSON(paramName[1])
 
 
-val<-3
+val<-2
 fileId<-val
 
 
@@ -70,7 +70,7 @@ pop<-do.call(rbind,lapply(indList_runs, fread))
   
   ## Calculate clustering for all generations  -------------------
   
-  runChoi<-0
+  runChoi<-1
   
   # Choose which interaction to visualize
   lastInt<-tail(pop[,unique(nInteract)],2)[1]
