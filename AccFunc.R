@@ -241,52 +241,52 @@ get_clusters<-function(DT,vars,k.max=5,Bsamples=500,iterMax=100){
   listTimeSeed<-split(t(as.matrix(listTimeSeed)), 
         rep(1:ncol(t(as.matrix(listTimeSeed))), 
             each = nrow(t(as.matrix(listTimeSeed)))))
+  if(!is.list(listTimeSeed)){
+    print("STOPPP!!!")
+  }
   totClusters<-do.call(rbind,sapply(listTimeSeed, function(x){
-    if(x[1]==1&x[2]==20000){
-      print("STOPPP!!!")
+    print(x)
+    error<-FALSE
+    error<-tryCatch(expr = 
+      { clus_gap<-cluster::clusGap(as.matrix(
+        DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),kmeans,
+        K.max = k.max,B = Bsamples,iter.max=iterMax)
+        nclustersGap<-cluster::maxSE(f = clus_gap$Tab[, "gap"], 
+                                    SE.f = clus_gap$Tab[, "SE.sim"])
+        FALSE
+      },error = function(e) {TRUE}
+    )
+    if(error) {
+      clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
+                           rep(1,dim(DT[seed==x[1]&time==x[2],.SD,.SDcols=vars])[1]))
     }
+    else if (nclustersGap==1){
+      clusters<-kmeans(as.matrix(
+      DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),
+      centers = nclustersGap,iter.max = 100)
+      clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
+                         clusters$cluster)
+    }
+    else{
       print(x)
-      error<-FALSE
-      error<-tryCatch(expr = 
-        { clus_gap<-cluster::clusGap(as.matrix(
-          DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),kmeans,
-          K.max = k.max,B = Bsamples,iter.max=iterMax)
-          nclustersGap<-cluster::maxSE(f = clus_gap$Tab[, "gap"], 
-                                      SE.f = clus_gap$Tab[, "SE.sim"])
-          FALSE
-        },error = function(e) {TRUE}
-      )
-      if(error) {
-        clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
-                             rep(1,dim(DT[seed==x[1]&time==x[2],.SD,.SDcols=vars])[1]))
+      if(x[1]==1&x[2]==20000){
+        print("STOPPP!!!")
       }
-      else if (nclustersGap==1){
-        clusters<-kmeans(as.matrix(
+      tryCatch(expr = invisible(capture.output(clus_Nb<-NbClust.AEQP(as.matrix(
         DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),
-        centers = nclustersGap,iter.max = 100)
-        clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
-                           clusters$cluster)
-      }
-      else{
-        print(x)
-        if(x[1]==1&x[2]==20000){
-          print("STOPPP!!!")
-        }
-        tryCatch(expr = invisible(capture.output(clus_Nb<-NbClust.AEQP(as.matrix(
+        min.nc = 2,max.nc = k.max,
+        method = "kmeans"))),
+        error = function(e) invisible(capture.output(clus_Nb<-NbClust.AEQP(as.matrix(
           DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),
-          min.nc = 2,max.nc = k.max,
-          method = "kmeans"))),
-          error = function(e) invisible(capture.output(clus_Nb<-NbClust.AEQP(as.matrix(
-            DT[seed==x[1]&time==x[2],.SD,.SDcols=vars]),
-            min.nc = 2,max.nc = k.max-1,
-            method = "kmeans")))
-        )
-        clusters<-clus_Nb$Best.partition
-        clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
-                               clusters)
-        print("wait")
-        }
-        return(clustersMatch)
+          min.nc = 2,max.nc = k.max-1,
+          method = "kmeans")))
+      )
+      clusters<-clus_Nb$Best.partition
+      clustersMatch<-cbind(which(DT[,seed] %in% x[1] & DT[,time] %in% x[2]),
+                             clusters)
+      print("wait")
+      }
+      return(clustersMatch)
       }
     )
   )

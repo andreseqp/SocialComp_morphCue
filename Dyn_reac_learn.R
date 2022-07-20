@@ -12,10 +12,10 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCostEvolNorm"
+scenario<-"betCostEvol4"
 
-extSimsDir<-#here("Simulations",paste0(scenario,"_"))
-  paste0("e:/BadgeSims/",scenario,"_")
+extSimsDir<-here("Simulations",paste0(scenario,"_"))
+  # paste0("e:/BadgeSims/",scenario,"_")
 
 
 
@@ -23,9 +23,9 @@ extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 # when program was run with internal paralellization
 
 # Project folder
-(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(listTest<-list.files(here("Simulations",paste0(scenario,"_")),full.names = TRUE))
 # External sims folder
-(listTest<-list.files(extSimsDir,full.names = TRUE))
+# (listTest<-list.files(extSimsDir,full.names = TRUE))
 
 (evolList<-grep("evolLearn",listTest,value=TRUE))
 (indList<-grep("indLearn",listTest,value=TRUE))
@@ -37,7 +37,7 @@ param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
 
 # Choose which parameter to plot
 
-val<-2
+val<-1
 
 
 # Load files -------------------------------------------------------------------
@@ -49,7 +49,7 @@ val<-2
 numCores <- length(param$rangParam)
 registerDoParallel(numCores)
 
-foreach(val = 2:3,#length(param$rangParam),
+foreach(val = 1:1,#length(param$rangParam),
         .packages = c("data.table","here")) %dopar% {
 source(here("AccFunc.R"))
 
@@ -93,7 +93,7 @@ pop<-do.call(rbind,lapply(indList_runs, fread))
 #                       "WeightCrit_7")
 # }
 
-param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[val]))
+param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
 
 Valpar<-param$rangParam[val]
 
@@ -580,7 +580,7 @@ dev.off()
 
 
 
-# no Inits - mean and IQRs among replicates of the genotypes and phenotypes  --------------------------
+ # no Inits - mean and IQRs among replicates of the genotypes and phenotypes  --------------------------
 
 cexAxis<-1.5
 

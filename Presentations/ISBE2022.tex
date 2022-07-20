@@ -1,0 +1,416 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  ignorenonframetext,
+]{beamer}
+\usepackage{pgfpages}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+% Prevent slide breaks in the middle of a paragraph
+\widowpenalties 1 10000
+\raggedbottom
+\setbeamertemplate{part page}{
+  \centering
+  \begin{beamercolorbox}[sep=16pt,center]{part title}
+    \usebeamerfont{part title}\insertpart\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center]{part title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center]{part title}
+    \usebeamerfont{subsection title}\insertsubsection\par
+  \end{beamercolorbox}
+}
+\AtBeginPart{
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \frame{\sectionpage}
+  \fi
+}
+\AtBeginSubsection{
+  \frame{\subsectionpage}
+}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdfauthor={Andrés Quiñones},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\newif\ifbibliography
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+\usepackage{caption}
+% Make caption package work with longtable
+\makeatletter
+\def\fnum@table{\tablename~\thetable}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\usepackage{float} \usepackage{multicol} \usepackage{amsmath} \usepackage{graphicx} \usepackage{array} \usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Learning can mediate the evolution of\\
+(cheap and costly) signals of quality}
+\author{Andrés Quiñones}
+\date{\hfill\break
+\hfill\break
+ISBE - Stockholm 2022\\
+August 2 - 2020}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}{Acknowledgements}
+\protect\hypertarget{acknowledgements}{}
+\begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\centering\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule
+\begin{minipage}[b]{\linewidth}\centering
+\includegraphics[width=0.4\textwidth,height=\textheight]{../Images/redouan.jpg}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+\includegraphics[width=0.55\textwidth,height=\textheight]{../Images/danielcadena.jpg}
+\end{minipage} \\
+\midrule
+\endhead
+\emph{R. Bshary} & \emph{D. Cadena} \\
+\includegraphics[width=0.3\textwidth,height=\textheight]{../Images/UNINE_cmjn.jpg}
+&
+\includegraphics[width=0.3\textwidth,height=\textheight]{../Images/logo_largo.png} \\
+\bottomrule
+\end{longtable}
+\end{frame}
+
+\begin{frame}{Social interactions}
+\protect\hypertarget{social-interactions}{}
+\begin{block}{The need to match partners with actions}
+\protect\hypertarget{the-need-to-match-partners-with-actions}{}
+\begin{center}\includegraphics[width=0.4\linewidth]{../Images/sexSelec} \end{center}
+
+\begin{center}\includegraphics[width=0.4\linewidth]{../Images/dominance} \end{center}
+\end{block}
+\end{frame}
+
+\begin{frame}{The effect of communication}
+\protect\hypertarget{the-effect-of-communication}{}
+\begin{block}{Badge of status}
+\protect\hypertarget{badge-of-status}{}
+\begin{center}\includegraphics[width=0.45\linewidth]{../Images/HouseSparrow_strong} \includegraphics[width=0.45\linewidth]{../Images/HouseSparrow_weak} \end{center}
+\end{block}
+\end{frame}
+
+\begin{frame}{What about signals?}
+\protect\hypertarget{what-about-signals}{}
+\begin{block}{The handicap principle}
+\protect\hypertarget{the-handicap-principle}{}
+\begin{center}\includegraphics[height=0.35\textheight]{../Images/Amotz_Zahavi_profile} \includegraphics[height=0.35\textheight]{../Images/sexualSelection} \includegraphics[height=0.35\textheight]{../Images/Grafen} \end{center}
+
+\begin{center}\includegraphics[height=0.35\textheight]{ISBE2022_files/figure-beamer/unnamed-chunk-4-1} \end{center}
+
+(Zahavi 1975; Grafen 1990)
+\end{block}
+\end{frame}
+
+\begin{frame}{What about learning?}
+\protect\hypertarget{what-about-learning}{}
+\begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
+
+\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_0} \end{center}
+\end{frame}
+
+\begin{frame}{What about learning?}
+\protect\hypertarget{what-about-learning-1}{}
+\begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
+
+\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_1} \end{center}
+\end{frame}
+
+\begin{frame}{What about learning?}
+\protect\hypertarget{what-about-learning-2}{}
+\begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
+
+\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_2} \end{center}
+\end{frame}
+
+\begin{frame}{What about learning?}
+\protect\hypertarget{what-about-learning-3}{}
+\begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
+
+\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_3} \end{center}
+\end{frame}
+
+\begin{frame}{What about learning?}
+\protect\hypertarget{what-about-learning-4}{}
+\begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
+
+\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_5} \end{center}
+\end{frame}
+
+\begin{frame}{What about learning?}
+\protect\hypertarget{what-about-learning-5}{}
+\begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
+
+\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_6} \end{center}
+\end{frame}
+
+\begin{frame}{A model of communication in animal conflict}
+\protect\hypertarget{a-model-of-communication-in-animal-conflict}{}
+\vspace{-0.3cm}
+
+\begin{block}{Conflict}
+\protect\hypertarget{conflict}{}
+\vspace{0.3cm}
+\begin{columns}
+\column{0.5\linewidth}
+hawk-dove game
+\tiny
+\begin{center}
+\begin{tabular}{ >{\centering\arraybackslash}p{0.2cm} | >{\centering\arraybackslash}p{2.5cm} | >{\centering\arraybackslash}p{0.8cm} }
+& H & D \\ \hline
+H & $p_w V\frac{-C}{2} + (1-p_w) \frac{-C}{2}$ & $V$ \\ \hline
+V & $0$ & $\frac{V}{2}$\\
+\end{tabular}
+\end{center}
+
+\begin{equation*}
+p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
+\end{equation*}
+
+\column{0.5\linewidth}
+
+
+
+\begin{center}\includegraphics[width=0.6\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-17-1} \end{center}
+
+\end{columns}
+
+\pause
+\end{block}
+
+\begin{block}{Communication}
+\protect\hypertarget{communication}{}
+\begin{columns}[T]
+
+
+\column{0.45\linewidth}
+
+The sender code
+
+\tiny
+\begin{equation*}
+B_i = \frac{1}{1+e^{-(\textcolor{red}{\alpha_s} +\textcolor{red}{\beta_s} Q_i)}}
+\end{equation*}
+
+
+
+\begin{center}\includegraphics[width=0.5\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-18-1} \end{center}
+
+
+\column{0.45\linewidth}
+
+The receiver code (learning)
+
+\tiny
+\begin{equation*}
+  \Delta V_{t(s)}=\alpha (R_t-V_t)
+\end{equation*}
+
+
+
+\begin{center}\includegraphics[width=0.6\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-19-1} \end{center}
+
+\end{columns}
+\end{block}
+\end{frame}
+
+\begin{frame}{Learning under honest signalling}
+\protect\hypertarget{learning-under-honest-signalling}{}
+\begin{center}\includegraphics[width=1\linewidth]{../Simulations/alphaAct_/alphaAct0.4learnDyn} \end{center}
+\end{frame}
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+\begin{frame}{Learning mediates the evolution of badges of status
+(handicaps)}
+\protect\hypertarget{learning-mediates-the-evolution-of-badges-of-status-handicaps}{}
+\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/betCostEvol1_/evolDyn0_betCost5} \end{center}
+\end{frame}
+
+\begin{frame}{Learning can mediate the evolution of Badges of Status}
+\protect\hypertarget{learning-can-mediate-the-evolution-of-badges-of-status}{}
+\begin{block}{Individual replicates: no badges}
+\protect\hypertarget{individual-replicates-no-badges}{}
+\begin{center}\includegraphics[width=19.44in,height=0.9\textheight]{../Simulations/betCostEvol1_/evolDyn5_betCost5} \end{center}
+\end{block}
+\end{frame}
+
+\begin{frame}{The evolution of cheap badges of Status}
+\protect\hypertarget{the-evolution-of-cheap-badges-of-status}{}
+\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/nIntGroupNormQual_/evolDyn7_nIntGroup2000} \end{center}
+\end{frame}
+
+\begin{frame}{Why would you want to be recognized?}
+\protect\hypertarget{why-would-you-want-to-be-recognized}{}
+\vspace{-1cm}
+
+\begin{block}{The peaceful, the aggressive and the clever}
+\protect\hypertarget{the-peaceful-the-aggressive-and-the-clever}{}
+\begin{itemize}
+\tightlist
+\item
+  Learning initial conditions
+\end{itemize}
+
+\includegraphics[width=0.45\linewidth]{../Simulations/alphaAct_/alphaAct0.4learnDyn}
+\includegraphics[width=0.45\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-24-2}
+\end{block}
+\end{frame}
+
+\begin{frame}{Why would you want to be recognized?}
+\protect\hypertarget{why-would-you-want-to-be-recognized-1}{}
+\begin{block}{The peaceful, the aggressive and the clever}
+\protect\hypertarget{the-peaceful-the-aggressive-and-the-clever-1}{}
+\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter_1}
+\end{block}
+\end{frame}
+
+\begin{frame}{Why would you want to be recognized?}
+\protect\hypertarget{why-would-you-want-to-be-recognized-2}{}
+\begin{block}{The peaceful, the aggressive and the clever}
+\protect\hypertarget{the-peaceful-the-aggressive-and-the-clever-2}{}
+\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter_}
+\end{block}
+\end{frame}
+
+\begin{frame}{Take-home messages}
+\protect\hypertarget{take-home-messages}{}
+\begin{block}{Costly signals}
+\protect\hypertarget{costly-signals}{}
+\begin{itemize}
+\tightlist
+\item
+  Learning can mediate costly signals
+\end{itemize}
+\end{block}
+
+\begin{block}{Cheap signals}
+\protect\hypertarget{cheap-signals}{}
+\begin{itemize}
+\tightlist
+\item
+  Learning mediates the evolution of polymorphisms with ``honest'' and
+  ``dishonest'' individuals
+\item
+  Cheap signals depend on the innate level of aggression (before
+  learning) of individuals
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Questions?}
+\protect\hypertarget{questions}{}
+\begin{center}\includegraphics[height=0.8\textheight]{../Images/BizarroParrot} \end{center}
+\end{frame}
+
+\begin{frame}{References}
+\protect\hypertarget{references}{}
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-grafen_Biological_1990}{}}%
+Grafen, Alan. 1990. {``Biological Signals as Handicaps.''} \emph{Journal
+of Theoretical Biology} 144 (4): 517--46.
+\url{https://doi.org/10.1016/S0022-5193(05)80088-8}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-zahavi_Mate_1975}{}}%
+Zahavi, Amotz. 1975. {``Mate Selection\textemdash -{A} Selection for a
+Handicap.''} \emph{Journal of Theoretical Biology} 53 (1): 205--14.
+\url{https://doi.org/10.1016/0022-5193(75)90111-3}.
+
+\end{CSLReferences}
+\end{frame}
+
+\end{document}

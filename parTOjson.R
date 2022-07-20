@@ -15,10 +15,10 @@ here()
 param<-list(totGen   = 20000,   nRep    = 1, seed = 10,
             printGen = 1000,   printLearn = 1000,
             printLearnInt = 500,
-            popSize  = 2000,  baselineFit = 2,   
-            MutSd    = 0.3,  nInt        = 2000,  init     = c(0,0,1,0),
+            popSize  = 3000,  baselineFit = 2,   
+            MutSd    = 0.3,  nInt        = 500,  init     = c(0,0,1,0),
             mutRate  = 0.001,  mutType  = 0,
-            sampleSize = 50,   strQual  = 10,
+            sampleSize = 100,   strQual  = 10,
             errorQual = 0,    alphaBad	 = I(c(0)),    
             betaBad	 = I(c(0)),
             alphaRes =-10,betaRes=-20, gammaRes=0,
@@ -31,7 +31,7 @@ param<-list(totGen   = 20000,   nRep    = 1, seed = 10,
             payoff_matrix = c(1.5,1,0,0.5),
             shareCost = 0,
             namParam = "betCost",
-            rangParam = I(c(5)),
+            rangParam = I(c(0)),
             typeAgent = 2, #//0. hawk 1.dove 2. learner 3. evaluator
             folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
 # folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for release
@@ -39,7 +39,7 @@ param<-list(totGen   = 20000,   nRep    = 1, seed = 10,
 
 
 
-apendScenar<-"Evol2"
+apendScenar<-"Evol5"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
@@ -86,16 +86,16 @@ check_create.dir(here("Simulations"),param = paste0(param$namParam,apendScenar),
 
 rangparam<-param$rangParam
 
-nReps<-10
+nReps<-15
 
 for (i in 0:(nReps-1)) {
   param$folderL<-paste0(here("Simulations",param$namParam),apendScenar,"_/") # comment for debug
   # param$folder<-param$folderL # for debug
   # param$rangParam<-c(rangparam[i])
-  param$seed<-10+i
+  param$seed<-i
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
   # filenameL<-paste0(fileName,i,".json")
-  filenameL<-paste0(fileName,param$seed,".json")
+  filenameL<-paste0(fileName,param$rangParam,"_",param$seed,".json")
   if(file.exists(paste(param$folderL,filenameL,sep = ''))){
     currFile<-fromJSON(paste(param$folderL,filenameL,sep = ''))
     if(sum(unlist(currFile)!=unlist(param))>0){

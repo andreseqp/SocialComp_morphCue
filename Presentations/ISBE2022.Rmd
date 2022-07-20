@@ -1,0 +1,519 @@
+---
+title: | 
+    | Learning can mediate the evolution of 
+    | (cheap and costly) signals of quality
+author: "Andrés Quiñones"
+bibliography: ../SocialMorphCue.bib
+date: | 
+    | 
+    | 
+    | ISBE - Stockholm 2022
+    | August 2 - 2020
+output: 
+    beamer_presentation: 
+      fig_caption: yes
+      keep_tex: yes
+header-includes: 
+    \usepackage{float}
+    \usepackage{multicol}
+    \usepackage{amsmath} 
+    \usepackage{graphicx}
+    \usepackage{array}
+    \usepackage{xcolor}
+---
+
+## Acknowledgements
+
+ ![Red1](../Images/redouan.jpg){width=40%} |  ![Daniel](../Images/danielcadena.jpg){width=55%} |
+ :---: | :---:|
+ *R. Bshary* |*D. Cadena*|
+ ![unine](../Images/UNINE_cmjn.jpg){width=30%} | ![uniandes](../Images/logo_largo.png){width=30%} |
+
+## Social interactions
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+source("../../R_files/posPlots.R")
+require("here")
+source("../AccFunc.R")
+source("../aesth.R")
+
+```
+
+
+### The need to match partners with actions
+
+```{r,echo=FALSE,fig.align="center",out.width='40%'}
+
+knitr::include_graphics("../Images/sexSelec.jpg")
+knitr::include_graphics("../Images/dominance.jpg")
+```
+
+
+## The effect of communication 
+
+
+### Badge of status
+
+```{r,echo=FALSE,fig.align='center',out.width='45%',fig.show='hold'}
+knitr::include_graphics("../Images/HouseSparrow_strong.jpg")
+knitr::include_graphics("../Images/HouseSparrow_weak.jpg")
+```
+
+
+## What about signals?
+
+### The handicap principle
+
+```{r,echo=FALSE,fig.align='center',out.height='35%',fig.show='hold'}
+knitr::include_graphics("../Images/Amotz_Zahavi_profile.jpg")
+knitr::include_graphics("../Images/sexualSelection.jpg")
+knitr::include_graphics("../Images/Grafen.jpg")
+```
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+
+badQualRang<-seq(0,1,length=1000)
+alpha<-0
+beta<-6
+costFunc<-function(beta,alpha,x) {d<-1/(1+exp(-alpha-beta*x))}
+par(plt=posPlot())
+betRang<-c(5)
+matplot(y=sapply(betRang,FUN = costFunc,alpha=alpha,x=badQualRang),x=badQualRang,
+        type="l",cex.lab=1.5, cex.axis=2,lwd=3,lty=1,las=1,
+     col=c(2,3),ylim=c(0.5,1.1),xaxt="s",yaxt="s",ylab="",xlab="") #,col=i
+# lines(badgeFunc(qualRange,3,-60,1.05)~qualRange,cex.lab=1.5,cex.axis=2,lwd=3,
+#       col="blue")
+# legend("bottomright",legend = betRang,title = expression(beta),col=1:3,
+       # lty=1)
+mtext(side=1,text="Quality",line=3.5,cex=3)
+mtext(side=2,text="Survival",line=3.5,cex=3)
+
+```
+[@zahavi_Mate_1975;@grafen_Biological_1990]
+
+
+
+<!-- ## The handicap principle -->
+
+<!-- ### Badges of status -->
+
+<!-- ```{r,echo=FALSE,fig.align='center',out.width='90%'} -->
+<!-- knitr::include_graphics("../Images//comSystemBot.png") -->
+<!-- ``` -->
+
+<!-- [@botero_Evolution_2010] -->
+
+<!-- ## Are bibs really badges? -->
+
+<!-- ```{r,echo=FALSE,fig.align='left',out.width='30%'} -->
+<!-- knitr::include_graphics("../Images/Sanchez-Tojar_2018.png") -->
+<!-- ``` -->
+
+<!-- [@sanchez-tojar_Metaanalysis_2018a] -->
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
+```
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_0.png")
+```
+
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
+```
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_1.png")
+```
+
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
+```
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_2.png")
+```
+
+
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
+```
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_3.png")
+```
+
+
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
+```
+
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_5.png")
+```
+
+
+
+## What about learning?
+
+```{r,echo=FALSE,fig.align='center',out.height='40%'}
+knitr::include_graphics("../Images//pavlov.jpg")
+```
+
+
+```{r,echo=FALSE,fig.align='center',out.height='35%'}
+knitr::include_graphics("../Images/learn_cartoon_6.png")
+```
+
+<!-- ## How to implement learning -->
+
+<!-- ### Reinforcement learning theory -->
+
+<!-- \begin{columns}[T] -->
+<!--  \column{0.5\linewidth} -->
+<!--  \begin{equation*} -->
+<!--   \Delta V_{t(s)}=\alpha \underbrace{(R_t-V_t)}_\text{prediction error} -->
+<!--   \end{equation*} -->
+<!--   \pause -->
+<!--   \includegraphics[width=1\textwidth]{../Images//learn_curve.png} -->
+<!--  \column{0.5\linewidth} -->
+<!--   \pause -->
+<!--   \includegraphics[height=.9\textheight]{../Images//predErrorNeur.png} -->
+<!-- \end{columns} -->
+
+<!-- ## Reinforcement learning theory -->
+
+<!-- ```{r,echo=FALSE,fig.align='center',out.width='90%'} -->
+<!-- knitr::include_graphics("../Images//learnUpdate.png") -->
+<!-- ``` -->
+
+<!-- ## The Hawk-Dove game -->
+
+<!-- Individuals have one of two genetically determined phenotypic strategies. _Hawks_ are willing to start a conflict over resources, while _doves_ prefer to stand down in the hope to share the resource without an aggressive contest. -->
+
+<!-- ```{r,echo=FALSE,fig.align="center",out.width='50%'} -->
+<!-- knitr::include_graphics("../Images//HDgame.png") -->
+<!-- ``` -->
+
+<!-- ## The hawk-dove game -->
+
+<!-- ```{r, echo=FALSE, fig.cap="\\label{fig:HD_game}Hawk-dove game. Dashed line is the  game theoretical prediction for frequency of hawks.", out.width = '80%'} -->
+<!-- knitr::include_graphics("../Simulations/mutType_/basicHawkDove.png") -->
+<!-- ``` -->
+
+
+
+## A model of communication in animal conflict
+
+\vspace{-0.3cm}
+
+### Conflict
+
+
+\vspace{0.3cm}
+\begin{columns}
+\column{0.5\linewidth}
+hawk-dove game
+\tiny
+\begin{center}
+\begin{tabular}{ >{\centering\arraybackslash}p{0.2cm} | >{\centering\arraybackslash}p{2.5cm} | >{\centering\arraybackslash}p{0.8cm} }
+& H & D \\ \hline
+H & $p_w V\frac{-C}{2} + (1-p_w) \frac{-C}{2}$ & $V$ \\ \hline
+V & $0$ & $\frac{V}{2}$\\
+\end{tabular}
+\end{center}
+
+\begin{equation*}
+p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
+\end{equation*}
+
+\column{0.5\linewidth}
+
+
+```{r,echo=FALSE,fig.align='center',out.width='60%'}
+par(plt=posPlot(),las=1)
+plot(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 2)~
+       seq(-1,1,length.out = 1000),type="l",xlab="",
+     ylab = expression(p[w]),cex.lab=3,lwd=3,col="red",cex.axis=2,ylim=c(0,1))
+ mtext("Difference in quality",1,line = 4,cex = 3,las = 0)
+lines(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 10)~
+       seq(-1,1,length.out = 1000),lwd=3,col="springgreen4")
+legend("topleft",legend=c(2,10),col=c("red","springgreen4"),lwd=3,title = expression(beta),cex=2,bty="n")
+```
+
+\end{columns}
+
+\pause
+
+### Communication
+
+
+\begin{columns}[T]
+
+
+\column{0.45\linewidth}
+
+The sender code
+
+\tiny
+\begin{equation*}
+B_i = \frac{1}{1+e^{-(\textcolor{red}{\alpha_s} +\textcolor{red}{\beta_s} Q_i)}}
+\end{equation*}
+
+
+```{r,echo=FALSE,fig.align='center',out.width='50%'}
+ par(plt=posPlot(),las=1)
+ rangeBeta<-c(4,10,-4,-10)
+ rangQual<-seq(0,1,by = 0.01)
+ linesSender<-sapply(rangeBeta,function(x)logist(rangQual,alpha = x/2,beta = x))
+ plot(logist(rangQual,alpha = 0,beta = 0)~rangQual,type="l",xlab="",
+      ylab ="",cex.lab=2,lwd=2,col="grey",cex.axis=2,ylim=c(0,1))
+ mtext("Quality",1,line = 4,cex = 3,las = 0)
+ matlines(x=rangQual,y=linesSender,lwd=4,col=colRuns,lty=1)
+ mtext("Badge size",2,line = 4,cex = 3,las = 0)
+ legend("left",legend=rangeBeta,col=colRuns,lwd=3,title = expression(beta),cex=2,bty="n")
+
+```
+
+
+\column{0.45\linewidth}
+
+The receiver code (learning)
+
+\tiny
+\begin{equation*}
+  \Delta V_{t(s)}=\alpha (R_t-V_t)
+\end{equation*}
+
+
+```{r, echo=FALSE,fig.align='center', out.width = '60%'}
+
+nCenters<-6
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+sigSq<-0.01
+weights<-rep(0,nCenters)
+#  Random weights
+weights<-runif(nCenters,min=-1,max=1)#RBF(centers,0.5,0.05)
+rangx<-seq(0,1,length=1000)
+
+par(plt=posPlot(),las=1)
+plot(logist(totRBF(rangx,centers,sigSq,weights),alpha = 0,beta=1)~rangx,type='l',col=1,
+     xlab="",ylab="",ylim=c(0,1),lwd=3,xaxt="s",cex.lab=2,cex.axis=2)
+# test<-sapply(1:6, function(x){RBF()})
+points(y=logist(weights,alpha = 0,beta=1),x=centers,cex=3,pch=20)
+# xRBFs<-sapply(centers, function(x){seq(x-0.2,x+0.2,by=0.001)})
+# RBFS<-sapply(1:6, function(x){
+#   logist(weights[x]*RBF(seq(centers[x]-0.2,centers[x]+0.2,by=0.001),xCenter = centers[x],
+#                         sigSq = 0.01))
+# })
+# matlines(x=xRBFs,y=RBFS,col="grey",lty=2,lwd=2)
+
+mtext("p(dove)",2,line = 4,cex = 3,las = 0)
+mtext("Badge size",1,line = 4,cex = 3,las = 0)
+
+```
+
+\end{columns}
+
+
+
+## Learning under honest signalling
+
+<!-- Learning simulations (without evolution yet), the sender code is set as an honest signal. -->
+<!-- Receivers develop a threshold like response according to their quality -->
+
+```{r, echo=FALSE,fig.align='center', out.width = '100%'}
+knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.4learnDyn.png")
+```
+
+# Results
+
+## Learning mediates the evolution of badges of status (handicaps)
+
+
+<!-- \small -->
+<!-- One of the replicates of the previous slide, the badge as a handicap -->
+```{r, echo=FALSE,fig.align='center', out.width='90%'}
+knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn0_betCost5.png")
+```
+
+<!-- ## Learning can mediate the evolution of Badges of Status -->
+<!-- ### Individual replicates: Badges -->
+<!-- \small -->
+<!-- Panels show the changes in frequency distribution along evolution ($\alpha$, $\beta$, and resulting badge respectively) for the replicate shown in the previous slide -->
+
+<!-- ```{r, echo=FALSE,fig.align='left', out.height='28%',fig.show='hold', fig.cap="alpha - beta -Badge"} -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/evolDistAlpha0_betCost5.png") -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/evolDistBeta0_betCost5.png") -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/evolDistBadge0_betCost5.png") -->
+<!-- ``` -->
+
+
+## Learning can mediate the evolution of Badges of Status
+### Individual replicates: no badges
+<!-- \small -->
+<!-- One of the replicates where the badge did not evolve -->
+
+```{r, echo=FALSE,fig.align='center', out.height='90%'}
+knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn5_betCost5.png")
+```
+
+<!-- ## Badges of Status: do they matter? -->
+<!-- ### Behavioural interactions -->
+
+<!-- \small -->
+<!-- Colours correspond to replicates, each point is one snapshot on the second half of the simulations. -->
+<!-- Higher costs seem to favour the signalling equilibrium -->
+
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='90%'} -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/compClustRep_betCost5.png") -->
+<!-- ``` -->
+
+<!-- ## The effect of costs on Badges of Status -->
+<!-- ### Badge size -->
+<!-- \small -->
+<!-- Same as previous slide but for the resulting signal. Higher costs yield smaller averga sizes and smaller ranges.  -->
+
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='80%'} -->
+<!-- knitr::include_graphics("../Simulations/betCostEvol1_/CueALL.png") -->
+<!-- ``` -->
+
+<!-- ## The evolution of cheap Badges of Status -->
+
+<!-- <!-- ### Variation among replicates --> 
+<!-- <!-- \small --> 
+<!-- <!-- Here simulations where the signal has no cost --> 
+
+<!-- ```{r, echo=FALSE,fig.align='center', out.width='80%'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupEvol1_/evolDynALL_nIntGroup2000.png") -->
+<!-- ``` -->
+
+## The evolution of cheap badges of Status
+
+<!-- \small -->
+<!-- Here simulations where the signal has no cost. -->
+
+<!-- There seems to be some consistency in the three type of sender codes -->
+
+```{r, echo=FALSE,fig.align='center', out.width='90%'}
+knitr::include_graphics("../Simulations/nIntGroupNormQual_/evolDyn7_nIntGroup2000.png")
+```
+
+
+<!-- ## The evolution of cheap Badges of Status -->
+<!-- ### How often does it happen? -->
+<!-- \tiny -->
+<!-- Values of $\alpha$ and $\beta$ for each individual in the different replicates. Each dot an individual, -->
+<!-- each panel a replicate. Individuals are sampled from populations from the second half of the simulations. -->
+
+<!-- Individuals in some simulations split up in three groups, others in two groups;  -->
+<!-- in one simulation the population does not split up -->
+
+
+<!-- ```{r, echo=FALSE,fig.align='left', out.width='90%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupNormQual_/corrAlphBet_nIntGroup2000.png") -->
+<!-- ``` -->
+
+<!-- ## The evolution of cheap Badges of Status -->
+<!-- ### Does it matter? -->
+<!-- \small -->
+<!-- Behavioural interactions splitting up the replicates according to the number of "types" that  -->
+<!-- evolve -->
+
+<!-- ```{r, echo=FALSE,fig.align='left', out.width='90%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/nIntGroupEvol1_/BehavIntAllClusters_nIntGroup2000.png") -->
+<!-- ``` -->
+
+
+## Why would you want to be recognized?
+
+\vspace{-1cm}
+
+### The peaceful, the aggressive and the clever
+
+- Learning initial conditions
+
+<!-- \tiny -->
+<!-- Here, I vary the aggressive tendency for unlearned individuals in these three set ups. -->
+
+<!-- Agressive, peaceful, clever (starts at the ESS of the classic hawk-dove game) -->
+
+```{r,out.width='45%',fig.show='hold'}
+knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.4learnDyn.png")
+# knitr::include_graphics("../Images/cartoonRBF_InitAct.png")
+nCenters<-6
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+sigSq<-0.01
+weights<-data.table(neutral=rep(0,nCenters),agressive=rep(-2,nCenters),
+        peaceful=rep(2,nCenters),clever=rep(-0.69,nCenters))
+rangx<-seq(0,1,length=1000)
+
+par(plt=posPlot(numploty = 2,idploty = 2),las=1)
+actor<-sapply(weights, Actor,centers=centers)
+
+par(plt=posPlot()*0.95)
+matplot(x=rangx,y=as.matrix(actor),type='l',col=c("black","red","blue","springgreen4"),lty=1,
+     xlab="",ylab="",ylim=c(0,1.1),lwd=5,xaxt="s",cex.lab=1.5,cex.axis=2)
+mtext(text = "p(dove)",2,line = 4,cex = 2.5,las=0)
+mtext(text = "Badge size",1,line = 3.5,cex = 2.5)
+points(y=logist(weights$neutral,alpha = 0,beta=1),x=centers,cex=3)
+text(y = actor[1,]+0.1,x=rep(0.5,4),col=c("black","red","blue","springgreen4"),
+     labels = names(weights),cex=2)
+```
+
+## Why would you want to be recognized?
+
+### The peaceful, the aggressive and the clever
+
+```{r,echo=FALSE,out.width='90%',fig.show='hold'}
+knitr::include_graphics("../Simulations/initAct_/indVarScatter_1.png")
+
+```
+
+## Why would you want to be recognized?
+
+### The peaceful, the aggressive and the clever
+
+```{r,out.width='90%',fig.show='hold'}
+knitr::include_graphics("../Simulations/initAct_/indVarScatter_.png")
+
+```
+
+## Take-home messages
+
+### Costly signals
+- Learning can mediate costly signals
+
+
+### Cheap signals
+- Learning mediates the evolution of polymorphisms with "honest" and "dishonest"
+individuals
+- Cheap signals depend on the innate level of aggression (before learning) of individuals
+
+## Questions?
+
+```{r, echo=FALSE,fig.align='center', out.height='80%',fig.show='hold'}
+  knitr::include_graphics("../Images/BizarroParrot.jpg")
+```
+
+
+## References

@@ -112,7 +112,7 @@ A somewhat ignored component of communication systems, in the context
 of aggressive interactions, is the cognitive aspects of the receiver module. 
 Theoretical models often assume that Communication systems relying on badges of 
 status to have reaction norms as their 
-mechanistic underpinning [@Botero_Evolution_2010], with 
+mechanistic underpinning [@botero_Evolution_2010], with 
 individuals using their own quality and the opponent's badge to determine 
 whether to aggressively engage in contest. Reaction norms 
 allow individuals to respond to the available information without a big
