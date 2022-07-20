@@ -10,14 +10,15 @@ source(here("AccFunc.R"))
 
 scenario<-"initAct"
 
-extSimsDir<-#here("Simulations",paste0(scenario,"_"))
-  paste0("e:/BadgeSims/",scenario,"_")
+# extSimsDir<-#here("Simulations",paste0(scenario,"_"))
+#   paste0("e:/BadgeSims/",scenario,"_")
 
 # Load files -------------------------------------------------------------------
 
-(listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
+(listTest<-list.files(here("Simulations",paste0(scenario,"_")),full.names = TRUE))
+(listTest<-grep(".txt",listTest,value = TRUE))
 
-(listTest<-list.files(extSimsDir,full.names = TRUE))
+# (listTest<-list.files(extSimsDir,full.names = TRUE))
 
 (sdList<-grep("evol",listTest,value=TRUE))
 (indList<-grep("ind",listTest,value=TRUE))
@@ -211,9 +212,15 @@ lastInt<-tail(inds[,unique(nInteract)],2)[1]
 
 popOneInd<-inds[nInteract==lastInt]
 
-png(here("Simulations",paste0(scenario,"_"),
-         paste0("indVarScatter","_1",".png")),
-    width = 1400,height = 1200)
+# png(here("Simulations",paste0(scenario,"_"),
+#          paste0("indVarScatter","_1",".png")),
+#     width = 1400,height = 1200)
+
+popOneInd$idClust<-get_clusters(popOneInd,vars,k.max = 5,
+                                Bsamples =500,iterMax = 500)
+
+seedsInset<-c()
+
 
 yaxtAll<-c("s","n","n")
 xlabAll<-c("",expression(beta[s]),"")
@@ -228,35 +235,71 @@ for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
       las=1,new=TRUE,
       yaxt=yaxtAll[match(PAr,popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)])],
       cex.axis=1.5,new=TRUE)
-  plot(data=popOneInd[(get(shortSce)==PAr&time>max(time)*0.8)&seed %in% 12:15],alpha~beta,ylab="",
-       xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=1,xaxt="s",
-       ylim=range(popOneInd[,alpha])*c(1.1,1.1),
-       xlim=range(popOneInd[,beta]),col=colReps[seed+1])
+  plot(data=popOneInd[(get(shortSce)==PAr&time>max(time)*0.8)&seed %in% 12:15],
+       alpha~beta,ylab="",
+       xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=1,xaxt="n",
+       ylim=range(popOneInd[,alpha])*c(1.05,1.05),
+       xlim=range(popOneInd[,beta]),col=multDiscrPallet[seed+1])
   lines(x=c(0,0),y=range(popOneInd[,alpha]),col="grey",
         lwd=2)
   lines(y=c(0,0),x=range(popOneInd[,beta]),col="grey",
         lwd=2)
   mtext(text = ylabAll[count],side = 2,line = 3.5,las=1,cex=3.5)
-  mtext(text = titleAll[count],side = 3,cex = 3,line = 2)
-  # par(plt=posPlot(numploty = 2,idploty = 1,
-  #                 numplotx = length(popOneInd[,unique(get(shortSce))]),
-  #                 idplotx = count)+c(0,0,-0.05,-0.05),
-  #     las=1,new=TRUE,yaxt=yaxtAll[count],
-  #     cex.axis=1.5,new=TRUE)
-  # plot(data=popOneInd[get(shortSce)==PAr&time>max(time)*0.8],alpha~beta,ylab="",
-  #      xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=1,
-  #      ylim=range(popOneInd[,alpha])*c(1.1,1.1),
-  #      xlim=range(popOneInd[,beta]),col=colReps[seed+1])
-  # lines(x=c(0,0),y=range(popOneInd[,alpha]),col="grey",
-  #       lwd=2)
-  # lines(y=c(0,0),x=range(popOneInd[,beta]),col="grey",
-  #       lwd=2)
+  mtext(text = titleAll[count],side = 3,cex = 3,line = 1)
+  par(plt=posPlot(numploty = 2,idploty = 1,
+                  numplotx = length(popOneInd[,unique(get(shortSce))]),
+                  idplotx = count)+c(0,0,-0.05,-0.05),
+      las=1,new=TRUE,yaxt=yaxtAll[count],
+      cex.axis=1.5,new=TRUE)
+  plot(data=popOneInd[get(shortSce)==PAr&time>max(time)*0.8],alpha~beta,ylab="",
+       xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=1,
+       ylim=range(popOneInd[,alpha])*c(1.05,1.05),
+       xlim=range(popOneInd[,beta]),col=multDiscrPallet[seed+1])
+  lines(x=c(0,0),y=range(popOneInd[,alpha]),col="grey",
+        lwd=2)
+  lines(y=c(0,0),x=range(popOneInd[,beta]),col="grey",
+        lwd=2)
   mtext(text = xlabAll[count],side = 1,line = 3.7,cex = 3.5)
 }
+
+PAr<-2.00
+
+tempPop<-popOneInd[get(shortSce)==PAr&(seed==8&time==max(time))]
+
+tempPop<-tempPop[,.SD[.N],
+                   .SDcol=c(grep("WeightAct",
+                                 names(evol),value = TRUE),"Quality","alpha","beta",
+                            "orderClus"),
+                   by=indId]
+
+par(mfrow=c(1,2))
+
+meansClustmp<-tempPop[,.(alphaMean=mean(alpha),betaMean=mean(beta)),by=orderClus]
+reacNormpClust<-sapply(meansClustmp[,orderClus], function(x){
+  logist(rangx,alpha = meansClustmp[orderClus==x,alphaMean],
+         beta = meansClustmp[orderClus==x,betaMean])})
+par(plt=posPlot())
+matplot(x = rangx,y = reacNormpClust,col=colRuns[meansClustmp$orderClus],
+        type='l',cex.axis=cexAxis,
+        xlab="",ylab="",ylim=c(0,1),lty=1,
+        lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
+
+
+dataIndReact<-sapply(as.list(tempPop[,indId]),
+                     function(x){x=
+                       sapply(rangx, 
+                              function(y)
+                                do.call(logist,
+                                        as.list(
+                                          c(y,as.double(
+                                            tempPop[indId==x,.SD,
+                                                    .SDcol=c("alpha","beta")])))))})
+matplot(x=rangx,y=dataIndReact,col = paletteMeans(100)[
+  findInterval(tempPop[,Quality],colorbreaksQual)],type='l',cex.axis=cexAxis,
+  xlab=seqXlabDown[count],ylab="",ylim=c(0,1),lty=1,
+  lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
+
+
 dev.off()
-
-
-
-
 
 

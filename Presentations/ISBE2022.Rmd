@@ -352,7 +352,8 @@ knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.4learnDyn.png")
 <!-- \small -->
 <!-- One of the replicates of the previous slide, the badge as a handicap -->
 ```{r, echo=FALSE,fig.align='center', out.width='90%'}
-knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn0_betCost5.png")
+# knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn0_betCost5.png")
+knitr::include_graphics("../Simulations/betCostEvol2_/evolDyn18_betCost5.png")
 ```
 
 <!-- ## Learning can mediate the evolution of Badges of Status -->
@@ -373,7 +374,7 @@ knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn0_betCost5.png")
 <!-- One of the replicates where the badge did not evolve -->
 
 ```{r, echo=FALSE,fig.align='center', out.height='90%'}
-knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn5_betCost5.png")
+knitr::include_graphics("../Simulations/betCostEvol2_/evolDyn19_betCost5.png")
 ```
 
 <!-- ## Badges of Status: do they matter? -->
