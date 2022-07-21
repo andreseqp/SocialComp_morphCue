@@ -212,14 +212,44 @@ lastInt<-tail(inds[,unique(nInteract)],2)[1]
 
 popOneInd<-inds[nInteract==lastInt]
 
-# png(here("Simulations",paste0(scenario,"_"),
-#          paste0("indVarScatter","_1",".png")),
-#     width = 1400,height = 1200)
 
+vars<-c("alpha","beta","Badge")
 popOneInd$idClust<-get_clusters(popOneInd,vars,k.max = 5,
                                 Bsamples =500,iterMax = 500)
 
-seedsInset<-c()
+repsScen<-c(12,13,14)
+
+
+list.DataReact<-lapply(popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)],
+function(x){
+  count<-match(x,popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)])
+  tempPop<-popOneInd[get(shortSce)==x&(seed==repsScen[count]&time==max(time))]
+  tempPop<-tempPop[,.SD[.N],
+                   .SDcol=c(grep("WeightAct",
+                                 names(popOneInd),value = TRUE),"Quality","alpha","beta"
+                            # ,
+                            # "orderClus"),
+                   ),
+                   by=indId]
+  dataIndReact<-sapply(as.list(tempPop[,indId]),
+                       function(x){x=
+                         sapply(rangx, 
+                                function(y)
+                                  do.call(logist,
+                                          as.list(
+                                            c(y,as.double(
+                                              tempPop[indId==x,.SD,
+                                                      .SDcol=c("alpha","beta")])))))})
+  return(dataIndReact)
+})
+
+names(list.DataReact)<-
+  popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]
+
+
+png(here("Simulations",paste0(scenario,"_"),
+         paste0("indVarScatter","1_",".png")),
+    width = 1400,height = 1200)
 
 
 yaxtAll<-c("s","n","n")
@@ -237,15 +267,21 @@ for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
       cex.axis=1.5,new=TRUE)
   plot(data=popOneInd[(get(shortSce)==PAr&time>max(time)*0.8)&seed %in% 12:15],
        alpha~beta,ylab="",
-       xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=1,xaxt="n",
+       xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=2,xaxt="n",
        ylim=range(popOneInd[,alpha])*c(1.05,1.05),
-       xlim=range(popOneInd[,beta]),col=multDiscrPallet[seed+1])
+       xlim=range(popOneInd[,beta]),
+       col=alpha(multDiscrPallet[seed+1],0.3))
+      # col=multDiscrPallet[seed+1])
+  points(data=popOneInd[(get(shortSce)==PAr&time>max(time)*0.8)&
+                          seed == repsScen[count]],
+       alpha~beta,col=multDiscrPallet[seed+1],cex=3,pch=20)
   lines(x=c(0,0),y=range(popOneInd[,alpha]),col="grey",
         lwd=2)
   lines(y=c(0,0),x=range(popOneInd[,beta]),col="grey",
         lwd=2)
   mtext(text = ylabAll[count],side = 2,line = 3.5,las=1,cex=3.5)
   mtext(text = titleAll[count],side = 3,cex = 3,line = 1)
+  
   par(plt=posPlot(numploty = 2,idploty = 1,
                   numplotx = length(popOneInd[,unique(get(shortSce))]),
                   idplotx = count)+c(0,0,-0.05,-0.05),
@@ -261,18 +297,34 @@ for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
         lwd=2)
   mtext(text = xlabAll[count],side = 1,line = 3.7,cex = 3.5)
 }
+for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
+  count<-match(PAr,popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)])
+  
+  par(new=TRUE,plt=posPlot(numplotx = 6,numploty = 4,idplotx = count*2,
+                           idploty = 3)+c(0.02,0.02,0.02,0.02),
+      xaxt="n",yaxt="n",xpd=T)
+  
+  plot(x=0,y=0,type='l',xlab="", ylab="",ylim=c(0,1),xlim=c(0,1))
+  polygon(x=c(par("usr")[1],par("usr")[1],par("usr")[2],par("usr")[2]),
+          y=c(par("usr")[3],par("usr")[4],par("usr")[4],par("usr")[3]),
+          col = "white",border=T)
+  matlines(x=rangx,y=list.DataReact[[count]],
+    #        col = paletteMeans(100)[
+    # findInterval(tempPop[,Quality],colorbreaksQual)],
+    col=alpha(multDiscrPallet[repsScen[count]+1],1),
+    type='l',xlab="",
+    ylab="",ylim=c(0,1),lty=1,lwd=2,new=T)
+}
+
+dev.off()
+
 
 PAr<-2.00
 
-tempPop<-popOneInd[get(shortSce)==PAr&(seed==8&time==max(time))]
+rangx<-seq(0,1,length=50)
 
-tempPop<-tempPop[,.SD[.N],
-                   .SDcol=c(grep("WeightAct",
-                                 names(evol),value = TRUE),"Quality","alpha","beta",
-                            "orderClus"),
-                   by=indId]
 
-par(mfrow=c(1,2))
+par(mfrow=c(1,1),plt=posPlot())
 
 meansClustmp<-tempPop[,.(alphaMean=mean(alpha),betaMean=mean(beta)),by=orderClus]
 reacNormpClust<-sapply(meansClustmp[,orderClus], function(x){
@@ -285,21 +337,11 @@ matplot(x = rangx,y = reacNormpClust,col=colRuns[meansClustmp$orderClus],
         lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
 
 
-dataIndReact<-sapply(as.list(tempPop[,indId]),
-                     function(x){x=
-                       sapply(rangx, 
-                              function(y)
-                                do.call(logist,
-                                        as.list(
-                                          c(y,as.double(
-                                            tempPop[indId==x,.SD,
-                                                    .SDcol=c("alpha","beta")])))))})
-matplot(x=rangx,y=dataIndReact,col = paletteMeans(100)[
-  findInterval(tempPop[,Quality],colorbreaksQual)],type='l',cex.axis=cexAxis,
-  xlab=seqXlabDown[count],ylab="",ylim=c(0,1),lty=1,
-  lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
 
 
-dev.off()
+
+
+
+
 
 
