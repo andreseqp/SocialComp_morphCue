@@ -12,9 +12,9 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCostEvol4"
+scenario<-"betCostEvol5"
 
-extSimsDir<-here("Simulations",paste0(scenario,"_"))
+# extSimsDir<-here("Simulations",paste0(scenario,"_"))
   # paste0("e:/BadgeSims/",scenario,"_")
 
 

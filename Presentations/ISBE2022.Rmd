@@ -1,25 +1,28 @@
 ---
 title: | 
-    | Learning can mediate the evolution of 
-    | (cheap and costly) signals of quality
-author: "Andrés Quiñones"
+  | Learning can mediate the evolution of  (cheap and costly) signals of quality
+author: |
+  | Andrés Quiñones
+institute: |
+  | Universitè de Neuchâtel
 bibliography: ../SocialMorphCue.bib
 date: | 
-    | 
-    | 
-    | ISBE - Stockholm 2022
-    | August 2 - 2020
+  | 
+  | 
+  | ISBE - Stockholm 2022
 output: 
-    beamer_presentation: 
-      fig_caption: yes
-      keep_tex: yes
+  beamer_presentation: 
+    fig_caption: yes
+    keep_tex: yes
+classoption: "aspectratio=169"
 header-includes: 
-    \usepackage{float}
-    \usepackage{multicol}
-    \usepackage{amsmath} 
-    \usepackage{graphicx}
-    \usepackage{array}
-    \usepackage{xcolor}
+  \usepackage{float}
+  \usepackage{multicol}
+  \usepackage{amsmath} 
+  \usepackage{graphicx}
+  \usepackage{array}
+  \usepackage{xcolor}
+  \usepackage{makecell}
 ---
 
 ## Acknowledgements
@@ -43,10 +46,10 @@ source("../aesth.R")
 
 ### The need to match partners with actions
 
-```{r,echo=FALSE,fig.align="center",out.width='40%'}
+```{r,echo=FALSE,fig.align="center",out.width='40%',fig.show='hold'}
 
 knitr::include_graphics("../Images/sexSelec.jpg")
-knitr::include_graphics("../Images/dominance.jpg")
+knitr::include_graphics("../Images/dominance2.jpg")
 ```
 
 
@@ -55,9 +58,9 @@ knitr::include_graphics("../Images/dominance.jpg")
 
 ### Badge of status
 
-```{r,echo=FALSE,fig.align='center',out.width='45%',fig.show='hold'}
-knitr::include_graphics("../Images/HouseSparrow_strong.jpg")
-knitr::include_graphics("../Images/HouseSparrow_weak.jpg")
+```{r,echo=FALSE,fig.align='center',out.width='70%',fig.show='hold'}
+knitr::include_graphics("../Images/houseSparrows.png")
+# knitr::include_graphics("../Images/HouseSparrow_weak.jpg")
 ```
 
 
@@ -90,6 +93,7 @@ mtext(side=1,text="Quality",line=3.5,cex=3)
 mtext(side=2,text="Survival",line=3.5,cex=3)
 
 ```
+\vspace{-0.3cm}
 [@zahavi_Mate_1975;@grafen_Biological_1990]
 
 
@@ -222,21 +226,17 @@ knitr::include_graphics("../Images/learn_cartoon_6.png")
 
 ## A model of communication in animal conflict
 
-\vspace{-0.3cm}
 
-### Conflict
+### Conflict: Hawk-Dove game 
 
-
-\vspace{0.3cm}
 \begin{columns}
 \column{0.5\linewidth}
-hawk-dove game
 \tiny
 \begin{center}
-\begin{tabular}{ >{\centering\arraybackslash}p{0.2cm} | >{\centering\arraybackslash}p{2.5cm} | >{\centering\arraybackslash}p{0.8cm} }
-& H & D \\ \hline
-H & $p_w V\frac{-C}{2} + (1-p_w) \frac{-C}{2}$ & $V$ \\ \hline
-V & $0$ & $\frac{V}{2}$\\
+\begin{tabular}{ >{\centering\arraybackslash}p{0.6cm} | >{\centering\arraybackslash}p{1.5cm} | >{\centering\arraybackslash}p{1.5cm} }
+& Hawk & Dove \\ \hline
+Hawk & $ \makecell{p_w V\frac{-C}{2}  +  \\ (1-p_w) \frac{-C}{2}}$ & $V$ \\ \hline
+Dove & $0$ & $\frac{V}{2}$\\
 \end{tabular}
 \end{center}
 
@@ -247,7 +247,7 @@ p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
 \column{0.5\linewidth}
 
 
-```{r,echo=FALSE,fig.align='center',out.width='60%'}
+```{r,echo=FALSE,fig.align='center',out.width='50%'}
 par(plt=posPlot(),las=1)
 plot(logist(seq(-1,1,length.out = 1000),alpha = 0,beta = 2)~
        seq(-1,1,length.out = 1000),type="l",xlab="",
@@ -303,7 +303,7 @@ The receiver code (learning)
 \end{equation*}
 
 
-```{r, echo=FALSE,fig.align='center', out.width = '60%'}
+```{r, echo=FALSE,fig.align='center', out.width = '50%'}
 
 nCenters<-6
 interv<-1/(nCenters-1)
@@ -340,7 +340,7 @@ mtext("Badge size",1,line = 4,cex = 3,las = 0)
 <!-- Learning simulations (without evolution yet), the sender code is set as an honest signal. -->
 <!-- Receivers develop a threshold like response according to their quality -->
 
-```{r, echo=FALSE,fig.align='center', out.width = '100%'}
+```{r, echo=FALSE,fig.align='center', out.width = '90%'}
 knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.4learnDyn.png")
 ```
 
@@ -373,7 +373,9 @@ knitr::include_graphics("../Simulations/betCostEvol2_/evolDyn18_betCost5.png")
 <!-- \small -->
 <!-- One of the replicates where the badge did not evolve -->
 
-```{r, echo=FALSE,fig.align='center', out.height='90%'}
+
+
+```{r, echo=FALSE,fig.align='center', out.width='90%'}
 knitr::include_graphics("../Simulations/betCostEvol2_/evolDyn19_betCost5.png")
 ```
 
@@ -458,7 +460,7 @@ knitr::include_graphics("../Simulations/nIntGroupNormQual_/evolDyn7_nIntGroup200
 <!-- Agressive, peaceful, clever (starts at the ESS of the classic hawk-dove game) -->
 
 ```{r,out.width='45%',fig.show='hold'}
-knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.4learnDyn.png")
+knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.4learnDyn.png",)
 # knitr::include_graphics("../Images/cartoonRBF_InitAct.png")
 nCenters<-6
 interv<-1/(nCenters-1)
@@ -471,13 +473,13 @@ rangx<-seq(0,1,length=1000)
 par(plt=posPlot(numploty = 2,idploty = 2),las=1)
 actor<-sapply(weights, Actor,centers=centers)
 
-par(plt=posPlot()*0.95)
-matplot(x=rangx,y=as.matrix(actor),type='l',col=c("black","red","blue","springgreen4"),lty=1,
+par(plt=posPlot()*0.92)
+matplot(x=rangx,y=as.matrix(actor),type='l',col=c("black","#E31A1C","dodgerblue2","green4"),lty=1,
      xlab="",ylab="",ylim=c(0,1.1),lwd=5,xaxt="s",cex.lab=1.5,cex.axis=2)
 mtext(text = "p(dove)",2,line = 4,cex = 2.5,las=0)
 mtext(text = "Badge size",1,line = 3.5,cex = 2.5)
 points(y=logist(weights$neutral,alpha = 0,beta=1),x=centers,cex=3)
-text(y = actor[1,]+0.1,x=rep(0.5,4),col=c("black","red","blue","springgreen4"),
+text(y = actor[1,]+0.1,x=rep(0.5,4),col=c("black","#E31A1C","dodgerblue2","green4"),
      labels = names(weights),cex=2)
 ```
 
@@ -486,7 +488,7 @@ text(y = actor[1,]+0.1,x=rep(0.5,4),col=c("black","red","blue","springgreen4"),
 ### The peaceful, the aggressive and the clever
 
 ```{r,echo=FALSE,out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/indVarScatter_1.png")
+knitr::include_graphics("../Simulations/initAct_/indVarScatter0_.png")
 
 ```
 
@@ -495,9 +497,19 @@ knitr::include_graphics("../Simulations/initAct_/indVarScatter_1.png")
 ### The peaceful, the aggressive and the clever
 
 ```{r,out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/indVarScatter_.png")
+knitr::include_graphics("../Simulations/initAct_/indVarScatter1_.png")
 
 ```
+
+## Why would you want to be recognized?
+
+### The peaceful, the aggressive and the clever
+
+```{r,out.width='90%',fig.show='hold'}
+knitr::include_graphics("../Simulations/initAct_/indVarScatter2_.png")
+
+```
+
 
 ## Take-home messages
 
@@ -512,9 +524,16 @@ individuals
 
 ## Questions?
 
-```{r, echo=FALSE,fig.align='center', out.height='80%',fig.show='hold'}
-  knitr::include_graphics("../Images/BizarroParrot.jpg")
-```
+<!-- ```{r, echo=FALSE,fig.align='center', out.height='50%',fig.show='hold'} -->
+<!--   knitr::include_graphics("../Images/BizarroParrot.jpg") -->
+<!--   knitr::include_graphics("../Images/Socialnet1.png") -->
+<!-- ``` -->
 
+\begin{columns}[T]
+ \column{0.7\linewidth}
+  \includegraphics[height=0.8\textwidth]{../Images/BizarroParrot.jpg}
+ \column{0.2\linewidth}
+  \includegraphics[height=1.5\textheight]{../Images//Socialnet.png}
+\end{columns}
 
 ## References

@@ -4,7 +4,7 @@
 %
 \documentclass[
   ignorenonframetext,
-]{beamer}
+  aspectratio=169]{beamer}
 \usepackage{pgfpages}
 \setbeamertemplate{caption}[numbered]
 \setbeamertemplate{caption label separator}{: }
@@ -75,7 +75,6 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdfauthor={Andrés Quiñones},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
@@ -127,18 +126,18 @@
 \newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
-\usepackage{float} \usepackage{multicol} \usepackage{amsmath} \usepackage{graphicx} \usepackage{array} \usepackage{xcolor}
+\usepackage{float} \usepackage{multicol} \usepackage{amsmath} \usepackage{graphicx} \usepackage{array} \usepackage{xcolor} \usepackage{makecell}
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 
-\title{Learning can mediate the evolution of\\
-(cheap and costly) signals of quality}
+\title{Learning can mediate the evolution of (cheap and costly) signals
+of quality}
 \author{Andrés Quiñones}
 \date{\hfill\break
 \hfill\break
-ISBE - Stockholm 2022\\
-August 2 - 2020}
+ISBE - Stockholm 2022}
+\institute{Universitè de Neuchâtel}
 
 \begin{document}
 \frame{\titlepage}
@@ -168,9 +167,7 @@ August 2 - 2020}
 \protect\hypertarget{social-interactions}{}
 \begin{block}{The need to match partners with actions}
 \protect\hypertarget{the-need-to-match-partners-with-actions}{}
-\begin{center}\includegraphics[width=0.4\linewidth]{../Images/sexSelec} \end{center}
-
-\begin{center}\includegraphics[width=0.4\linewidth]{../Images/dominance} \end{center}
+\begin{center}\includegraphics[width=0.4\linewidth]{../Images/sexSelec} \includegraphics[width=0.4\linewidth]{../Images/dominance2} \end{center}
 \end{block}
 \end{frame}
 
@@ -178,7 +175,7 @@ August 2 - 2020}
 \protect\hypertarget{the-effect-of-communication}{}
 \begin{block}{Badge of status}
 \protect\hypertarget{badge-of-status}{}
-\begin{center}\includegraphics[width=0.45\linewidth]{../Images/HouseSparrow_strong} \includegraphics[width=0.45\linewidth]{../Images/HouseSparrow_weak} \end{center}
+\begin{center}\includegraphics[width=0.7\linewidth]{../Images/houseSparrows} \end{center}
 \end{block}
 \end{frame}
 
@@ -189,6 +186,7 @@ August 2 - 2020}
 \begin{center}\includegraphics[height=0.35\textheight]{../Images/Amotz_Zahavi_profile} \includegraphics[height=0.35\textheight]{../Images/sexualSelection} \includegraphics[height=0.35\textheight]{../Images/Grafen} \end{center}
 
 \begin{center}\includegraphics[height=0.35\textheight]{ISBE2022_files/figure-beamer/unnamed-chunk-4-1} \end{center}
+\vspace{-0.3cm}
 
 (Zahavi 1975; Grafen 1990)
 \end{block}
@@ -238,20 +236,16 @@ August 2 - 2020}
 
 \begin{frame}{A model of communication in animal conflict}
 \protect\hypertarget{a-model-of-communication-in-animal-conflict}{}
-\vspace{-0.3cm}
-
-\begin{block}{Conflict}
-\protect\hypertarget{conflict}{}
-\vspace{0.3cm}
+\begin{block}{Conflict: Hawk-Dove game}
+\protect\hypertarget{conflict-hawk-dove-game}{}
 \begin{columns}
 \column{0.5\linewidth}
-hawk-dove game
 \tiny
 \begin{center}
-\begin{tabular}{ >{\centering\arraybackslash}p{0.2cm} | >{\centering\arraybackslash}p{2.5cm} | >{\centering\arraybackslash}p{0.8cm} }
-& H & D \\ \hline
-H & $p_w V\frac{-C}{2} + (1-p_w) \frac{-C}{2}$ & $V$ \\ \hline
-V & $0$ & $\frac{V}{2}$\\
+\begin{tabular}{ >{\centering\arraybackslash}p{0.6cm} | >{\centering\arraybackslash}p{1.5cm} | >{\centering\arraybackslash}p{1.5cm} }
+& Hawk & Dove \\ \hline
+Hawk & $ \makecell{p_w V\frac{-C}{2}  +  \\ (1-p_w) \frac{-C}{2}}$ & $V$ \\ \hline
+Dove & $0$ & $\frac{V}{2}$\\
 \end{tabular}
 \end{center}
 
@@ -263,7 +257,7 @@ p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
 
 
 
-\begin{center}\includegraphics[width=0.6\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-17-1} \end{center}
+\begin{center}\includegraphics[width=0.5\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-17-1} \end{center}
 
 \end{columns}
 
@@ -300,7 +294,7 @@ The receiver code (learning)
 
 
 
-\begin{center}\includegraphics[width=0.6\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-19-1} \end{center}
+\begin{center}\includegraphics[width=0.5\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-19-1} \end{center}
 
 \end{columns}
 \end{block}
@@ -308,7 +302,7 @@ The receiver code (learning)
 
 \begin{frame}{Learning under honest signalling}
 \protect\hypertarget{learning-under-honest-signalling}{}
-\begin{center}\includegraphics[width=1\linewidth]{../Simulations/alphaAct_/alphaAct0.4learnDyn} \end{center}
+\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/alphaAct_/alphaAct0.4learnDyn} \end{center}
 \end{frame}
 
 \hypertarget{results}{%
@@ -317,14 +311,14 @@ The receiver code (learning)
 \begin{frame}{Learning mediates the evolution of badges of status
 (handicaps)}
 \protect\hypertarget{learning-mediates-the-evolution-of-badges-of-status-handicaps}{}
-\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/betCostEvol1_/evolDyn0_betCost5} \end{center}
+\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/betCostEvol2_/evolDyn18_betCost5} \end{center}
 \end{frame}
 
 \begin{frame}{Learning can mediate the evolution of Badges of Status}
 \protect\hypertarget{learning-can-mediate-the-evolution-of-badges-of-status}{}
 \begin{block}{Individual replicates: no badges}
 \protect\hypertarget{individual-replicates-no-badges}{}
-\begin{center}\includegraphics[width=19.44in,height=0.9\textheight]{../Simulations/betCostEvol1_/evolDyn5_betCost5} \end{center}
+\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/betCostEvol2_/evolDyn19_betCost5} \end{center}
 \end{block}
 \end{frame}
 
@@ -354,7 +348,7 @@ The receiver code (learning)
 \protect\hypertarget{why-would-you-want-to-be-recognized-1}{}
 \begin{block}{The peaceful, the aggressive and the clever}
 \protect\hypertarget{the-peaceful-the-aggressive-and-the-clever-1}{}
-\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter_1}
+\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter0_}
 \end{block}
 \end{frame}
 
@@ -362,7 +356,15 @@ The receiver code (learning)
 \protect\hypertarget{why-would-you-want-to-be-recognized-2}{}
 \begin{block}{The peaceful, the aggressive and the clever}
 \protect\hypertarget{the-peaceful-the-aggressive-and-the-clever-2}{}
-\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter_}
+\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter1_}
+\end{block}
+\end{frame}
+
+\begin{frame}{Why would you want to be recognized?}
+\protect\hypertarget{why-would-you-want-to-be-recognized-3}{}
+\begin{block}{The peaceful, the aggressive and the clever}
+\protect\hypertarget{the-peaceful-the-aggressive-and-the-clever-3}{}
+\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter2_}
 \end{block}
 \end{frame}
 
@@ -393,7 +395,12 @@ The receiver code (learning)
 
 \begin{frame}{Questions?}
 \protect\hypertarget{questions}{}
-\begin{center}\includegraphics[height=0.8\textheight]{../Images/BizarroParrot} \end{center}
+\begin{columns}[T]
+ \column{0.7\linewidth}
+  \includegraphics[height=0.8\textwidth]{../Images/BizarroParrot.jpg}
+ \column{0.2\linewidth}
+  \includegraphics[height=1.5\textheight]{../Images//Socialnet.png}
+\end{columns}
 \end{frame}
 
 \begin{frame}{References}

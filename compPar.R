@@ -5,6 +5,7 @@
 library(here)
 here()
 source(here("AccFunc.R"))
+library("scales")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
@@ -206,19 +207,20 @@ par(plt=posPlot())
 hist(inds[time==gener&get(shortSce)==unique(get(shortSce))[1],Badge],xaxt="s")
 hist(inds[time==gener&get(shortSce)==unique(get(shortSce))[3],Badge],xaxt="s")
 
-## Individual variation for different parameters ------------------------------
+# Individual variation for different parameters ------------------------------
 
 lastInt<-tail(inds[,unique(nInteract)],2)[1]
 
 popOneInd<-inds[nInteract==lastInt]
 
 
-vars<-c("alpha","beta","Badge")
-popOneInd$idClust<-get_clusters(popOneInd,vars,k.max = 5,
-                                Bsamples =500,iterMax = 500)
+# vars<-c("alpha","beta","Badge")
+# popOneInd$idClust<-get_clusters(popOneInd,vars,k.max = 5,
+#                                 Bsamples =500,iterMax = 500)
 
-repsScen<-c(12,13,14)
+repsScen<-c(12,14,13)
 
+rangx<-seq(0,1,length=50)
 
 list.DataReact<-lapply(popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)],
 function(x){
@@ -249,13 +251,14 @@ names(list.DataReact)<-
 
 png(here("Simulations",paste0(scenario,"_"),
          paste0("indVarScatter","1_",".png")),
-    width = 1400,height = 1200)
+    width = 1920,height = 1080)
 
 
 yaxtAll<-c("s","n","n")
 xlabAll<-c("",expression(beta[s]),"")
 ylabAll<-c(expression(alpha[s]),"","")
 titleAll<-c("Peaceful","Clever","Aggressive")
+colorAll<-c("dodgerblue2","green4","#E31A1C")
 plot.new()
 for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
   count<-match(PAr,popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)])
@@ -270,17 +273,18 @@ for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
        xlab="", pch=20,cex.lab=3,cex.axis=2,las=1,cex=2,xaxt="n",
        ylim=range(popOneInd[,alpha])*c(1.05,1.05),
        xlim=range(popOneInd[,beta]),
-       col=alpha(multDiscrPallet[seed+1],0.3))
-      # col=multDiscrPallet[seed+1])
-  points(data=popOneInd[(get(shortSce)==PAr&time>max(time)*0.8)&
-                          seed == repsScen[count]],
-       alpha~beta,col=multDiscrPallet[seed+1],cex=3,pch=20)
+       # col=alpha(multDiscrPallet[seed+1],0.3))
+       col=multDiscrPallet[seed+1])
+  # points(data=popOneInd[(get(shortSce)==PAr&time>max(time)*0.8)&
+  #                         seed == repsScen[count]],
+  #      alpha~beta,col=multDiscrPallet[seed+1],cex=3,pch=20)
   lines(x=c(0,0),y=range(popOneInd[,alpha]),col="grey",
         lwd=2)
   lines(y=c(0,0),x=range(popOneInd[,beta]),col="grey",
         lwd=2)
   mtext(text = ylabAll[count],side = 2,line = 3.5,las=1,cex=3.5)
-  mtext(text = titleAll[count],side = 3,cex = 3,line = 1)
+  mtext(text = titleAll[count],side = 3,cex = 3,line = 1,
+        col = colorAll[count])
   
   par(plt=posPlot(numploty = 2,idploty = 1,
                   numplotx = length(popOneInd[,unique(get(shortSce))]),
@@ -297,31 +301,31 @@ for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
         lwd=2)
   mtext(text = xlabAll[count],side = 1,line = 3.7,cex = 3.5)
 }
-for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
-  count<-match(PAr,popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)])
-  
-  par(new=TRUE,plt=posPlot(numplotx = 6,numploty = 4,idplotx = count*2,
-                           idploty = 3)+c(0.02,0.02,0.02,0.02),
-      xaxt="n",yaxt="n",xpd=T)
-  
-  plot(x=0,y=0,type='l',xlab="", ylab="",ylim=c(0,1),xlim=c(0,1))
-  polygon(x=c(par("usr")[1],par("usr")[1],par("usr")[2],par("usr")[2]),
-          y=c(par("usr")[3],par("usr")[4],par("usr")[4],par("usr")[3]),
-          col = "white",border=T)
-  matlines(x=rangx,y=list.DataReact[[count]],
-    #        col = paletteMeans(100)[
-    # findInterval(tempPop[,Quality],colorbreaksQual)],
-    col=alpha(multDiscrPallet[repsScen[count]+1],1),
-    type='l',xlab="",
-    ylab="",ylim=c(0,1),lty=1,lwd=2,new=T)
-}
+# for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
+#   count<-match(PAr,popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)])
+# 
+#   par(new=TRUE,plt=posPlot(numplotx = 6,numploty = 4,idplotx = count*2,
+#                            idploty = 3)+c(0.02,0.02,0.02,0.02),
+#       xaxt="n",yaxt="n",xpd=T)
+# 
+#   plot(x=0,y=0,type='l',xlab="", ylab="",ylim=c(0,1),xlim=c(0,1))
+#   polygon(x=c(par("usr")[1],par("usr")[1],par("usr")[2],par("usr")[2]),
+#           y=c(par("usr")[3],par("usr")[4],par("usr")[4],par("usr")[3]),
+#           col = "white",border=T)
+#   matlines(x=rangx,y=list.DataReact[[count]],
+#     #        col = paletteMeans(100)[
+#     # findInterval(tempPop[,Quality],colorbreaksQual)],
+#     col=alpha(multDiscrPallet[repsScen[count]+1],1),
+#     type='l',xlab="",
+#     ylab="",ylim=c(0,1),lty=1,lwd=2,new=T)
+# }
 
 dev.off()
 
 
 PAr<-2.00
 
-rangx<-seq(0,1,length=50)
+
 
 
 par(mfrow=c(1,1),plt=posPlot())

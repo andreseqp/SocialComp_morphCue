@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"nIntGroupNormQual"#"betCostEvol2"
+scenario<-"alphaAct"#"nIntGroupNormQual"#
 
 # extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 #   paste0("M:/BadgeSims/",scenario,"_")
@@ -29,7 +29,7 @@ scenario<-"nIntGroupNormQual"#"betCostEvol2"
 paramName<-list.files(here("Simulations",paste0(scenario,"_")))
 # paramName<-list.files(extSimsDir,full.names = TRUE)
 paramName<-grep(".json",paramName,value=TRUE)
-param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
+param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[2]))
   # fromJSON(paramName[1])
 
 
@@ -67,11 +67,14 @@ nampar<-param$namParam
 nCenters<-param$nCenters
 sigSquar<-param$sigSq
   
-  
+# Aesthetic paremeters ---------------------------------------------------------
+
+cexAxis<-2.2
+
+
   ## Calculate clustering for all generations  -------------------
   
-runChoi<-19
-  
+runChoi<-7
 # Choose which interaction to visualize
 lastInt<-tail(pop[,unique(nInteract)],4)[1]
 # pop[,max(nInteract),by=.(seed,time)][,min(V1)]
@@ -125,7 +128,7 @@ evolStats<-evol[, as.list(unlist(lapply(.SD, my.summary))),
 ## Plot mean and IQRs among individuals for each replicate --------------------
 
 
-cexAxis<-2.2
+# cexAxis<-1.3
 
 # get the trajectories for individual runs
 traitsTrajs<-dcast(evol,time~seed,
@@ -142,7 +145,7 @@ genstoPrint<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
 
 png(here("Simulations",paste0(scenario,"_"),
          paste0("evolDyn",runChoi,"_",nampar,Valpar,".png")),
-    width = 1400,height = 1200)
+    width = 1920,height = 1080)
 
 
 # Evolutionary dynamics for alpha - intercept of the sender --------------------------------------------
@@ -450,17 +453,19 @@ timePoints<-round(seq(1,length(unique(tempPop[,nInteract]))-25,
                       length.out = 5))
 
 png(here("Simulations",paste0(scenario,"_"),paste0(nampar,Valpar,"learnDyn.png")),
-    width = 1000,height = 600)
+    width = 1920,height = 1080)
 
 par(mfrow=c(1,1))
 plot.new()
 
-par(plt=posPlot(numploty = 2,numplotx = 4,idploty = 2,idplotx = 2))
+par(plt=posPlot(numploty = 2,numplotx = 4,idploty = 2,idplotx = 2,upboundy = 99,
+                lowboundy = 20))
 rangx<-seq(0,1,by=0.01)
 badge<-logist(rangx,alpha = param$alphaBad,beta = param$betaBad)
-plot(x=rangx,y=badge,col=1,lwd=4,ylim = c(0,1.1),xlim=c(0,1),xaxt="n",ylab = "",
+plot(x=rangx,y=badge,col=1,lwd=4,ylim = c(0,1.1),xlim=c(0,1),xaxt="s",ylab = "",
      xlab="",type="l",cex.axis=cexAxis)
 mtext("Badge size",2,cex=2,las=0,line=3)
+mtext("Quality",1,line = 3,cex=2)
 lines(logist(totRBF(rangx,centers,sigSquar,rep(0,nCenters))
              ,alpha = 0,beta = 1)~rangx,
       lwd=1,col=1)
@@ -477,14 +482,17 @@ dataIndsAct<-sapply(as.list(tempPop[nInteract==1700,indId]),
                                                           names(tempPop),
                                                           value = TRUE)
                                               ])),alpha = 0,beta = 1)})
-par(plt=posPlot(numploty = 2,numplotx = 4,idploty = 2,idplotx = 3),new=TRUE)
+par(plt=posPlot(numploty = 2,numplotx = 4,idploty = 2,idplotx = 3,upboundy = 99,
+                lowboundy = 20)
+    ,new=TRUE)
 matplot(x=rangx,y=dataIndsAct,type='l',xlab="",ylab="",
-        xaxt="n",yaxt="n",lty = 1,
+        xaxt="s",yaxt="n",lty = 1,
         col=paletteMeans(100)[
           findInterval(tempPop[nInteract==1700,Quality],colorbreaksQual)],
-        lwd=0.5,ylim=c(0,1.1))
+        lwd=0.5,ylim=c(0,1.1),cex.axis=cexAxis)
 axis(4,cex.axis=cexAxis)
-mtext("p(dove)",side = 4,cex=2,las=0,line = 3)
+mtext(expression(p(dove)),side = 4,cex=2,las=0,line = 3)
+mtext("Badge size",1,line = 3,cex=2)
 
 yaxRang<-c("s",rep("n",4))
 xaxRang<-c("s","n")
@@ -510,7 +518,8 @@ for(behavTime in unique(tempPop$nInteract)[timePoints]){
                                                             names(tempPop),
                                                             value = TRUE)
                                                 ])),alpha = 0,beta = 1)})
-  par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx),
+  par(plt=posPlot(numploty = 2,numplotx = 5,idploty = county,idplotx = countx,
+                  upboundy = 95,lowboundy = 10),
       las=1,new=T)
   matplot(x=rangx,y=dataIndsAct,type='l',xlab="",ylab="",
           xaxt=xaxRang[county],yaxt=yaxRang[countx],lty = 1,
@@ -522,7 +531,7 @@ for(behavTime in unique(tempPop$nInteract)[timePoints]){
           #                  &seed==seedCh,indId],
           #         indLearn[(time==gener)&(seed==seedCh&nInteract==behavTime),
           #                  unique(indId)])
-          lwd=0.5,ylim=c(0,1.1),cex.axis=1.3)
+          lwd=0.5,ylim=c(0,1.1),cex.axis=cexAxis)
   lines(logist(totRBF(rangx,centers,sigSquar,rep(0,nCenters))
                ,alpha = 0,beta = 1)~rangx,
         lwd=1,col=1)
@@ -531,13 +540,16 @@ for(behavTime in unique(tempPop$nInteract)[timePoints]){
   if(countx==1) mtext(yAxLabs[county],2,line = 3,cex=2,las=0)
 }
 
-dev.off()
+
  # Include if the color scheme relates to quality
 par(new=FALSE)
 color.bar.aeqp(paletteMeans(100),min =min(colorbreaksQual),
                max = max(colorbreaksQual),nticks = 3,
                title = "Quality",
-               cex.tit = 1.1,
-               numplotx = 15,numploty = 15,idplotx =2,idploty = 9)
-  
+               cex.tit = 1.3,
+               numplotx = 13,numploty = 13,idplotx =2,idploty = 10)
+
+dev.off()
+
+
   
