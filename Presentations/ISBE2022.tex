@@ -72,12 +72,6 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\hypersetup{
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
 \newif\ifbibliography
 \usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
@@ -130,6 +124,12 @@
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
 
 \title{Learning can mediate the evolution of (cheap and costly) signals
 of quality}
@@ -147,19 +147,19 @@ ISBE - Stockholm 2022}
 \begin{longtable}[]{@{}
   >{\centering\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
   >{\centering\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\toprule
+\toprule()
 \begin{minipage}[b]{\linewidth}\centering
 \includegraphics[width=0.4\textwidth,height=\textheight]{../Images/redouan.jpg}
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 \includegraphics[width=0.55\textwidth,height=\textheight]{../Images/danielcadena.jpg}
 \end{minipage} \\
-\midrule
+\midrule()
 \endhead
 \emph{R. Bshary} & \emph{D. Cadena} \\
 \includegraphics[width=0.3\textwidth,height=\textheight]{../Images/UNINE_cmjn.jpg}
 &
 \includegraphics[width=0.3\textwidth,height=\textheight]{../Images/logo_largo.png} \\
-\bottomrule
+\bottomrule()
 \end{longtable}
 \end{frame}
 
@@ -183,10 +183,9 @@ ISBE - Stockholm 2022}
 \protect\hypertarget{what-about-signals}{}
 \begin{block}{The handicap principle}
 \protect\hypertarget{the-handicap-principle}{}
-\begin{center}\includegraphics[height=0.35\textheight]{../Images/Amotz_Zahavi_profile} \includegraphics[height=0.35\textheight]{../Images/sexualSelection} \includegraphics[height=0.35\textheight]{../Images/Grafen} \end{center}
+\begin{center}\includegraphics[height=0.45\textheight]{../Images/Amotz_Zahavi_profile} \includegraphics[height=0.45\textheight]{../Images/sexualSelection} \includegraphics[height=0.45\textheight]{../Images/Grafen} \end{center}
 
-\begin{center}\includegraphics[height=0.35\textheight]{ISBE2022_files/figure-beamer/unnamed-chunk-4-1} \end{center}
-\vspace{-0.3cm}
+\vspace{0.6cm}
 
 (Zahavi 1975; Grafen 1990)
 \end{block}
@@ -196,42 +195,28 @@ ISBE - Stockholm 2022}
 \protect\hypertarget{what-about-learning}{}
 \begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
 
-\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_0} \end{center}
+\begin{center}\includegraphics[height=0.35\textheight]{../Images/learn_cartoon_0} \end{center}
 \end{frame}
 
 \begin{frame}{What about learning?}
 \protect\hypertarget{what-about-learning-1}{}
 \begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
 
-\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_1} \end{center}
+\begin{center}\includegraphics[height=0.35\textheight]{../Images/learn_cartoon_1} \end{center}
 \end{frame}
 
 \begin{frame}{What about learning?}
 \protect\hypertarget{what-about-learning-2}{}
 \begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
 
-\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_2} \end{center}
+\begin{center}\includegraphics[height=0.35\textheight]{../Images/learn_cartoon_3} \end{center}
 \end{frame}
 
 \begin{frame}{What about learning?}
 \protect\hypertarget{what-about-learning-3}{}
 \begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
 
-\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_3} \end{center}
-\end{frame}
-
-\begin{frame}{What about learning?}
-\protect\hypertarget{what-about-learning-4}{}
-\begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
-
-\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_5} \end{center}
-\end{frame}
-
-\begin{frame}{What about learning?}
-\protect\hypertarget{what-about-learning-5}{}
-\begin{center}\includegraphics[height=0.4\textheight]{../Images//pavlov} \end{center}
-
-\begin{center}\includegraphics[width=16.76in,height=0.35\textheight]{../Images/learn_cartoon_6} \end{center}
+\begin{center}\includegraphics[height=0.35\textheight]{../Images/learn_cartoon_6} \end{center}
 \end{frame}
 
 \begin{frame}{A model of communication in animal conflict}
@@ -257,7 +242,7 @@ p_w=\frac{1}{1+e^{-\beta(Q_i-Q_j)}}
 
 
 
-\begin{center}\includegraphics[width=0.5\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-17-1} \end{center}
+\begin{center}\includegraphics[width=0.5\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-12-1} \end{center}
 
 \end{columns}
 
@@ -280,7 +265,7 @@ B_i = \frac{1}{1+e^{-(\textcolor{red}{\alpha_s} +\textcolor{red}{\beta_s} Q_i)}}
 
 
 
-\begin{center}\includegraphics[width=0.5\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-18-1} \end{center}
+\begin{center}\includegraphics[width=0.5\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-13-1} \end{center}
 
 
 \column{0.45\linewidth}
@@ -294,7 +279,7 @@ The receiver code (learning)
 
 
 
-\begin{center}\includegraphics[width=0.5\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-19-1} \end{center}
+\begin{center}\includegraphics[width=0.5\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-14-1} \end{center}
 
 \end{columns}
 \end{block}
@@ -311,20 +296,87 @@ The receiver code (learning)
 \begin{frame}{Learning mediates the evolution of badges of status
 (handicaps)}
 \protect\hypertarget{learning-mediates-the-evolution-of-badges-of-status-handicaps}{}
-\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/betCostEvol2_/evolDyn18_betCost5} \end{center}
+\begin{columns}[T]
+
+
+\column{0.05\linewidth}
+
+\tiny
+\vspace{1cm}
+
+Receiver  
+
+\vspace{2cm}
+
+Evolutionary  \\
+Dynamics
+
+\vspace{2cm}
+
+Sender
+
+\column{0.95\linewidth}
+
+\includegraphics{../Simulations/betCostEvol2_/evolDyn18_betCost5_1.png}
+
+\end{columns}
 \end{frame}
 
-\begin{frame}{Learning can mediate the evolution of Badges of Status}
-\protect\hypertarget{learning-can-mediate-the-evolution-of-badges-of-status}{}
-\begin{block}{Individual replicates: no badges}
-\protect\hypertarget{individual-replicates-no-badges}{}
-\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/betCostEvol2_/evolDyn19_betCost5} \end{center}
-\end{block}
+\begin{frame}{Learning mediates the evolution of badges of status
+(handicaps)}
+\protect\hypertarget{learning-mediates-the-evolution-of-badges-of-status-handicaps-1}{}
+\begin{columns}[T]
+
+
+\column{0.05\linewidth}
+
+\tiny
+\vspace{1cm}
+
+Receiver  
+
+\vspace{2cm}
+
+Evolutionary  \\
+Dynamics
+
+\vspace{2cm}
+
+Sender
+
+\column{0.95\linewidth}
+
+\includegraphics{../Simulations/betCostEvol2_/evolDyn18_betCost5.png}
+
+\end{columns}
 \end{frame}
 
 \begin{frame}{The evolution of cheap badges of Status}
 \protect\hypertarget{the-evolution-of-cheap-badges-of-status}{}
-\begin{center}\includegraphics[width=0.9\linewidth]{../Simulations/nIntGroupNormQual_/evolDyn7_nIntGroup2000} \end{center}
+\begin{columns}[T]
+
+
+\column{0.05\linewidth}
+
+\tiny
+\vspace{1cm}
+
+Receiver  
+
+\vspace{2cm}
+
+Evolutionary  \\
+Dynamics
+
+\vspace{2cm}
+
+Sender
+
+\column{0.95\linewidth}
+
+\includegraphics{../Simulations/nIntGroupNormQual_/evolDyn7_nIntGroup2000.png}
+
+\end{columns}
 \end{frame}
 
 \begin{frame}{Why would you want to be recognized?}
@@ -340,7 +392,7 @@ The receiver code (learning)
 \end{itemize}
 
 \includegraphics[width=0.45\linewidth]{../Simulations/alphaAct_/alphaAct0.4learnDyn}
-\includegraphics[width=0.45\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-24-2}
+\includegraphics[width=0.45\linewidth]{ISBE2022_files/figure-beamer/unnamed-chunk-16-2}
 \end{block}
 \end{frame}
 
@@ -348,7 +400,7 @@ The receiver code (learning)
 \protect\hypertarget{why-would-you-want-to-be-recognized-1}{}
 \begin{block}{The peaceful, the aggressive and the clever}
 \protect\hypertarget{the-peaceful-the-aggressive-and-the-clever-1}{}
-\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter0_}
+\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter01_}
 \end{block}
 \end{frame}
 
@@ -356,15 +408,7 @@ The receiver code (learning)
 \protect\hypertarget{why-would-you-want-to-be-recognized-2}{}
 \begin{block}{The peaceful, the aggressive and the clever}
 \protect\hypertarget{the-peaceful-the-aggressive-and-the-clever-2}{}
-\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter1_}
-\end{block}
-\end{frame}
-
-\begin{frame}{Why would you want to be recognized?}
-\protect\hypertarget{why-would-you-want-to-be-recognized-3}{}
-\begin{block}{The peaceful, the aggressive and the clever}
-\protect\hypertarget{the-peaceful-the-aggressive-and-the-clever-3}{}
-\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter2_}
+\includegraphics[width=0.9\linewidth]{../Simulations/initAct_/indVarScatter11_}
 \end{block}
 \end{frame}
 

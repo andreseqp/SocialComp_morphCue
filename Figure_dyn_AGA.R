@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"alphaAct"#"nIntGroupNormQual"#
+scenario<-"betCostEvol2"#"alphaAct"#"nIntGroupNormQual"#
 
 # extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 #   paste0("M:/BadgeSims/",scenario,"_")
@@ -33,7 +33,7 @@ param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[2]))
   # fromJSON(paramName[1])
 
 
-val<-1
+val<-2
 fileId<-val
 
 
@@ -74,7 +74,7 @@ cexAxis<-2.2
 
   ## Calculate clustering for all generations  -------------------
   
-runChoi<-7
+runChoi<-18
 # Choose which interaction to visualize
 lastInt<-tail(pop[,unique(nInteract)],4)[1]
 # pop[,max(nInteract),by=.(seed,time)][,min(V1)]
@@ -144,7 +144,7 @@ genstoPrint<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
 
 
 png(here("Simulations",paste0(scenario,"_"),
-         paste0("evolDyn",runChoi,"_",nampar,Valpar,".png")),
+         paste0("evolDyn",runChoi,"_",nampar,Valpar,"_1.png")),
     width = 1920,height = 1080)
 
 
@@ -169,7 +169,7 @@ legend("topleft",legend = c(expression(alpha[s])),col=colGenesLin[1],lwd=2,
 # grey lines to show the generations shown in the upper and lower panels
 
 matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
-         y=matrix(rep(c(-2,3),4),nrow = 2),lty=1,col = "grey",lwd=2)
+         y=matrix(rep(c(-2,3),4),nrow = 2),lty=1,col = "grey",lwd=4)
 
 axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1))-1)],
      labels = axTicks(1)[2:(length(axTicks(1))-1)]/1000,cex.axis=cexAxis)
@@ -210,7 +210,7 @@ legend("topleft",legend = c(expression(beta[s])),cex=2,
 # grey lines to show the generations shown in the upper and lower panels
 
 matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
-         y=matrix(rep(c(-2,6),4),nrow = 2),lty=1,col = "grey",lwd=2)
+         y=matrix(rep(c(-2,6),4),nrow = 2),lty=1,col = "grey",lwd=4)
 
 axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1))-1)],
      labels = axTicks(1)[2:(length(axTicks(1))-1)]/1000,cex.axis=cexAxis)

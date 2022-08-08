@@ -68,32 +68,33 @@ knitr::include_graphics("../Images/houseSparrows.png")
 
 ### The handicap principle
 
-```{r,echo=FALSE,fig.align='center',out.height='35%',fig.show='hold'}
+```{r,echo=FALSE,fig.align='center',out.height='45%',fig.show='hold'}
 knitr::include_graphics("../Images/Amotz_Zahavi_profile.jpg")
 knitr::include_graphics("../Images/sexualSelection.jpg")
 knitr::include_graphics("../Images/Grafen.jpg")
 ```
 
-```{r,echo=FALSE,fig.align='center',out.height='35%'}
+<!-- # ```{r,echo=FALSE,fig.align='center',out.height='35%'} -->
+<!-- #  -->
+<!-- # badQualRang<-seq(0,1,length=1000) -->
+<!-- # alpha<-0 -->
+<!-- # beta<-6 -->
+<!-- # costFunc<-function(beta,alpha,x) {d<-1/(1+exp(-alpha-beta*x))} -->
+<!-- # par(plt=posPlot()) -->
+<!-- # betRang<-c(5) -->
+<!-- # matplot(y=sapply(betRang,FUN = costFunc,alpha=alpha,x=badQualRang),x=badQualRang, -->
+<!-- #         type="l",cex.lab=1.5, cex.axis=2,lwd=3,lty=1,las=1, -->
+<!-- #      col=c(2,3),ylim=c(0.5,1.1),xaxt="s",yaxt="s",ylab="",xlab="") #,col=i -->
+<!-- # # lines(badgeFunc(qualRange,3,-60,1.05)~qualRange,cex.lab=1.5,cex.axis=2,lwd=3, -->
+<!-- # #       col="blue") -->
+<!-- # # legend("bottomright",legend = betRang,title = expression(beta),col=1:3, -->
+<!-- #        # lty=1) -->
+<!-- # mtext(side=1,text="Quality",line=3.5,cex=3) -->
+<!-- # mtext(side=2,text="Survival",line=3.5,cex=3) -->
+<!-- #  -->
+<!-- # ``` -->
 
-badQualRang<-seq(0,1,length=1000)
-alpha<-0
-beta<-6
-costFunc<-function(beta,alpha,x) {d<-1/(1+exp(-alpha-beta*x))}
-par(plt=posPlot())
-betRang<-c(5)
-matplot(y=sapply(betRang,FUN = costFunc,alpha=alpha,x=badQualRang),x=badQualRang,
-        type="l",cex.lab=1.5, cex.axis=2,lwd=3,lty=1,las=1,
-     col=c(2,3),ylim=c(0.5,1.1),xaxt="s",yaxt="s",ylab="",xlab="") #,col=i
-# lines(badgeFunc(qualRange,3,-60,1.05)~qualRange,cex.lab=1.5,cex.axis=2,lwd=3,
-#       col="blue")
-# legend("bottomright",legend = betRang,title = expression(beta),col=1:3,
-       # lty=1)
-mtext(side=1,text="Quality",line=3.5,cex=3)
-mtext(side=2,text="Survival",line=3.5,cex=3)
-
-```
-\vspace{-0.3cm}
+\vspace{0.6cm}
 [@zahavi_Mate_1975;@grafen_Biological_1990]
 
 
@@ -138,15 +139,15 @@ knitr::include_graphics("../Images/learn_cartoon_1.png")
 ```
 
 
-## What about learning?
+<!-- ## What about learning? -->
 
-```{r,echo=FALSE,fig.align='center',out.height='40%'}
-knitr::include_graphics("../Images//pavlov.jpg")
-```
+<!-- ```{r,echo=FALSE,fig.align='center',out.height='40%'} -->
+<!-- knitr::include_graphics("../Images//pavlov.jpg") -->
+<!-- ``` -->
 
-```{r,echo=FALSE,fig.align='center',out.height='35%'}
-knitr::include_graphics("../Images/learn_cartoon_2.png")
-```
+<!-- ```{r,echo=FALSE,fig.align='center',out.height='35%'} -->
+<!-- knitr::include_graphics("../Images/learn_cartoon_2.png") -->
+<!-- ``` -->
 
 
 
@@ -162,16 +163,16 @@ knitr::include_graphics("../Images/learn_cartoon_3.png")
 
 
 
-## What about learning?
+<!-- ## What about learning? -->
 
-```{r,echo=FALSE,fig.align='center',out.height='40%'}
-knitr::include_graphics("../Images//pavlov.jpg")
-```
+<!-- ```{r,echo=FALSE,fig.align='center',out.height='40%'} -->
+<!-- knitr::include_graphics("../Images//pavlov.jpg") -->
+<!-- ``` -->
 
 
-```{r,echo=FALSE,fig.align='center',out.height='35%'}
-knitr::include_graphics("../Images/learn_cartoon_5.png")
-```
+<!-- ```{r,echo=FALSE,fig.align='center',out.height='35%'} -->
+<!-- knitr::include_graphics("../Images/learn_cartoon_5.png") -->
+<!-- ``` -->
 
 
 
@@ -346,15 +347,61 @@ knitr::include_graphics("../Simulations/alphaAct_/alphaAct0.4learnDyn.png")
 
 # Results
 
+
 ## Learning mediates the evolution of badges of status (handicaps)
 
+\begin{columns}[T]
 
-<!-- \small -->
-<!-- One of the replicates of the previous slide, the badge as a handicap -->
-```{r, echo=FALSE,fig.align='center', out.width='90%'}
-# knitr::include_graphics("../Simulations/betCostEvol1_/evolDyn0_betCost5.png")
-knitr::include_graphics("../Simulations/betCostEvol2_/evolDyn18_betCost5.png")
-```
+
+\column{0.05\linewidth}
+
+\tiny
+\vspace{1cm}
+
+Receiver  
+
+\vspace{2cm}
+
+Evolutionary  \\
+Dynamics
+
+\vspace{2cm}
+
+Sender
+
+\column{0.95\linewidth}
+
+\includegraphics{../Simulations/betCostEvol2_/evolDyn18_betCost5_1.png}
+
+\end{columns}
+
+## Learning mediates the evolution of badges of status (handicaps)
+
+\begin{columns}[T]
+
+
+\column{0.05\linewidth}
+
+\tiny
+\vspace{1cm}
+
+Receiver  
+
+\vspace{2cm}
+
+Evolutionary  \\
+Dynamics
+
+\vspace{2cm}
+
+Sender
+
+\column{0.95\linewidth}
+
+\includegraphics{../Simulations/betCostEvol2_/evolDyn18_betCost5.png}
+
+\end{columns}
+
 
 <!-- ## Learning can mediate the evolution of Badges of Status -->
 <!-- ### Individual replicates: Badges -->
@@ -368,16 +415,35 @@ knitr::include_graphics("../Simulations/betCostEvol2_/evolDyn18_betCost5.png")
 <!-- ``` -->
 
 
-## Learning can mediate the evolution of Badges of Status
-### Individual replicates: no badges
-<!-- \small -->
-<!-- One of the replicates where the badge did not evolve -->
+<!-- ## Learning can mediate the evolution of Badges of Status -->
+<!-- ### Individual replicates: no badges -->
+<!-- <!-- \small --> 
+<!-- <!-- One of the replicates where the badge did not evolve --> 
+
+<!-- \begin{columns}[T] -->
 
 
+<!-- \column{0.05\linewidth} -->
 
-```{r, echo=FALSE,fig.align='center', out.width='90%'}
-knitr::include_graphics("../Simulations/betCostEvol2_/evolDyn19_betCost5.png")
-```
+<!-- \tiny -->
+<!-- \vspace{1cm} -->
+
+<!-- Receiver   -->
+
+<!-- \vspace{2cm} -->
+
+<!-- Evolutionary  \\ -->
+<!-- Dynamics -->
+
+<!-- \vspace{2cm} -->
+
+<!-- Sender -->
+
+<!-- \column{0.95\linewidth} -->
+
+<!-- \includegraphics{../Simulations/betCostEvol2_/evolDyn19_betCost5.png} -->
+
+<!-- \end{columns} -->
 
 <!-- ## Badges of Status: do they matter? -->
 <!-- ### Behavioural interactions -->
@@ -411,15 +477,31 @@ knitr::include_graphics("../Simulations/betCostEvol2_/evolDyn19_betCost5.png")
 
 ## The evolution of cheap badges of Status
 
-<!-- \small -->
-<!-- Here simulations where the signal has no cost. -->
 
-<!-- There seems to be some consistency in the three type of sender codes -->
+\begin{columns}[T]
 
-```{r, echo=FALSE,fig.align='center', out.width='90%'}
-knitr::include_graphics("../Simulations/nIntGroupNormQual_/evolDyn7_nIntGroup2000.png")
-```
 
+\column{0.05\linewidth}
+
+\tiny
+\vspace{1cm}
+
+Receiver  
+
+\vspace{2cm}
+
+Evolutionary  \\
+Dynamics
+
+\vspace{2cm}
+
+Sender
+
+\column{0.95\linewidth}
+
+\includegraphics{../Simulations/nIntGroupNormQual_/evolDyn7_nIntGroup2000.png}
+
+\end{columns}
 
 <!-- ## The evolution of cheap Badges of Status -->
 <!-- ### How often does it happen? -->
@@ -488,7 +570,7 @@ text(y = actor[1,]+0.1,x=rep(0.5,4),col=c("black","#E31A1C","dodgerblue2","green
 ### The peaceful, the aggressive and the clever
 
 ```{r,echo=FALSE,out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/indVarScatter0_.png")
+knitr::include_graphics("../Simulations/initAct_/indVarScatter01_.png")
 
 ```
 
@@ -497,18 +579,18 @@ knitr::include_graphics("../Simulations/initAct_/indVarScatter0_.png")
 ### The peaceful, the aggressive and the clever
 
 ```{r,out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/indVarScatter1_.png")
+knitr::include_graphics("../Simulations/initAct_/indVarScatter11_.png")
 
 ```
 
-## Why would you want to be recognized?
+<!-- ## Why would you want to be recognized? -->
 
-### The peaceful, the aggressive and the clever
+<!-- ### The peaceful, the aggressive and the clever -->
 
-```{r,out.width='90%',fig.show='hold'}
-knitr::include_graphics("../Simulations/initAct_/indVarScatter2_.png")
+<!-- ```{r,out.width='90%',fig.show='hold'} -->
+<!-- knitr::include_graphics("../Simulations/initAct_/indVarScatter2_.png") -->
 
-```
+<!-- ``` -->
 
 
 ## Take-home messages
