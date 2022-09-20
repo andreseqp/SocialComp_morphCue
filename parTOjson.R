@@ -14,11 +14,11 @@ here()
 
 traitsTrajs[,.SD,.SDcol=c(paste0(c("meanAlpha_"),runChoi),paste0(c("meanBeta_"),runChoi))]
 
-param<-list(totGen   = 10000,   nRep    = 1, seed = 10,
-            printGen = 1000,   printLearn = 1000,
-            printLearnInt = 500,
-            popSize  = 3000,  baselineFit = 2,   
-            MutSd    = 0.3,  nInt        = 1500,  init     = c(0,0,1,0),
+param<-list(totGen   = 100,   nRep    = 1, seed = 1,
+            printGen = 20,   printLearn = 20,
+            printLearnInt = 100,
+            popSize  = 500,  baselineFit = 2,   
+            MutSd    = 0.3,  nInt        = 500,  init     = c(0,0,1,0),
             mutRate  = 0.001,  mutType  = 0,
             sampleSize = 100,   strQual  = 10,
             errorQual = 0,    alphaBad	 = I(c(1.8)),    
@@ -28,19 +28,20 @@ param<-list(totGen   = 10000,   nRep    = 1, seed = 10,
             sigSq   	 = 0.01, nCenters = 6,
             initCrit = 0,      initAct=0,   gamma = 0,
             QualStDv   = 0.15, betCost = 0,
-            alphCost	 = 3, mutLearn = FALSE,
-            nIntGroup  = 2000, 
+            alphCost	 = 3, 
+            mutLearn = c(TRUE,TRUE),
+            nIntGroup  = 500, 
             payoff_matrix = c(1.5,1,0,0.5),
             shareCost = 0,
             namParam = "betCost",
             rangParam = I(c(5)),
             typeAgent = 2, #//0. hawk 1.dove 2. learner 3. evaluator
-            folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
-# folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for release
+            # folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
+folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for release
 
-apendScenar<-"Evol6"
-param$folderL<-paste0(param$folderL,
-       param$namParam,apendScenar,"_/")
+apendScenar<-"test"
+# param$folderL<-paste0(param$folderL,
+#        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
 # 
 # partition<-"long"#"short"#
@@ -57,6 +58,7 @@ param$folder<-paste0("/home/ubuntu/BadgeStatus/",
                      param$namParam,apendScenar,"_/")
 ## For the local pc
 # param$folder<-paste0("e:/BadgeSims/",param$namParam,apendScenar,"_/")
+param$folder<-param$folderL
 # read and edit json 
 # oldJson<-fromJSON(here("Simulations","strQualEvol_",fileName))
 # diffJsons(oldJson,param)
@@ -85,11 +87,11 @@ check_create.dir(here("Simulations"),param = paste0(param$namParam,apendScenar),
 
 rangparam<-param$rangParam
 
-nReps<-15
+nReps<-5
 
 for (i in 0:(nReps-1)) {
-  param$folderL<-paste0(here("Simulations",param$namParam),apendScenar,"_/") # comment for debug
-  # param$folder<-param$folderL # for debug
+  # param$folderL<-paste0(here("Simulations",param$namParam),apendScenar,"_/") # comment for debug
+  param$folder<-param$folderL # for debug
   # param$rangParam<-c(rangparam[i])
   param$seed<-i
   outParam<-toJSON(param,auto_unbox = TRUE,pretty = TRUE)
