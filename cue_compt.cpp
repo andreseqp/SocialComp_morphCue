@@ -277,32 +277,32 @@ individual::individual(strategy genotype_ = hawk, double QualStDv = 0.1,
 }
 
 individual::individual(individual& mother, json param) {
-	genotype = mutateStr(mother.genotype, double(param["mutRate"]),
+	genotype = mutateStr(mother.genotype, (double)(param["mutRate"]),
 		int(param["mutType"]));
 	nCenters = mother.nCenters;
-	alphaBadge = mutateDoub(mother.alphaBadge, double(param["mutRate"]), 
-		double(param["MutSd"]));
-	betaBadge = mutateDoub(mother.betaBadge, double(param["mutRate"]),
-		double(param["MutSd"]));
+	alphaBadge = mutateDoub(mother.alphaBadge, (double)(param["mutRate"]),
+		(double)(param["MutSd"]));
+	betaBadge = mutateDoub(mother.betaBadge, (double)(param["mutRate"]),
+		(double)(param["MutSd"]));
 	if (genotype == evaluator) {
-		alphaAttack = mutateDoub(mother.alphaAttack, double(param["mutRate"]),
-			double(param["MutSd"]));
-		betaAttack = mutateDoub(mother.betaAttack, double(param["mutRate"]),
-			double(param["MutSd"]));
-		gammaAttack = mutateDoub(mother.gammaAttack, double(param["mutRate"]),
-			double(param["MutSd"]));
+		alphaAttack = mutateDoub(mother.alphaAttack, (double)(param["mutRate"]),
+			(double)(param["MutSd"]));
+		betaAttack = mutateDoub(mother.betaAttack, (double)(param["mutRate"]),
+			(double)(param["MutSd"]));
+		gammaAttack = mutateDoub(mother.gammaAttack, (double)(param["mutRate"]),
+			(double)(param["MutSd"]));
 	}
 	else if (genotype == learner) {
-		alphaAct = !param["mutLearn"][0]*mother.alphaAct+
-			param["mutLearn"][0] * mutateDoub(mother.alphaAct,
-				double(param["mutRate"]),
-				double(param["MutSd"]));
+		alphaAct = !(bool)(param["mutLearn"][0])*mother.alphaAct+
+			(bool)(param["mutLearn"][0]) * mutateDoub(mother.alphaAct,
+				(double)(param["mutRate"]),
+				(double)(param["MutSd"]));
 		alphaCrit = alphaAct;
-		initAct = !param["mutLearn"][1] * mother.initAct +
-			param["mutLearn"][0] * mutateDoub(mother.initAct,
-				double(param["mutRate"]),double(param["MutSd"]));
-			mutateDoub(mother.initAct, double(param["mutRate"]),
-				double(param["MutSd"]));
+		initAct = !bool(param["mutLearn"][1]) * mother.initAct +
+			bool(param["mutLearn"][1]) * mutateDoub(mother.initAct,
+				(double)(param["mutRate"]),(double)(param["MutSd"]));
+			mutateDoub(mother.initAct, (double)(param["mutRate"]),
+				(double)(param["MutSd"]));
 		gamma = mother.gamma;
 		sigmaSq = mother.sigmaSq;
 		double interv = 1 / (static_cast<double>(nCenters) - 1);
@@ -313,7 +313,7 @@ individual::individual(individual& mother, json param) {
 			responses.emplace_back(0);
 		}
 	}
-	set_Badge(double(param["QualStDv"]),double(param["errorQual"])); 
+	set_Badge((double)(param["QualStDv"]),(double)(param["errorQual"])); 
 	curr_payoff = 0, cum_payoff = 0, ninterac = 0, valueT = 0, 
 	preferenceT=0;
 }
@@ -474,7 +474,7 @@ void Reprod(vector<individual> &popT, json param) {
 	
 	for (vector<individual>::iterator itpop = popT.begin(); 
 		itpop < popT.end(); ++itpop) {
-		payoff_dist[itpop-popT.begin()] = param["baselineFit"] +
+		payoff_dist[itpop-popT.begin()] = double(param["baselineFit"]) +
 			itpop->cum_payoff/itpop->ninterac;
 	}
 	vector<individual>::iterator itpopTplus1 = popTplus1.begin();
