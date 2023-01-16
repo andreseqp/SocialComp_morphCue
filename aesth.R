@@ -23,9 +23,8 @@ colGenesLin<-c(rgb(241/255,163/255,64/255),
                rgb(153/255,142/255,195/255),
                rgb(127/255,191/255,123/255))
 
-paletteMeans <- colorRampPalette(c('#d73027','#fc8d59','#fee090',
-                                   '#e0f3f8','#91bfdb','#4575b4')[6:1],
-                                 alpha=TRUE)
+paletteMeans <- colorRampPalette(c('#d73027','#fc8d59','#fdcb44',
+                                   '#a2dbea','#91bfdb','#4559b4')[6:1])
 colboxes<- c('#31a354','#d7191c','#fdae61','#2b83ba',"black")
 
 colRuns<-c('#e41a1c','#377eb8','#4daf4a', '#984ea3','#ff7f00')

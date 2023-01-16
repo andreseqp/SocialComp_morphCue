@@ -5,3 +5,5 @@ jsonlite
 rmarkdown
 data.table
 lattice
+NbClust
+dplyr
