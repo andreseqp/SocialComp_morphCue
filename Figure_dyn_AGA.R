@@ -373,7 +373,7 @@ dev.off()
   
 ## Effect of the alternative equilibria in behavioural interactions ----------
 
-indVarScatter
+#indVarScatter
 evolFinal<-evol[time>max(time)*0.8]
 
 names(evolFinal)

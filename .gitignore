@@ -25,3 +25,5 @@ QD_presentation_files/
 *.toc
 Debug/
 .Rproj.user
+*.rdb
+*.rdx

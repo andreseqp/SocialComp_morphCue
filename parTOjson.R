@@ -15,7 +15,7 @@ here()
 # traitsTrajs[,.SD,.SDcol=c(paste0(c("meanAlpha_"),runChoi),paste0(c("meanBeta_"),runChoi))]
 
 param<-list(totGen   = 20000,   nRep    = 1, seed = 0,
-            printGen = 1000,   printLearn = 1000,
+            printGen = 500,   printLearn = 500,
             printLearnInt = 500,
             popSize  = 3000,  baselineFit = 2,   
             MutSd    = 0.3,  nInt        = 500,  init     = c(0,0,1,0),
@@ -33,13 +33,13 @@ param<-list(totGen   = 20000,   nRep    = 1, seed = 0,
             nIntGroup  = 3000, 
             payoff_matrix = c(1.5,1,0,0.5),
             shareCost = 0,
-            namParam = "betCost",
-            rangParam = I(c(0)),
+            namParam = "initAct",
+            rangParam = I(c(-2)),
             typeAgent = 2, #//0. hawk 1.dove 2. learner 3. evaluator
             folderL=paste(here("Simulations"),"/",sep="")) # comment for debug
 # folderL=paste(here("Simulations","test_"),"/",sep="")) # comment for release
 
-apendScenar<-"alphaL2"
+apendScenar<-"5"
 param$folderL<-paste0(param$folderL,
        param$namParam,apendScenar,"_/")
 # runTime<-"360:00:00"# "10:00:00"# 
@@ -87,7 +87,7 @@ check_create.dir(here("Simulations"),param = paste0(param$namParam,apendScenar),
 
 rangparam<-param$rangParam
 
-nReps<-15
+nReps<-10
 
 for (i in 0:(nReps-1)) {
   param$folderL<-paste0(here("Simulations",param$namParam),apendScenar,"_/") # comment for debug

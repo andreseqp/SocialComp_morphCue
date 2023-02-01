@@ -13,7 +13,7 @@ library(dplyr)
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCostalphaL2"
+scenario<-"initAct5"
 
 # extSimsDir<-here("Simulations",paste0(scenario,"_"))
   # paste0("e:/BadgeSims/",scenario,"_")
@@ -49,7 +49,7 @@ val<-1
 
 
 # loop to produce pdfs for parameter values
-numCores <- length(param$rangParam)
+numCores <- length(paramRang)
 registerDoParallel(numCores)
 
 foreach(val = 1:length(paramRang),
