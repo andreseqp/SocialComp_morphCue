@@ -6,18 +6,20 @@
 
 library(here)
 here()
+library(dplyr)
 source(here("AccFunc.R"))
 
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"QualStDvEvol"
+scenario<-"betCostalphaL2"
 
 
 # Load files -------------------------------------------------------------------
 
 (listTest<-list.files(here("Simulations",paste0(scenario,"_"))))
-(sdList<-grep("evol",listTest,value=TRUE))
+(sdList<-grep("evol",listTest,value=TRUE)%>%
+    grep(pattern = ".txt",value = TRUE))
 
 evol<-fread(here("Simulations",paste0(scenario,"_"),sdList[1]))
 
