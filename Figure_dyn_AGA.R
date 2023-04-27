@@ -12,7 +12,7 @@ require("jsonlite")
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"betCostEvol2"#"alphaAct"#"nIntGroupNormQual"#
+scenario<-"betCostEvol5"#"alphaAct"#"nIntGroupNormQual"#
 
 # extSimsDir<-#here("Simulations",paste0(scenario,"_"))
 #   paste0("M:/BadgeSims/",scenario,"_")
@@ -33,7 +33,7 @@ param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[2]))
   # fromJSON(paramName[1])
 
 
-val<-2
+val<-1
 fileId<-val
 
 
@@ -76,7 +76,7 @@ cexAxis<-2.2
   
 runChoi<-18
 # Choose which interaction to visualize
-lastInt<-tail(pop[,unique(nInteract)],4)[1]
+lastInt<-tail(pop[,unique(nInteract)],1)[1]
 # pop[,max(nInteract),by=.(seed,time)][,min(V1)]
 # to get last interaction: tail(pop[,unique(nInteract)],1)
   

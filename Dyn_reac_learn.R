@@ -13,7 +13,7 @@ library(dplyr)
 
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
-scenario<-"initAct5"
+scenario<-"betCostalphaL"
 
 # extSimsDir<-here("Simulations",paste0(scenario,"_"))
   # paste0("e:/BadgeSims/",scenario,"_")
@@ -83,34 +83,34 @@ source(here("AccFunc.R"))
   # }))
   
   
-evol<-do.call(rbind,lapply(evolList_runs,fread))
-pop<-do.call(rbind,lapply(indList_runs, fread))
+  evol<-do.call(rbind,lapply(evolList_runs,fread))
+  pop<-do.call(rbind,lapply(indList_runs, fread))
 
-# temp fix to lack of name to the weights
+  # temp fix to lack of name to the weights
+  
+  # if(nCenters==8){
+  # names(evol)[35:38]<-c("WeightAct_6","WeightCrit_6","WeightAct_7",
+  #                       "WeightCrit_7")
+  # 
+  # names(pop)[29:32]<-c("WeightAct_6","WeightCrit_6","WeightAct_7",
+  #                       "WeightCrit_7")
+  # }
 
-# if(nCenters==8){
-# names(evol)[35:38]<-c("WeightAct_6","WeightCrit_6","WeightAct_7",
-#                       "WeightCrit_7")
-# 
-# names(pop)[29:32]<-c("WeightAct_6","WeightCrit_6","WeightAct_7",
-#                       "WeightCrit_7")
-# }
+  param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
 
-param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
+  Valpar<-paramRang[val]
 
-Valpar<-paramRang[val]
+  nampar<-param$namParam
 
-nampar<-param$namParam
-
-if(nampar=="nCenters") {nCenters<-Valpar} else nCenters<-param$nCenters
-
-sigSquar<-param$sigSq
+  if(nampar=="nCenters") {nCenters<-Valpar} else nCenters<-param$nCenters
+  
+  sigSquar<-param$sigSq
 
 
-# names(pop)[29:35]<-c("Quality", "genotype","alpha","beta","Badge","initCrit","initAct")
-# names(pop)[9:28]<-do.call(rbind,as.list(sapply(0:9,FUN = function(x){
-#     return(rbind(paste0("WeightAct_",x),paste0("WeightCrit_",x)))
-#     })))
+  # names(pop)[29:35]<-c("Quality", "genotype","alpha","beta","Badge","initCrit","initAct")
+  # names(pop)[9:28]<-do.call(rbind,as.list(sapply(0:9,FUN = function(x){
+  #     return(rbind(paste0("WeightAct_",x),paste0("WeightCrit_",x)))
+  #     })))
 
 # Get stats from the evolutionary simulations ----------------------------------
 names(evol)
@@ -179,34 +179,37 @@ axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 
 # Evolutionary Dynamics of learning parameters
 
+var2plot<-"AlphaLearn"
+
 par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 2,
                 lowboundx = 8,upboundx = 93),xaxt="s",las=1,new=TRUE)
 plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
      # ylim=fivenum(as.matrix(evol[,meanInitCrit,meanInitAct]))[c(1,5)],yaxt="n",
-     ylim=fivenum(as.matrix(evol[,.(meanAlphaLearn,meanInitAct)]))[c(1,5)],yaxt="n",
+     ylim=range(evol[,get(paste0("mean",var2plot))]),yaxt="n",
      xlab="",ylab="",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
 # polygon(x=c(evolStats$time,rev(evolStats$time)),
 #         y=c(evolStats$meanFit.upIQR,rev(evolStats$meanFit.lowIQR)),
 #         col=colGenesPol[1],border = NA)
 polygon(x=c(evolStats$time,rev(evolStats$time)),
         # y=c(evolStats$InAct.upIQR,rev(evolStats$InAct.lowIQR)),
-        y=c(evolStats$meanAlphaLearn.upIQR,rev(evolStats$meanAlphaLearn.lowIQR)),
+        y=c(evolStats[,get(paste0("mean",var2plot,".upIQR"))],
+            rev(evolStats[,get(paste0("mean",var2plot,".lowIQR"))])),
         col=colGenesPol[1],border = NA)
 with(evolStats,{
   # lines(time,meanFit.mean,col=colGenesLin[1],lwd=3)
   # lines(time,meanInAct.mean,col=colGenesLin[2],lwd=3)
-  lines(time,meanAlphaLearn.mean,col=colGenesLin[1],lwd=3)
+  lines(time,get(paste0("mean",var2plot,".mean")),col=colGenesLin[1],lwd=3)
 })
-polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$meanInitAct.upIQR,rev(evolStats$meanInitAct.lowIQR)),
-        col=colGenesPol[2],border = NA)
-with(evolStats,{
-  # lines(time,meanFit.mean,col=colGenesLin[1],lwd=3)
-  lines(time,meanInitAct.mean,col=colGenesLin[2],lwd=3)
-})
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$meanInitAct.upIQR,rev(evolStats$meanInitAct.lowIQR)),
+#         col=colGenesPol[2],border = NA)
+# with(evolStats,{
+#   # lines(time,meanFit.mean,col=colGenesLin[1],lwd=3)
+#   lines(time,meanInitAct.mean,col=colGenesLin[2],lwd=3)
+# })
 legend("topleft",
        # legend = c("mean Fit"),
-       legend = c("alpha learn","initAct"),
+       legend = c("alpha learn"),
        col=colGenesLin,lwd=2,bty = "n",ncol = 2,cex=0.8)
 axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
 axis(4,cex=0.8,hadj = 2.5)
@@ -237,36 +240,70 @@ axis(4,cex=0.8,hadj = 2.5)
 # 
 # }
 
-# Dynamics of behavioural interactions 
-par(plt=posPlot(numploty = 3,idploty = 2,numplotx = numPlotsDyn, 
-                idplotx = numPlotsDyn,
-                lowboundx = 8,upboundx = 93),
-    xaxt="s",las=1,new=TRUE)
-plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col=0,
-     ylim=range(evol$freqHH)+c(-0.1,0.05),xlab="",ylab="",yaxt="n",
-     cex.lab=1.5,cex.axis=1,xaxt='n',las=1)
-axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
-axis(4,cex=0.8,padj = -0.5)
+## Last horizontal panel in the middle row
 
-# Variation among replicates
+var2plot<-"InitAct"
+
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 3,idplotx = 3,
+                lowboundx = 8,upboundx = 93),xaxt="s",las=1,new=TRUE)
+
+plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col="grey",
+     # ylim=fivenum(as.matrix(evol[,meanInitCrit,meanInitAct]))[c(1,5)],yaxt="n",
+     ylim=range(evol[,get(paste0("mean",var2plot))]),yaxt="n",
+     xlab="",ylab="",cex.lab=1.2,cex.axis=1,xaxt='n',las=1)
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$meanFit.upIQR,rev(evolStats$meanFit.lowIQR)),
+#         col=colGenesPol[1],border = NA)
 polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$freqHH.upIQR,rev(evolStats$freqHH.lowIQR)),
-        col=colIntTypesPol[1],border = NA)
-polygon(x=c(evolStats$time,rev(evolStats$time)),
-        y=c(evolStats$freqDD.upIQR,rev(evolStats$freqDD.lowIQR)),
-        col=colIntTypesPol[2],border = NA)
+        # y=c(evolStats$InAct.upIQR,rev(evolStats$InAct.lowIQR)),
+        y=c(evolStats[,get(paste0("mean",var2plot,".upIQR"))],
+            rev(evolStats[,get(paste0("mean",var2plot,".lowIQR"))])),
+        col=colGenesPol[1],border = NA)
 with(evolStats,{
-  lines(time,freqHH.mean,col=colIntTypesLin[1],lwd=3)
-  lines(time,freqDD.mean,col=colIntTypesLin[2],lwd=3)
-  lines(time,freqHD.mean,col=colIntTypesLin[3],lwd=3)
-  lines(x=c(0,max(time)),y=c(0.6666,0.6666)^2,col=colIntTypesLin[1],lwd=2,lty=2)
-  lines(x=c(0,max(time)),y=c(0.3333,0.3333)^2,col=colIntTypesLin[2],lwd=2,lty=2)
-  lines(x=c(0,max(time)),y=c(0.6666*0.33333,0.6666*0.33333)*2+0.01,
-        col=colIntTypesLin[3],lwd=2,lty=2)
+  # lines(time,meanFit.mean,col=colGenesLin[1],lwd=3)
+  # lines(time,meanInAct.mean,col=colGenesLin[2],lwd=3)
+  lines(time,get(paste0("mean",var2plot,".mean")),col=colGenesLin[1],lwd=3)
 })
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$meanInitAct.upIQR,rev(evolStats$meanInitAct.lowIQR)),
+#         col=colGenesPol[2],border = NA)
+# with(evolStats,{
+#   # lines(time,meanFit.mean,col=colGenesLin[1],lwd=3)
+#   lines(time,meanInitAct.mean,col=colGenesLin[2],lwd=3)
+# })
+legend("topleft",
+       # legend = c("mean Fit"),
+       legend = c(var2plot),
+       col=colGenesLin,lwd=2,bty = "n",ncol = 2,cex=0.8)
+axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
+axis(4,cex=0.8)
 
-legend("topleft",legend = c("HH","DD","HD"),ncol = 3,
-       col=colIntTypesLin,lwd=2,bty = "n",cex=0.8)
+# Dynamics of behavioural interactions 
+# plot(x=c(0,max(evolStats$time)),y=c(0,0),type="l",lwd=2,col=0,
+#      ylim=range(evol$freqHH)+c(-0.1,0.05),xlab="",ylab="",yaxt="n",
+#      cex.lab=1.5,cex.axis=1,xaxt='n',las=1)
+# axis(side=1,padj = -3.5,cex=0.8,at=axTicks(1),labels = axTicks(1)/100)
+# axis(4,cex=0.8,padj = -0.5)
+# 
+# # Variation among replicates
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$freqHH.upIQR,rev(evolStats$freqHH.lowIQR)),
+#         col=colIntTypesPol[1],border = NA)
+# polygon(x=c(evolStats$time,rev(evolStats$time)),
+#         y=c(evolStats$freqDD.upIQR,rev(evolStats$freqDD.lowIQR)),
+#         col=colIntTypesPol[2],border = NA)
+# with(evolStats,{
+#   lines(time,freqHH.mean,col=colIntTypesLin[1],lwd=3)
+#   lines(time,freqDD.mean,col=colIntTypesLin[2],lwd=3)
+#   lines(time,freqHD.mean,col=colIntTypesLin[3],lwd=3)
+#   lines(x=c(0,max(time)),y=c(0.6666,0.6666)^2,col=colIntTypesLin[1],lwd=2,lty=2)
+#   lines(x=c(0,max(time)),y=c(0.3333,0.3333)^2,col=colIntTypesLin[2],lwd=2,lty=2)
+#   lines(x=c(0,max(time)),y=c(0.6666*0.33333,0.6666*0.33333)*2+0.01,
+#         col=colIntTypesLin[3],lwd=2,lty=2)
+# })
+# 
+# legend("topleft",legend = c("HH","DD","HD"),ncol = 3,
+#        col=colIntTypesLin,lwd=2,bty = "n",cex=0.8)
 
 # Dynamics of behavioural types
 # par(plt=posPlot(numploty = 3,idploty = 3),xaxt="s",las=1,new=TRUE)
@@ -373,7 +410,7 @@ traitsTrajs<-dcast(evol,time~seed,
 
 
 for(runChoi in finReps){
- # runChoi<-2
+ runChoi<-1
  
 print(runChoi)
 # Average trajectory

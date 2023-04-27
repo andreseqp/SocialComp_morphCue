@@ -1,6 +1,6 @@
 ---
 title: |
-  | The role of learning in status signalling: a modeling approach
+  The role of learning in status signalling: a modeling approach
 author:
 - Andrés E. Quiñones^[Laboratorio de Biología Evolutiva de Vertebrados, Departamento
   de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia]
@@ -8,23 +8,30 @@ author:
 - Redouan Bshary^[Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland]
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
-  word_document: default
-  # pdf_document:
-  #   latex_engine: xelatex
+  pdf_document:
+    latex_engine: xelatex # default  # word_document: default
 fig_caption: yes
 fontsize: 12pt
-header-includes: "```{=latex}\n  \\usepackage{float}\n  \\usepackage{unicode-math}\n
-  \ \\usepackage{setspace}\\doublespacing\n  \\usepackage[backref=page]{hyperref}\n
-  \ \\linespread{2}\n  \\usepackage{lineno}\n  \\linenumbers\n  \\floatplacement{figure}{H}\n
-  \ \\newcommand{\\beginsupplement}{ \\setcounter{table}{0}         \\renewcommand{\\thetable}{S\\arabic{table}}\\setcounter{figure}{0}
-  \\renewcommand{\\thefigure}{S\\arabic{figure}}}\n```\n"
+header-includes: |
+  ```{=latex}
+    \usepackage{float}
+    \usepackage{unicode-math}
+    \usepackage{setspace}\doublespacing
+    \usepackage[backref=page]{hyperref}
+    \linespread{2}
+    \usepackage{lineno}
+    \linenumbers
+    \floatplacement{figure}{H}
+    \newcommand{\beginsupplement}{ \setcounter{table}{0}         \renewcommand{\thetable}{S\arabic{table}}\setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+  ```
 keep_tex: yes
 keywords: My keywords
 linespread: 2
 bibliography: ../SocialMorphCue.bib
 spacing: double
 style: C:\Users\andre\Zotero\styles\elife.csl
-abstract: "Adaptive behavioural responses often depend on qualities of the interacting
+abstract: |
+  Adaptive behavioural responses often depend on qualities of the interacting
   partner of an individual. For example, when competing for resources, an individual
   might be better off escalating fights with individuals of lower quality, while restraining
   from fighting individuals of higher quality. Communication systems involving signals
@@ -40,7 +47,7 @@ abstract: "Adaptive behavioural responses often depend on qualities of the inter
   quality of the sender populations are only composed of honest signalers. When the
   cost is not proportional to the quality of the signaler, the population is composed
   of both honest and dishonest signalers. We argue that learning can be a general
-  cognitive mechanism playing a role in a wide range of communication systems.  \n"
+  cognitive mechanism playing a role in a wide range of communication systems."
 ---
 
 ```{r setup, include=FALSE}
@@ -247,9 +254,7 @@ Following the classic *hawk-dove* game [@maynard-smith_Evolution_1982],
 if the focal individual fights and its partner does not, the focal gets 
 as pay-off the resource of value $V$ while its partner gets nothing; 
 if both individuals restrain  from fighting, then they split up the resource 
-in half; if both decide to fight they split up the cost of fighting and 
-the winner takes over the resource. We further assume that the 
-probability of wining a fight for the focal individual depends on the 
+in half. If both individuals decide to fight, the winner takes over the resource and the cost of fighting is split among the two players. We further assume that the probability of wining a fight for the focal individual depends on the 
 difference in quality between it and its interacting partner; specifically 
 it is given by $p_{ij}=1/(1+e^{-k_3(Q_i-Q_j)})$, where $k_3$ is a 
 parameter defining how strong the quality difference determines the 
@@ -505,6 +510,8 @@ text(x = -0.1,y = -0.25,labels = "Badge size")
 
 
 ## Results
+
+### Learning under a monomorphic population
 
 We first present the outcome of simulations where we prevent the 
 evolution of the badge size (by setting the mutation rate to $0$), 
@@ -793,6 +800,8 @@ rm(list=grep("temp",ls(),value = T))
 ```
 
 
+### Badges as Handicaps
+
 When we allow the badge size to evolve ($\alpha$ and $\beta$ 
 change subject to natural selection and genetic drift), and the signal
 works as a handicap (i.e. the cost of the badge is inversely 
@@ -833,6 +842,8 @@ Instead, subject to genetic drift, the
 population either evolves towards the disappearance of the badge, or to the 
 maximum badge size. In either of this cases reaction norms are flat, so the 
 badge does not provide any information about quality. 
+
+### The evolution of polymorphism mediated by learning
 
 The amount of information that agents are able to collect through learning 
 throughout their life time can strongly change the outcome of 
@@ -1125,6 +1136,7 @@ for(genC in genstoPrint){
 
 rm(list=grep("temp",ls(),value = T))
 
+
 ```
 A limited number of interactions on the amount of variation has an effect on 
 the evolving parameters when the signal follows the handicap
@@ -1400,8 +1412,9 @@ for(genC in genstoPrint){
   }
 
 rm(list=grep("temp",ls(),value = T))
-
 ```
+
+### The peaceful, the clever and the aggressive
 
 The behaviour expressed by naive individuals (those who have not learned) 
 imposes negative-frequency dependent selection, allowing for the build up of
@@ -1585,15 +1598,17 @@ for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
   axis(2,at =c(0,1),tick = TRUE,cex.axis=.7,hadj=-0.2)
 }
 
-
 ```
 
 ## Discussion
 
-We have presented here an evolutionary model where the response of a signal in a 
+Here we presented a model that integrates the basic mechanisms of 
+learning with the fundamental rules of evolutionary processes. 
+In the model the response of a signal in a 
 communication system is mediated by learning processes. Individuals 
 throughout their life learn the best way to respond to a quantitative 
-trait of their interactive partners. The learning process can mediate the evolution 
+trait of their interactive partners. 
+The learning process can mediate the evolution 
 of an honest signal under the handicap 
 principle [@grafen_Biological_1990;@zahavi_Mate_1975]. This conclusion is not 
 different from the classical genetic models, where responses to the signal are
@@ -1979,6 +1994,318 @@ for(genC in genstoPrint){
 
 rm(list=grep("temp",ls(),value = T))
 
+```
+
+```{r learnEvol,echo=FALSE,out.width='100%',fig.height=6,fig.align='center',fig.show='hold',fig.cap= "The evolution of costly signals. Portrait of the evolutionary dynamics of the sender code with snapsots of both sender and receiver codes just as in fig. \\ref{fig:handicap}. The middle panels show changes in the distribution of values for $\\alpha$ and $\\beta$ along evolutionary time. Panels above and below correspond to snapshots of the sender and receiver codes, respectively, generation time of the snapshots are indicated by the grey lines in the middle panels. Similarly to the evolutionary dynamics in Fig. \\ref{fig:handicap}, first the badge size evolves towards its minimum value. Then, the slope evolves positive values determining an increasing reaction norm. In contrast to \\ref{fig:handicap}, the normal distribution splits up into two modes. This translates into two types of reaction norms assorting in the population where both code for a positive relation between quality and badge size."}
+
+# knitr::include_graphics(here("Simulations","nIntGroupNormQual_","evolDyn7_nIntGroup2000.png"))
+
+scenario<-"betCostalphaL"#"alphaAct"#"nIntGroupNormQual"#
+runChoi<-13
+
+
+# Load files -------------------------------------------------------------------
+# Project folder
+listTest<-list.files(here("Simulations",paste0(scenario,"_")),full.names = TRUE)
+evolList<-grep("evolLearn",listTest,value=TRUE)
+indList<-grep("indLearn",listTest,value=TRUE)
+paramName<-list.files(here("Simulations",paste0(scenario,"_")))
+# paramName<-list.files(extSimsDir,full.names = TRUE)
+paramName<-grep(".json",paramName,value=TRUE) %>% grep(pattern = "*0_*",value = TRUE)
+
+param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[1]))
+  # fromJSON(paramName[1])
+
+val<-1
+fileId<-val
+
+evolList_runs<-grep(paste0(param$namParam,param$rangParam),
+                    evolList,value =TRUE)
+indList_runs<-grep(paste0(param$namParam,param$rangParam),
+                   indList,value =TRUE)
+
+
+evol<-do.call(rbind,lapply(evolList_runs,fread))
+pop<-do.call(rbind,lapply(indList_runs, fread))
+  
+Valpar<-param$rangParam
+  
+nampar<-param$namParam
+  
+nCenters<-param$nCenters
+sigSquar<-param$sigSq
+  
+# Aesthetic paremeters ---------------------------------------------------------
+
+## Calculate clustering for all generations  -------------------
+  
+### Choose which interaction to visualize
+# lastInt<-tail(pop[,unique(nInteract)],4)[2]
+# # pop[,max(nInteract),by=.(seed,time)][,min(V1)]
+# # to get last interaction: tail(pop[,unique(nInteract)],1)
+# 
+# popOneInd<-pop[nInteract==lastInt]
+# vars<-c("alpha","beta","Badge")
+# # ,"Badge",grep("WeightAct",names(popFinal),value = TRUE))
+# popOneInd$idClust<-get_clusters(popOneInd,vars,k.max = 10,
+#                                 Bsamples =500,iterMax = 500)
+# clusSummary<-popOneInd[,.(meanAlph=mean(alpha),meanBet=mean(beta)),
+#                        by=.(idClust,time,seed)]
+# clusSummary[,orderClus:=0]
+# invisible(capture.output(
+#   for(i in 1:dim(clusSummary)[1]){
+#   set(clusSummary,i,6L,match(clusSummary[i,meanAlph],
+#         sort(clusSummary[time==clusSummary[i,time]&
+#                            seed==clusSummary[i,seed]]$meanAlph)))
+# }
+# ))
+# 
+# 
+# popOneInd<-merge(popOneInd,clusSummary,all = TRUE)
+# 
+# 
+# fwrite(popOneInd,file = here("Simulations",paste0(scenario,"_"),
+#                              paste0("popOneInd",nampar,Valpar,".txt")))
+# 
+popOneInd<-fread(here("Simulations",paste0(scenario,"_"),
+                             paste0("popOneInd",nampar,Valpar,".txt")))
+
+# Get stats from the evolutionary simulations ----------------------------------
+# names(evol)
+
+cols<-c("freqGenHawks","freqGenDove",  "freqGenEval",  #"freqGenLearn",
+        "freqFenHawks", "freqFenDoves", "freqHH", "freqHD", "freqDD", "meanCue",
+        "meanAlpha", "meanBeta",
+        #"meanFit", #"meanInitCrit", "sdInitCrit", 
+        "meanInitAct", "sdInitAct", "meanAlphaLearn","sdAlphaLearn",
+        "WeightAct_0","WeightCrit_0",
+        "WeightAct_1","WeightCrit_1","WeightAct_2",  "WeightCrit_2",
+        "WeightAct_3",  "WeightCrit_3", "WeightAct_4",  "WeightCrit_4",
+        "WeightAct_5","WeightCrit_5")
+
+my.summary<- function(x) list(mean = mean(x), lowIQR = fivenum(x)[2], 
+                              upIQR = fivenum(x)[4])
+
+evolStats<-evol[, as.list(unlist(lapply(.SD, my.summary))), 
+                .SDcols = cols,by=time]
+
+## Plot mean and IQRs among individuals for each replicate --------------------
+
+# get the trajectories for individual runs
+traitsTrajs<-dcast(evol,time~seed,
+                   value.var = c("meanAlpha","meanBeta",
+                                 #"meanInitCrit",#"meanFit",
+                                 "meanInitAct", "sdInitAct",
+                                 "meanAlphaLearn","sdAlphaLearn",
+                                 "sdAlpha","sdBeta","freqHH",
+                                 "freqHD","freqDD"))
+
+finReps<-evol[time==max(time),seed]
+
+genstoPrint<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
+
+# Evolutionary dynamics for alpha - intercept of the sender --------------------------------------------
+par(plt=posPlot(numploty = 3,idploty = 3,numplotx = 2,idplotx = 1,
+                lowboundx = 8, title = TRUE,lowboundy = 10,
+                upboundy = 92,upboundx = 92),
+    mfrow=c(1,1), xaxt="s",las=1,mgp=c(2,0.8,0))
+
+adjsYlims<-abs(range(pop[seed==runChoi,alpha])[1]-
+                 range(pop[seed==runChoi,alpha])[2])*c(-0.1,0.2)
+            
+
+evolDist(indData = pop[seed==runChoi],variable = "alpha",nbins = 10,
+         pal = pal_dist,
+         nlevels=10,cexAxis = cexAxis,xlab="",ylab = "",xaxt="n",yaxt = "s",
+         ylim = range(pop[seed==runChoi,alpha])+adjsYlims,
+         xlim=c(0,22000))
+
+mtext(text = "Trait value",cex = cexAxis,line = 1.8,side = 2,las=0)
+legend("topright",legend =
+      expression(paste("intercept (",alpha[s],")")),col=colGenesLin[1],lwd=2,
+       bty = "n",cex=cexAxis)
+legend("topleft",legend = c("A.1"),cex=cexAxis,bty = "n",inset = -0.06)
+
+
+axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1)))],
+     labels = axTicks(1)[2:(length(axTicks(1)))]/1000,cex.axis=cexAxis,
+     hadj = 1.3,line = -0.5,tick = FALSE)
+
+# grey lines to show the generations shown in the upper and lower panels
+
+matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
+         y=matrix(rep(range(pop[seed==runChoi,alpha]),4),nrow = 2),
+         lty=1,col = "grey",lwd=2)
+
+# Variation among individuals
+
+matlines(x=traitsTrajs[,time],
+         y=traitsTrajs[,.SD,
+                       .SDcol=paste0(c("meanAlpha_"),runChoi)],
+         col=colGenesLin,lty = 1,type="l",lwd=5)
+
+par(plt=posPlot(numploty = 3,idploty = 3,numplotx = 2, idplotx = 2,
+                lowboundx = 8, title = TRUE,lowboundy = 10,
+                upboundy = 92,upboundx = 92),
+    xaxt="s",las=1,new=TRUE)
+
+adjsYlims<-abs(range(pop[seed==runChoi,beta])[1]-
+                 range(pop[seed==runChoi,beta])[2])*c(-0.1,0.2)
+
+evolDist(indData = pop[seed==runChoi],variable = "beta",nbins = 10,pal = pal_dist,
+         nlevels=10,cexAxis = 1.5,xlab="",ylab = "",xaxt="n",yaxt = "n",
+         ylim = range(pop[seed==runChoi,beta])+adjsYlims,xlim=c(0,22000))
+legend("topright",legend = expression(paste("Slope (",beta[s],")")),cex=cexAxis,
+       col=colGenesLin[2],lwd=2,bty = "n")
+legend("topleft",legend = c("A.2"),cex=cexAxis,bty = "n",inset = -0.06)
+# grey lines to show the generations shown in the upper and lower panels
+matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
+         y=matrix(rep(range(pop[seed==runChoi,beta]))),
+                      lty=1,col = "grey",lwd=2)
+
+axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1)))],
+     labels = axTicks(1)[2:(length(axTicks(1)))]/1000,cex.axis=cexAxis,
+     hadj = 1.3,line = -0.5,tick = FALSE)
+
+axis(4,cex.axis=cexAxis)
+
+matlines(x=traitsTrajs[,time],
+         y=traitsTrajs[,.SD,
+                       .SDcol=paste0(c("meanBeta_"),runChoi)],
+         col=colGenesLin[2],lty = 1,type="l",lwd=4)
+
+# Evolutionary dynamics for the speed of learning-------------------------------
+
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 2,idplotx = 1,
+                lowboundx = 8, title = TRUE,lowboundy = 10,
+                upboundy = 92,upboundx = 92),
+    mfrow=c(1,1), xaxt="s",las=1,mgp=c(2,0.8,0),new=TRUE)
+
+
+adjsYlims<-abs(range(pop[seed==runChoi,alphaLear])[1]-
+                 range(pop[seed==runChoi,alphaLear])[2])*c(-0.1,0.2)
+            
+
+evolDist(indData = pop[seed==runChoi],variable = "alphaLear",nbins = 10,
+         pal = pal_dist,
+         nlevels=10,cexAxis = cexAxis,xlab="",ylab = "",xaxt="n",yaxt = "s",
+         ylim = range(pop[seed==runChoi,alphaLear])+adjsYlims,
+         xlim=c(0,22000))
+
+mtext(text = "Trait value",cex = cexAxis,line = 1.8,side = 2,las=0)
+legend("topright",legend = "Speed of learning",col=colGenesLin[1],lwd=2,
+       bty = "n",cex=cexAxis)
+legend("topleft",legend = c("B.1"),cex=cexAxis,bty = "n",inset = -0.06)
+
+
+axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1)))],
+     labels = axTicks(1)[2:(length(axTicks(1)))]/1000,cex.axis=cexAxis,
+     hadj = 1.3,line = -0.5,tick = FALSE)
+
+# black line showing the value 0 as a benchmark 
+
+lines(x = pop[,range(time)],y=c(0,0))
+
+# grey lines to show the generations shown in the upper and lower panels
+
+matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
+         y=matrix(rep(range(pop[seed==runChoi,alphaLear]),4),nrow = 2),
+         lty=1,col = "grey",lwd=2)
+
+# Variation among individuals
+
+matlines(x=traitsTrajs[,time],
+         y=traitsTrajs[,.SD,
+                       .SDcol=paste0(c("meanAlphaLearn_"),runChoi)],         col=colGenesLin,lty = 1,type="l",lwd=5)
+
+## Plot evolutionary dynamics of the naive behaviour of inds -------------------
+
+par(plt=posPlot(numploty = 3,idploty = 2,numplotx = 2, idplotx = 2,
+                lowboundx = 8, title = TRUE,lowboundy = 10,
+                upboundy = 92,upboundx = 92),
+    xaxt="s",las=1,new=TRUE)
+
+adjsYlims<-abs(range(pop[seed==runChoi,initAct])[1]-
+                 range(pop[seed==runChoi,initAct])[2])*c(-0.1,0.2)
+
+evolDist(indData = pop[seed==runChoi],variable = "initAct",nbins = 10,
+         pal = pal_dist, nlevels=10,cexAxis = 1.5,xlab="",ylab = "",
+         xaxt="n",yaxt = "n",
+         ylim = range(pop[seed==runChoi,initAct])+adjsYlims,xlim=c(0,22000))
+legend("topright",legend = c("Behavioural tendency before learning"),cex=cexAxis,
+       col=colGenesLin[2],lwd=2,bty = "n")
+legend("topleft",legend = c("B.2"),cex=cexAxis,bty = "n",inset = -0.06)
+# grey lines to show the generations shown in the upper and lower panels
+matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
+         y=matrix(rep(range(pop[seed==runChoi,initAct]))),
+                      lty=1,col = "grey",lwd=2)
+
+axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1)))],
+     labels = axTicks(1)[2:(length(axTicks(1)))]/1000,cex.axis=cexAxis,
+     hadj = 1.3,line = -0.5,tick = FALSE)
+
+axis(4,cex.axis=cexAxis)
+
+matlines(x=traitsTrajs[,time],
+         y=traitsTrajs[,.SD,
+                       .SDcol=paste0(c("meanInitAct_"),runChoi)],
+         col=colGenesLin[2],lty = 1,type="l",lwd=4)
+
+# black line showing the value 0 as a benchmark 
+
+lines(x = pop[,range(time)],y=c(0,0))
+
+
+# Choose time range
+gen2plot<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
+# Plor the actor
+seqYax<-c("s",rep("n",3))
+# seqYlabUp<-c("Badge",rep("",3))
+seqYlabUp<-c("P(dove)",rep("",3))
+seqYlabDown<-c("Badge",rep("",3))
+seqXlabDown<-c("","Quality","")#paste0("seed: ",runChoi))
+seqXlabUp<-c("","Badge","")
+rangQual<-seq(0,1,length.out = 50)
+interv<-1/(nCenters-1)
+centers<-interv*seq(0,nCenters-1)
+rangx<-seq(0,1,length=50)
+count<-0
+for(genC in genstoPrint){
+  count<-count+1
+  par(plt=posPlot(numplotx = 4,numploty = 3,idplotx = count,idploty = 1,
+                  lowboundx = 8, title = TRUE,lowboundy = 10,
+                  upboundy = 92,upboundx = 92),
+      xaxt="s",las=1,new=TRUE)
+  tempPop<-popOneInd[(time==unique(time)[genC]&seed==runChoi),.SD[.N],
+               .SDcol=c(grep("WeightAct",
+                             names(evol),value = TRUE),"Quality","alpha","beta",
+                        "orderClus"),
+               by=indId]
+  
+  randInds<-sample(tempPop$indId,nInd2print, replace = FALSE)
+  
+  
+# meansClustmp<-tempPop[,.(alphaMean=mean(alpha),betaMean=mean(beta)),by=orderClus]
+# reacNormpClust<-sapply(meansClustmp[,orderClus], function(x){
+#   logist(rangx,alpha = meansClustmp[orderClus==x,alphaMean],
+#          beta = meansClustmp[orderClus==x,betaMean])})
+# matplot(x = rangx,y = reacNormpClust,col=colRuns[meansClustmp$orderClus],
+#          type='l',cex.axis=cexAxis,
+#          xlab="",ylab="",ylim=c(0,1.1),lty=1,
+#          lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
+  reacNormInd<-sapply(tempPop[indId %in%randInds,indId], function(x){
+    logist(rangx,alpha = tempPop[indId==x,alpha],
+           beta = tempPop[indId==x,beta])})
+  matplot(x = rangx,y = reacNormInd,
+          type='l',cex.axis=cexAxis,
+          xlab="",ylab="",ylim=c(0,1.1),lty=1,col=1,
+          lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
+  mtext(text = seqYlabDown[count],cex = cexAxis,line = 1.9,side = 2,las=0)
+  mtext(text = seqXlabDown[count],cex = cexAxis,line = 1.7,side = 1,las=0)
+  legend("topleft",legend = c(paste0("C.",count)),bty = "n",inset = -0.06)
+  }
+
+rm(list=grep("temp",ls(),value = T))
 ```
 
 
