@@ -172,7 +172,7 @@ Theory has shown that natural selection favours such associations
 in complex environments where conditions are difficult to predict 
 [@dridi_Environmental_2016]. Associative learning is a flexible cognitive 
 mechanism whose underpinnings show interspecific variation 
-[@enquist_Power_2016; @quinones_Reinforcement_2019]. Associative learning 
+[@enquist_Power_2016; @quinones_Reinforcement_2020]. Associative learning 
 is not a single mechanisms, but rather a set of cognitive structures 
 and processes that can vary in their scope and complexity. Presumably, 
 these structures and processes have been modified 
@@ -267,7 +267,8 @@ The decision of whether to escalate a fight against an interacting
 partner can depend on the size of the partner's badge, 
 the dependency is determined by the focal's experiences 
 through a learning process. We implement learning using 
-the actor-critic approach from reinforcement learning (RL) theory [@sutton_Reinforcement_2018;@quinones_Reinforcement_2019; @leimar_Learning_2019].
+the actor-critic approach from reinforcement learning (RL) theory [@sutton_Reinforcement_2018;@quinones_Reinforcement_2020; @leimar_Learning_2019;
+@leimar_Evolution_2021].
 Individuals estimate the reward (pay-off) expected from  interacting 
 with partners of different badge sizes (the critic in RL terminology). 
 After each interaction they update the estimate of reward proportionally 
@@ -332,7 +333,7 @@ changes the distribution of values in $\alpha$ and $\beta$ that segregates
 in the population, effectively changing  the badges expressed and the 
 communication system. 
 
-```{r model-struc,echo=FALSE,warning=FALSE,fig.width=8,fig.align='center',fig.height=7,fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A, the reaction norm determines the badge size. Red shows an informative reaction norm, while the blue shows a uninformative reaction norm. B individuals perceiving the signal have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Feature weaights are values associated with a particular badge size and are updated as individuals interact with each other. The generalization of the information associated with each feature weight is represented by the grey line and its axis, which shows the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether that leads to an increase in the estimated reward. In C and D, effect of learning on the receiver strategy. Receivers in C face signallers with uninformative reaction norms (blue line in A). The uninformative reaction norm yields badge size of 0.5, thus the behavioural reaction norm in C is only updated around that value.D Receivers face signallers with informative reaction norms (red line in A). Accordingly, receivers develop a threashold-like reaction norm where the decision to retreat increases with the badge size of the interacting partner. Colour scale in C and D indicates the quality of the individual. "}
+```{r model-struc,echo=FALSE,warning=FALSE,fig.width=8,fig.align='center',fig.height=7,fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A, the reaction norm determines the bib (badge) size, black band on birds chest. Red shows an informative reaction norm, while the blue shows a uninformative reaction norm. B individuals perceiving the signal have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Feature weaights are values associated with a particular badge size and are updated as individuals interact with each other. The generalization of the information associated with each feature weight is represented by the grey line and its axis, which shows the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether that leads to an increase in the estimated reward. In C and D, effect of learning on the receiver strategy. Receivers in C face signallers with uninformative reaction norms (blue line in A). The uninformative reaction norm yields badge size of 0.5, thus the behavioural reaction norm in C is only updated around that value.D Receivers face signallers with informative reaction norms (red line in A). Accordingly, receivers develop a threashold-like reaction norm where the decision to retreat increases with the badge size of the interacting partner. Colour scale in C and D indicates the quality of the individual. "}
 
 # Top panels -  A the sender code and  B learning for the receiver code
 
@@ -1644,7 +1645,7 @@ This is very obvious in classical examples such as when animals learn to avoid
 food that makes them sick, or use environmental cues to find food. 
 More recent ideas have highlighted the potential role that associations 
 can have in a social contexts such as: hierarchy formation 
-[@leimar_Reproductive_2022;@leimar_Effects_2022],
+[@leimar_Evolution_2021;@leimar_Reproductive_2022;@leimar_Effects_2022],
 and cooperation [@leimar_Learning_2019;@dridi_Learning_2018]. In this 
 theoretical examples individuals use various sources of reward to make
 adaptive choices in a given social context. Here we extend this logic to the 
