@@ -33,15 +33,16 @@ style: C:\Users\andre\Zotero\styles\elife.csl
 abstract: |
   Adaptive behavioural responses often depend on qualities of the interacting
   partner of an individual. For example, when competing for resources, an individual
-  might be better off escalating fights with individuals of lower quality, while restraining
-  from fighting individuals of higher quality. Communication systems involving signals
-  of quality allow individuals to reduce uncertainty regarding the fighting ability
-  of their partners and make more adaptive behavioral decisions. However, dishonest
-  individuals can destabilize such communications systems. One open question is whether
-  cognitive mechanisms, such as learning, can maintain the honesty of signals, thus,
-  favoring their evolutionary stability. Here we present evolutionary simulations,
-  where individuals can produce a signal proportional to their quality; and learn
-  along their lifetime the best response to the signal emitted by their peers. In
+  might be better off escalating fights with individuals of lower quality, while
+  restraining  from fighting individuals of higher quality. Communication systems
+  involving signals of quality allow individuals to reduce uncertainty regarding the  
+  fighting ability of their partners and make more adaptive behavioral decisions. 
+  However, dishonest individuals can destabilize such communications systems. 
+  One open question is whether cognitive mechanisms, such as learning, 
+  can maintain the honesty of signals, thus, favoring their evolutionary 
+  stability. Here we present evolutionary simulations, where individuals 
+  can produce a signal proportional to their quality; and learn along 
+  their lifetime the best response to the signal emitted by their peers. In
   these simulations, learning on the receiver side can mediate the evolution of signals
   of quality on the sender side. When the cost of the signal is proportional to the
   quality of the sender populations are only composed of honest signalers. When the
@@ -662,8 +663,7 @@ evolDist(indData = pop[seed==runChoi],variable = "alpha",nbins = 10,
          xlim=c(0,22000))
 
 mtext(text = "Trait value",cex = cexAxis,line = 1,side = 2,las=0)
-legend("topright",legend = c(expression(alpha[s])),col=colGenesLin[1],lwd=2,
-       bty = "n",cex=cexAxis)
+legend("topright",legend = c(expression(alpha[s])), bty = "n",cex=cexAxis)
 legend("topleft",legend = c("A.1"),cex=cexAxis,bty = "n",inset = -0.06)
 
 
@@ -682,7 +682,7 @@ matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
                        .SDcol=paste0(c("meanAlpha_"),runChoi)],
-         col=colGenesLin,lty = 2,type="l",lwd=5)
+         col=colGenesLin,lty = 1,type="l",lwd=5)
 
 par(plt=posPlot(numploty = 3,idploty = 3,numplotx = 2, idplotx = 2,
                 lowboundx = 8, title = TRUE,lowboundy = 15,
@@ -695,8 +695,7 @@ adjsYlims<-abs(range(pop[seed==runChoi,beta])[1]-
 evolDist(indData = pop[seed==runChoi],variable = "beta",nbins = 10,pal = pal_dist,
          nlevels=10,cexAxis = 1.5,xlab="",ylab = "",xaxt="n",yaxt = "n",
          ylim = range(pop[seed==runChoi,beta])+adjsYlims,xlim=c(0,22000))
-legend("topright",legend = c(expression(beta[s])),cex=cexAxis,
-       col=colGenesLin[2],lwd=2,bty = "n")
+legend("topright",legend = c(expression(beta[s])),cex=cexAxis,bty = "n")
 legend("topleft",legend = c("A.2"),cex=cexAxis,bty = "n",inset = -0.06)
 # grey lines to show the generations shown in the upper and lower panels
 matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
@@ -712,7 +711,7 @@ axis(4,cex.axis=cexAxis)
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
                        .SDcol=paste0(c("meanBeta_"),runChoi)],
-         col=colGenesLin[2],lty = 2,type="l",lwd=4)
+         col=colGenesLin,lty = 1,type="l",lwd=4)
 
 # Choose time range
 gen2plot<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
@@ -786,7 +785,7 @@ for(genC in genstoPrint){
            beta = tempPop[indId==x,beta])})
   matplot(x = rangx,y = reacNormInd,
           type='l',cex.axis=cexAxis,
-          xlab="",ylab="",ylim=c(0,1.1),lty=1,col=1,
+          xlab="",ylab="",ylim=c(0,1.1),lty=1,col="grey",
           lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
   mtext(text = seqYlabDown[count],cex = cexAxis,line = 1.5,side = 2,las=0)
   mtext(text = seqXlabDown[count],cex = cexAxis,line = 1.3,side = 1,las=0)
@@ -867,7 +866,7 @@ peaks in the distribution are not so clear-cut, but it is clear that there is an
 increase in the variance of the distribution. These changes in the 
 distribution of the parameters of the sender reaction norm 
 imply that individuals can generally be classified into three 
-distinct types (\ref{fig:branching}). Two types express a flat reaction 
+distinct types (Fig. \ref{fig:branching}). Two types express a flat reaction 
 norm with extreme values for the badge size, meaning that their badge size 
 is not informative of their quality, whereas the third type shows 
 intermediate badge sizes determined by the quality of the individual 
@@ -1002,7 +1001,7 @@ evolDist(indData = pop[seed==runChoi],variable = "alpha",nbins = 10,
          xlim=c(0,22000))
 
 mtext(text = "Trait value",cex = cexAxis,line = 1,side = 2,las=0)
-legend("topright",legend = c(expression(alpha[s])),col=colGenesLin[1],lwd=2,
+legend("topright",legend = c(expression(alpha[s])),
        bty = "n",cex=cexAxis)
 legend("topleft",legend = c("A"),cex=cexAxis,bty = "n",inset = -0.06)
 
@@ -1022,7 +1021,7 @@ matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
                        .SDcol=paste0(c("meanAlpha_"),runChoi)],
-         col=colGenesLin,lty = 2,type="l",lwd=5)
+         col=colGenesLin,lty = 1,type="l",lwd=5)
 
 par(plt=posPlot(numploty = 3,idploty = 3,numplotx = 2, idplotx = 2,
                 lowboundx = 8, title = TRUE,lowboundy = 15,
@@ -1035,8 +1034,7 @@ adjsYlims<-abs(range(pop[seed==runChoi,beta])[1]-
 evolDist(indData = pop[seed==runChoi],variable = "beta",nbins = 10,pal = pal_dist,
          nlevels=10,cexAxis = 1.5,xlab="",ylab = "",xaxt="n",yaxt = "n",
          ylim = range(pop[seed==runChoi,beta])+adjsYlims,xlim=c(0,22000))
-legend("topright",legend = c(expression(beta[s])),cex=cexAxis,
-       col=colGenesLin[2],lwd=2,bty = "n")
+legend("topright",legend = c(expression(beta[s])),cex=cexAxis,bty = "n")
 legend("topleft",legend = c("A.2"),cex=cexAxis,bty = "n",inset = -0.06)
 # grey lines to show the generations shown in the upper and lower panels
 matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
@@ -1052,7 +1050,7 @@ axis(4,cex.axis=cexAxis)
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
                        .SDcol=paste0(c("meanBeta_"),runChoi)],
-         col=colGenesLin[2],lty = 2,type="l",lwd=4)
+         col=colGenesLin,lty = 1,type="l",lwd=4)
 
 # Choose time range
 gen2plot<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
@@ -1126,7 +1124,7 @@ for(genC in genstoPrint){
            beta = tempPop[indId==x,beta])})
   matplot(x = rangx,y = reacNormInd,
           type='l',cex.axis=cexAxis,
-          xlab="",ylab="",ylim=c(0,1.1),lty=1,col=1,
+          xlab="",ylab="",ylim=c(0,1.1),lty=1,col="grey",
           lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
   mtext(text = seqYlabDown[count],cex = cexAxis,line = 1.5,side = 2,las=0)
   mtext(text = seqXlabDown[count],cex = cexAxis,line = 1.3,side = 1,las=0)
@@ -1280,8 +1278,7 @@ evolDist(indData = pop[seed==runChoi],variable = "alpha",nbins = 10,
          xlim=c(0,22000))
 
 mtext(text = "Trait value",cex = cexAxis,line = 1,side = 2,las=0)
-legend("topright",legend = c(expression(alpha[s])),col=colGenesLin[1],lwd=2,
-       bty = "n",cex=cexAxis)
+legend("topright",legend = c(expression(alpha[s])), bty = "n",cex=cexAxis)
 legend("topleft",legend = c("A.1"),cex=cexAxis,bty = "n",inset = -0.06)
 
 
@@ -1300,7 +1297,7 @@ matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
                        .SDcol=paste0(c("meanAlpha_"),runChoi)],
-         col=colGenesLin,lty = 2,type="l",lwd=5)
+         col=colGenesLin,lty = 1,type="l",lwd=5)
 
 par(plt=posPlot(numploty = 3,idploty = 3,numplotx = 2, idplotx = 2,
                 lowboundx = 8, title = TRUE,lowboundy = 15,
@@ -1313,8 +1310,7 @@ adjsYlims<-abs(range(pop[seed==runChoi,beta])[1]-
 evolDist(indData = pop[seed==runChoi],variable = "beta",nbins = 10,pal = pal_dist,
          nlevels=10,cexAxis = 1.5,xlab="",ylab = "",xaxt="n",yaxt = "n",
          ylim = range(pop[seed==runChoi,beta])+adjsYlims,xlim=c(0,22000))
-legend("topright",legend = c(expression(beta[s])),cex=cexAxis,
-       col=colGenesLin[2],lwd=2,bty = "n")
+legend("topright",legend = c(expression(beta[s])),cex=cexAxis,bty = "n")
 legend("topleft",legend = c("A.2"),cex=cexAxis,bty = "n",inset = -0.06)
 # grey lines to show the generations shown in the upper and lower panels
 matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
@@ -1330,7 +1326,7 @@ axis(4,cex.axis=cexAxis)
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
                        .SDcol=paste0(c("meanBeta_"),runChoi)],
-         col=colGenesLin[2],lty = 2,type="l",lwd=4)
+         col=colGenesLin,lty = 1,type="l",lwd=4)
 
 # Choose time range
 gen2plot<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
@@ -1403,7 +1399,7 @@ for(genC in genstoPrint){
            beta = tempPop[indId==x,beta])})
   matplot(x = rangx,y = reacNormInd,
           type='l',cex.axis=cexAxis,
-          xlab="",ylab="",ylim=c(0,1.1),lty=1,col=1,
+          xlab="",ylab="",ylim=c(0,1.1),lty=1,col="grey",
           lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
   mtext(text = seqYlabDown[count],cex = cexAxis,line = 1.5,side = 2,las=0)
   mtext(text = seqXlabDown[count],cex = cexAxis,line = 1.3,side = 1,las=0)
@@ -1571,7 +1567,7 @@ for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
   
   points(data=popOneInd[(get(shortSce)==PAr&time>max(time)*0.8)&
                           seed == repsScen[count]],
-       alpha~beta,col=multDiscrPallet[seed+1],cex=2,pch=20)
+       alpha~beta,col=multDiscrPallet[seed+1],cex=1,pch=20)
 
 }
 for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
@@ -1598,6 +1594,25 @@ for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
 }
 
 ```
+
+The action of natural selection and genetic drift do not override the conditions 
+for the evolutionary branching described earlier. Given how crucial naive 
+behaviour is for the diversification process described earlier, we tested whether 
+evolutionary processes could lead key parameters of the learning process toward
+values that prevented the genetic variation to build up. 
+Figure \ref{fig:learnEvol} shows the dynamics from a set of simulations where we 
+allow for the coevolution of the reaction norm as well as key parameters of
+the learning module, namely the speed of learning ($A$) and the behavioural 
+tendency expressed by individuals before learning. Top panels in 
+figure \ref{fig:learnEvol} show that there is diversification process in this 
+coevolutionary scenario as well. That is because, as is shown in the middle 
+panels (B) of the same figure, the learning parameters stay within the range 
+necessary for the diversification process. The speed of learning 
+(Fig. \ref{fig:learnEvol} B.1) stays well above zero throughout the simulation. 
+In contrast, the initial behavioral tendency maintain values around zero. 
+Thus, evolutionary processes acting on the learning parameteres 
+did not override the conditions necessary for frequency dependent to boost 
+genetic variation. 
 
 ## Discussion
 
@@ -1860,8 +1875,7 @@ evolDist(indData = pop[seed==runChoi],variable = "alpha",nbins = 10,
          xlim=c(0,22000))
 
 mtext(text = "Trait value",cex = cexAxis,line = 1,side = 2,las=0)
-legend("topright",legend = c(expression(alpha[s])),col=colGenesLin[1],lwd=2,
-       bty = "n",cex=cexAxis)
+legend("topright",legend = c(expression(alpha[s])),bty = "n",cex=cexAxis)
 legend("topleft",legend = c("A.1"),cex=cexAxis,bty = "n",inset = -0.06)
 
 
@@ -1880,7 +1894,7 @@ matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
                        .SDcol=paste0(c("meanAlpha_"),runChoi)],
-         col=colGenesLin,lty = 2,type="l",lwd=5)
+         col=colGenesLin,lty = 1,type="l",lwd=5)
 
 par(plt=posPlot(numploty = 3,idploty = 3,numplotx = 2, idplotx = 2,
                 lowboundx = 8, title = TRUE,lowboundy = 15,
@@ -1893,9 +1907,8 @@ adjsYlims<-abs(range(pop[seed==runChoi,beta])[1]-
 evolDist(indData = pop[seed==runChoi],variable = "beta",nbins = 10,pal = pal_dist,
          nlevels=10,cexAxis = 1.5,xlab="",ylab = "",xaxt="n",yaxt = "n",
          ylim = range(pop[seed==runChoi,beta])+adjsYlims,xlim=c(0,22000))
-legend("topright",legend = c(expression(beta[s])),cex=cexAxis,
-       col=colGenesLin[2],lwd=2,bty = "n")
-legend("topleft",legend = c("B"),cex=cexAxis,bty = "n",inset = -0.06)
+legend("topright",legend = c(expression(beta[s])),cex=cexAxis,bty = "n")
+legend("topleft",legend = c("A.2"),cex=cexAxis,bty = "n",inset = -0.06)
 # grey lines to show the generations shown in the upper and lower panels
 matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
          y=matrix(rep(range(pop[seed==runChoi,beta]))),
@@ -1910,7 +1923,7 @@ axis(4,cex.axis=cexAxis)
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
                        .SDcol=paste0(c("meanBeta_"),runChoi)],
-         col=colGenesLin[2],lty = 2,type="l",lwd=4)
+         col=colGenesLin,lty = 1,type="l",lwd=4)
 
 # Choose time range
 gen2plot<-round(seq(1,length(unique(evolStats$time)),length.out = 5))[2:5]
@@ -1984,7 +1997,7 @@ for(genC in genstoPrint){
            beta = tempPop[indId==x,beta])})
   matplot(x = rangx,y = reacNormInd,
           type='l',cex.axis=cexAxis,
-          xlab="",ylab="",ylim=c(0,1.1),lty=1,col=1,
+          xlab="",ylab="",ylim=c(0,1.1),lty=1,col="grey",
           lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
   mtext(text = seqYlabDown[count],cex = cexAxis,line = 1.5,side = 2,las=0)
   mtext(text = seqXlabDown[count],cex = cexAxis,line = 1.3,side = 1,las=0)
@@ -1995,7 +2008,7 @@ rm(list=grep("temp",ls(),value = T))
 
 ```
 
-```{r learnEvol,echo=FALSE,out.width='100%',fig.height=6,fig.align='center',fig.show='hold',fig.cap= "The evolution of costly signals. Portrait of the evolutionary dynamics of the sender code with snapsots of both sender and receiver codes just as in fig. \\ref{fig:handicap}. The middle panels show changes in the distribution of values for $\\alpha$ and $\\beta$ along evolutionary time. Panels above and below correspond to snapshots of the sender and receiver codes, respectively, generation time of the snapshots are indicated by the grey lines in the middle panels. Similarly to the evolutionary dynamics in Fig. \\ref{fig:handicap}, first the badge size evolves towards its minimum value. Then, the slope evolves positive values determining an increasing reaction norm. In contrast to \\ref{fig:handicap}, the normal distribution splits up into two modes. This translates into two types of reaction norms assorting in the population where both code for a positive relation between quality and badge size."}
+```{r learnEvol,echo=FALSE,out.width='100%',fig.height=6,fig.align='center',fig.show='hold',fig.cap= "Coevolutionary dynamics of both the signal reaction norm and key parameters of the learning module. Dynamics are portrait as changes in the distribution of values assorting in the population. In the top panels (A)  evolutionary dynamics of the sender code; A.1 shows the intercept and A.2 the slope of the logistic reaction norm. Both of these parameters experience evolutionary branching, whereby in the end three distincs types are assorting in the population. The middle panels (B) show changes in the distribution of values for the speed of learning ($A$;B1) and the behavioural tendency before learning ($y_z^0$; B2) along evolutionary time. The speed of learning does not change drastically, it maintains values well above 0 (black line). In contrast, the initial behavioural tendency does not evolve away from 0 (black line). Both of these conditions favour evolutionary branching in the signal reaction norm. Bottom Panels correspond to snapshots of the sender code. Generation time of the snapshots are indicated by the grey lines in the top and middle panels."}
 
 # knitr::include_graphics(here("Simulations","nIntGroupNormQual_","evolDyn7_nIntGroup2000.png"))
 
@@ -2121,8 +2134,7 @@ evolDist(indData = pop[seed==runChoi],variable = "alpha",nbins = 10,
 
 mtext(text = "Trait value",cex = cexAxis,line = 1.8,side = 2,las=0)
 legend("topright",legend =
-      expression(paste("intercept (",alpha[s],")")),col=colGenesLin[1],lwd=2,
-       bty = "n",cex=cexAxis)
+      expression(paste("intercept (",alpha[s],")")),bty = "n",cex=cexAxis)
 legend("topleft",legend = c("A.1"),cex=cexAxis,bty = "n",inset = -0.06)
 
 
@@ -2155,7 +2167,7 @@ evolDist(indData = pop[seed==runChoi],variable = "beta",nbins = 10,pal = pal_dis
          nlevels=10,cexAxis = 1.5,xlab="",ylab = "",xaxt="n",yaxt = "n",
          ylim = range(pop[seed==runChoi,beta])+adjsYlims,xlim=c(0,22000))
 legend("topright",legend = expression(paste("Slope (",beta[s],")")),cex=cexAxis,
-       col=colGenesLin[2],lwd=2,bty = "n")
+       bty = "n")
 legend("topleft",legend = c("A.2"),cex=cexAxis,bty = "n",inset = -0.06)
 # grey lines to show the generations shown in the upper and lower panels
 matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
@@ -2171,7 +2183,7 @@ axis(4,cex.axis=cexAxis)
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
                        .SDcol=paste0(c("meanBeta_"),runChoi)],
-         col=colGenesLin[2],lty = 1,type="l",lwd=4)
+         col=colGenesLin,lty = 1,type="l",lwd=4)
 
 # Evolutionary dynamics for the speed of learning-------------------------------
 
@@ -2192,8 +2204,7 @@ evolDist(indData = pop[seed==runChoi],variable = "alphaLear",nbins = 10,
          xlim=c(0,22000))
 
 mtext(text = "Trait value",cex = cexAxis,line = 1.8,side = 2,las=0)
-legend("topright",legend = "Speed of learning",col=colGenesLin[1],lwd=2,
-       bty = "n",cex=cexAxis)
+legend("topright",legend = "Speed of learning", bty = "n",cex=cexAxis)
 legend("topleft",legend = c("B.1"),cex=cexAxis,bty = "n",inset = -0.06)
 
 
@@ -2231,8 +2242,8 @@ evolDist(indData = pop[seed==runChoi],variable = "initAct",nbins = 10,
          pal = pal_dist, nlevels=10,cexAxis = 1.5,xlab="",ylab = "",
          xaxt="n",yaxt = "n",
          ylim = range(pop[seed==runChoi,initAct])+adjsYlims,xlim=c(0,22000))
-legend("topright",legend = c("Behavioural tendency before learning"),cex=cexAxis,
-       col=colGenesLin[2],lwd=2,bty = "n")
+legend("topright",legend = c("Naive behavioural tendency"),cex=cexAxis,
+       bty = "n")
 legend("topleft",legend = c("B.2"),cex=cexAxis,bty = "n",inset = -0.06)
 # grey lines to show the generations shown in the upper and lower panels
 matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
@@ -2248,7 +2259,7 @@ axis(4,cex.axis=cexAxis)
 matlines(x=traitsTrajs[,time],
          y=traitsTrajs[,.SD,
                        .SDcol=paste0(c("meanInitAct_"),runChoi)],
-         col=colGenesLin[2],lty = 1,type="l",lwd=4)
+         col=colGenesLin,lty = 1,type="l",lwd=4)
 
 # black line showing the value 0 as a benchmark 
 
@@ -2297,7 +2308,7 @@ for(genC in genstoPrint){
            beta = tempPop[indId==x,beta])})
   matplot(x = rangx,y = reacNormInd,
           type='l',cex.axis=cexAxis,
-          xlab="",ylab="",ylim=c(0,1.1),lty=1,col=1,
+          xlab="",ylab="",ylim=c(0,1.1),lty=1,col="grey",
           lwd=2,yaxt=seqYax[count],xaxt="s",cex.lab=cexAxis)
   mtext(text = seqYlabDown[count],cex = cexAxis,line = 1.9,side = 2,las=0)
   mtext(text = seqXlabDown[count],cex = cexAxis,line = 1.7,side = 1,las=0)
