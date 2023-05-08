@@ -7,7 +7,7 @@ require(here)
 library(ggplot2)
 source(here("AccFunc.R"))
 require("jsonlite")
-
+library(dplyr)
 # Scenario to be plotted - corresponds to folders where simulations are stored
 
 scenario<-"betCostEvol5"#"alphaAct"#"nIntGroupNormQual"#
@@ -27,6 +27,7 @@ scenario<-"betCostEvol5"#"alphaAct"#"nIntGroupNormQual"#
 paramName<-list.files(here("Simulations",paste0(scenario,"_")))
 # paramName<-list.files(extSimsDir,full.names = TRUE)
 paramName<-grep(".json",paramName,value=TRUE)
+paramName<-grep(".json",paramName,value=TRUE) %>% grep(pattern = "*s0_*",value = TRUE)
 param<-fromJSON(here("Simulations",paste0(scenario,"_"),paramName[2]))
 # fromJSON(paramName[1])
 
@@ -53,7 +54,7 @@ pop[,unique(cumPayoff)]
 
 popOneInd[,unique(time)]
 
-popOneInd.gen<-popOneInd
+popOneInd.gen<-popOneInd[seed==0&time==1000]
 
 popOneInd.gen[,dist:=sqrt((Badge-mean(Badge))^2)]
 
@@ -86,6 +87,7 @@ par(mfrow=c(1,1),plt=posPlot())
 hist.badge<-hist(popOneInd.gen$Badge,breaks = nbins,freq = TRUE)
 
 popOneInd.gen[,binFreq:=sapply(Badge,function(x){
+  # hist.badge<-hist(Badge,breaks = nbins,plot=FALSE)
   hist.badge$density[which.min(abs(hist.badge$mids-x))]
 })]
 
@@ -93,8 +95,10 @@ str(popOneInd.gen)
 
 ggplot(popOneInd.gen,aes(y=cumPayoff,x=binFreq))+
   geom_point(aes(color=as.factor(seed)))+
-  geom_smooth()+
+  geom_smooth(method="lm")+
   theme_classic()
+
+popOneInd.gen[,unique(binFreq)]
 
 
 model1 <-lm(data = popOneInd.gen,cumPayoff~Quality)
@@ -116,7 +120,7 @@ popOneInd.gen$resid.loess<-model.loess$residuals
 
 ggplot(popOneInd.gen,aes(y=resid.model1,x=binFreq))+
   geom_point(aes(color=as.factor(seed)))+
-  geom_smooth()+
+  geom_smooth(method="lm")+
   theme_classic()
 
 ggplot(popOneInd.gen,aes(y=resid.loess,x=binFreq))+
