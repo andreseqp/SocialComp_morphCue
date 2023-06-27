@@ -15,6 +15,7 @@ institute:
 - unine: Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
+  word_document: default
   # word_document: default
   pdf_document:
     latex_engine: xelatex # default  #
