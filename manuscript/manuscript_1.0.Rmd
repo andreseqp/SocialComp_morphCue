@@ -33,7 +33,8 @@ header-includes: |
     \usepackage{lineno}
     \linenumbers
     \floatplacement{figure}{H}
-    \newcommand{\beginsupplement}{ \setcounter{table}{0}         \renewcommand{\thetable}{S\arabic{table}}\setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+    \newcommand{\beginsupplement}{ \setcounter{table}{0}            
+    \renewcommand{\thetable}{S\arabic{table}}\setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
   ```
 keep_tex: yes
 keywords: My keywords
@@ -57,7 +58,7 @@ abstract: |
   replicate previous results where the handicap principle mediates the evolution 
   of signals. In our simulations learning on the receiver side can mediate the evolution
   of signals  of quality on the sender side. When the cost of the signal is proportional
-  to the  quality of the sender, all individuals in populations are honest signalers.   
+  to the  quality of the sender, all individuals in populations are honest signalers. 
   In contrast to traditional models which predict the absence of signals when the
   cost is not proportional to the quality of the signaler, our model revealed that
   learning facilitates the evolution of a polymorphism in which populations comprise both
@@ -112,10 +113,11 @@ partners, which is sometimes referred to as Resource Holding Potential
 Responsiveness to the quality of an opponent is central 
 to communication systems in which individuals 
 exhibit badges of status, where a signal conveys quality 
-[@johnstone_Badges_1993; @rohwer_Social_1975a]. 
-Such signals must be arbitrary, meaning the signals could potentially be 
-produced by high and low quality individuals alike. 
-Generally signals can be evolutionarily stable whenever low-quality individuals 
+[@johnstone_Badges_1993; @rohwer_Social_1975]. 
+Such signals tend to be arbitrary, meaning the signals could potentially be 
+produced by high- and low-quality individuals alike. This symmetry opens up the 
+possibility of dishonest signalling and the question of evolutionary stability. 
+Signals can be evolutionarily stable whenever low-quality individuals 
 pay a higher fitness cost for carrying the signal such that it is not 
 in the interest of low-quality individuals to fake quality by producing a large badge.
 Signal costs inversely proportional to quality may come about as a result of the
@@ -1661,10 +1663,10 @@ coevolutionary scenario as well. That is because, as is shown in the middle
 panels (B) of the same figure, the learning parameters stay within the range 
 necessary for the branching event to take place. The speed of learning 
 (Fig. \ref{fig:learnEvol} B.1) stays well above zero throughout the simulation. 
-In contrast, the initial behavioral tendency maintain values around zero. 
+In contrast, the initial behavioural tendency maintain values around zero. 
 Thus, evolutionary processes acting on the learning parameters 
 did not override the conditions necessary for frequency-dependent selection to boost 
-genetic variation. 
+genetic and phenotypic variation. 
 
 ## Discussion
 
@@ -1755,7 +1757,7 @@ however the frequency-dependen effect of learning could potentially be
 more important when individuals learn from multidimensional signals. 
 
 
-Originally, @rohwer_Social_1975a proposed the idea that certain phenotypic 
+Originally, @rohwer_Social_1975 proposed the idea that certain phenotypic 
 traits could be used by animals as status signals or signals of quality. 
 This idea has been tested repeatedly on the dark patches of some bird species, 
 such as the bibs exhibited by species in various families, particularly sparrows.
@@ -1768,7 +1770,7 @@ Alternatively, if the signal does not carry production costs inversely
 proportional to quality it may work as a convention.
 In this later case, honesty is presumably maintained by the aggressive 
 reaction of receivers when the convention is 
-broken [@enquist_Signaling_2010;@tibbetts_Socially_2004]. Our model, portraits 
+broken [@enquist_Signaling_2010;@tibbetts_Socially_2004]. Our model, captures 
 both kinds of signals, although with some nuances. When we assume the handicap 
 principle, simulations result in the evolution of honest signals mediated by the
 learned response. When we assume cost-free signal, under certain conditions the
@@ -1779,7 +1781,7 @@ appropriately to the trait of their peer. The house sparrow (*Passer domesticus*
 has been a text-book example of badges of status. According to the prevailing narrative the bib size in males is a signal of dominance rank and quality.
 However, a recent meta-analysis called into question 
 this narrative by showing that the effect size of the association between bib 
-size and dominance rank is small and uncertain [@sanchez-tojar_Metaanalysis_2018a]. 
+size and dominance rank is small and uncertain [@sanchez-tojar_Metaanalysis_2018]. 
 A simple correlation between bib size and dominance rank
 (and quality) is expected under the handicap principle, as it is shown here and 
 elsewhere [@botero_Evolution_2010;@grafen_Biological_1990;@johnstone_Badges_1993].
@@ -1793,21 +1795,21 @@ are often performed across the whole range of variation.
 
 The focus of theoretical and empirical work on communication systems, 
 and particularly badges of status, is often explaining the presence and 
-absence of certain morphological traits within populations. However, the 
-morphological traits hypothesized to play a role in communication systems 
-regularly present interesting patters at the phylogeographic
-level. One example of this is the leapfrog pattern [@remsen_High_1984],
-whereas a certain morphological trait alternates its presence and 
-absence in a set of geographically adjunct populations. Patterns of 
-molecular variation along geographic clines suggest that natural selection 
-is involved in the emergence of these patterns 
-[@cadena_Testing_2011;@cadena_Evolutionary_2007]. However, it is unclear what 
+absence of certain morphological traits within populations. Phenotypic traits
+hypothesized to play a role in communication systems regularly exhibit 
+patterns of geographic variation within species that have long called 
+for explanations. One example of this is the leapfrog pattern [@remsen_High_1984],
+whereby a certain morphological trait alternates its presence and 
+absence in a set of geographically adjunct populations, likely as 
+a consequence of selection [@cadena_Testing_2011;@marquez_Divergence_2020]. 
+However, it is unclear what 
 type of ecological process is behind these selective regimes. 
-Given the wide variation in outcomes found in our model, that depend on both 
-stochasticity and cognitive parameters, we think variation in cognition and 
-learning in particular could provide some explanatory power in this respect. 
-One first step, for example is to evaluate the way individuals in different 
-populations respond to novel traits [@avendano_Territorial_2021]. 
+Given the wide variation in outcomes found in our model, which depend on both
+stochasticity and cognitive parameters which may vary in space owing to various
+processes, we speculate that variation in cognition and learning could 
+provide some explanatory power in this respect. A first step to assess this 
+hypothesis would be to evaluate the way individuals in different populations 
+respond to novel traits [*e.g.* @avendano_Territorial_2021]. 
 
 We have presented here an evolutionary model where the evolution of a 
 communication system is mediated through the learned responses of
