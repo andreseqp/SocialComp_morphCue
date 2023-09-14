@@ -128,7 +128,7 @@ ggplot(popOneInd.gen,aes(y=resid.loess,x=binFreq))+
   geom_smooth()+
   theme_classic()
 
-ggplot(popOneInd.gen,aes(y=binFreq,x=Quality))+
+%>% ggplot(popOneInd.gen,aes(y=binFreq,x=Quality))+
   geom_point(aes(color=as.factor(seed)))+
   geom_smooth()+
   theme_classic()
