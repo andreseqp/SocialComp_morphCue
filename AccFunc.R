@@ -218,7 +218,8 @@ evolDist<-function(indData,variable,nbins,range=NULL,pal, nlevels =10,
   #                 new=NewP)
   
  
-  filled.contour3(x=as.numeric(timeseq),y = as.numeric(bins),z = log(0.01+t(contour1)),
+  filled.contour3(x=as.numeric(timeseq),y = as.numeric(bins),
+                  z = log(0.01+t(contour1)),
                  color.palette = pal, nlevels = nlevels,ylim=ylim,
                  plot.axes={
                    axis(1,cex.axis=cexAxis,xaxt=xaxt)
@@ -312,35 +313,6 @@ ESS<-function(pay_offsM){
 }
 
 
-
-# clus_silou<-c(0,clus_silou)
-# nclustersSil<-which.max(clus_silou)
-
-
-# DT[,idClust:=as.numeric(idClust)]
-
-# for(i in which(DT[,seed] %in% runChoi)){
-#   set(popFinal,i,match( "idClust",names(DT)),
-#       clustersMatch[clustersMatch[,2]==i,1])
-# }
-
-
-# #SBATCH --job-name=TestJOB		#Nombre del job
-# #SBATCH -p short			#Cola a usar, Default=short (Ver colas y límites en /hpcfs/shared/README/partitions.txt)
-# #SBATCH -N 1				#Nodos requeridos, Default=1
-# #SBATCH -n 1				#Tasks paralelos, recomendado para MPI, Default=1
-# #SBATCH --cpus-per-task=1		#Cores requeridos por task, recomendado para multi-thread, Default=1
-# #SBATCH --mem=2000		#Memoria en Mb por CPU, Default=2048
-# #SBATCH --time=00:10:00			#Tiempo máximo de corrida, Default=2 horas
-# #SBATCH --mail-user=USER@uniandes.edu.co
-# #SBATCH --mail-type=ALL			
-# #SBATCH -o TEST_job.o%j			#Nombre de archivo de salida
-# 
-# host=`/bin/hostname`
-# date=`/bin/date`
-# echo "Soy un JOB de prueba"
-# echo "Corri en la maquina: "$host
-# echo "Corri el: "$date
 
 
 

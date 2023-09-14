@@ -1,0 +1,109 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={ The role of learning in the evolution of status signalling: a modeling approach},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{\large \textbf{Title:} The role of learning in the evolution of
+status signalling: a modeling approach}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{\normalsize \textbf{Abbreviated title:} Learning and evolution
+in status signalling}
+\date{}
+
+\usepackage{forarray}
+\usepackage{xstring}
+\newcommand{\getIndex}[2]{
+  \ForEach{,}{\IfEq{#1}{\thislevelitem}{\number\thislevelcount\ExitForEach}{}}{#2}
+}
+
+\newcommand{\getAff}[1]{
+  \getIndex{#1}{a,b}
+}
+
+\begin{document}
+\maketitle
+\begin{flushleft}
+
+Andrés E.
+Quiñones\textsuperscript{\getAff{a}, \getAff{b}}\textsuperscript{*},
+Redouan Bshary\textsuperscript{\getAff{a}},
+C. Daniel Cadena\textsuperscript{\getAff{b}}\\
+\bigskip
+\textbf{\getAff{a}}Institute of Biology, University of Neuchatel,
+Neuchatel, Switzerland\\
+\textbf{\getAff{b}}Laboratorio de Biología Evolutiva de Vertebrados,
+Departamento de Ciencias Biológicas, Universidad de los Andes, Bogotá,
+Colombia\\
+\bigskip
+* Corresponding author: \href{mailto:andresqp@gmail.com}{\nolinkurl{andresqp@gmail.com}}, Rue
+Emile-Argand 11, CH-2000, Neuchatel, Switzerland, tel. +41325586486\\
+\end{flushleft}
+
+\hypertarget{funding}{%
+\subsection{Funding}\label{funding}}
+
+This work was supported by the posdoctoral assistant funding from the
+Depatamento de Ciencias Biológicas from the Universidad de los Andes
+granted to A.Q. and by the by the Swiss National Science Foundation
+grants (grant number: 310030\_192673) to R.B.
+
+\hypertarget{acknowledgements}{%
+\subsection{Acknowledgements}\label{acknowledgements}}
+
+AQ and CDC kindly thank the members of Evolvert, in particular Jorge
+Avendaño for pictures of the \emph{Arremon} and discussion on signal
+evolution. AQ thanks C. Botero for fruitful discussions, and thecluster
+of the Institute of Computer Science of the University of Neuchâtel
+(IIUN) for the computing resources provided.
+
+\end{document}

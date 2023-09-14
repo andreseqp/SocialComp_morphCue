@@ -1,31 +1,43 @@
 ---
 title: |
-  The role of learning in status signalling: a modeling approach
-author:
-- Andrés E. Quiñones:
-    email: "andresqp@gmail.com"
-    institute: [andes, unine]
-    correspondence: true
-- Redouan Bshary:
-    institute: unine
-- C. Daniel Cadena:
-    institute: andes
-institute:
-- andes: Laboratorio de Biología Evolutiva de Vertebrados, Departamento  de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia
-- unine: Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland
-date: "`r format(Sys.time(), '%B %d, %Y')`"
+   \large \textbf{Title:} The role of learning in the evolution of status signalling: a modeling approach
+subtitle: |
+  \normalsize \textbf{Abbreviated title:} Learning and evolution in status signalling
+author: 
+# author:
+# - Andrés E. Quiñones:
+#     email: "andresqp@gmail.com"
+#     institute: [andes, unine]
+#     correspondence: true
+# - Redouan Bshary:
+#     institute: unine
+# - C. Daniel Cadena:
+#     institute: andes
+# institute:
+# - andes: Laboratorio de Biología Evolutiva de Vertebrados, Departamento  de Ciencias Biológicas, Universidad de los Andes, Bogotá, Colombia
+# - unine: Institute of Biology, University of Neuchâtel, Neuchâtel, Switzerland
+# date: "`r format(Sys.time(), '%B %d, %Y')`"
+# output:
+#   pdf_document:
+#     latex_engine: xelatex  # default  ##word_document: default  # word_document:default
+#     pandoc_args:
+#       - '--lua-filter=scholarly-metadata.lua'
+#       - '--lua-filter=author-info-blocks.lua'
+#   word_document: default
 output:
   pdf_document:
-    latex_engine: xelatex  # default  ##word_document: default  # word_document:default
-    pandoc_args:
-      - '--lua-filter=scholarly-metadata.lua'
-      - '--lua-filter=author-info-blocks.lua'
+    keep_tex: yes
+    latex_engine: xelatex
+    template: template.latex
   word_document: default
+keep_tex: yes
 fig_caption: yes
 fontsize: 12pt
 header-includes: |
   ```{=latex}
+    \AddToHook{env/abstract/before}{\vspace*{-4.5cm}}
     \usepackage{float}
+    \usepackage{graphicx}
     \usepackage{unicode-math}
     \usepackage{setspace}\doublespacing
     \usepackage[backref=page]{hyperref}
@@ -36,12 +48,11 @@ header-includes: |
     \newcommand{\beginsupplement}{ \setcounter{table}{0}            
     \renewcommand{\thetable}{S\arabic{table}}\setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
   ```
-keep_tex: yes
 keywords: My keywords
 linespread: 2
 bibliography: ../SocialMorphCue.bib
 spacing: double
-style: C:\Users\andre\Zotero\styles\elife.csl
+style: "M:\\Zotero\\styles\\behavioral-ecology.csl"
 abstract: |
   Adaptive behavioural responses often depend on qualities of the interacting
   partner of an individual. For example, when competing for resources, an individual
@@ -65,6 +76,17 @@ abstract: |
   honest and dishonest signalers. We argue that learning may have a role in the evolution
   and dynamics of a wide range of communication systems and more generally in 
   behavioral responses.
+lay_summary:  |
+  Biological signals allow individuals to respond appropietly. For example, a 
+  signal of fighting hability would allow peers to decide whether to fight 
+  another individual. But, what prevents weaklings from faking to be 
+  strong? Using a theoretical approach we assess whether learning has 
+  a role in maintaining a signal honest. We find that when individuals 
+  learn how best to respond to a signal, populations are composed of a 
+  mixed of honest and dishonest signals. 
+editor_options:
+  markdown:
+    wrap: 80
 ---
 
 ```{r setup, include=FALSE}
@@ -77,6 +99,8 @@ source(here("AccFunc.r"))
 library("scales")
 ```
 
+\newpage
+
 ## Introduction 
 
 The outcome of interactions with conspecific individuals is a critical
@@ -85,7 +109,7 @@ such interactions are cooperative or competitive, the actions of
 interacting individuals influence 
 their reproductive success. However, the best action for an individual 
 engaging in a social interaction might vary depending on its 
-own condition, and that of individuals with 
+own condition and that of individuals with 
 whom it interacts. Thus, acting based on information about interacting 
 partners is typically adaptive [@quinones_Negotiation_2016], yet
 acquiring such information is far from trivial. 
@@ -93,8 +117,8 @@ In some cases, interacting partners (*i.e.* signallers) might be 'willing' to
 provide accurate information, but in others it might be in their 
 own interest to conceal information [@johnstone_Recognition_1997] 
 or to provide deceptive information [@johnstone_Badges_1993]. 
-Typically, in a given context, some individuals benefit 
-from broadcasting accurate information, whereas others benefit 
+Typically, in a given context, some individuals benefit may 
+from broadcasting accurate information, whereas others may benefit 
 from concealing it. Take, for instance, an interaction between two individuals 
 where one can help the other. Given some costs and benefits, 
 a potential donor is likely to be interested in helping 
@@ -112,11 +136,11 @@ partners, which is sometimes referred to as Resource Holding Potential
 [RHP, Parker -@parker_Assessment_1974] or simply as quality. 
 Responsiveness to the quality of an opponent is central 
 to communication systems in which individuals 
-exhibit badges of status, where a signal conveys quality 
-[@johnstone_Badges_1993; @rohwer_Social_1975]. 
-Such signals tend to be arbitrary, meaning the signals could potentially be 
-produced by high- and low-quality individuals alike. This symmetry opens up the 
-possibility of dishonest signalling and the question of evolutionary stability. 
+exhibit badges of status, where a signal typically conveys quality 
+[@johnstone_Badges_1993; @rohwer_Social_1975a]. 
+Such signals tend to be arbitrary, however, meaning the signals could potentially be 
+produced by high- and low-quality individuals alike, opening up the 
+possibility of dishonest signalling and raising the question of evolutionary stability. 
 Signals can be evolutionarily stable whenever low-quality individuals 
 pay a higher fitness cost for carrying the signal such that it is not 
 in the interest of low-quality individuals to fake quality by producing a large badge.
@@ -127,7 +151,7 @@ Alternatively, the costs can come from
 the aggressive reaction of receivers when the convention of the communication 
 is broken [@enquist_Signaling_2010;@tibbetts_Socially_2004]. For example in paper 
 wasps, subordinate individuals with experimentally manipulated dominant-like facial
-patterns received more aggression from the dominant[@tibbetts_Socially_2004]. 
+patterns received more aggression from the dominant [@tibbetts_Socially_2004]. 
 In this case, costs are socially rather than developmentally mediated and are 
 triggered by the violation of the convention, although how the convention
 is established in the first place is unclear.
@@ -165,7 +189,7 @@ allow individuals to respond to the available information without a large
 cognitive burden because the computations involved in the reaction 
 norm response do not require much memory nor advanced algorithmic processes. 
 This contrasts with other information-processing 
-mechanisms like individual recognition. Where individuals associate cues of 
+mechanisms like individual recognition where individuals associate cues of 
 their peers to their quality. Because these 
 associations must be learnt throughout the life of individuals, 
 they have the usual cognitive requirements of associative learning processes. 
@@ -218,7 +242,7 @@ capturing the essence of learning processes
 Furthermore, these algorithms can be embedded in evolutionary simulations to 
 generate theoretical predictions of the effect of learning on behavioural evolution [@leimar_Learning_2019;@leimar_Effects_2022].
 
-Here we present an evolutionary model where individuals use 
+Here, we present an evolutionary model where individuals use 
 associative learning to develop a tendency to behave either aggressively 
 or  peacefully in the context of competition over resources, 
 depending on a quantitative morphological trait 
@@ -227,13 +251,13 @@ Over evolutionary time, the size of
 the badge evolves as does its dependency on the individual's quality. 
 Under this simple set up, individuals can use the badge as a signal of quality. 
 We use the model to assess under what conditions 
-we expect communication signals to evolve as handicaps or conventions. 
+one might expect communication signals to evolve as handicaps or conventions. 
 
 ## The model
 
 We model the evolution of signals indicating individual quality 
 in the context of agonistic interactions. 
-For simplicity we consider a population of haploid 
+For simplicity, we consider a population of haploid 
 individuals with non-overlapping generations. Individuals are born 
 every generation with a level of quality ($Q_i$, where $i$ is subscript 
 of the population vector of size $N$) given by a number between zero and one, 
@@ -244,7 +268,7 @@ develop, individuals produce a phenotypic signal (badge),
 the size of which depends on their quality according to a reaction norm given by 
 $B_i=1/(1+e^{\alpha_i-\beta_i Q_i})$; where $\alpha_i$ and 
 $\beta_i$ are individual specific traits that determine the shape of 
-the reaction norm (Fig. \ref{fig:model-struc} A). Variation in $\alpha_i$ 
+the reaction norm (Fig. \ref{fig:modelStruc} A). Variation in $\alpha_i$ 
 and $\beta_i$ means individuals can have either uninformative (flat) or 
 informative (logistic) norms. Informative reaction norms represent a 
 developmental program where the phenotype of the individual is determined by
@@ -318,18 +342,18 @@ To implement generalization we use the linear function approximation
 method based on radial basis functions [@sutton_Reinforcement_2018].
 Specifically, we pick $c$ feature centres, which are evenly spaced values 
 along the badge size interval ([0,1]) where the updates are focused. 
-For the sake of simplicity we keep the location of these feature centres 
+For simplicity, we keep the location of these feature centres 
 constant and  the same for all individuals; they are stored in 
 vector $\symbf{b}$ . Each of these feature centres 
 is associated with a weight for reward estimation and tendency to play 
 retreat in a given interaction. The reward estimation and the tendency 
 to retreat are calculated (in every interaction) as the sum of the weights 
 associated with each feature centre, weighted by the response 
-triggered by the feature (Fig. \ref{fig:model-struc} B, dots 
+triggered by the feature (Fig. \ref{fig:modelStruc} B, dots 
 represent the feature weights). The response of each feature centre 
 diminishes as a Gaussian function with the distance between the 
 feature centre and the badge size of 
-the partner (Fig. \ref{fig:model-struc} B, grey line). Formally, the 
+the partner (Fig. \ref{fig:modelStruc} B, grey line). Formally, the 
 reward estimation $\hat{R}$ when the focal individual ($i$) faces 
 individual $j$ is given by,
 \
@@ -341,7 +365,7 @@ where $x_z$ is the weight of feature centre $z$ on the reward estimation;
 and $\theta$ is the width of the generalization function. Similarly, 
 the tendency to retreat is given by the sum of feature weights associated 
 with the actor, and the probability is obtained by applying a logistic 
-transformation (Fig. \ref{fig:model-struc} B, black line). 
+transformation (Fig. \ref{fig:modelStruc} B, black line). 
 Thus formally, the log-odds to retreat when facing individual $j$ is 
 
 \begin{equation}
@@ -359,17 +383,18 @@ baseline pay-off ($w_0$) and all the pay-offs obtained throughout their
 life. Thus, the combination of natural selection and genetic drift 
 changes the distribution of values in $\alpha$ and $\beta$ that segregates 
 in the population, effectively changing  the badges expressed and the 
-communication system. 
+communication system.
 
-```{r model-struc,echo=FALSE,warning=FALSE,fig.width=8,fig.align='center',fig.height=7,fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A, the reaction norm determines the badge size, *e.g* the size of a black band on a bird's chest. Red shows an informative reaction norm, whereas blue shows a uninformative reaction norm. B individuals perceiving the signal have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Feature weights are values associated with a particular badge size and are updated as individuals interact with each other. The generalization of the information associated with each feature weight is represented by the grey line and its axis, which shows that the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether this leads to an increase in the estimated reward. Panels C and D show the effect of learning on the receiver strategy. Receivers in C face signallers with uninformative reaction norms (blue line in A). The uninformative reaction norm yields a badge size of 0.5, thus the behavioural reaction norm in C is only updated around that value. D Receivers face signallers with informative reaction norms (red line in A). Accordingly, receivers develop a threashold-like reaction norm where the decision to retreat increases with the badge size of the interacting partner. Colour scale in C and D indicates the quality of the individual. "}
+```{r modelStruc,echo=FALSE,out.width='100%',fig.height=5,fig.align='center',fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A, the reaction norm determines the badge size, *e.g* the size of a black band on a bird's chest. Red shows an informative reaction norm, whereas blue shows a uninformative reaction norm. B individuals perceiving the signal have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Feature weights are values associated with a particular badge size and are updated as individuals interact with each other. The generalization of the information associated with each feature weight is represented by the grey line and its axis, which shows that the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether this leads to an increase in the estimated reward. Panels C and D show the effect of learning on the receiver strategy. Receivers in C face signallers with uninformative reaction norms (blue line in A). The uninformative reaction norm yields a badge size of 0.5, thus the behavioural reaction norm in C is only updated around that value. D Receivers face signallers with informative reaction norms (red line in A). Accordingly, receivers develop a threashold-like reaction norm where the decision to retreat increases with the badge size of the interacting partner. Colour scale in C and D indicates the quality of the individual." ,warning=FALSE}
 
 # Top panels -  A the sender code and  B learning for the receiver code
-# load(here("manuscript","manuscript_1.0_cache","latex","model-struc_6905f4797a1faa21041511a8dcdf1eb9.RData"))
+# load(here("manuscript","manuscript_1.0_cache","latex","modelStruc_6905f4797a1faa21041511a8dcdf1eb9.RData"))
 library(dplyr)
 honestBig<-readPNG(here("Images/cart_honestBig.png"))
 honestSmall<-readPNG(here("Images/cart_honestSmall.png"))
 dishonest<-readPNG(here("Images/cart_dishonest.png"))
-par(plt=posPlot(numplotx = 2,idplotx = 1,numploty = 1,idploty = 1,upboundx = 91),
+par(plt=posPlot(numplotx = 2,idplotx = 1,numploty = 1,idploty = 1,upboundx = 91,
+                lowboundy = 18),
     las=1,mfrow=c(2,1),mgp=c(2,0.7,0))
   rangPars<-data.frame(honest=c(4,2),dishonest=c(0,0))
  rangQual<-seq(0,1,by = 0.01)
@@ -378,9 +403,9 @@ par(plt=posPlot(numplotx = 2,idplotx = 1,numploty = 1,idploty = 1,upboundx = 91)
       ylab ="",cex.lab=1,lwd=2,col="grey",cex.axis=1,ylim=c(0,1.1),xaxt="n")
  axis(1)
  text(x = 0.08,y=1.05,"A",cex = 1.5)
- mtext("Quality",1,line = 2,cex = 1,las = 0)
+ mtext("Quality",1,line = 1.5,cex = 1,las = 0)
  matlines(x=rangQual,y=linesSender,lwd=4,col=colRuns,lty=1)
- mtext("Badge size",2,line = 2.3,cex = 1,las = 0)
+ mtext("Badge size",2,line = 2,cex = 1,las = 0)
  # include bird cartoons
  rasterImage(honestBig,0.75,0.87,0.95,1.07)
  rasterImage(honestSmall,0.05,0.01,0.25,0.21)
@@ -389,7 +414,7 @@ par(plt=posPlot(numplotx = 2,idplotx = 1,numploty = 1,idploty = 1,upboundx = 91)
  # legend("left",legend=rangeBeta,col=colRuns,lwd=3,title = expression(beta),cex=2,bty="n")
  
 par(plt=posPlot(numplotx = 2,idplotx = 2,numploty = 1,idploty = 1,
-                 upboundx = 91),las=1,new=TRUE)
+                 upboundx = 91,lowboundy = 18),las=1,new=TRUE)
   nCenters<-6
 interv<-1/(nCenters-1)
 centers<-interv*seq(0,nCenters-1)
@@ -411,7 +436,7 @@ axis(side = 4,at = seq(range(respon)[1],range(respon)[2],length.out = 4),
 
 
 mtext("prob. retreat",4,line = 2.3,cex = 1,las = 0)
-mtext("Badge size",1,line = 2,cex = 1,las = 0)
+mtext("Badge size",1,line = 1.5,cex = 1,las = 0)
 
 ## Lower panels - the effect of learning
 
@@ -464,7 +489,8 @@ rangx<-seq(0,1,by=0.01)
                                                             value = TRUE)
                                                 ])),alpha = 0,beta = 1)})
   # par(plt=posPlot(numploty = 4,numplotx = 4,idploty = 2,idplotx = 1))
-  par(plt=posPlot(numploty = 1,numplotx = 2,idploty = 1,idplotx = 1,upboundx = 91))
+par(plt=posPlot(numploty = 1,numplotx = 2,idploty = 1,idplotx = 1,upboundx = 91,
+                  lowboundy = 18))
 matplot(x=rangx,y=dataIndsAct,type='l',xlab="",ylab="prob. retreat",
           xaxt="s",yaxt="s",lty = 1,
           col=paletteMeans(100)[
@@ -523,7 +549,8 @@ rangx<-seq(0,1,by=0.01)
                                                             value = TRUE)
                                                 ])),alpha = 0,beta = 1)})
   # par(plt=posPlot(numploty = 4,numplotx = 4,idploty = 2,idplotx = 1))
-  par(plt=posPlot(numploty = 1,numplotx = 2,idploty = 1,idplotx = 2,upboundx = 91)
+  par(plt=posPlot(numploty = 1,numplotx = 2,idploty = 1,idplotx = 2,upboundx = 91,
+                  lowboundy = 18)
       ,new=TRUE,xpd=TRUE)
 matplot(x=rangx,y=dataIndsAct,type='l',xlab="",ylab="",
           xaxt="s",yaxt="n",lty = 1,
@@ -531,12 +558,11 @@ matplot(x=rangx,y=dataIndsAct,type='l',xlab="",ylab="",
             findInterval(tempPop[nInteract==1700,Quality],colorbreaksQual)],
           lwd=3,ylim=c(0,1.1))
 text(x = 0.08,y=1.05,"D",cex = 1.5)
-text(x = -0.1,y = -0.25,labels = "Badge size")
+text(x = -0.1,y = -0.3,labels = "Badge size")
 
 
 
 ```
-
 
 ## Results
 
@@ -548,25 +574,25 @@ and assumed that all individuals in the population display either
 an uninformative or informative badge size with respect to their quality. 
 These simulations show what type of receiver strategy develops through 
 a learning process in such a monomorphic population. 
-Figure \ref{fig:model-struc} (C and D) shows 
+Figure \ref{fig:modelStruc} (C and D) shows 
 the receiver strategy developed through learning; panel C is for 
 receivers that faced uninformative signals, and D for those facing informative ones. 
-The simulations reveal that when learners face uninformative signals (Fig. \ref{fig:model-struc} C), they modify their probability of retreating 
+The simulations reveal that when learners face uninformative signals (Fig. \ref{fig:modelStruc} C), they modify their probability of retreating 
 depending on their own quality. 
 Individuals with higher quality (red tones) have a 
-high probability of attacking after the learning process; 
+high probability of attacking after the learning process  
 while individuals of lower quality 
-(blue tones) mostly retreat from confrontations; in both cases 
+(blue tones) mostly retreat from confrontations; in both cases, 
 individuals behave equally irrespective of the quality of
 their opponent. Thus, learning splits the population of receivers into 
 the two classic pure strategies of hawks and doves. 
 Given that we assumed a monomorphic population 
 with unresponsive reaction norms on the signalling side, the changes 
-triggered by learning only affect a small range of badge sizes. Specifically, 
+triggered by learning only affected a small range of badge sizes. Specifically, 
 all learning occurred around a badge size of $0.5$, because all
 badges in the population are of this size (panel C). 
 In contrast, when receivers face informative reaction norms 
-on the side of the signaller (Fig. \ref{fig:model-struc} B), 
+on the side of the signaller (Fig. \ref{fig:modelStruc} B), 
 receivers use information on the badge size of their interacting 
 partners to determine whether to retreat or attack. 
 The relationship is given by a threshold-like reaction norm, 
@@ -574,7 +600,7 @@ where the decision to retreat or to attack depends on the quality of the receive
 As expected, the higher the quality of the receiver, the larger the badge size 
 of the signaller that triggers a retreat.
 
-```{r handicap,echo=FALSE,out.width='100%',fig.height=6,fig.align='center',fig.show='hold',fig.cap="Evolution of the badge size as a handicap mediated by learning. Top panels (A.1 and A.2) show the evolutionary dynamics of the sender code. On the left (A.1), changes in the distribution of values for the intercept of the reaction norm ($\\alpha$); on the right (A.2) changes in the distribution of the slope ($\\beta$). Darker areas of the background correspond to values with high frequency, while orange lines in both panels show the mean of the distribution. X axis in the evolutionary dynamics are given in thousands of generations. Grey lines show the generation time corresponding to the panels below portraing the sender (B) and receiver code(C). In the bottom panels (C1-4), the learned reaction norms correspond to individuals in the population after the interaction round. Color scale indicates quality just as in Fig. \\ref{fig:model-struc}. On the first half of the simulation (B.1 and B.2) the badge size evolves to its minimum value. In the second half, the slope takes positive values and reaction norms evolve to produce an honest signal of quality. Correspondingly, individuals learn to react to badge size by increasing the probability of retreating with increasing badge sizes"  ,warning=FALSE}
+```{r handicap,echo=FALSE,out.width='100%',fig.height=6,fig.align='center',fig.show='hold',fig.cap="Evolution of the badge size as a handicap mediated by learning. Top panels (A.1 and A.2) show the evolutionary dynamics of the sender code. On the left (A.1), changes in the distribution of values for the intercept of the reaction norm ($\\alpha$); on the right (A.2) changes in the distribution of the slope ($\\beta$). Darker areas of the background correspond to values with high frequency, while orange lines in both panels show the mean of the distribution. X axis in the evolutionary dynamics are given in thousands of generations. Grey lines show the generation time corresponding to the panels below portraing the sender (B) and receiver code(C). In the bottom panels (C1-4), the learned reaction norms correspond to individuals in the population after the interaction round. Color scale indicates quality just as in Fig. \\ref{fig:modelStruc}. On the first half of the simulation (B.1 and B.2) the badge size evolves to its minimum value. In the second half, the slope takes positive values and reaction norms evolve to produce an honest signal of quality. Correspondingly, individuals learn to react to badge size by increasing the probability of retreating with increasing badge sizes"  ,warning=FALSE}
 
 scenario<-"betCostEvol3"#"alphaAct"#"nIntGroupNormQual"#
 runChoi<-9 #1
@@ -841,7 +867,7 @@ rm(list=grep("temp",ls(),value = T))
 When we allowed the badge size to evolve ($\alpha$ and $\beta$ 
 changed subject to natural selection and genetic drift) and the signal
 worked as a handicap (*i.e.* the cost of the badge was inversely 
-proportional to the quality of the individual), the sender code evolved often
+proportional to the quality of the individual), the sender code often evolved 
 to produce an honest signal (Fig. \ref{fig:handicap}). The evolution of 
 the sender code did not happen immediately after the start of the 
 evolutionary process. Instead, the evolutionary dynamics of the reaction 
@@ -881,7 +907,7 @@ badge does not provide any information about quality.
 
 ### The evolution of polymorphism mediated by learning
 
-The amount of information that agents are able to collect through learning 
+The amount of information that agents are able to collect via learning 
 over their life time can strongly change the outcome of 
 evolutionary dynamics. In the simulations presented in figure 
 \ref{fig:handicap} and \ref{fig:noBadge}, 
@@ -895,7 +921,7 @@ the slope of the reaction norm, and mutations quickly build up a
 normal distribution around the starting 
 value. Within the first 2000 generations, the unimodal distribution in 
 the intercept ($\alpha$) splits into a bimodal one. 
-Later in evolutionary time one of the peaks splits further, 
+Later in evolutionary time, one of the peaks splits further, 
 so at the end of the evolutionary simulation the distribution of the intercept 
 ($\alpha$) in the population shows three distinct peaks. In the case of $\beta$, the 
 peaks in the distribution are not so clear-cut, but the variance of the 
@@ -1180,7 +1206,7 @@ rm(list=grep("temp",ls(),value = T))
 
 A limited number of interactions has an effect on the amount of variation in
 the evolving parameters when the signal follows the handicap
-principle as well. In fig \ref{fig:honestDiv}, we show simulations where individuals 
+principle as well. In fig. \ref{fig:honestDiv}, we show simulations where individuals 
 have on average 300 interactions in their life and the cost of the signal
 is proportional to quality, following the handicap principle. 
 The evolutionary process leads to a combination of reaction norm parameters where 
@@ -1490,7 +1516,7 @@ with a rare badge size have a fitness advantage. This triggers
 negative-frequency dependent selection and the evolution of different types of 
 badge sizes. According to this narrative, situations where individuals 
 learn fast and interact repeatedly will diminish the strength 
-of frequency dependent selection. 
+of frequency-dependent selection. 
 
 
 ```{r startCond, echo=FALSE, out.width='100%',fig.align='center',fig.show='hold',fig.cap="The peaceful, the aggressive and the clever. Distribution of values of the intercept $\\alpha$ and slope $\\beta$ for individuals at the end of the evolutionary simulations. The panels show the three different initial conditions for the behaviour of individuals: peaceful, agressive and  \"clever\", see maintext for details. Colours indicate the replicate simulation. In the inset, the resulting reaction norms corresponding to the intecept and slope values for one of the replicates, which replicate is shown is indicated by the line colour. The simulations where individual disply a \"clever\" and agressive behaviour, before the learning process, show all the points of a single replicate cluster together, while in simulation where individuals start being peaceful al replicates show distinct groups of individuals spread throughout the x and y axis. Only in this condition there is a frequency-dependent process that favour diversity in the reaction norm."}
@@ -1649,7 +1675,7 @@ for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
 
 The action of natural selection and genetic drift on the learning parameters 
 do not override the conditions for the evolutionary branching 
-[@dieckmann_Dynamical_1996] described earlier. 
+[@dieckmann_Dynamical_1996] described above. 
 Given how crucial naive behaviour is for the branching event 
 described earlier, we tested whether evolutionary processes could lead 
 key parameters of the learning process toward
@@ -1671,11 +1697,10 @@ genetic and phenotypic variation.
 ## Discussion
 
 We presented a model that integrates learning with 
-evolutionary processes. In the model the response of a signal in a 
-communication system is mediated by learning processes. Individuals 
-throughout their life learn the best way to respond to a quantitative 
-trait of their interactive partners. 
-We show that the learning process can mediate the evolution 
+evolutionary processes. In the model, the response to a signal in a 
+communication system is mediated by learning processes: individuals 
+learn how to respond to a quantitative trait of their interactive partners. 
+We showed that the learning process can mediate the evolution 
 of an honest signal under the handicap principle
 [@grafen_Biological_1990;@zahavi_Mate_1975]. This conclusion is not 
 different from classical genetic models, where responses to signals are
@@ -1689,7 +1714,7 @@ initial conditions of the learning process, were crucial for the emergence
 and maintenance of variation in the signalling system. 
 Namely the polymorphism required
 a limit in the amount of information collected by individuals, as well as
-peaceful behaviour in naive individuals. Furthermore, we have shown that the 
+peaceful behaviour in naive individuals. Furthermore, we showed that the 
 conditions leading to the origin of the polymorphism can be reached when evolutionary
 processes are able to change the parameters of the learning system (the speed of
 learning and the naive behaviour). 
@@ -1718,30 +1743,30 @@ our simulations in the responses developed by individuals of different quality.
 Because individuals learn about their own quality, 
 even in the absence of an honest signal, they are able to make more 
 adaptive choices. Specifically, lower quality individuals refrained more from
-escalating fights, while higher quality took over resources they 
+escalating fights, while higher-quality individuals took over resources they 
 could win in a fight. Thus, the learning process we modelled and the 
-response it mediates has fitness relevant consequences even in the 
+response it mediates has fitness-relevant consequences even in the 
 absence of an honest signal. This was confirmed by simulations where 
 the speed of learning was allowed to change subject to evolutionary processes. 
 In those simulations, natural selection always
 maintained learning rates above zero. Our simulations however, 
 only captured the effect of selection mediated by the social 
-game on the learning parameters. For example, We did not account for 
-potential costs of faster updating, or improved performance in foraginf tasks. 
+game on the learning parameters. For example, we did not account for 
+potential costs of faster updating, or improved performance in foraging tasks. 
 Inter-specific variation in cognitive abilities mediated by environmental 
 differences has been reported elsewhere
 [@sonnenberg_Natural_2019]. If such variation is partly mediated by changes 
 that affect general cognitive processes, like the speed of learning,
 they could impact the outcome of communication systems like the one we modelled. 
 
-Learning processes collecting information on a population wide level promote 
-frequency dependent selection. Frequency-dependence triggered by 
+Learning processes which involve collecting information on a population-wide level promote 
+frequency-dependent selection. For example, frequency-dependence triggered by 
 learning process was highlighted by a 
 classic study where live predators drive the evolution
 of *in silico* polymorphic prey [@bond_Visual_2002]. 
-The key to the evolution of prey polymorphism is 
-that predators are better able to discriminate prey from the background, 
-when preys are frequently encountered.
+The key to the evolution of prey polymorphism in such system is 
+that predators are better able to discriminate prey from the background 
+when prey are frequently encountered.
 Thus, prey morphs found in low frequency in a population have a selective advantage. 
 An analogous process emerged in our simulations, in which the 
 receiver individual learned the appropriate response towards individuals 
@@ -1750,48 +1775,53 @@ rare badge size it can be favoured or unfavoured by the naive behaviour. When
 the naive behaviour is peaceful, polymorphism is promoted, whereas when the naive 
 behaviour is aggressive polymorphism is prevented. These two situations show how
 behaviours dependent on learning processes seem to generally trigger 
-frequency-dependent selection. That is because the learning algorithm 
+frequency-dependent selection because the learning algorithm 
 collects more information on the more frequent values of the the trait distribution. 
-For the sake of simplicity we modelled a single dimension (badge size), 
-however the frequency-dependen effect of learning could potentially be 
+For simplicity, we modelled a single dimension (badge size), 
+yet the frequency-dependent effect of learning could potentially be 
 more important when individuals learn from multidimensional signals. 
 
 
-Originally, @rohwer_Social_1975 proposed the idea that certain phenotypic 
+Originally, @rohwer_Social_1975a proposed the idea that certain phenotypic 
 traits could be used by animals as status signals or signals of quality. 
 This idea has been tested repeatedly on the dark patches of some bird species, 
 such as the bibs exhibited by species in various families, particularly sparrows.
-So, are bibs real signals of quality? if so are they handicaps or 
+So, are bibs real signals of quality? If so, are they handicaps or 
 badge of status? From an evolutionary perspective it is unclear how the stability of 
 status signals can be maintained. One option is that honesty is 
 maintained by the cost of signal production; that is, when the signal works as a 
 handicap [@botero_Evolution_2010;@grafen_Biological_1990;@johnstone_Badges_1993]. 
 Alternatively, if the signal does not carry production costs inversely 
-proportional to quality it may work as a convention.
-In this later case, honesty is presumably maintained by the aggressive 
+proportional to quality, then it may work as a convention.
+In this latter case, honesty is presumably maintained by the aggressive 
 reaction of receivers when the convention is 
-broken [@enquist_Signaling_2010;@tibbetts_Socially_2004]. Our model, captures 
+broken [@enquist_Signaling_2010;@tibbetts_Socially_2004]. Our model captures 
 both kinds of signals, although with some nuances. When we assume the handicap 
 principle, simulations result in the evolution of honest signals mediated by the
-learned response. When we assume cost-free signal, under certain conditions the
+learned response. When we assume a cost-free signal, under certain conditions the
 learned response mediated the emergence of phenotypic variation in the signal. 
-This variation, particularly in the mid-range of the distribution facilitates 
-the establishment of a convention, in this range individuals respond 
-appropriately to the trait of their peer. The house sparrow (*Passer domesticus*) 
-has been a text-book example of badges of status. According to the prevailing narrative the bib size in males is a signal of dominance rank and quality.
-However, a recent meta-analysis called into question 
-this narrative by showing that the effect size of the association between bib 
-size and dominance rank is small and uncertain [@sanchez-tojar_Metaanalysis_2018]. 
-A simple correlation between bib size and dominance rank
+This variation, particularly in the mid-range of the distribution, facilitates 
+the establishment of a convention: in this range, individuals respond 
+appropriately to the trait of their peer. 
+A simple correlation between the size os a signal and dominance rank
 (and quality) is expected under the handicap principle, as it is shown here and 
 elsewhere [@botero_Evolution_2010;@grafen_Biological_1990;@johnstone_Badges_1993].
-However, the branching event presented here shows that conventions can 
+However, the branching event we documented shows that conventions can 
 emerge in a less straightforward way when mediated by learning processes. These 
 nuances could potentially make sense of seemingly contradictory evidence on the 
-correlation between plumage traits and quality. For example, conventions in our
-simulations arose only in an intermediate range of the signalling trait, yet 
+correlation between plumage traits and quality. A case in point is that of the 
+House Sparrow (*Passer domesticus*), a textbook example of badges of status. 
+According to the prevailing narrative [@3062aab1-6f44-361c-a548-6bc040ba8ca2;@searcy_Evolution_2005], 
+the bib size of males of this species is a signal of dominance rank and quality. 
+However, a recent meta-analysis called into question this narrative by showing 
+that the effect size of the association between bib size and dominance rank 
+is small and uncertain [@sanchez-tojar_Metaanalysis_2018a].
+Our simulations revealed that, conventions 
+arose only in an intermediate range of the signalling trait, yet 
 empirical studies seeing for correlations between phenotypic traits and quality 
 are often performed across the whole range of variation. 
+Whether such a situation may apply empirically to bib sizes in House Sparrows 
+remains to be studied.
 
 The focus of theoretical and empirical work on communication systems, 
 and particularly badges of status, is often explaining the presence and 
@@ -1811,7 +1841,7 @@ provide some explanatory power in this respect. A first step to assess this
 hypothesis would be to evaluate the way individuals in different populations 
 respond to novel traits [*e.g.* @avendano_Territorial_2021]. 
 
-We have presented here an evolutionary model where the evolution of a 
+In sum, we have presented here an evolutionary model where the evolution of a 
 communication system is mediated through the learned responses of
 receivers. This is a novel way to understand the evolution of communication
 that integrates classical cognitive process in learning with 
@@ -2436,7 +2466,5 @@ rm(list=grep("temp",ls(),value = T))
 Table: Notation of the model parameters and variables
 
 
-
-
-
 ## References
+
