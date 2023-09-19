@@ -5,8 +5,6 @@ Code, data and manuscript accompanying the publications
 Quiñones, A.E. Bshary. R. Cadena, C.D.
 The role of learning in the evolution of status signalling: a modeling approach
 
-![image](https://user-images.githubusercontent.com/36297302/157276290-33cd37e3-7bc1-4ad0-8147-ff60596163c2.png)
-
 
 ## Reproducibility 
 
