@@ -83,6 +83,7 @@
   \floatplacement{figure}{H}
   \newcommand{\beginsupplement}{ \setcounter{table}{0}            
   \renewcommand{\thetable}{S\arabic{table}}\setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+  \providecommand{\keywords}[1]{\textbf{\textit{Keywords---}} #1}
 
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
@@ -91,21 +92,14 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={ The role of learning in the evolution of status signalling: a modeling approach},
-  pdfkeywords={My keywords},
+  pdftitle={The role of learning in the evolution of status signaling: a modeling approach},
+  pdfkeywords={Biological signals, evolutionary branching, agent-based
+modeling, animal communication, badges of status, handicap principle},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{\large \textbf{Title:} The role of learning in the evolution of
-status signalling: a modeling approach}
-\usepackage{etoolbox}
-\makeatletter
-\providecommand{\subtitle}[1]{% add subtitle to \maketitle
-  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
-}
-\makeatother
-\subtitle{\normalsize \textbf{Abbreviated title:} Learning and evolution
-in status signalling}
+\title{The role of learning in the evolution of status signaling: a
+modeling approach}
 \date{}
 
 \usepackage{forarray}
@@ -159,6 +153,8 @@ signals. We find that when individuals learn how best to respond to a
 signal, populations evolve to be composed of a mix of honest and
 dishonest signals.
 
+
+\keywords{Signals, evolutionary branching, agent-based modeling, animal communication, badges of status, handicap principle}
 
 \newpage
 
@@ -414,6 +410,10 @@ throughout their life. Thus, the combination of natural selection and
 genetic drift changes the distribution of values in \(\alpha\) and
 \(\beta\) that segregates in the population, effectively changing the
 badges expressed and the communication system.
+
+The code necessary to run simulations as well as to produce
+visualizations can be found in:
+\url{https://doi.org/10.5281/zenodo.8359809}
 
 \begin{figure}
 

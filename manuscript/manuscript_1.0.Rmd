@@ -1,9 +1,8 @@
 ---
 title: |
-   \large \textbf{Title:} The role of learning in the evolution of status signalling: a modeling approach
-subtitle: |
-  \normalsize \textbf{Abbreviated title:} Learning and evolution in status signalling
-author: 
+   The role of learning in the evolution of status signaling: a modeling approach
+# subtitle: |
+#   \normalsize \textbf{Abbreviated title:} Learning and evolution in status signalling
 # author:
 # - Andrés E. Quiñones:
 #     email: "andresqp@gmail.com"
@@ -33,7 +32,7 @@ output:
 keep_tex: yes
 fig_caption: yes
 fontsize: 12pt
-header-includes: |
+header-includes: | 
   ```{=latex}
     \AddToHook{env/abstract/before}{\vspace*{-4.5cm}}
     \usepackage{float}
@@ -47,9 +46,12 @@ header-includes: |
     \floatplacement{figure}{H}
     \newcommand{\beginsupplement}{ \setcounter{table}{0}            
     \renewcommand{\thetable}{S\arabic{table}}\setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+    \providecommand{\keywords}[1]{\textbf{\textit{Keywords---}} #1}
   ```
-keywords: My keywords
-linespread: 2
+keywords: |
+  Biological signals, evolutionary branching, agent-based modeling, animal communication, badges of status,
+  handicap principle
+linespread: 2 
 bibliography: ../SocialMorphCue.bib
 spacing: double
 style: "M:\\Zotero\\styles\\behavioral-ecology.csl"
@@ -84,11 +86,15 @@ lay_summary:  |
   whether learning has a role in maintaining honest signals. We find that when 
   individuals learn how best to respond to a signal, populations evolve to be 
   composed of a mix of honest and dishonest signals.
-
 editor_options:
   markdown:
     wrap: 80
 ---
+
+```{=latex}
+\keywords{Signals, evolutionary branching, agent-based modeling, animal communication, badges of status, handicap principle}
+```
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,cache=TRUE,warnings=FALSE)
@@ -386,6 +392,9 @@ changes the distribution of values in $\alpha$ and $\beta$ that segregates
 in the population, effectively changing  the badges expressed and the 
 communication system.
 
+The code necessary to run simulations as well as to produce visualizations can be found 
+in: \url{https://doi.org/10.5281/zenodo.8359809} 
+
 ```{r modelStruc,echo=FALSE,out.width='100%',fig.height=5,fig.align='center',fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A, the reaction norm determines the badge size, *e.g* the size of a black band on a bird's chest. Red shows an informative reaction norm, whereas blue shows a uninformative reaction norm. B individuals perceiving the signal have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Feature weights are values associated with a particular badge size and are updated as individuals interact with each other. The generalization of the information associated with each feature weight is represented by the grey line and its axis, which shows that the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether this leads to an increase in the estimated reward. Panels C and D show the effect of learning on the receiver strategy. Receivers in C face signallers with uninformative reaction norms (blue line in A). The uninformative reaction norm yields a badge size of 0.5, thus the behavioural reaction norm in C is only updated around that value. D Receivers face signallers with informative reaction norms (red line in A). Accordingly, receivers develop a threashold-like reaction norm where the decision to retreat increases with the badge size of the interacting partner. Colour scale in C and D indicates the quality of the individual." ,warning=FALSE}
 
 # Top panels -  A the sender code and  B learning for the receiver code
@@ -408,10 +417,10 @@ par(plt=posPlot(numplotx = 2,idplotx = 1,numploty = 1,idploty = 1,upboundx = 91,
  matlines(x=rangQual,y=linesSender,lwd=4,col=colRuns,lty=1)
  mtext("Badge size",2,line = 2,cex = 1,las = 0)
  # include bird cartoons
- rasterImage(honestBig,0.75,0.87,0.95,1.07)
- rasterImage(honestSmall,0.05,0.01,0.25,0.21)
- rasterImage(dishonest,0.75,0.5,0.95,0.7)
- rasterImage(dishonest,0.05,0.5,0.25,0.7)
+ rasterImage(honestBig,0.77,0.87,0.95,1.07)
+ rasterImage(honestSmall,0.05,0.01,0.22,0.21)
+ rasterImage(dishonest,0.77,0.5,0.95,0.7)
+ rasterImage(dishonest,0.05,0.5,0.22,0.7)
  # legend("left",legend=rangeBeta,col=colRuns,lwd=3,title = expression(beta),cex=2,bty="n")
  
 par(plt=posPlot(numplotx = 2,idplotx = 2,numploty = 1,idploty = 1,
