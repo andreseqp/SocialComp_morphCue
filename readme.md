@@ -34,9 +34,9 @@ The executable files compiled in section 1, get the parameter files as input.
 With the settings used as default, the executable for the runs
 one replicate for each parameter files that gets as input. The simulation
 produces two types of files:
-1) The evolutionary dynamics named with the prefix *evolLearn* and appended with
+<br> 1) The evolutionary dynamics named with the prefix *evolLearn* and appended with
   parameters used for the simulations.
-2) Information from individuals sampled from the population at regular intervals 
+<br> 2) Information from individuals sampled from the population at regular intervals 
   along evolutionary time. 
 These files are place in the directory specified in the parameter file. 
 
@@ -48,16 +48,15 @@ analysis and their role.
 
 ### Description of relevant files
 *cue_comp.cpp*: c++ code of the individual-based model.
-*aesth*: Defines a set of aesthetic parameters to be used in 
-  the visualizations.
-*AccFunc.r*: Accesory functions to visualize the outcome of the simulations. 
-*NbClust.R*: Function to systemtize k-means
-*posPlots.R*: fucntion to control figure size and location
-*Filled.contour3.R*: Tailored implementation of filled contour
-*json.hpp*: Header file necessary to use json files in the c++ code.
-*parTOjson.R*: generate different types of json files with the parameter values.
-*random.cpp*, *random.h*, *utils.cpp*, *utils.h*: Headers and cpp files 
+<br> *aesth*: Defines a set of aesthetic parameters to be used in the visualizations.
+<br> *AccFunc.r*: Accesory functions to visualize the outcome of the simulations. 
+<br> *NbClust.R*: Function to systemtize k-means
+<br> *posPlots.R*: fucntion to control figure size and location
+<br> *Filled.contour3.R*: Tailored implementation of filled contour
+<br> *json.hpp*: Header file necessary to use json files in the c++ code.
+<br> *parTOjson.R*: generate different types of json files with the parameter values.
+<br> *random.cpp*, *random.h*, *utils.cpp*, *utils.h*: Headers and cpp files 
   necessary to compile the executables. They define convenient functions and
   random number generators. 
-*manuscript_1.0/*: files necessary to compile the R markdown file that 
+<br> *manuscript_1.0/*: files necessary to compile the R markdown file that 
   renders the manuscript. Among those *Cleanerlearning.bib* the reference list.
