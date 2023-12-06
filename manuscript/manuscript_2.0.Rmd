@@ -152,8 +152,10 @@ Signals can be evolutionarily stable whenever low-quality individuals
 pay a higher fitness cost for carrying the signal such that it is not 
 in the interest of low-quality individuals to fake quality by producing a large badge.
 Signal costs inversely proportional to quality may come about as a result of the
-production costs of the signal, in which case the signal works like a handicap
-[@botero_Evolution_2010; @johnstone_Badges_1993;@grafen_Biological_1990;@zahavi_Mate_1975]. 
+production costs of the signal, in which case the signal works like a 'handicap'
+[@botero_Evolution_2010; @johnstone_Badges_1993;@grafen_Biological_1990;@zahavi_Mate_1975].
+Throughout this manuscript, we use the word 'handicap' to refer to the differential 
+costs model by Grafen [-@grafen_Biological_1990]
 Alternatively, the costs can come from 
 the aggressive reaction of receivers when the convention of the communication 
 is broken [@enquist_Signaling_2010;@tibbetts_Socially_2004]. For example in paper 
@@ -161,7 +163,7 @@ wasps, subordinate individuals with experimentally manipulated dominant-like fac
 patterns received more aggression from the dominant [@tibbetts_Socially_2004]. 
 In this case, costs are socially rather than developmentally mediated and are 
 triggered by the violation of the convention, although how the convention
-is established in the first place is unclear.
+is established in the first place is unclear. 
 
 <!-- should this last part of the paragraph stay ?-->
 <!-- An alternative system of communication is one where individuals  -->
