@@ -38,6 +38,7 @@ header-includes: |
     \usepackage{float}
     \usepackage{graphicx}
     \usepackage{unicode-math}
+    \usepackage{geometry}
     \usepackage{setspace}\doublespacing
     \usepackage[backref=page]{hyperref}
     \linespread{2}
@@ -47,6 +48,7 @@ header-includes: |
     \newcommand{\beginsupplement}{ \setcounter{table}{0}            
     \renewcommand{\thetable}{S\arabic{table}}\setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
     \providecommand{\keywords}[1]{\textbf{\textit{Keywords---}} #1}
+    \geometry{top=1in,left=1in,bottom=1in,right=1in}
   ```
 keywords: |
   Biological signals, evolutionary branching, agent-based modeling, animal communication, badges of status,
@@ -155,10 +157,11 @@ Signal costs inversely proportional to quality may come about as a result of the
 production costs of the signal, in which case the signal works like a 'handicap'
 [@botero_Evolution_2010; @johnstone_Badges_1993;@grafen_Biological_1990;@zahavi_Mate_1975].
 Throughout this manuscript, we use the word 'handicap' to refer to the differential 
-costs model by Grafen [-@grafen_Biological_1990]
-Alternatively, the costs can come from 
-the aggressive reaction of receivers when the convention of the communication 
-is broken [@enquist_Signaling_2010;@tibbetts_Socially_2004]. For example in paper 
+costs model by Grafen [-@grafen_Biological_1990]; however, note that the 
+accuracy of this terminology has been questioned [@penn_Handicap_2020]. 
+Alternatively, the costs can come from the aggressive reaction of receivers 
+when the convention of the communication 
+is broken [@enquist_Signaling_2010;@tibbetts_Socially_2004]. For example, in paper 
 wasps, subordinate individuals with experimentally manipulated dominant-like facial
 patterns received more aggression from the dominant [@tibbetts_Socially_2004]. 
 In this case, costs are socially rather than developmentally mediated and are 
@@ -231,9 +234,11 @@ mechanism whose underpinnings show interspecific variation
 @pretot_Comparative_2021]. For example, species can have different learning rates
 [@hoedjes_Natural_2010], some may vary these rates during learning 
 trials which allows them to have more 
-flexible learning [@leimar_Flexibility_2023], and some may include future rewards in their associations [@raby_Planning_2007;@osvath_Spontaneous_2009].
+flexible learning [@leimar_Flexibility_2023], and some may include 
+future rewards in their associations [@raby_Planning_2007;@osvath_Spontaneous_2009].
 Associative learning is not a single mechanism, but rather a set of 
-cognitive structures and processes that can vary in their scope and complexity. Presumably, these structures and processes have been modified 
+cognitive structures and processes that can vary in their scope and complexity. 
+Presumably, these structures and processes have been modified 
 by natural selection and could provide novel explanations for behavioural 
 variation. Nonetheless, associative learning is 
 not often included in the narrative of evolutionary explanations of 
@@ -267,17 +272,21 @@ one might expect communication signals to evolve as handicaps or conventions.
 We model the evolution of signals indicating individual quality 
 in the context of agonistic interactions. 
 For simplicity, we consider a population of haploid 
-individuals with non-overlapping generations. Individuals are born 
-every generation with a level of quality ($Q_i$, where $i$ is subscript 
-of the population vector of size $N$) given by a number between zero and one, 
+individuals with non-overlapping generations of size $N=3000$. Individuals are born 
+every generation with a level of quality $Q_i$ (where $i$ is subscript 
+of the population vector) given by a number between zero and one, 
 which is drawn from a truncated normal distribution 
-$N( 0.5,\sigma)$. An individual with quality $0$ has the lowest RHP, 
+$TN( 0.5,\sigma)$. An individual with quality $0$ has the lowest RHP, 
 while an individual with quality $1$ has the highest. As they 
 develop, individuals produce a phenotypic signal (badge), 
-the size of which depends on their quality according to a reaction norm given by 
-$B_i=1/(1+e^{\alpha_i-\beta_i Q_i})$; where $\alpha_i$ and 
-$\beta_i$ are individual specific traits that determine the shape of 
-the reaction norm (Fig. \ref{fig:modelStruc} A). Variation in $\alpha_i$ 
+the size of which depends on their quality according to a logistic reaction norm given by
+\begin{equation}
+B_i=1/(1+e^{-\alpha_i-\beta_i Q_i}) \textrm{;}\label{eq:reacNorm}
+\end{equation}
+
+where $\alpha_i$ and $\beta_i$ are individual specific traits 
+that determine the shape of the reaction norm (Fig. \ref{fig:modelStruc} 
+A). Variation in $\alpha_i$ 
 and $\beta_i$ means individuals can have either uninformative (flat) or 
 informative (logistic) norms. Informative reaction norms represent a 
 developmental program where the phenotype of the individual is determined by
@@ -286,11 +295,17 @@ correlation between quality and signal. The size of the signal is constrained
 to take values between zero and one. We assume different values of these traits 
 are given by different alleles and are inherited from mother to offspring 
 unless, with a small probability ($\mu$), mutation changes the allelic value 
-of the offspring by an amount drawn from a normal distribution $TN(0,\sigma_\mu)$.  
+of the offspring by an amount drawn from a normal distribution $N(0,\sigma_\mu)$.  
 
 After birth, individuals go through a round of 
 viability selection. The survival probability of an individual is 
-given by $s_i=1/(1+e^{-k_1-k_2(Q_i-B_i)})$, where $k_1$ and $k_2$ are parameter 
+given by 
+
+\begin{equation}
+s_i=1/(1+e^{-k_1-k_2(Q_i-B_i)})\textrm{,} \label{eq:viability}
+\end{equation}
+
+where $k_1$ and $k_2$ are parameter 
 values determining the shape of the survival function. 
 Importantly, if $k_2=0$ survival probability is independent of quality, 
 while if $k_2>0$ lower-quality individuals pay a higher price for similar-sized 
@@ -325,47 +340,32 @@ in the population vector of the focal and its interacting
 partner, respectively.
 
 The decision of whether to escalate a fight against an interacting 
-partner can depend on the size of the partner's badge, 
-with the dependency being determined by the focal's experiences acquired
-through a learning process. We implement learning using 
-the actor-critic approach from reinforcement learning (RL) theory [@sutton_Reinforcement_2018;@quinones_Reinforcement_2020; @leimar_Learning_2019;
-@leimar_Evolution_2021].
-Individuals estimate the reward (pay-off) expected from  interacting 
-with partners of different badge sizes (the critic in RL terminology). 
-After each interaction they update the estimate of reward proportionally 
-to the difference between their current estimate and the observed 
-reward (prediction error $\delta$) and to the speed of learning 
-($\mathrm{A}$). Furthermore, individuals express different probabilities of 
-retreating/attacking depending on the badge size of their opponent 
-(the actor in RL). They update the probability of 
-retreating/attacking depending on whether retreating/attacking
-leads to an increase in the reward estimation. 
-Thus, if a focal individual decides to escalate a fight against 
-an individual with a small badge and this leads to an increase in 
-the reward estimation, then the focal individual will increase the probability 
-of escalating fights with individuals of small badges in the future. 
-Given that badge size is a real number between 0 and 1, there are infinitely 
-many badge sizes. Thus, the reward estimation, as well as the probability 
-of retreating/attacking, must be generalized across different values. 
+partner depends on the size of the partner's badge, with the dependency 
+being determined by the focal's experiences acquired
+through a learning process. Individuals use previous experiences to estimate
+the reward expected from encountering a partner with a particular badge size. 
+However, given that badge size is a real number between 0 and 1, previous 
+experiences must be generalized across the badge size range. 
 To implement generalization we use the linear function approximation 
 method based on radial basis functions [@sutton_Reinforcement_2018].
 Specifically, we pick $c$ feature centres, which are evenly spaced values 
 along the badge size interval ([0,1]) where the updates are focused. 
 For simplicity, we keep the location of these feature centres 
 constant and  the same for all individuals; they are stored in 
-vector $\symbf{b}$ . Each of these feature centres 
-is associated with a weight for reward estimation and tendency to play 
-retreat in a given interaction. The reward estimation and the tendency 
-to retreat are calculated (in every interaction) as the sum of the weights 
-associated with each feature centre, weighted by the response 
-triggered by the feature (Fig. \ref{fig:modelStruc} B, dots 
-represent the feature weights). The response of each feature centre 
+vector $\symbf{b}$. Each of these feature centres 
+is associated with a weight for reward estimation 
+($x_z$, $z$ is an index that goes from 1 to $c$) and tendency to play 
+retreat in a given interaction ($y_z$). For each badge size ecountered the reward 
+estimate and the associated tendency to retreat are calculated 
+as the sum of the weights associated with each feature centre, 
+weighted by the response triggered by the feature (Fig. \ref{fig:modelStruc} B, 
+dots  represent the feature weights). The response of each feature centre 
 diminishes as a Gaussian function with the distance between the 
 feature centre and the badge size of 
 the partner (Fig. \ref{fig:modelStruc} B, grey line). Formally, the 
 reward estimation $\hat{R}$ when the focal individual ($i$) faces 
 individual $j$ is given by,
-\
+
 \begin{equation}
 \hat{R}_{ij} =  \sum_{z=1}^{c} x_z e^{(-\frac{|B_j-b_z|}{2\theta^2})} 
 \end{equation}
@@ -383,21 +383,92 @@ logit(q_{ij}) =  \sum_{z=1}^{c} y_z e^{(-\frac{|B_i-b_z|}{2\theta^2})}
 
 where $y_z$ is the weight of feature centre $z$ on the tendency to retreat.
 
+The weights vectors for reward estimation ($\symbf{x}$) and tendency 
+to retreat ($\symbf{y}$) are the focus of the learning update. In the baseline
+implementation of the model, these two vectors are initialized with values
+of zero. For the reward estimation ($\symbf{x}$), this means that
+before any interaction individuals assume they will get a payoff of 
+zero. As for the behavioral policy, these initial values
+translate into a $0.5$ probability of playing dove. Beyond the baseline scenario,
+we explore initializing the policy vector with a) more positive values triggering 
+more peaceful behaviour, b) more negative values triggering more aggressive 
+behaviour, c) values that trigger the ESS of the original *hawk-dove* game and 
+d) letting these values be defined by evolutionary processes 
+(see Results for more details). The later was 
+implemented by letting an extra locus pass on the initial value from parent to 
+offspring and changed by mutation. Regardless of the initialization, all these 
+values change with every interaction as a function of the reward experienced. 
+Formally the change is given by,
+
+\begin{equation}
+  \Delta x_z = \Alpha \delta e^{(-\frac{|B_j-b_z|}{2\theta^2})} \textrm{.}
+  \label{eq:critic}
+\end{equation}
+
+Where $\delta$ is the *prediction error*, which is the difference between the 
+predicted and experienced reward, formally 
+
+\begin{equation}
+  \delta = R - \hat{R} \textrm{.} \label{eq:predError}
+\end{equation}
+
+The experienced reward ($R$) is the outcome from the *hawk-dove* 
+game described earlier. 
+
+Thus, the learning update depends on the speed of learning ($A$) 
+and the prediction error. The exponential term assures, just as in 
+the reward estimation, that the size of update is weighted by 
+the distance of the partner's badge size to each feature centre. 
+
+ 
+The weights for the probability of retreat ($\symbf{z}$) are updated in a similar
+fashion according to
+ 
+\begin{equation}
+  \Delta y_z = \Alpha \delta (1-\pi) e^{(-\frac{|B_j-b_z|}{2\theta^2})} \textrm{.}
+  \label{eq:actor}
+\end{equation}
+
+where $\pi$ is the probability of choosing the action chosen by the individual. 
+If an individual chooses to behave as a dove and avoid an overt conflict, 
+
+\begin{equation}
+  \pi = q_{ij} = \frac{1}{1+e^{\sum_{z=1}^{c} y_z e^{-\frac{|B_i-b_z|}{2\theta^2}}}} \textrm{;}\label{eq:pi}
+\end{equation}
+
+if alternatively, the individual chooses to escalate the fight, $\pi$ corresponds 
+to $1-q_{ij}$. The combination of $\pi$ and the *prediction error* ($\delta$)
+assures that behavioral policy updates are carried increasing the probability of 
+behaviours that predict higher reward. 
+
+This implementation corresponds to the *actor-critic* approach from reinforcement learning (RL) theory [@sutton_Reinforcement_2018;@quinones_Reinforcement_2020; @leimar_Learning_2019;@leimar_Evolution_2021]. In the *actor-critic* approach
+the agent updates its behavioral policy (*actor*) and in parallel its 
+reward estimation (*critic*). In our model the actor update is implemented by equations \ref{eq:actor} and \ref{eq:pi}; while the *critic* update 
+is implemented by equation \ref{eq:critic}. 
+Both of these updates include the *prediction error* 
+(equation \ref{eq:predError}). The *prediction error* corresponds to the Rescorla-Wagner 
+rule [@rescorla_Theory_1972], which is a key component of learning 
+theory and widely applied in neurobiology to understand learning processes
+[@holland_Minireview_2016].
+
 Individuals interact as the focal individual $n$ times and the interaction 
 partner is chosen at random. Thus, the expected number of interactions for 
 each individual is $2n$. 
-After the interaction round , individuals in the population 
-reproduce with a probability proportional to their total pay-off $w_i$, which is a sum of the 
-baseline pay-off ($w_0$) and all the pay-offs obtained throughout their 
-life. Thus, the combination of natural selection and genetic drift 
-changes the distribution of values in $\alpha$ and $\beta$ that segregates 
+After the interaction round, individuals in the population 
+reproduce with a probability proportional to their total pay-off $w_i$, 
+which is a sum of the baseline pay-off ($w_0$) and all the pay-offs 
+obtained from interactions throughout their life. Thus, the total fitness
+is composed of the viability component (equation \ref{eq:viability}) and the 
+total payoff collected in the interaction round. Therefore, the combination of natural 
+selection and genetic drift changes the distribution of 
+values in $\alpha$ and $\beta$ that segregates 
 in the population, effectively changing  the badges expressed and the 
 communication system.
 
-The code necessary to run simulations as well as to produce visualizations can be found 
-in: \url{https://doi.org/10.5281/zenodo.8359809} 
+The code necessary to run simulations as well as to produce visualizations 
+can be found in: \url{https://doi.org/10.5281/zenodo.8359809} 
 
-```{r modelStruc,echo=FALSE,out.width='100%',fig.height=5,fig.align='center',fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A, the reaction norm determines the badge size, *e.g* the size of a black band on a bird's chest. Red shows an informative reaction norm, whereas blue shows a uninformative reaction norm. B individuals perceiving the signal have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the feature weights (black dots). Feature weights are values associated with a particular badge size and are updated as individuals interact with each other. The generalization of the information associated with each feature weight is represented by the grey line and its axis, which shows that the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether this leads to an increase in the estimated reward. Panels C and D show the effect of learning on the receiver strategy. Receivers in C face signallers with uninformative reaction norms (blue line in A). The uninformative reaction norm yields a badge size of 0.5, thus the behavioural reaction norm in C is only updated around that value. D Receivers face signallers with informative reaction norms (red line in A). Accordingly, receivers develop a threashold-like reaction norm where the decision to retreat increases with the badge size of the interacting partner. Colour scale in C and D indicates the quality of the individual." ,warning=FALSE}
+```{r modelStruc,echo=FALSE,out.width='100%',fig.height=5,fig.align='center',fig.show='hold',fig.cap= "Model of communication in the context of aggressive interactions. In A, the reaction norm  (equation \\ref{eq:reacNorm}) determines the badge size, \\textit{e.g} the size of a black band on a bird's chest. Red shows an informative reaction norm, whereas blue shows a uninformative reaction norm. B individuals perceiving the signal have a behavioral reaction norm that determines their probability of retreating (black line). The reaction norm arises from generalizing the information from the policy feature weights (black dots). Feature weights are values associated with a particular badge size and are updated as individuals interact with each other. The generalization of the information associated with each feature weight is represented by the grey line and its axis, which shows that the response triggered by the fourth feature diminishes as the value evaluated is further from the feature center. The learning process moves the feature weights (black dots) up or down depending on whether this leads to an increase in the estimated reward. Panels C and D show the effect of learning on the receiver strategy. Receivers in C face signallers with uninformative reaction norms (blue line in A). The uninformative reaction norm yields a badge size of 0.5, thus the behavioural reaction norm in C is only updated around that value. D Receivers face signallers with informative reaction norms (red line in A). Accordingly, receivers develop a threashold-like reaction norm where the decision to retreat increases with the badge size of the interacting partner. Colour scale in C and D indicates the quality of the individual." ,warning=FALSE}
 
 # Top panels -  A the sender code and  B learning for the receiver code
 # load(here("manuscript","manuscript_1.0_cache","latex","modelStruc_6905f4797a1faa21041511a8dcdf1eb9.RData"))
@@ -576,7 +647,7 @@ text(x = -0.1,y = -0.3,labels = "Badge size")
 
 ```
 
-## Results
+## Results 
 
 ### Learning in a monomorphic population
 
@@ -612,7 +683,7 @@ where the decision to retreat or to attack depends on the quality of the receive
 As expected, the higher the quality of the receiver, the larger the badge size 
 of the signaller that triggers a retreat.
 
-```{r handicap,echo=FALSE,out.width='100%',fig.height=7,fig.align='center',fig.show='hold',fig.cap="Evolution of the badge size as a handicap mediated by learning. Top panels (A.1 and A.2) show the evolutionary dynamics of the sender code. In the y axis the trait value, in the x axis the generation time in thousands of generations. On the left (A.1), changes in the distribution of values for the intercept of the reaction norm ($\\alpha$); on the right (A.2) changes in the distribution of the slope ($\\beta$). Darker areas of the background correspond to values with high frequency, while orange lines in both panels show the mean of the distribution. Grey lines show the generation time corresponding to the panels below portraing the sender (B) and receiver code (C). In the bottom panels (C1-4), the learned reaction norms correspond to individuals in the population after the interaction round. Color scale indicates quality just as in Fig. \\ref{fig:modelStruc}. The black dashed line shows the average reaction norm of the population. On the first half of the simulation (B.1 and B.2) the badge size evolves to its minimum value. In the second half, the slope takes positive values and reaction norms evolve to produce an honest signal of quality. Correspondingly, individuals learn to react to badge size by increasing the probability of retreating with increasing badge sizes"  ,warning=FALSE}
+```{r handicap,echo=FALSE,out.width='100%',fig.height=6,fig.align='center',fig.show='hold',fig.cap="Evolution of the badge size as a handicap mediated by learning. Top panels (A.1 and A.2) show the evolutionary dynamics of the sender code. In y axis shows the trait value, in the x axis shows the generation time in thousands of generations. On the left (A.1), changes in the distribution of values for the intercept of the reaction norm ($\\alpha$); on the right (A.2) changes in the distribution of the slope ($\\beta$). Darker areas of the background correspond to values with high frequency, while orange lines in both panels show the mean of the distribution. Grey lines show the generation time corresponding to the panels below portraing the sender (B) and receiver code (C). In the bottom panels (C1-4), the learned reaction norms correspond to individuals in the population after the interaction round. Color scale indicates quality just as in Fig. \\ref{fig:modelStruc}. The black dashed line shows the average reaction norm of the population. On the first half of the simulation (B.1 and B.2) the badge size evolves to its minimum value. In the second half, the slope takes positive values and reaction norms evolve to produce an honest signal of quality. Correspondingly, individuals learn to react to badge size by increasing the probability of retreating with increasing badge sizes."  ,warning=FALSE}
 
 scenario<-"betCostEvol3"#"alphaAct"#"nIntGroupNormQual"#
 runChoi<-9 #1
@@ -637,6 +708,9 @@ indList_runs<-grep(paste0(param$namParam,param$rangParam[2]),
                    indList,value =TRUE)
 evol<-do.call(rbind,lapply(evolList_runs,fread))
 pop<-do.call(rbind,lapply(indList_runs, fread))
+
+evol[,meanAlpha:=meanAlpha*-1]
+pop[,alpha:=alpha*-1]
   
 Valpar<-param$rangParam[2]
   
@@ -732,12 +806,12 @@ evolDist(indData = pop[seed==runChoi],variable = "alpha",nbins = 10,
          ylim = range(pop[seed==runChoi,alpha])+adjsYlims,
          xlim=c(0,22000))
 
-mtext(text = "Trait value",cex = cexAxis,line = 1,side = 2,las=0)
+mtext(text = "Trait value",cex = cexAxis,line = 1.2,side = 2,las=0)
 legend("topright",legend = c(expression(alpha[s])), bty = "n",cex=cexAxis)
 legend("topleft",legend = c("A.1"),cex=cexAxis,bty = "n",inset = -0.06)
 
 
-text(x = 2000,y=0,"time:")
+text(x = 2000,y=-4.2,"time:")
 axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1)))],
      labels = axTicks(1)[2:(length(axTicks(1)))]/1000,cex.axis=cexAxis,
      hadj = 1.3,line = -0.5,tick = FALSE)
@@ -876,7 +950,7 @@ rm(list=grep("temp",ls(),value = T))
 ```
 
 
-### Badges as Handicaps
+### Badges as Handicaps (costly signals)
 
 When we allowed the badge size to evolve ($\alpha$ and $\beta$ 
 changed subject to natural selection and genetic drift) and the signal
@@ -886,9 +960,9 @@ to produce an honest signal (Fig. \ref{fig:handicap}). The evolution of
 the sender code did not happen immediately after the start of the 
 evolutionary process. Instead, the evolutionary dynamics of the reaction 
 norm parameters (Fig. \ref{fig:handicap}, A) appeared to involve a set of 
-steps. First, the intercept of the reaction norm ($\alpha$) 
+steps. First, the intercept of the logistic reaction norm ($\alpha$) 
 describing the relationship between individual quality and badge size evolved to 
-higher values, reducing the average badge size in the populations. 
+lower values, reducing the average badge size in the populations. 
 This is because reaction norms segregating in the population are 
 flat at the beginning of the simulation; consequently, 
 the receiver code does not respond to the badge size 
@@ -902,7 +976,7 @@ correlation, increasing the probability of retreating when facing
 individuals with larger badges (Fig. \ref{fig:handicap} C). Hence, natural selection 
 favours larger values of $\beta$, eventually leading to an evolutionary 
 equilibrium in which badge size is an honest signal of quality mediated
-by the learned responses of receivers (Fig. \ref{fig:handicap} B.4 and C.4).
+by the learned responses of receivers (Fig. \ref{fig:handicap} B.4 and C.4). 
 
 The evolutionary trajectory portrayed in figure 
 \ref{fig:handicap} A is not the only possible outcome. If the slope of the 
@@ -917,9 +991,20 @@ never leads to the establishment of an honest signal.
 Instead, subject to genetic drift, the 
 population either evolves towards the disappearance of the badge or to the 
 maximum badge size. In either of these cases reaction norms are flat, so the 
-badge does not provide any information about quality. 
+badge does not provide any information about quality. This means that learning
+is not sufficient to yield a communication system, but rather is requires 
+the badge to have a cost proportional to the quality of the individual. 
 
-### The evolution of polymorphism mediated by learning
+We have described here  two replicate simulations representative of the 
+two outcomes found in a series of 20 replicates run with the same parameter
+combination. The exact evolutionary trajectory differs in each of these replicates 
+due to the stochastic effects of the dynamical system. Particularly the timing 
+of the changes was different in each replicate. Nevertheless, all of the 
+replicates could be classified as either evolving a functioning communication 
+system, or not having the badge present in the population. 
+
+
+### The evolution of polymorphism mediated by learning when the signal is cost-free
 
 The amount of information that agents are able to collect via learning 
 over their life time can strongly change the outcome of 
@@ -934,27 +1019,32 @@ with a value of zero for both the intercept and
 the slope of the reaction norm, and mutations quickly build up a 
 normal distribution around the starting 
 value. Within the first 2000 generations, the unimodal distribution in 
-the intercept ($\alpha$) splits into a bimodal one. 
+the logistic intercept ($\alpha$) splits into a bimodal one. 
 Later in evolutionary time, one of the peaks splits further, 
-so at the end of the evolutionary simulation the distribution of the intercept 
-($\alpha$) in the population shows three distinct peaks. In the case of $\beta$, the 
-peaks in the distribution are not so clear-cut, but the variance of the 
-distribution increases over time. These changes in the 
-distribution of the parameters of the sender reaction norm 
+so at the end of the evolutionary simulation the distribution of the 
+logistic intercept ($\alpha$) in the population shows three distinct peaks. 
+In the case of $\beta$, the peaks in the distribution are not so clear-cut, 
+but the variance of the distribution increases over time. 
+These changes in the distribution of the parameters of the sender reaction norm 
 imply that individuals can generally be classified into three 
 distinct types (Fig. \ref{fig:branching}). Two types express a flat reaction 
 norm with extreme values for the badge size, meaning that their badge size 
 is not informative of their quality, whereas the third type shows 
 intermediate badge sizes determined by individual quality 
-(Fig. \ref{fig:branching} B.3-4). 
+(Fig. \ref{fig:branching} B.3-4).
+
+
 In this simulation, the values of the slope in the informative group
 are negative, which implies that badge size correlates negatively with quality. 
-Furthermore, the receiver reaction norms developed through learning, particularly those 
+The receiver reaction norms developed through learning, particularly those 
 of individuals of intermediate quality, respond to the signal of their 
 sender type by increasing the probability of retreating from a fight with 
-individuals with smaller badges (Fig. \ref{fig:branching}). 
+individuals with smaller badges (Fig. \ref{fig:branching}). However, 
+given the absence of costs, the sign of the slope is arbitrary. In our replicate 
+simulations we found examples where the third type had positive 
+and negative slopes.
 
-```{r branching,echo=FALSE,out.width='100%',fig.height=6,fig.align='center',fig.show='hold',fig.cap= "The evolution of cheap signals. Portrait of the evolutionary dynamics of the sender code with snapsots of both sender and receiver codes just as in fig. \\ref{fig:handicap}. The top panels (A) show changes in the distribution of values for $\\alpha$ (A.1) and $\\beta$ (A.2) along evolutionary time. In the y axis the trait value, in the x axis the generation time in thousands of generations. Panels below correspond to snapshots of the sender (B) and receiver codes (C). Generation time of the snapshots are indicated by the grey lines in the top panels. Color of the lines indicates the quality of the individual, as indicated in the color code in C.1. The dashed line represents the average reaction norm of the popúlations. The unimodal distribution with which $\\alpha$ (A.1) starts the simulation, quickly turns into a bimondal distribution, and at about 10000 generations it splits further into three modes. These three peaks correspond to three type of reaction norms in panels B.1-3."}
+```{r branching,echo=FALSE,out.width='100%',fig.height=6,fig.align='center',fig.show='hold',fig.cap= "The evolution of cheap signals. Portrait of the evolutionary dynamics of the sender code with snapsots of both sender and receiver codes just as in fig. \\ref{fig:handicap}. The top panels (A) show changes in the distribution of values for $\\alpha$ (A.1) and $\\beta$ (A.2) along evolutionary time. The y axis shows the trait value, and  the x axis shows the generation time in thousands of generations. Panels below correspond to snapshots of the sender (B) and receiver codes (C). Generation time of the snapshots are indicated by the grey lines in the top panels. Color of the lines indicates the quality of the individual, as indicated in the color code in C.1. The dashed line represents the average reaction norm of the populations. The unimodal distribution with which $\\alpha$ (A.1) starts the simulation, quickly turns into a bimondal distribution, and at about 10000 generations it splits further into three modes. These three peaks correspond to three type of reaction norms in panels B.1-3."}
 
 # knitr::include_graphics(here("Simulations","nIntGroupNormQual_","evolDyn7_nIntGroup2000.png"))
 
@@ -985,7 +1075,10 @@ indList_runs<-grep(paste0(param$namParam,param$rangParam),
 
 evol<-do.call(rbind,lapply(evolList_runs,fread))
 pop<-do.call(rbind,lapply(indList_runs, fread))
-  
+
+evol[,meanAlpha:=meanAlpha*-1]
+pop[,alpha:=alpha*-1]  
+
 Valpar<-param$rangParam
   
 nampar<-param$namParam
@@ -1117,7 +1210,7 @@ matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
          y=matrix(rep(range(pop[seed==runChoi,beta]))),
                       lty=1,col = "grey",lwd=2)
 
-text(x = 2000,y=-3.2,"time:")
+text(x = 2000,y=-3.3,"time:")
 axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1)))],
      labels = axTicks(1)[2:(length(axTicks(1)))]/1000,cex.axis=cexAxis,
      hadj = 1.3,line = -0.5,tick = FALSE)
@@ -1227,9 +1320,10 @@ is proportional to quality, following the handicap principle.
 The evolutionary process leads to a combination of reaction norm parameters where 
 there is a positive correlation between the size of the badge and the quality 
 of the individual. This relationship, however, is muddled by the fact that there 
-are two clusters of values for the intercept ($\alpha$) and slope ($\beta$) 
-of the reaction norm in the population. Thus, there are two types 
-of reaction norms. One of the types has a steeper slope compared to the other. 
+are two clusters of values for the logistic intercept 
+($\alpha$) and slope ($\beta$) of the reaction norm in the population. 
+Thus, there are two types of reaction norms. 
+One of the types has a steeper slope compared to the other. 
 This effect of an increased variance in the trait distribution
 is not only triggered by lower number of interactions. 
 Larger variances are also found when we assume 
@@ -1270,6 +1364,9 @@ indList_runs<-grep(paste0(param$namParam,param$rangParam),
 
 evol<-do.call(rbind,lapply(evolList_runs,fread))
 pop<-do.call(rbind,lapply(indList_runs, fread))
+
+evol[,meanAlpha:=meanAlpha*-1]
+pop[,alpha:=alpha*-1]
   
 Valpar<-param$rangParam
   
@@ -1361,11 +1458,11 @@ evolDist(indData = pop[seed==runChoi],variable = "alpha",nbins = 10,
          ylim = range(pop[seed==runChoi,alpha])+adjsYlims,
          xlim=c(0,22000))
 
-mtext(text = "Trait value",cex = cexAxis,line = 1,side = 2,las=0)
+mtext(text = "Trait value",cex = cexAxis,line = 1.2,side = 2,las=0)
 legend("topright",legend = c(expression(alpha[s])), bty = "n",cex=cexAxis)
 legend("topleft",legend = c("A.1"),cex=cexAxis,bty = "n",inset = -0.06)
 
-text(x = 2000,y=0,"time:")
+text(x = 2000,y=-4,"time:")
 axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1)))],
      labels = axTicks(1)[2:(length(axTicks(1)))]/1000,cex.axis=cexAxis,
      hadj = 1.3,line = -0.5,tick = FALSE)
@@ -1401,7 +1498,7 @@ matlines(x=matrix(rep(evolStats[genstoPrint,time],each=2),nrow=2),
          y=matrix(rep(range(pop[seed==runChoi,beta]))),
                       lty=1,col = "grey",lwd=2)
 
-text(x = 2000,y=-1,"time:")
+text(x = 2000,y=-1.2,"time:")
 axis(side=1,padj = -2,at = axTicks(1)[2:(length(axTicks(1)))],
      labels = axTicks(1)[2:(length(axTicks(1)))]/1000,cex.axis=cexAxis,
      hadj = 1.3,line = -0.5,tick = FALSE)
@@ -1500,7 +1597,7 @@ for(genC in genstoPrint){
 rm(list=grep("temp",ls(),value = T))
 ```
 
-### The peaceful, the aggressive and the clever
+### The peaceful, the aggressive and the clever, when signals are cost-free 
 
 Our model revealed that the behaviour expressed by naive individuals 
 (*i.e.* those who have not yet learned) imposes negative-frequency dependent selection, 
@@ -1514,13 +1611,15 @@ the initial conditions of the actor module in the learning model. Specifically,
 we let naive individuals have a flat reaction norm with either a 1) low (peaceful),
 2) high (aggressive) probability of escalating a fight or 3) a probability 
 corresponding to the ESS of the original hawk-dove game 
-(which we call clever, due to information and computation necessary to know the ESS). 
+(which we call clever, due to information and computation 
+necessary to know the ESS). 
 Fig. \ref{fig:startCond} shows the distribution of values of the 
 intercept ($\alpha$) and slope ($\beta$) evolved in different 
 replicates of the simulations. The left-hand side panel, 
 corresponding to peaceful naive individuals, is the only one where the 
 distribution of values is split in different clusters. That is, most of 
-the variation occurs within clusters. In contrast, when naive individuals behave
+the variation occurs between clusters of each replicate. 
+In contrast, when naive individuals behave
 either aggressively or cleverly, badges evolve toward minimum and maximum 
 values, and so the variation is driven mainly by differences among replicates. 
 We can make sense of these results by realizing that individuals change their 
@@ -1529,13 +1628,13 @@ the population. In contrast, an individual expressing a rare badge size
 will most likely experience the naive behaviour of their partner. 
 When the naive behaviour is peaceful, individuals
 with a rare badge size have a fitness advantage. This triggers 
-negative-frequency dependent selection and the evolution of different types of 
+negative frequency-dependent selection and the evolution of different types of 
 badge sizes. According to this narrative, situations where individuals 
 learn fast and interact repeatedly will diminish the strength 
 of frequency-dependent selection. 
 
 
-```{r startCond, echo=FALSE, out.width='100%',fig.align='center',fig.show='hold',fig.cap="The peaceful, the aggressive and the clever. Distribution of values of the intercept $\\alpha$ and slope $\\beta$ for individuals at the end of the evolutionary simulations. The panels show the three different initial conditions for the behaviour of individuals: peaceful, agressive and  \"clever\", see maintext for details. Colours indicate the replicate simulation. In the inset, the resulting reaction norms corresponding to the intecept and slope values for one of the replicates, which replicate is shown is indicated by the line colour. The simulations where individual disply a \"clever\" and agressive behaviour, before the learning process, show all the points of a single replicate cluster together, while in simulation where individuals start being peaceful al replicates show distinct groups of individuals spread throughout the x and y axis. Only in this condition there is a frequency-dependent process that favour diversity in the reaction norm."}
+```{r startCond, echo=FALSE, out.width='100%',fig.align='center',fig.show='hold',fig.cap="The peaceful, the aggressive and the clever. Distribution of values of the logistic intercept $\\alpha$ and slope $\\beta$ for individuals at the end of the evolutionary simulations. The panels show the three different initial conditions for the behaviour of individuals: peaceful, agressive and  \"clever\", see maintext for details. Colours indicate the replicate simulation. In the inset, the resulting reaction norms corresponding to the intecept and slope values for one of the replicates, which replicate is shown is indicated by the line colour. The simulations where individual disply a \"clever\" and agressive behaviour, before the learning process, show all the points of a single replicate cluster together, while in simulation where individuals start being peaceful al replicates show distinct groups of individuals spread throughout the x and y axis. Only in this condition there is a frequency-dependent process that favour diversity in the reaction norm."}
 
 # knitr::include_graphics("../Simulations/initAct_/indVarScatter_.png")
 
@@ -1557,9 +1656,11 @@ indList<-grep("ind",listTest,value=TRUE)
 
 inds<-rbindlist(lapply(indList,filesScenar,scenario,full.name=TRUE),fill = TRUE)
 
+inds[,negAlpha:=alpha*-1]
 inds[,diffActWeight:=abs(WeightAct_0-WeightAct_4)]
 
-shortSce<-gsub("[^[:alpha:]]",gsub(".txt","",tail(strsplit(indList[1],"_")[[1]],2)[1]),
+shortSce<-gsub("[^[:alpha:]]",
+               gsub(".txt","",tail(strsplit(indList[1],"_")[[1]],2)[1]),
                replacement = "")
 
 
@@ -1646,11 +1747,11 @@ for(PAr in popOneInd[,unique(get(shortSce))][c(3,2,1)]){
       +c(-0.03,-0.03,-0.025,-0.025),
       las=1,new=TRUE,yaxt=yaxtAll[count],
       cex.axis=1.5,new=TRUE)
-  plot(data=popOneInd[get(shortSce)==PAr&time>max(time)*0.8],alpha~beta,ylab="",
+  plot(data=popOneInd[get(shortSce)==PAr&time>max(time)*0.8],negAlpha~beta,ylab="",
        xlab="", pch=20,cex.lab=cexAxis,cex.axis=cexAxis,las=1,cex=1,
-       ylim=range(popOneInd[,alpha])*c(1.1,1.05),
+       ylim=range(popOneInd[,negAlpha])*c(1.1,1.2),
        xlim=range(popOneInd[,beta]),col=multDiscrPallet[seed+1])
-  lines(x=c(0,0),y=range(popOneInd[,alpha]),col="grey",
+  lines(x=c(0,0),y=range(popOneInd[,negAlpha]),col="grey",
         lwd=2)
   lines(y=c(0,0),x=range(popOneInd[,beta]),col="grey",
         lwd=2)
@@ -1661,16 +1762,16 @@ for(PAr in popOneInd[,unique(get(shortSce))][c(3,2,1)]){
   
   points(data=popOneInd[(get(shortSce)==PAr&time>max(time)*0.8)&
                           seed == repsScen[count]],
-       alpha~beta,col=multDiscrPallet[seed+1],cex=1,pch=20)
+       negAlpha~beta,col=multDiscrPallet[seed+1],cex=1,pch=20)
 
 }
 for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
   count<-match(PAr,popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)])
 
   par(new=TRUE,plt=posPlot(numplotx = 6,numploty = 4,idplotx = count*2-1,
-                           idploty = 1,upboundx = 96,lowboundx =11,
-                           upboundy = 98)
-      +c(0.02,0.02,0.03,0.03),xpd=T,xaxt="s",yaxt="s")
+                           idploty = 3,upboundx = 96,lowboundx =11,
+                           upboundy = 98)+c(0.0,0.0,0.13,0.13),
+      xpd=T,xaxt="s",yaxt="s")
 
   plot(x=0,y=0,type='l',xlab="", ylab="",ylim=c(0,1),xlim=c(0,1),
        xaxt="n",yaxt="n")
@@ -1684,25 +1785,29 @@ for(PAr in popOneInd[,sort(unique(get(shortSce)),decreasing = TRUE)]){
     type='l',xlab="",
     ylab="",ylim=c(0,1),lty=1,lwd=2,new=T)
   axis(1,at = c(0,1),tick = TRUE,cex.axis=.7,padj=-1.7)
-  axis(2,at =c(0,1),tick = TRUE,cex.axis=.7,hadj=-0.2)
+  axis(4,at =c(0,1),tick = TRUE,cex.axis=.7,hadj=-0.2)
 }
 
 ```
 
-The action of natural selection and genetic drift on the learning parameters 
-do not override the conditions for the evolutionary branching 
-[@dieckmann_Dynamical_1996] described above. 
 Given how crucial naive behaviour is for the branching event 
-described earlier, we tested whether evolutionary processes could lead 
-key parameters of the learning process toward
-values that prevented the genetic variation to build up. 
-Figure \ref{fig:learnEvol} shows the dynamics from a set of simulations where we 
-allow for the coevolution of the reaction norm as well as key parameters of
-the learning module, namely the speed of learning ($A$) and the behavioural 
-tendency expressed by individuals prior to learning. Top panels in 
-figure \ref{fig:learnEvol} show that there is diversification process in this 
-coevolutionary scenario as well. That is because, as is shown in the middle 
-panels (B) of the same figure, the learning parameters stay within the range 
+described earlier, we tested whether the occurrence of branching was robust to 
+the actions of natural selection. If natural selection favoured high 
+learning rates or extreme values in the initial policy vector, then
+the evolutionary branching we find would not be as relevant in 
+biological populations. Thus, we developed an extension of the model 
+where the speed of learning ($\Alpha$) and the initial value of the 
+policy vector $\symbf{y}$ are allowed to change
+subject to natural selection and genetic drift. We do this by assuming 
+that the values of the learning parameters are inherited from parent to 
+offspring and occasionally undergo mutation, just like the parameters 
+of the reaction norm. The action of natural selection and genetic drift 
+on the learning parameters do not override the conditions 
+for the evolutionary branching [@dieckmann_Dynamical_1996] described above. 
+Top panels in figure \ref{fig:learnEvol} show that there is diversification 
+process in this coevolutionary scenario as well. That is because, 
+as is shown in the middle panels (B) of the same figure, 
+the learning parameters stay within the range 
 necessary for the branching event to take place. The speed of learning 
 (Fig. \ref{fig:learnEvol} B.1) stays well above zero throughout the simulation. 
 In contrast, the initial behavioural tendency maintain values around zero. 
@@ -1717,8 +1822,9 @@ evolutionary processes. In the model, the response to a signal in a
 communication system is mediated by learning processes: individuals 
 learn how to respond to a quantitative trait of their interactive partners. 
 We showed that the learning process can mediate the evolution 
-of an honest signal under the handicap principle
-[@grafen_Biological_1990;@zahavi_Mate_1975]. This conclusion is not 
+of an honest signal under the handicap principle, but it cannot without it
+[@grafen_Biological_1990;@zahavi_Mate_1975]. Learning is not sufficient to 
+trigger the evolution of the communication system.  This conclusion is not 
 different from classical genetic models, where responses to signals are
 innate to the individual. However, unlike classical genetic models,
 our model shows that learning can also mediate the origin of a signal 
@@ -1728,7 +1834,7 @@ types of individuals, with honest and dishonest signals.
 The amount of information gathered through learning, as a well as the 
 initial conditions of the learning process, were crucial for the emergence
 and maintenance of variation in the signalling system. 
-Namely the polymorphism required
+Namely, the polymorphism required
 a limit in the amount of information collected by individuals, as well as
 peaceful behaviour in naive individuals. Furthermore, we showed that the 
 conditions leading to the origin of the polymorphism can be reached when evolutionary
@@ -1839,9 +1945,9 @@ are often performed across the whole range of variation.
 Whether such a situation may apply empirically to bib sizes in House Sparrows 
 remains to be studied.
 
-The focus of theoretical and empirical work on communication systems, 
-and particularly badges of status, is often explaining the presence and 
-absence of certain morphological traits within populations. Phenotypic traits
+The focus of classical theoretical and empirical work on communication systems
+is often explaining the presence and absence of certain 
+morphological traits (ornaments) within populations. Phenotypic traits
 hypothesized to play a role in communication systems regularly exhibit 
 patterns of geographic variation within species that have long called 
 for explanations. One example of this is the leapfrog pattern [@remsen_High_1984],
@@ -1902,6 +2008,9 @@ indList_runs<-grep(paste0(param$namParam,param$rangParam),
 
 evol<-do.call(rbind,lapply(evolList_runs,fread))
 pop<-do.call(rbind,lapply(indList_runs, fread))
+
+evol[,meanAlpha:=meanAlpha*-1]
+pop[,alpha:=alpha*-1]
   
 Valpar<-param$rangParam[1]
   
@@ -1994,7 +2103,7 @@ evolDist(indData = pop[seed==runChoi],variable = "alpha",nbins = 10,
          ylim = range(pop[seed==runChoi,alpha])+adjsYlims,
          xlim=c(0,22000))
 
-mtext(text = "Trait value",cex = cexAxis,line = 1,side = 2,las=0)
+mtext(text = "Trait value",cex = cexAxis,line = 1.2,side = 2,las=0)
 legend("topright",legend = c(expression(alpha[s])),bty = "n",cex=cexAxis)
 legend("topleft",legend = c("A.1"),cex=cexAxis,bty = "n",inset = -0.06)
 
@@ -2166,6 +2275,9 @@ indList_runs<-grep(paste0(param$namParam,param$rangParam),
 
 evol<-do.call(rbind,lapply(evolList_runs,fread))
 pop<-do.call(rbind,lapply(indList_runs, fread))
+
+evol[,meanAlpha:=meanAlpha*-1]
+pop[,alpha:=alpha*-1]
   
 Valpar<-param$rangParam
   
@@ -2452,37 +2564,42 @@ rm(list=grep("temp",ls(),value = T))
 \small
 
 
-| Symbol |      Description |
-|:-------:|:--------------------------------|
-| $Q_i$ | Quality of individual $i$ |
-| $N$   | Population size |
+| Symbol |      Description |      Value |
+|:-------:|:--------------------------------|:----------------|
+| $Q_i$ | Quality of individual $i$ |                         |
+| $N$   | Population size | $3000$                            |
 | $n$   | Number of interactions as the focal individual |
-| $\sigma$ | Standard deviation of the truncated normal distribution from which quality is drawn |
-| $B_i$ | Badge size of individual $i$ |
-| $\alpha_i$ | Intercept of the badge size reaction norm for individual $i$ |
+| $\sigma$ | Standard deviation of the truncated normal distribution from which quality is drawn |    $0.15$                                             |
+| $B_i$ | Badge size of individual $i$ |                      |
+| $\alpha_i$ | Intercept of the badge size logistic reaction norm for individual $i$ |
+                                                              |
 | $\beta_i$  | Slope of the badge size reaction norm for individual $i$ |
-| $\mu$     | Mutation rate | 
-| $\sigma_\mu$ |Standard deviation of the normal distribution from which quality is mutations are drawn |
-| $s_i$ | Survival probability of individual $i$ |
-| $k_1$ | Intercept of the survival function |
-| $k_2$ | Slope of the survival function |
-| $V$   | Value of the contested resource |
-| $C$   | Cost of an escalated fight |
-| $p_{ij}$ | Probability that individual $i$ wins an escalated fight against individual $j$ |
-| $k_3$ | Parameter determining how important is quality defining the probability of wining |
-| $\delta$ | Prediction error |
-| $A$ | Speed of learning | 
-| $c$ | Number of feature centres |
-| $b_z$ | badge size for feature centre $z$  | 
-| $\hat{R}$ | Reward estimate | 
+                                                              |
+| $\mu$     | Mutation rate | $0.001$                         |
+| $\sigma_\mu$ |Standard deviation of the normal distribution from which quality is mutations are drawn | $0.3$                                   |
+| $s_i$ | Survival probability of individual $i$ |            |
+| $k_1$ | Intercept of the survival function |  $3$           |     
+| $k_2$ | Slope of the survival function |                    |
+| $V$   | Value of the contested resource | $1$               |
+| $C$   | Cost of an escalated fight |    $1.5$               |
+| $p_{ij}$ | Probability that individual $i$ wins an escalated fight against individual $j$ |                                                             |
+| $k_3$ | Parameter determining how important quality is defining the probability of wining | $10$                                                        |
+| $\delta$ | Prediction error |                               |
+| $A$ | Speed of learning |                                   |
+| $c$ | Number of feature centres | $6$                       |   
+| $b_z$ | badge size for feature centre $z$  |                |          
+| $\hat{R}$ | Reward estimate |                               |
 | $x_z$ | weight of feature centre $z$ on the reward estimation |
-| $\theta$ | width of the generalization function | 
-| $q_{ij}$ | probability that individual $i$ retreats from a fight in an encounter with individual $j$ |
-| $y_z$ | weight of feature centre z on the tendency to retreat |
-| $w_i$ | total pay-off of individual $i$ |
-| $w_0$ | base line pay-off |
+                                                              |
+| $\theta$ | width of the generalization function | $0.01$   |          
+| $q_{ij}$ | probability that individual $i$ retreats from a fight in an encounter with individual $j$ |                                              |
+| $y_z$ | weight of feature centre $z$ on the tendency to retreat |
+                                                              |
+| $w_i$ | total pay-off of individual $i$ |                   |
+| $w_0$ | base line pay-off | $2$                             |
 
-Table: Notation of the model parameters and variables
+Table: Notation of the model parameters and variables. Values for the parameters
+that are kept constant throughout all simulations are given in the third column. 
 
 
 ## References
